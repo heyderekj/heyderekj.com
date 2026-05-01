@@ -71,6 +71,18 @@ if (project.data.url) {
       <Content />
     </div>
 
+    {project.data.image && (
+      <div class="project-detail-image">
+        <img
+          src={project.data.image}
+          alt={project.data.name}
+          class="project-detail-img"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    )}
+
     <p class="back-link"><a href="/projects/"><span class="arrow">&larr;</span> all projects</a></p>
   </article>
 </Base>
@@ -144,5 +156,20 @@ if (project.data.url) {
     .detail-status--retired {
       background: rgba(255, 255, 255, 0.04);
     }
+  }
+
+  .project-detail-image {
+    margin-top: var(--space-4);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .project-detail-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: top center;
   }
 </style>
