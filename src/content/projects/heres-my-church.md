@@ -9,7 +9,8 @@ stack: [React, Supabase]
 image: /assets/images/projects/heresmychurch-og.png
 featured: true
 order: 2
-status: active
+status: paused
+burnerLevel: Back Burner
 ---
 
 ## About

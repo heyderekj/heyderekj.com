@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { projectStartTime } from '../lib/projectStart';
+import { displayProjectStatus } from '../lib/projectStatus';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
@@ -15,10 +16,13 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
     const startYear = project.data.started
       ? new Date(project.data.started).getFullYear()
       : (project.data.year ?? null);
-    const isActive = project.data.status === 'active';
-    const dateLabel = startYear
-      ? `${startYear} – ${isActive ? 'Present' : startYear}`
-      : null;
+    const timelineEnd =
+      project.data.status === 'active'
+        ? 'Present'
+        : project.data.status === 'paused'
+          ? 'Back burner'
+          : String(startYear);
+    const dateLabel = startYear ? `${startYear} – ${timelineEnd}` : null;
     return (
       <li class="project-grid-item">
         <a href={`/projects/${project.slug}/`} class="project-grid-card">
@@ -40,7 +44,14 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
           <div class="project-grid-footer">
             <div class="project-grid-info">
               <span class="project-grid-name">{project.data.name}</span>
-              {dateLabel && <span class="project-grid-date">{dateLabel}</span>}
+              <div class="project-grid-meta">
+                {project.data.status && (
+                  <span class={`card-status card-status--${project.data.status}`}>
+                    {displayProjectStatus(project.data.status)}
+                  </span>
+                )}
+                {dateLabel && <span class="project-grid-date">{dateLabel}</span>}
+              </div>
             </div>
             <span class="project-grid-arrow" aria-hidden="true">→</span>
           </div>
@@ -118,8 +129,42 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
 .project-grid-info {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
   min-width: 0;
+}
+
+.project-grid-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: var(--size-meta);
+  color: var(--muted-strong);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+}
+
+.card-status {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  line-height: 1.2;
+}
+
+.card-status--active {
+  color: var(--muted-strong);
+  background: rgba(249, 115, 22, 0.14);
+  border: 1px solid rgba(249, 115, 22, 0.38);
+}
+
+.card-status--paused {
+  color: var(--muted-strong);
+  background: rgba(234, 179, 8, 0.12);
+  border: 1px solid rgba(234, 179, 8, 0.4);
 }
 
 .project-grid-name {

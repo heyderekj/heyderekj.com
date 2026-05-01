@@ -1,12 +1,12 @@
 ---
 name: ChurchSync
-tagline: Keeping people, events, and comms aligned for smaller churches.
+tagline: Past portfolio entry from the archive.
 started: 2024-10-01
-status: paused
+status: retired
 featured: false
 order: 0
 ---
 
 ## About
 
-A direction for calmer church operations tooling—paused while other products take priority.
+A past idea from the portfolio archive; not actively developed.

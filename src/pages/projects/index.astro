@@ -21,13 +21,19 @@ const retiredProjects = projects
     Apps and experiments—design, code, and AI.
   </p>
 
-  {activeProjects.length > 0 && <ProjectList projects={activeProjects} />}
+  {activeProjects.length > 0 && (
+    <>
+      <h2 class="projects-section-title" id="front-burner">Front Burner</h2>
+      <p class="projects-section-lede">Current focus—shipping and active builds.</p>
+      <ProjectList projects={activeProjects} />
+    </>
+  )}
 
   {pausedProjects.length > 0 && (
     <>
-      <h2 class="projects-section-title" id="inactive">Inactive</h2>
+      <h2 class="projects-section-title" id="back-burner">Back Burner</h2>
       <p class="projects-section-lede">
-        {`${pausedProjects.length} ${pausedProjects.length === 1 ? 'project' : 'projects'} that may continue.`}
+        {`${pausedProjects.length} ${pausedProjects.length === 1 ? 'project' : 'projects'} on the back burner—they may still continue.`}
       </p>
       <ProjectList projects={pausedProjects} variant="compact" startedOrder="desc" />
     </>
