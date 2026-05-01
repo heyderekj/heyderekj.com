@@ -26,10 +26,11 @@ const showMeta = Boolean(startLabel || status);
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
 const pageUrl = new URL(`/projects/${project.slug}/`, `${siteOrigin}/`).toString();
+const metaDesc = project.data.summary ?? project.data.tagline;
 const projectJsonLd: Record<string, unknown> = {
   '@type': 'SoftwareApplication',
   name: project.data.name,
-  description: project.data.tagline,
+  description: metaDesc,
   url: project.data.url ?? pageUrl,
   author: { '@type': 'Person', '@id': schemaPersonId(siteOrigin), name: 'Derek Castelli' },
 };
@@ -37,7 +38,7 @@ if (project.data.url) {
   projectJsonLd.sameAs = [project.data.url];
 }
 ---
-<Base title={`${project.data.name} — Derek Castelli`} description={project.data.tagline} jsonLd={projectJsonLd}>
+<Base title={`${project.data.name} — Derek Castelli`} description={metaDesc} jsonLd={projectJsonLd}>
   <article class="prose">
     <header class="post-header project-detail-header">
       {project.data.url ? (
@@ -67,9 +68,9 @@ if (project.data.url) {
       )}
     </header>
 
-    <div class="post-content">
-      <Content />
-    </div>
+    {project.data.summary && (
+      <p class="project-summary">{project.data.summary}</p>
+    )}
 
     {project.data.image && (
       <div class="project-detail-image">
@@ -82,6 +83,10 @@ if (project.data.url) {
         />
       </div>
     )}
+
+    <div class="post-content">
+      <Content />
+    </div>
 
     <p class="back-link"><a href="/projects/"><span class="arrow">&larr;</span> all projects</a></p>
   </article>
@@ -156,6 +161,14 @@ if (project.data.url) {
     .detail-status--retired {
       background: rgba(255, 255, 255, 0.04);
     }
+  }
+
+  .project-summary {
+    margin: var(--space-4) 0 0;
+    font-size: var(--size-body);
+    color: var(--fg-soft);
+    line-height: 1.6;
+    max-width: 52em;
   }
 
   .project-detail-image {

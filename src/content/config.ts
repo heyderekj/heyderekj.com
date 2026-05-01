@@ -55,6 +55,8 @@ const projects = defineCollection({
   schema: z.object({
     name: z.string(),
     tagline: z.string(),
+    /** One-sentence hook shown on the detail page before the body content; max ~140 chars. */
+    summary: z.string().max(200).optional(),
     url: z.string().url().optional(),
     year: z.number().optional(),
     /** Prefer this for card footer; falls back to Jan 1 of `year` if omitted */

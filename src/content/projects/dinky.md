@@ -1,6 +1,7 @@
 ---
 name: Dinky
 tagline: Smaller images, videos, and PDFs on macOS.
+summary: A tiny macOS app that shrinks images, videos, and PDFs. Drag files in, compressed copies land where you expect—free, open source, and honest about format tradeoffs.
 url: https://dinkyfiles.com
 year: 2026
 started: 2026-04-01

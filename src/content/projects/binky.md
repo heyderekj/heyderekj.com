@@ -1,6 +1,7 @@
 ---
 name: Binky
 tagline: Binky sorts your files.
+summary: A native macOS app that watches your Downloads folder and quietly sorts incoming files into sensible folders—nothing disappears, unknowns go to Review.
 url: https://binkyfiles.com
 year: 2026
 started: 2026-05-01

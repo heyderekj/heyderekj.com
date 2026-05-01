@@ -1,6 +1,7 @@
 ---
 name: Harvous
 tagline: A notes app designed for Bible study—threads, scripture, and recall.
+summary: A web-based notes app for Bible study that helps you save, organize, and reconnect what mattered from reading, sermons, and small group—without replacing your Bible reader.
 url: https://harvous.com
 year: 2024
 started: 2024-03-01

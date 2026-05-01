@@ -1,6 +1,7 @@
 ---
 name: Here's My Church
 tagline: Interactive map of U.S. churches—accurate, searchable, crowd-sourced.
+summary: An interactive map of Christian churches in the U.S.—browse by name, denomination, size, or language, and help keep the data accurate with crowd-sourced corrections.
 url: https://heresmychurch.com
 year: 2026
 started: 2026-03-01
