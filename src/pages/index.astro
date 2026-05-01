@@ -43,16 +43,10 @@ const highlightedWork = (await getCollection('work', ({ data }) => !data.draft &
 const homeHighlightedWork = highlightedWork.filter(({ slug }) => slug !== 'harvouscom').slice(0, 2);
 
 const allProjects = await getCollection('projects', ({ data }) => !data.draft);
-/** Front burner + back burner — same pool as the top sections on /projects/. */
+/** Front Burner only — active projects shown on the home page. */
 const homeGridProjects = allProjects
-  .filter((p) => p.data.status === 'active' || p.data.status === 'paused')
-  .sort((a, b) => {
-    const rank = (s: string) => (s === 'active' ? 0 : 1);
-    const ra = rank(a.data.status);
-    const rb = rank(b.data.status);
-    if (ra !== rb) return ra - rb;
-    return projectStartTime(b) - projectStartTime(a);
-  });
+  .filter((p) => p.data.status === 'active')
+  .sort((a, b) => projectStartTime(b) - projectStartTime(a));
 const pausedProjects = allProjects.filter((p) => p.data.status === 'paused');
 const retiredProjects = allProjects.filter((p) => p.data.status === 'retired');
 const pausedCount = pausedProjects.length;

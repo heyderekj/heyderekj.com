@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { projectStartTime } from '../lib/projectStart';
+import { formatProjectStartLabel, projectStartTime } from '../lib/projectStart';
 import { displayProjectStatus } from '../lib/projectStatus';
 
 interface Props {
@@ -11,50 +11,47 @@ const { projects } = Astro.props;
 
 const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTime(a));
 ---
-<ul class="project-grid">
+<ul class="project-cards">
   {sorted.map((project) => {
-    const startYear = project.data.started
-      ? new Date(project.data.started).getFullYear()
-      : (project.data.year ?? null);
-    const timelineEnd =
-      project.data.status === 'active'
-        ? 'Present'
-        : project.data.status === 'paused'
-          ? 'Back burner'
-          : String(startYear);
-    const dateLabel = startYear ? `${startYear} – ${timelineEnd}` : null;
+    const startStr = formatProjectStartLabel(project);
+    const stackStr = project.data.stack?.length ? project.data.stack.join(', ') : '';
     return (
-      <li class="project-grid-item">
-        <a href={`/projects/${project.slug}/`} class="project-grid-card">
-          <div class="project-grid-visual">
+      <li class="project-card">
+        <a href={`/projects/${project.slug}/`} class="project-card-link">
+          <div class="card-thumb">
             {project.data.image ? (
               <img
                 src={project.data.image}
                 alt={project.data.name}
-                class="project-grid-img"
+                class="card-thumb-img"
                 loading="lazy"
                 decoding="async"
               />
             ) : (
-              <div class="project-grid-placeholder" aria-hidden="true">
+              <div class="card-thumb-placeholder" aria-hidden="true">
                 {project.data.name[0]}
               </div>
             )}
           </div>
-          <div class="project-grid-footer">
-            <div class="project-grid-info">
-              <span class="project-grid-name">{project.data.name}</span>
-              <div class="project-grid-meta">
+          <div class="card-body">
+            <span class="card-name">{project.data.name}</span>
+            <p class="card-tagline">{project.data.tagline}</p>
+            <p class="card-foot">
+              <span class="card-foot-lead">
                 {project.data.status && (
                   <span class={`card-status card-status--${project.data.status}`}>
                     {displayProjectStatus(project.data.status)}
                   </span>
                 )}
-                {dateLabel && <span class="project-grid-date">{dateLabel}</span>}
-              </div>
-            </div>
-            <span class="project-grid-arrow" aria-hidden="true">→</span>
+                {startStr && <span class="card-foot-date">{startStr}</span>}
+              </span>
+              {stackStr && (startStr || project.data.status) && (
+                <span class="card-foot-gap">·</span>
+              )}
+              {stackStr && <span class="card-foot-stack">{stackStr}</span>}
+            </p>
           </div>
+          <span class="card-arrow" aria-hidden="true">→</span>
         </a>
       </li>
     );
@@ -62,36 +59,62 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
 </ul>
 
 <style>
-.project-grid {
+.project-cards {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
-.project-grid-item {
+.project-card {
   margin: 0;
   padding: 0;
 }
 
-:global(main.main) .project-grid-card {
-  display: block;
-  text-decoration: none;
-  border-bottom: none;
-  color: inherit;
-}
-
-.project-grid-visual {
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
+:global(main.main) .project-card-link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
   border-radius: var(--radius-md);
-  background: var(--border);
-  position: relative;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  text-decoration: none;
+  color: inherit;
+  box-sizing: border-box;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.project-grid-img {
+:global(main.main) .project-card-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+:global(main.main) .project-card-link:hover {
+  background-color: var(--glass-active-bg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Thumbnail */
+.card-thumb {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--border);
+}
+
+.card-thumb-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -100,50 +123,87 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
   transition: transform 0.3s ease;
 }
 
-:global(main.main) .project-grid-card:hover .project-grid-img {
-  transform: scale(1.03);
+:global(main.main) .project-card-link:hover .card-thumb-img {
+  transform: scale(1.05);
 }
 
-.project-grid-placeholder {
+.card-thumb-placeholder {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--muted);
-  background: var(--border);
   user-select: none;
 }
 
-.project-grid-footer {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-2);
-  padding-top: var(--space-2);
-  font-size: var(--size-body);
-}
-
-.project-grid-info {
+/* Content */
+.card-body {
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-width: 0;
+  gap: var(--space-1);
 }
 
-.project-grid-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem;
+.card-name {
+  font-size: var(--size-body);
+  font-weight: 600;
+  color: var(--fg);
+  transition: color 0.15s ease;
+  line-height: 1.25;
+}
+
+:global(main.main) .project-card-link:hover .card-name {
+  color: var(--accent);
+}
+
+.card-tagline {
+  margin: 0;
+  font-size: var(--size-meta);
+  color: var(--fg-soft);
+  line-height: 1.45;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-foot {
+  margin: 0;
   font-size: var(--size-meta);
   color: var(--muted-strong);
   font-variant-numeric: tabular-nums;
   line-height: 1.35;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.4rem;
+  row-gap: 0.2rem;
 }
 
+.card-foot-lead {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.card-foot-date {
+  font-variant-numeric: tabular-nums;
+}
+
+.card-foot-gap {
+  color: var(--muted);
+  user-select: none;
+}
+
+.card-foot-stack {
+  min-width: 0;
+}
+
+/* Status chips */
 .card-status {
   flex-shrink: 0;
   font-size: 10px;
@@ -167,40 +227,18 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
   border: 1px solid rgba(234, 179, 8, 0.4);
 }
 
-.project-grid-name {
-  font-size: inherit;
-  font-weight: 600;
-  color: var(--fg);
-  line-height: 1.25;
-  transition: color 0.15s ease;
-}
-
-:global(main.main) .project-grid-card:hover .project-grid-name {
-  color: var(--accent);
-}
-
-.project-grid-arrow {
+/* Arrow */
+.card-arrow {
+  flex-shrink: 0;
   color: var(--muted);
   font-size: 16px;
-  flex-shrink: 0;
-  line-height: 1.4;
+  line-height: 1;
+  align-self: center;
   transition: color 0.15s ease, transform 0.15s ease;
 }
 
-:global(main.main) .project-grid-card:hover .project-grid-arrow {
+:global(main.main) .project-card-link:hover .card-arrow {
   color: var(--accent);
   transform: translateX(2px);
-}
-
-:global(main.main) .project-grid-card:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: var(--radius-md);
-}
-
-@media (max-width: 540px) {
-  .project-grid {
-    grid-template-columns: 1fr;
-  }
 }
 </style>
