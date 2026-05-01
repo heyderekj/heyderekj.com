@@ -6,6 +6,7 @@ year: 2026
 started: 2026-05-01
 role: Designer & builder
 stack: [Swift]
+image: https://binkyfiles.com/screenshots/sorting.png
 featured: true
 order: 4
 status: active
