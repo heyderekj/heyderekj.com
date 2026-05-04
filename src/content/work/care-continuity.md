@@ -19,6 +19,7 @@ gallery:
   - "/images/work/care-continuity/gallery-06.png"
 liveLink: "https://www.carecontinuity.com/"
 partnership: "Kem Design"
+partnershipWorkLink: "https://www.kemdesign.co/work/care-continuity"
 soloOrAgency: "Agency"
 estimatedTimeSpent: "4 weeks"
 tags:
