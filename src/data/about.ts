@@ -160,7 +160,6 @@ export const aboutExperienceGroups: AboutExpGroup[] = [
         range: 'Jan 2025 — May 2026',
         description:
           'Senior Web Designer (Freelance), designing websites and developing them in Webflow one update at a time.',
-        link: { label: 'jamm.co', href: 'https://jamm.co', icon: 'arrow' },
       },
       {
         name: 'Apollos',
