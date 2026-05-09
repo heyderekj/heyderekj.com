@@ -1,10 +1,14 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { peopleMeta, people } from '../../data/people';
+
+const peopleCount = people.length;
+const peopleHeading =
+  peopleCount === 1 ? '1 person I want to meet IRL' : `${peopleCount} people I want to meet IRL`;
 ---
 <Base title={peopleMeta.title} description={peopleMeta.description}>
   <article class="prose">
-    <h1>People I'd like to meet IRL</h1>
+    <h1>{peopleHeading}</h1>
     <p style="color: var(--fg-soft);">This is a list of people who have helped me and ones I admire and would love to meet in real life, someday.</p>
 
     <ul class="people-list">

@@ -22,7 +22,6 @@ export const people: Person[] = [
   { name: 'Gary Vaynerchuk', handle: '@garyvee',      xUrl: 'https://x.com/garyvee',       tagline: 'Entrepreneur, author, VaynerMedia', met: true },
   { name: 'Guy Beahm',      handle: '@GuyBeahm',      xUrl: 'https://x.com/GuyBeahm',      tagline: 'The two-time · streamer · Dr Disrespect' },
   { name: 'Jared Erickson', handle: '@alliswell',     xUrl: 'https://x.com/alliswell',     tagline: 'Head of design at Switchyards' },
-  { name: 'Jared Erondu',   handle: '@erondu',        xUrl: 'https://x.com/erondu',        tagline: 'Design exec & advisor' },
   { name: 'Jason Fried',    handle: '@jasonfried',    xUrl: 'https://x.com/jasonfried',    tagline: 'Started and runs 37signals' },
   { name: 'Jeff Sheldon',   handle: '@ugmonk',        xUrl: 'https://x.com/ugmonk',        tagline: 'Founder & designer of Ugmonk' },
   { name: 'Josh Pigford',   handle: '@Shpigford',     xUrl: 'https://x.com/Shpigford',     tagline: 'Maker. Can\'t stop starting things.' },
