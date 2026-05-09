@@ -17,6 +17,7 @@ import { peopleMeta, people } from '../../data/people';
           <a href={person.xUrl} target="_blank" rel="noopener noreferrer" class="person-name">
             {person.name}
           </a>
+          <span class="person-line" aria-hidden="true"></span>
           <span class="person-handle">{person.handle}</span>
         </li>
       ))}
@@ -51,11 +52,16 @@ import { peopleMeta, people } from '../../data/people';
   }
 
   .person-name {
-    flex: 1;
     font-weight: 500;
     color: var(--fg);
     text-decoration: none;
-    line-height: 1.3;
+    border-bottom: none;
+    white-space: nowrap;
+    padding-inline-end: var(--space-2);
+  }
+
+  .people-list li:hover i {
+    color: var(--accent);
   }
 
   .person-name:hover {
@@ -66,10 +72,18 @@ import { peopleMeta, people } from '../../data/people';
     color: var(--accent);
   }
 
-.person-handle {
+  .person-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    padding-inline-start: var(--space-2);
+  }
+
+  .person-handle {
     font-size: var(--size-meta);
     color: var(--muted);
     white-space: nowrap;
     flex-shrink: 0;
+    padding-inline-start: var(--space-2);
   }
 </style>
