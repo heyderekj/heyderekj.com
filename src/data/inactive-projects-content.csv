@@ -1,0 +1,30 @@
+Slug,Started,Status,AboutBody,Section2Title,Section2Body
+chrchlink,2024-01-12,retired,A past idea from the portfolio archive; not actively developed.,,
+churchsync,2024-10-01,retired,A past idea from the portfolio archive; not actively developed.,,
+city-planning-blog,2024-01-29,retired,A past idea from the portfolio archive; not actively developed.,,
+cogitav,2024-02-15,retired,A past idea from the portfolio archive; not actively developed.,,
+copact,2024-03-04,retired,A past idea from the portfolio archive; not actively developed.,,
+decent-soap,2024-03-22,retired,A past idea from the portfolio archive; not actively developed.,,
+feedme-post,2024-04-09,retired,A past idea from the portfolio archive; not actively developed.,,
+handiwork,2024-04-26,retired,A past idea from the portfolio archive; not actively developed.,,
+heres-my-church,2026-03-01,paused,"Here's My Church is an interactive map of Christian churches in the United States with a simple goal: be a trustworthy place to find, filter, and correct church information. Visitors can browse and search by name, denomination, size, or language; see address, website, and service times where available; and add or update listings so the dataset stays accurate over time.
+
+The project is free, open source, and crowd-sourced—built for clarity and usefulness for people exploring churches, not for paywalls or noise.",Tools & process,"- Claude — first pass of the interactive map and visual system in a prompt-driven visual build, then carried forward into production code.
+- React — SVG-based map UI with Motion for animation and Lucide for icons (not a generic embedded map widget); Vite for the production bundle.
+- Supabase — backing database for church records and crowd-sourced corrections.
+- OpenStreetMap, Census, and denomination sources — blending free location and attribute data; attendance estimates refined with building footprint logic where available.
+- Product & data — modeling what “accurate church data” means in the UI, review flows for edits, and ongoing stewardship of the map experience."
+hike,2024-05-14,retired,A past idea from the portfolio archive; not actively developed.,,
+lazwear,2024-06-01,retired,A past idea from the portfolio archive; not actively developed.,,
+lifenotion,2024-06-18,retired,A past idea from the portfolio archive; not actively developed.,,
+lilo-loved,2024-07-06,retired,A past idea from the portfolio archive; not actively developed.,,
+littleseaandme,2024-07-24,retired,A past idea from the portfolio archive; not actively developed.,,
+made-in-dsm,2024-08-11,retired,A past idea from the portfolio archive; not actively developed.,,
+neighbormade,2024-09-16,retired,A past idea from the portfolio archive; not actively developed.,,
+perch,2024-10-04,retired,A past idea from the portfolio archive; not actively developed.,,
+resimplify,2024-10-21,retired,A past idea from the portfolio archive; not actively developed.,,
+revisemy,2024-09-01,paused,A scoped tool idea for collecting feedback and sign-off without drowning in threads—paused while other work ships first.,,
+scio7,2024-11-08,retired,A past idea from the portfolio archive; not actively developed.,,
+shift-pace-drive,2024-11-25,retired,A past idea from the portfolio archive; not actively developed.,,
+sparrow,2024-12-13,retired,A past idea from the portfolio archive; not actively developed.,,
+uniqueblog,2024-12-28,retired,A past idea from the portfolio archive; not actively developed.,,
