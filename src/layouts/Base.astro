@@ -145,25 +145,20 @@ const year = new Date().getFullYear();
                 id="nav-fork-trigger"
               >
                 <i class={`${onFork ? 'ph-fill' : 'ph-bold'} ${forkIcon}`} aria-hidden="true"></i>
-                <span aria-hidden="true">{onAbout ? 'About' : onPeople ? 'People' : 'About'}</span>
               </button>
               <div class="nav-fork-menu" id="nav-fork-menu" hidden>
-                <a
-                  href="/about/"
-                  class={onAbout ? 'active' : ''}
-                  aria-current={onAbout ? 'page' : undefined}
-                >
-                  <i class={`${onAbout ? 'ph-fill' : 'ph-bold'} ph-user`} aria-hidden="true"></i>
-                  <span aria-hidden="true">About</span>
-                </a>
-                <a
-                  href="/people/"
-                  class={onPeople ? 'active' : ''}
-                  aria-current={onPeople ? 'page' : undefined}
-                >
-                  <i class={`${onPeople ? 'ph-fill' : 'ph-bold'} ph-users`} aria-hidden="true"></i>
-                  <span aria-hidden="true">People</span>
-                </a>
+                {!onAbout && (
+                  <a href="/about/">
+                    <i class="ph-bold ph-user" aria-hidden="true"></i>
+                    <span aria-hidden="true">About</span>
+                  </a>
+                )}
+                {!onPeople && (
+                  <a href="/people/">
+                    <i class="ph-bold ph-users" aria-hidden="true"></i>
+                    <span aria-hidden="true">People</span>
+                  </a>
+                )}
               </div>
             </div>
 
