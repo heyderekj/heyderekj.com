@@ -257,6 +257,159 @@ body {
 .sidebar-nav a.active:hover span { color: var(--fg); }
 
 /* ============================================================
+   Nav fork — About / People combined toggle (in-flow)
+   ============================================================ */
+
+/* Wrapper flows inline with the sidebar-nav column */
+.nav-fork {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Trigger mirrors .sidebar-nav a exactly */
+.nav-fork-trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 7px 8px;
+  border-radius: var(--radius-squircle);
+  font-size: var(--size-meta);
+  font-weight: 500;
+  line-height: 1.3;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.nav-fork-trigger i {
+  display: inline-block;
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: color 0.15s ease, transform 0.14s cubic-bezier(0.2, 0.88, 0.2, 1);
+}
+
+.nav-fork-trigger span {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  z-index: 2;
+  pointer-events: none;
+  white-space: nowrap;
+  color: var(--fg-soft);
+  font-weight: 600;
+  opacity: 0;
+  transform: translate(-6px, -50%);
+  transition: opacity 0.18s ease, transform 0.22s var(--spring);
+}
+
+.nav-fork-trigger:hover {
+  color: var(--fg-soft);
+  background: var(--nav-active-bg);
+}
+
+.nav-fork-trigger:hover i {
+  color: var(--accent);
+  transform: rotate(-5deg);
+}
+
+.nav-fork-trigger:hover span,
+.nav-fork-trigger[aria-expanded="true"] span {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.nav-fork-trigger.active {
+  color: var(--accent);
+  background: var(--nav-active-bg);
+}
+
+.nav-fork-trigger.active i { color: var(--accent); }
+
+/* Expanded menu — in flow, same direction as sidebar-nav */
+.nav-fork-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-fork-menu[hidden] { display: none; }
+
+/* Menu items mirror .sidebar-nav a exactly */
+.nav-fork-menu a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  padding: 7px 8px;
+  border-radius: var(--radius-squircle);
+  text-decoration: none;
+  border-bottom: none;
+  font-size: var(--size-meta);
+  font-weight: 500;
+  line-height: 1.3;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.nav-fork-menu a i {
+  display: inline-block;
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: color 0.15s ease, transform 0.14s cubic-bezier(0.2, 0.88, 0.2, 1);
+}
+
+.nav-fork-menu a span {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  z-index: 2;
+  pointer-events: none;
+  white-space: nowrap;
+  color: var(--fg-soft);
+  font-weight: 600;
+  opacity: 0;
+  transform: translate(-6px, -50%);
+  transition: opacity 0.18s ease, transform 0.22s var(--spring);
+}
+
+.nav-fork-menu a:hover {
+  color: var(--fg-soft);
+  background: var(--nav-active-bg);
+  border-bottom: none;
+}
+
+.nav-fork-menu a:hover i { color: var(--accent); transform: rotate(-5deg); }
+
+.nav-fork-menu a:hover span {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.nav-fork-menu a.active {
+  color: var(--accent);
+  background: var(--nav-active-bg);
+}
+
+.nav-fork-menu a.active i { color: var(--accent); }
+
+/* Mobile — sidebar-nav is horizontal, so fork flows horizontally too */
+@media (max-width: 660px) {
+  .nav-fork        { flex-direction: row; gap: 2px; }
+  .nav-fork-menu   { flex-direction: row; gap: 2px; }
+  .nav-fork-menu a span { display: none; }
+  .nav-fork-menu a i    { font-size: 22px; }
+  .nav-fork-trigger span { display: none; }
+  .nav-fork-trigger i    { font-size: 22px; }
+}
+
+
+
+/* ============================================================
    Main content area
    ============================================================ */
 .main {
