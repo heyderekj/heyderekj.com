@@ -27,4 +27,5 @@ export const people: Person[] = [
   { name: 'Josh Pigford',   handle: '@Shpigford',     xUrl: 'https://x.com/Shpigford',     tagline: 'Maker. Can\'t stop starting things.' },
   { name: 'Kevin Rose',     handle: '@kevinrose',     xUrl: 'https://x.com/kevinrose',     tagline: 'Angel investor, founder of Digg & Oak' },
   { name: 'Lee Robinson',   handle: '@leerob',        xUrl: 'https://x.com/leerob',        tagline: 'Teaching developers at Cursor, ex-Vercel' },
+  { name: 'Mike Smith',     handle: '@mikesmith187', xUrl: 'https://x.com/mikesmith187', tagline: 'Designer & creator' },
 ];
