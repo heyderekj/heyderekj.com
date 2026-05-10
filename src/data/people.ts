@@ -26,7 +26,6 @@ export const people: Person[] = [
   { name: 'Jason Fried',    handle: '@jasonfried',    xUrl: 'https://x.com/jasonfried',    tagline: 'Started and runs 37signals' },
   { name: 'Jeff Sheldon',   handle: '@ugmonk',        xUrl: 'https://x.com/ugmonk',        tagline: 'Founder & designer of Ugmonk' },
   { name: 'Josh Pigford',   handle: '@Shpigford',     xUrl: 'https://x.com/Shpigford',     tagline: 'Maker. Can\'t stop starting things.' },
-  { name: 'Lee Robinson',   handle: '@leerob',        xUrl: 'https://x.com/leerob',        tagline: 'Teaching developers at Cursor, ex-Vercel' },
   {
     name: 'Michael Jackson',
     handle: '1958–2009',
@@ -34,7 +33,6 @@ export const people: Person[] = [
     tagline: 'Singer, dancer, King of Pop',
     remembered: true,
   },
-  { name: 'Mike Smith',     handle: '@mikesmith187', xUrl: 'https://x.com/mikesmith187', tagline: 'Designer & creator' },
   {
     name: 'Robin Williams',
     handle: '1951–2014',
