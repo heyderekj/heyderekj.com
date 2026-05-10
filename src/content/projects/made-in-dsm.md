@@ -1,7 +1,7 @@
 ---
 name: Made in DSM
 tagline: Past portfolio entry — Blog.
-started: 2024-08-11
+started: 2013-10-27
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+Showcasing and sharing what local creatives, makers, and businesses were doing in Des Moines, Iowa. We did vlogs, events, and a high-engaging newsletter.

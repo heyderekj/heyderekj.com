@@ -1,7 +1,7 @@
 ---
 name: Scio7
 tagline: Past portfolio entry — Podcast Network.
-started: 2024-11-08
+started: 2009-06-01
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+A bite-sized podcast network inspired by 5by5.

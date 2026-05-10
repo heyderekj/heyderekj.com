@@ -1,7 +1,7 @@
 ---
 name: Shift Pace Drive
 tagline: Past portfolio entry — Blog.
-started: 2024-11-25
+started: 2020-08-18
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Back Burner
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+A racing blog, community, and exploring what a Figjam meets fantasy league.

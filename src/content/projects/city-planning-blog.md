@@ -1,7 +1,7 @@
 ---
 name: City Planning Blog (Naming?)
 tagline: Past portfolio entry — Blog.
-started: 2024-01-29
+started: 2009-04-01
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+A city planning blog where I documented what I learned as I studied this at Iowa State University.

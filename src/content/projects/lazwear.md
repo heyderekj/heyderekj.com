@@ -1,7 +1,7 @@
 ---
 name: Lazwear
 tagline: Past portfolio entry — Ecommerce Shop.
-started: 2024-06-01
+started: 2021-05-23
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Back Burner
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+What about a line of church merch? The first and only collection was called “Mirror” and sold and printed 26 shirts.

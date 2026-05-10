@@ -1,7 +1,7 @@
 ---
 name: Copact
 tagline: Past portfolio entry — App.
-started: 2024-03-04
+started: 2023-08-05
 status: retired
 featured: false
 order: 0

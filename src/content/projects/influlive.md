@@ -1,7 +1,7 @@
 ---
-name: ChurchSync
+name: Influlive
 tagline: Past portfolio entry from the archive.
-started: 2025-05-29
+started: 2008-08-01
 status: retired
 featured: false
 order: 0
@@ -9,4 +9,4 @@ order: 0
 
 ## About
 
-A database for churches that would be very flexible.
+Another made in Blogger project that started my blogging journey.

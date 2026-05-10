@@ -1,7 +1,7 @@
 ---
 name: Hike
 tagline: Past portfolio entry — App.
-started: 2024-05-14
+started: 2021-02-03
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+After going to therapy for the first time I realized families need better tools. This was a family journaling app that ironically was worked on more after my divorce, made it into development, but then all of the sudden—all erased.

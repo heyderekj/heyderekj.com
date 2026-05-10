@@ -1,7 +1,7 @@
 ---
 name: Chrchlink
 tagline: Past portfolio entry — Directory.
-started: 2024-01-12
+started: 2022-09-02
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+A church directory with a link in bio for churches.

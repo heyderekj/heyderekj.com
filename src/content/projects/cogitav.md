@@ -1,7 +1,7 @@
 ---
 name: Cogitav
 tagline: Past portfolio entry from the archive.
-started: 2024-02-15
+started: 2009-05-01
 status: retired
 featured: false
 order: 0
@@ -10,4 +10,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+All I know is I was thinking big with this blog but it only lasted over the summer.

@@ -1,7 +1,7 @@
 ---
 name: Lilo Loved
 tagline: Past portfolio entry — Eccomerce Shop.
-started: 2024-07-06
+started: 2019-01-09
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+A dog bath products brand.

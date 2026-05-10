@@ -1,7 +1,7 @@
 ---
 name: Neighbormade
 tagline: Past portfolio entry — App.
-started: 2024-09-16
+started: 2020-12-09
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+A barter system inspired by the Amazon locker system. Think community garden meets Amazon locker.

@@ -1,7 +1,7 @@
 ---
 name: Perch
 tagline: Past portfolio entry — App.
-started: 2024-10-04
+started: 2022-06-22
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Back Burner
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+A fresh take on property management software where tenants had a better experience.

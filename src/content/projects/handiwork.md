@@ -1,7 +1,7 @@
 ---
 name: Handiwork
 tagline: Past portfolio entry — App.
-started: 2024-04-26
+started: 2019-05-22
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+My first app idea was to solve my own problem—Planning Center. I would start with groups and go from there.

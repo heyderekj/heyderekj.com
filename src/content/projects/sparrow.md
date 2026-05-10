@@ -1,7 +1,7 @@
 ---
 name: Sparrow
 tagline: Past portfolio entry — Education.
-started: 2024-12-13
+started: 2022-07-01
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+An education platform.

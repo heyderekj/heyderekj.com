@@ -1,7 +1,7 @@
 ---
 name: "FeedMe! Post"
 tagline: Past portfolio entry — Aggregate.
-started: 2024-04-09
+started: 2008-05-01
 status: retired
 featured: false
 order: 0
@@ -11,4 +11,4 @@ burnerLevel: Burnt (Tossed Out)
 
 ## About
 
-A past idea from the portfolio archive; not actively developed.
+My first idea come from RSS feeds, popularity of Digg, and having more curated content. Made in Blogger.

@@ -1,7 +1,7 @@
 ---
 name: LifeNotion
 tagline: Past portfolio entry — Blog.
-started: 2024-06-18
+started: 2010-05-01
 status: retired
 featured: false
 order: 0
