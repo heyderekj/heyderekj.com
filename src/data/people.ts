@@ -6,6 +6,8 @@ export type Person = {
   xUrl: string;
   tagline: string;
   met?: boolean;
+  /** No longer living — show tribute styling instead of meet/checkbox UI */
+  remembered?: boolean;
 };
 
 export const peopleMeta = {
@@ -26,4 +28,18 @@ export const people: Person[] = [
   { name: 'Josh Pigford',   handle: '@Shpigford',     xUrl: 'https://x.com/Shpigford',     tagline: 'Maker. Can\'t stop starting things.' },
   { name: 'Lee Robinson',   handle: '@leerob',        xUrl: 'https://x.com/leerob',        tagline: 'Teaching developers at Cursor, ex-Vercel' },
   { name: 'Mike Smith',     handle: '@mikesmith187', xUrl: 'https://x.com/mikesmith187', tagline: 'Designer & creator' },
+  {
+    name: 'Robin Williams',
+    handle: '1951–2014',
+    xUrl: 'https://en.wikipedia.org/wiki/Robin_Williams',
+    tagline: 'Actor, comedian, singular talent',
+    remembered: true,
+  },
+  {
+    name: 'Steve Jobs',
+    handle: '1955–2011',
+    xUrl: 'https://en.wikipedia.org/wiki/Steve_Jobs',
+    tagline: 'Apple, Pixar, NeXT',
+    remembered: true,
+  },
 ];
