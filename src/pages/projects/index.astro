@@ -13,7 +13,7 @@ const pausedProjects = projects
   .sort((a, b) => projectStartTime(b) - projectStartTime(a));
 const retiredProjects = projects
   .filter((p) => p.data.status === 'retired')
-  .sort((a, b) => projectStartTime(a) - projectStartTime(b));
+  .sort((a, b) => projectStartTime(b) - projectStartTime(a));
 ---
 <Base title="Projects — Derek Castelli" description="Apps and sites built by Derek Castelli.">
   <h1>Projects</h1>
@@ -45,7 +45,7 @@ const retiredProjects = projects
       <p class="projects-section-lede">
         {retiredProjects.length} past {retiredProjects.length === 1 ? 'project' : 'projects'} from the archive.
       </p>
-      <ProjectList projects={retiredProjects} variant="compact" startedOrder="asc" />
+      <ProjectList projects={retiredProjects} variant="compact" startedOrder="desc" />
     </>
   )}
 </Base>
