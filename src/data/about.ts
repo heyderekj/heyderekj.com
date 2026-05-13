@@ -139,10 +139,11 @@ export const aboutExperienceGroups: AboutExpGroup[] = [
     title: 'Current',
     items: [
       {
-        name: 'Derek J Design',
+        name: 'Testament Made LLC',
         range: 'Jun 2020 — Present',
         description:
-          'Freelance web designer partnering with clients and teams to make websites in Webflow.',
+          'Freelance web designer partnering with clients and teams to make websites in Webflow, and making apps on the side.',
+        link: { label: 'testamentmade.com', href: 'https://testamentmade.com', icon: 'arrow' },
       },
       {
         name: 'Kem Design Co.',
