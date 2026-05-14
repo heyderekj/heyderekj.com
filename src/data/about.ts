@@ -66,7 +66,7 @@ export const aboutSections: AboutSection[] = [
     heading: 'The latest',
     paragraphs: [
       "Fast forward to October 2022 when I was able to go full-time as a freelancer for a different local creative agency (One Branding) focused again on Webflow. They've worked with Yelp and so far I've had the opportunity to work with GoGuardian, IGN, and many others.",
-      "While contracting full-time, I have focused more on my design skills in Figma where I'm the Lead UI/UX Designer at said agency. We have a small, nimble team. Outside of the agency I take on my own clients from time-to-time where I focus on a content-first approach to designing and developing websites. I'm also a Webflow Expert with Kem Design Co., supporting the team on website builds.",
+      "Since moving on from this team I've been blessed and happy working with Kem Design Co. as a Webflow Expert, supporting the team on website builds. Oh, and of course working with my own clients through Testament Made LLC DBA Derek J Design",
     ],
   },
   {
