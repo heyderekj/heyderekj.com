@@ -10,8 +10,8 @@ stack: [React, Supabase]
 image: /assets/images/projects/heresmychurch-og.png
 featured: true
 order: 2
-status: paused
-burnerLevel: Back Burner
+status: active
+burnerLevel: Front Burner
 ---
 
 ## About
