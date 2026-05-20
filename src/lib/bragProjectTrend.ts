@@ -72,6 +72,31 @@ export function computeBragStatCycles(
     });
   }
 
+  const longestRunning = projects
+    .map((project) => ({ project, start: projectStartTime(project) }))
+    .filter((entry) => entry.start > 0)
+    .reduce<{ project: CollectionEntry<'projects'>; start: number } | null>(
+      (longest, entry) =>
+        !longest || entry.start < longest.start ? entry : longest,
+      null,
+    );
+
+  if (longestRunning) {
+    const yearsRunning = Math.max(
+      1,
+      Math.floor((now.getTime() - longestRunning.start) / MS_YEAR),
+    );
+    const sinceYear = new Date(longestRunning.start).getUTCFullYear();
+
+    push({
+      id: 'longest-run',
+      kicker: 'Longest run',
+      value: String(yearsRunning),
+      title: longestRunning.project.data.name,
+      subtitle: `years · since ${sinceYear}`,
+    });
+  }
+
   if (currentCount >= 2) {
     push({
       id: 'trending-year',
