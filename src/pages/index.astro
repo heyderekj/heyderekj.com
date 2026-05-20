@@ -5,7 +5,6 @@ import PostList from '../components/PostList.astro';
 import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
 import { projectStartTime } from '../lib/projectStart';
-import NowHomeTicker from '../components/NowHomeTicker.astro';
 import { schemaPersonId, schemaWebsiteId } from '../lib/schemaIds';
 import GitHubActivity from '../components/GitHubActivity.astro';
 import { fetchGitHubActivity } from '../lib/github';
@@ -59,9 +58,6 @@ const githubData = await fetchGitHubActivity();
     <p>
       An agentic design engineer and Christian making websites with{' '}
       <a href="https://kemdesign.co" rel="noopener noreferrer">Kem Design</a> and apps on the side. I write about my life, faith, and tech, drawing on work in Apple Retail, design work for a church, and freelance work since 2020.
-    </p>
-    <p class="now-line">
-      <NowHomeTicker />
     </p>
   </section>
 
