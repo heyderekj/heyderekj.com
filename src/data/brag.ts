@@ -56,7 +56,7 @@ export const bragMeta = {
 };
 
 export const bragIntro =
-  'Here are things I tell my best friends. Not a résumé — just things I’m proud of from shipping apps, client work, and sharing in public.';
+  'Here are things I tell my best friends. Not a résumé — just things I wanna brag about...';
 
 export const bragEpigraphNote =
   'I miss Robin. I’d like to think we’d be good friends if we ever met.';
