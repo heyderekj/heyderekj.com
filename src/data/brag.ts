@@ -141,9 +141,9 @@ export const bragClippings: BragClipping[] = [
   {
     publication: 'The Mac Desk',
     dateline: 'May 2026',
-    headline: 'Mac Apps That Ship',
+    headline: 'First Mac Apps, Built with AI',
     summary:
-      'Binky sorts Downloads with rules; Dinky compresses images and PDFs. Sorting demos hit 1.4k+ likes and 180k+ views; Dinky 2.0 drew 455 likes and 300+ GitHub stars. Native Mac tools still win.',
+      'It started when another Mac app crashed on me—I built Binky and Dinky with Claude and Cursor, my first shipped Mac apps. Both within weeks would get 200+ stars on GitHub.',
     href: '/projects/binky/',
     preview: [
       {
