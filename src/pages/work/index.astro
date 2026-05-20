@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
 import PostList from '../../components/PostList.astro';
 import { testimonials } from '../../data/about';
 
@@ -12,7 +13,7 @@ const entries = (await getCollection('work', ({ data }) => !data.draft)).sort(
   title="Work — Derek Castelli"
   description="Case studies and write-ups from client and shipped product work—Webflow builds, branding sites, and collaborations."
 >
-  <h1>Work</h1>
+  <PageTitle path="/work" />
   <p style="color: var(--fg-soft); max-width: var(--max-prose);">
     Selected posts from shipped sites and collaborations. Also see the full <a href="/posts/">posts archive</a> and{' '}
     <a href="/projects/">projects</a>.

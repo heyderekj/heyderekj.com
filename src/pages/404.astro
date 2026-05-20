@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageTitle from '../components/PageTitle.astro';
 
 const siteUrl = (Astro.site?.toString() ?? 'https://heyderekj.com').replace(/\/$/, '');
 const canonical = `${siteUrl}/404/`;
@@ -8,7 +9,7 @@ const description = 'This URL does not exist on heyderekj.com.';
 ---
 <Base title={title} description={description} canonical={canonical} noindex includeAnalytics={false}>
   <article class="prose">
-    <h1>Page not found</h1>
+    <PageTitle path="/404" />
     <p style="color: var(--fg-soft);">
       This page isn’t here—maybe a broken link, a typo, or an old bookmark. Head back home or
       use the nav to find something that is.

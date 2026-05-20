@@ -57,8 +57,9 @@ const isActive = (href: string) => {
 
 const onAbout  = isActive('/about/');
 const onPeople = isActive('/people/');
-const onFork   = onAbout || onPeople;
-const forkIcon = onPeople ? 'ph-users' : 'ph-user';
+const onBrag   = isActive('/brag/');
+const onFork   = onAbout || onPeople || onBrag;
+const forkIcon = onBrag ? 'ph-lightning' : onPeople ? 'ph-users' : 'ph-user';
 
 const year = new Date().getFullYear();
 ---
@@ -141,7 +142,7 @@ const year = new Date().getFullYear();
                 type="button"
                 class={`nav-fork-trigger${onFork ? ' active' : ''}`}
                 aria-expanded="false"
-                aria-label="About or People"
+                aria-label="About, People, or Brag"
                 id="nav-fork-trigger"
               >
                 <i class={`${onFork ? 'ph-fill' : 'ph-bold'} ${forkIcon}`} aria-hidden="true"></i>
@@ -157,6 +158,12 @@ const year = new Date().getFullYear();
                   <a href="/people/">
                     <i class="ph-bold ph-users" aria-hidden="true"></i>
                     <span aria-hidden="true">People</span>
+                  </a>
+                )}
+                {!onBrag && (
+                  <a href="/brag/">
+                    <i class="ph-bold ph-lightning" aria-hidden="true"></i>
+                    <span aria-hidden="true">Brag</span>
                   </a>
                 )}
               </div>

@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 export async function GET(context) {
   const site = context.site?.toString().replace(/\/$/, '') ?? 'https://heyderekj.com';
 
-  const staticPaths = ['/', '/posts/', '/work/', '/projects/', '/about/', '/tools/'];
+  const staticPaths = ['/', '/posts/', '/work/', '/projects/', '/about/', '/brag/', '/tools/'];
 
   const posts = await getCollection('posts', ({ data }) => !data.draft);
   const work = await getCollection('work', ({ data }) => !data.draft);

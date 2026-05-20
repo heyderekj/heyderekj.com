@@ -403,6 +403,17 @@ body {
    ============================================================ */
 .prose { max-width: var(--max-main); }
 
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.page-title h1 {
+  margin: 0;
+}
+
 h1, h2, h3 {
   font-weight: 600;
   line-height: 1.2;
@@ -1495,9 +1506,14 @@ main.main .footer-links a:hover { color: var(--accent); }
 .about-page .about-hero__credit-link:hover {
   color: var(--accent-hover);
 }
-.about-page .about-hero h1 {
+.about-page .about-hero__headline {
   margin-top: 0;
   margin-bottom: var(--space-3);
+  font-size: var(--size-h1);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.022em;
+  color: var(--fg);
 }
 .about-page .about-intro p {
   font-size: var(--size-lead);
@@ -1539,12 +1555,14 @@ main.main .footer-links a:hover { color: var(--accent); }
   margin-bottom: var(--space-3);
 }
 /* Grouped experience — outer card matches homepage project cards */
-.about-page .about-exp-stack {
+.about-page .about-exp-stack,
+.brag-page .about-exp-stack {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
-.about-page .about-exp-group {
+.about-page .about-exp-group,
+.brag-page .about-exp-group {
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--bg);
@@ -1555,14 +1573,17 @@ main.main .footer-links a:hover { color: var(--accent); }
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
-.about-page .about-exp-group:hover {
+.about-page .about-exp-group:hover,
+.brag-page .about-exp-group:hover,
+.brag-page .brag-preview--experience:hover .about-exp-group {
   background: var(--glass-active-bg);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-color: var(--glass-border);
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
 }
-.about-page .about-exp-group__title {
+.about-page .about-exp-group__title,
+.brag-page .about-exp-group__title {
   margin: 0 0 var(--space-3);
   font-size: var(--size-micro);
   font-weight: 600;
@@ -1570,20 +1591,24 @@ main.main .footer-links a:hover { color: var(--accent); }
   text-transform: uppercase;
   color: var(--muted);
 }
-.about-page .about-exp-group__list {
+.about-page .about-exp-group__list,
+.brag-page .about-exp-group__list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-.about-page .about-exp-item {
+.about-page .about-exp-item,
+.brag-page .about-exp-item {
   padding: var(--space-3) 0;
   border-top: 1px solid var(--border);
 }
-.about-page .about-exp-group__list > .about-exp-item:first-child {
+.about-page .about-exp-group__list > .about-exp-item:first-child,
+.brag-page .about-exp-group__list > .about-exp-item:first-child {
   border-top: 0;
   padding-top: 0;
 }
-.about-page .about-exp-item__range {
+.about-page .about-exp-item__range,
+.brag-page .about-exp-item__range {
   margin: 0 0 var(--space-1);
   font-family: var(--font-mono);
   font-size: var(--size-micro);
@@ -1594,24 +1619,28 @@ main.main .footer-links a:hover { color: var(--accent); }
   line-height: 1.35;
   font-variant-numeric: tabular-nums;
 }
-.about-page .about-exp-item__name {
+.about-page .about-exp-item__name,
+.brag-page .about-exp-item__name {
   margin: 0 0 var(--space-2);
   font-size: var(--size-body);
   font-weight: 600;
   color: var(--fg);
   line-height: 1.25;
 }
-.about-page .about-exp-item__desc {
+.about-page .about-exp-item__desc,
+.brag-page .about-exp-item__desc {
   margin: 0 0 var(--space-2);
   font-size: var(--size-meta);
   color: var(--fg-soft);
   line-height: 1.45;
   max-width: 42em;
 }
-.about-page .about-exp-item__desc:last-child {
+.about-page .about-exp-item__desc:last-child,
+.brag-page .about-exp-item__desc:last-child {
   margin-bottom: 0;
 }
-.about-page .about-exp-pill {
+.about-page .about-exp-pill,
+.brag-page .about-exp-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1625,7 +1654,8 @@ main.main .footer-links a:hover { color: var(--accent); }
   background: var(--glass-bg);
   color: var(--fg-soft);
 }
-.about-page .about-exp-pill i {
+.about-page .about-exp-pill i,
+.brag-page .about-exp-pill i {
   font-size: 14px;
   color: var(--muted-strong);
   flex-shrink: 0;

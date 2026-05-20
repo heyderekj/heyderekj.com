@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
 import ProjectList from '../../components/ProjectList.astro';
 import { projectStartTime } from '../../lib/projectStart';
 
@@ -16,7 +17,7 @@ const retiredProjects = projects
   .sort((a, b) => projectStartTime(b) - projectStartTime(a));
 ---
 <Base title="Projects — Derek Castelli" description="Apps and sites built by Derek Castelli.">
-  <h1>Projects</h1>
+  <PageTitle path="/projects" />
   <p style="color: var(--fg-soft); max-width: var(--max-prose);">
     Apps and experiments—design, code, and AI.
   </p>

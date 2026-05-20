@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
 
 const sections = [
   {
@@ -52,7 +53,7 @@ const sections = [
 ---
 <Base title="Tools — Derek Castelli" description="Tools Derek reaches for daily.">
   <article class="prose">
-    <h1>Tools</h1>
+    <PageTitle path="/tools" />
     <p style="color: var(--fg-soft);">What I use to design, build, write, and ship.</p>
 
     {sections.map((section) => (

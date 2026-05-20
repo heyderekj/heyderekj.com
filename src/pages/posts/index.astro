@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
 import PostList from '../../components/PostList.astro';
 
 const entries = (await getCollection('posts', ({ data }) => !data.draft)).sort(
@@ -8,7 +9,7 @@ const entries = (await getCollection('posts', ({ data }) => !data.draft)).sort(
 );
 ---
 <Base title="Posts — Derek Castelli" description="Writing on faith, technology, and agentic design by Derek Castelli.">
-  <h1>Posts</h1>
+  <PageTitle path="/posts" />
   <p style="color: var(--fg-soft); max-width: var(--max-prose);">
     Notes and essays on faith, tech, and agentic design. For client sites and shipped work, see{' '}
     <a href="/work/">Work</a>.

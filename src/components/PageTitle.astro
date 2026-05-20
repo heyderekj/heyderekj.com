@@ -1,0 +1,12 @@
+---
+interface Props {
+  /** Path-style page title, e.g. "/posts" */
+  path: string;
+}
+
+const { path } = Astro.props;
+---
+<div class="page-title">
+  <h1>{path}</h1>
+  <slot />
+</div>

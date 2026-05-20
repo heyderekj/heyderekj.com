@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageTitle from '../components/PageTitle.astro';
 import {
   aboutMeta,
   aboutHero,
@@ -9,6 +10,7 @@ import {
 ---
 <Base title={aboutMeta.title} description={aboutMeta.description} ogImage={aboutMeta.ogImage}>
   <article class="prose about-page">
+    <PageTitle path="/about" />
     <header class="about-hero">
       <div
         class="about-hero__visual-wrap"
@@ -45,7 +47,7 @@ import {
           </a>
         </p>
       </div>
-      <h1>{aboutHero.headline}</h1>
+      <p class="about-hero__headline">{aboutHero.headline}</p>
       <div class="about-intro">
         {aboutHero.introParagraphs.map((p) => (
           <p>{p}</p>
