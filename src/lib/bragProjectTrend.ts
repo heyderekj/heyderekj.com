@@ -1,6 +1,6 @@
 import type { CollectionEntry } from 'astro:content';
 import { projectStartTime } from './projectStart';
-import { displayProjectStatus, isOngoingProject } from './projectStatus';
+import { isOngoingProject } from './projectStatus';
 
 export type BragStatCycle = {
   id: string;
@@ -88,15 +88,12 @@ export function computeBragStatCycles(
       1,
       Math.floor((now.getTime() - longestRunning.start) / MS_YEAR),
     );
-    const sinceYear = new Date(longestRunning.start).getUTCFullYear();
-    const burner = displayProjectStatus(longestRunning.project.data.status);
-
     push({
       id: 'longest-run',
       kicker: 'Longest run',
-      value: String(yearsRunning),
-      title: longestRunning.project.data.name,
-      subtitle: `${burner} · since ${sinceYear}`,
+      value: `~${yearsRunning}`,
+      title: yearsRunning === 1 ? 'year running' : 'years running',
+      subtitle: longestRunning.project.data.name,
     });
   }
 
