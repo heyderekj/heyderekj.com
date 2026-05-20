@@ -2,7 +2,17 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageTitle from '../../components/PageTitle.astro';
-import { bragMeta, bragIntro, bragHero, bragEpigraphNote, bragCredit, bragClippings, bragRightNow } from '../../data/brag';
+import {
+  bragMeta,
+  bragHero,
+  bragEpigraphNote,
+  bragCredit,
+  bragClippings,
+  bragRightNow,
+  bragSkills,
+  bragConnect,
+  sortBragFavoritePosts,
+} from '../../data/brag';
 import type { BragPreview } from '../../data/brag';
 import { projectStartTime } from '../../lib/projectStart';
 import { computeBragStatCycles } from '../../lib/bragProjectTrend';
@@ -46,13 +56,14 @@ const fmtPostDate = (iso: string) =>
           class="brag-credit-trigger"
           aria-expanded="false"
           aria-controls="brag-credit-popover"
-          aria-label="Episode credit"
+          aria-label="About this page"
         >
           <i class="ph-bold ph-info" aria-hidden="true"></i>
         </button>
         <div id="brag-credit-popover" class="brag-credit-popover" role="tooltip" hidden>
-          <p>
-            This page is brought to you by{' '}
+          <p>{bragCredit.intent}</p>
+          <p class="brag-credit-popover__credit">
+            Inspired by{' '}
             <a href={bragCredit.episodeUrl} target="_blank" rel="noopener noreferrer">{bragCredit.episodeLabel}</a>
           </p>
         </div>
@@ -71,7 +82,8 @@ const fmtPostDate = (iso: string) =>
       <div class="brag-hero__copy">
         <h2 class="brag-hero__headline">{bragHero.headline}</h2>
         <p class="brag-hero__role">
-          <a href={bragHero.profileHref} target="_blank" rel="noopener noreferrer">{bragHero.role}</a>
+          <i class="ph-bold ph-map-pin" aria-hidden="true"></i>
+          {bragHero.location}
         </p>
         <p class="brag-hero__bio">{bragHero.bio}</p>
       </div>
@@ -92,7 +104,16 @@ const fmtPostDate = (iso: string) =>
       </ol>
     </section>
 
-    <p class="brag-intro">{bragIntro}</p>
+    <section class="brag-skills" aria-label="Skills">
+      <ul class="brag-skills__list" role="list">
+        {bragSkills.map((skill) => (
+          <li class="brag-skills__item">
+            <i class="ph-bold ph-check" aria-hidden="true"></i>
+            <span>{skill}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
 
     <ol class="brag-feed" role="list">
       {bragClippings.map((clip) => {
@@ -115,17 +136,6 @@ const fmtPostDate = (iso: string) =>
               )}
 
               <p class="brag-item-summary">{clip.summary}</p>
-
-              {(clip.relatedLinks?.length ?? 0) > 0 && (
-                <p class="brag-item-links">
-                  {clip.relatedLinks!.map((link, i) => (
-                    <>
-                      {i > 0 && <span aria-hidden="true"> · </span>}
-                      <a href={link.href}>{link.label}</a>
-                    </>
-                  ))}
-                </p>
-              )}
             </div>
 
             {previews.length > 0 && (
@@ -143,7 +153,7 @@ const fmtPostDate = (iso: string) =>
                     return (
                       <div class="brag-preview brag-preview--posts">
                         <ul class="entries" role="list">
-                          {preview.favoritePosts.map((post) => (
+                          {sortBragFavoritePosts(preview.favoritePosts).map((post) => (
                             <li>
                               <a
                                 href={post.href}
@@ -194,16 +204,16 @@ const fmtPostDate = (iso: string) =>
                               >
                                 <div class="brag-stat-hero">
                                   <p class="brag-stat-hero__value">{projectStatCycles[0]!.value}</p>
-                                  <div class="brag-stat-hero__copy">
-                                    <p class="brag-stat-hero__kicker">{projectStatCycles[0]!.kicker}</p>
-                                    <p class="brag-stat-hero__title">{projectStatCycles[0]!.title}</p>
-                                    <p
-                                      class="brag-stat-hero__since"
-                                      hidden={!projectStatCycles[0]!.subtitle}
-                                    >
-                                      {projectStatCycles[0]!.subtitle}
-                                    </p>
-                                  </div>
+                                  <p class="brag-stat-hero__label" data-brag-stat-label>
+                                    <span class="brag-stat-hero__label-line" data-brag-stat-label-primary>
+                                      {[projectStatCycles[0]!.kicker, projectStatCycles[0]!.title]
+                                        .filter(Boolean)
+                                        .join(' ')}
+                                    </span>
+                                    <span class="brag-stat-hero__label-line" data-brag-stat-label-secondary>
+                                      {projectStatCycles[0]!.subtitle ?? '\u00a0'}
+                                    </span>
+                                  </p>
                                 </div>
                                 {projectStatCycles.length > 1 && (
                                   <button
@@ -216,7 +226,7 @@ const fmtPostDate = (iso: string) =>
                                 )}
                               </div>
                               {preview.linkLabel && preview.href && (
-                                <a class="about-exp-pill brag-stats-more" href={preview.href}>
+                                <a class="about-exp-pill about-exp-pill--link brag-stats-more" href={preview.href}>
                                   <i class="ph-bold ph-arrow-right" aria-hidden="true" />
                                   {preview.linkLabel}
                                 </a>
@@ -237,7 +247,7 @@ const fmtPostDate = (iso: string) =>
                           {!preview.aggregateProjects &&
                             preview.linkLabel &&
                             preview.href && (
-                              <a class="about-exp-pill brag-stats-more" href={preview.href}>
+                              <a class="about-exp-pill about-exp-pill--link brag-stats-more" href={preview.href}>
                                 <i class="ph-bold ph-arrow-right" aria-hidden="true" />
                                 {preview.linkLabel}
                               </a>
@@ -251,7 +261,7 @@ const fmtPostDate = (iso: string) =>
                     return (
                       <div class="brag-preview brag-preview--link">
                         <a
-                          class="about-exp-pill brag-link-pill"
+                          class="about-exp-pill about-exp-pill--link brag-link-pill"
                           href={preview.href}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -324,6 +334,17 @@ const fmtPostDate = (iso: string) =>
                 })}
               </div>
             )}
+
+            {clip.testimonial && (
+              <figure class="brag-item-testimonial">
+                <blockquote class="work-testimonial-quote">{clip.testimonial.quote}</blockquote>
+                <figcaption class="work-testimonial-footer">
+                  <p class="work-testimonial-name">{clip.testimonial.author}</p>
+                  <p class="work-testimonial-role">{clip.testimonial.role}</p>
+                  <p class="work-testimonial-context">{clip.testimonial.context}</p>
+                </figcaption>
+              </figure>
+            )}
           </li>
         );
       })}
@@ -344,6 +365,21 @@ const fmtPostDate = (iso: string) =>
         <p id="brag-epigraph-note-text" class="brag-epigraph-note__text">{bragEpigraphNote}</p>
       </aside>
     </div>
+
+    <nav class="brag-connect" aria-label="Connect">
+      {bragConnect.map((link) => (
+        <a
+          class="about-exp-pill about-exp-pill--link"
+          href={link.href}
+          {...(link.href.startsWith('mailto:')
+            ? {}
+            : { target: '_blank', rel: 'noopener noreferrer' })}
+        >
+          <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+          {link.label}
+        </a>
+      ))}
+    </nav>
   </article>
 
   <script>
@@ -364,28 +400,24 @@ const fmtPostDate = (iso: string) =>
 
         const btn = root.querySelector('.brag-stat-cycle');
         const valueEl = root.querySelector('.brag-stat-hero__value');
-        const kickerEl = root.querySelector('.brag-stat-hero__kicker');
-        const titleEl = root.querySelector('.brag-stat-hero__title');
-        const sinceEl = root.querySelector('.brag-stat-hero__since');
-        if (!btn || !valueEl || !kickerEl || !titleEl || !sinceEl) return;
+        const primaryEl = root.querySelector('[data-brag-stat-label-primary]');
+        const secondaryEl = root.querySelector('[data-brag-stat-label-secondary]');
+        if (!btn || !valueEl || !primaryEl || !secondaryEl) return;
+
+        const formatLabel = (s) => ({
+          primary: [s.kicker, s.title].filter(Boolean).join(' '),
+          secondary: s.subtitle || '\u00a0',
+          spoken: [s.kicker, s.title, s.subtitle].filter(Boolean).join(' '),
+        });
 
         let i = 0;
         const show = (idx) => {
           const s = slides[idx];
+          const label = formatLabel(s);
           valueEl.textContent = s.value;
-          kickerEl.textContent = s.kicker;
-          titleEl.textContent = s.title;
-          if (s.subtitle) {
-            sinceEl.textContent = s.subtitle;
-            sinceEl.hidden = false;
-          } else {
-            sinceEl.textContent = '';
-            sinceEl.hidden = true;
-          }
-          root.setAttribute(
-            'aria-label',
-            [s.kicker, s.value, s.title, s.subtitle].filter(Boolean).join(' '),
-          );
+          primaryEl.textContent = label.primary;
+          secondaryEl.textContent = label.secondary;
+          root.setAttribute('aria-label', [s.value, label.spoken].filter(Boolean).join(' '));
         };
 
         btn.addEventListener('click', () => {
@@ -466,6 +498,13 @@ const fmtPostDate = (iso: string) =>
 </Base>
 
 <style>
+  .brag-connect {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+  }
+
   .brag-epigraph-wrap {
     --brag-plaque-frame: color-mix(in srgb, #6b5a45 8%, var(--border-strong));
     --brag-plaque-rule: color-mix(in srgb, #6b5a45 6%, var(--border));
@@ -628,6 +667,8 @@ const fmtPostDate = (iso: string) =>
     max-height: 8rem;
     padding-block: var(--space-2);
     opacity: 0.92;
+    overflow: visible;
+    text-wrap: pretty;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -637,35 +678,45 @@ const fmtPostDate = (iso: string) =>
   }
 
   .brag-credit-wrap {
-    position: relative;
-    flex-shrink: 0;
+    position: absolute;
+    top: 0.1em;
+    left: 100%;
+    margin-left: var(--space-2);
+    z-index: 2;
+    transform: translateY(-28%);
   }
 
   .brag-credit-trigger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 1.375rem;
+    height: 1.375rem;
     padding: 0;
-    border: none;
+    border: 1px solid var(--glass-border);
     border-radius: var(--radius-pill);
-    background: transparent;
+    background: var(--glass-active-bg);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     color: var(--muted-strong);
+    box-shadow: var(--glass-inset), 0 1px 4px rgba(0, 0, 0, 0.08);
     cursor: pointer;
     transition:
       color 0.15s ease,
-      background 0.15s ease;
+      background 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
   .brag-credit-trigger i {
-    font-size: 15px;
+    font-size: 12px;
   }
 
   .brag-credit-trigger:hover,
   .brag-credit-trigger[aria-expanded='true'] {
     color: var(--accent);
     background: var(--accent-soft);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
   }
 
   .brag-credit-trigger:focus-visible {
@@ -675,16 +726,20 @@ const fmtPostDate = (iso: string) =>
 
   .brag-credit-popover {
     position: absolute;
-    top: calc(100% + 6px);
+    top: calc(100% + 8px);
     left: 0;
+    right: auto;
     z-index: 20;
     width: max-content;
     max-width: min(22rem, calc(100vw - 2.5rem));
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-3);
     border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-    background: var(--bg-elevated);
-    box-shadow: 0 10px 28px color-mix(in srgb, var(--fg) 12%, transparent);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-active-bg);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
+    box-sizing: border-box;
   }
 
   .brag-credit-popover p {
@@ -692,6 +747,15 @@ const fmtPostDate = (iso: string) =>
     font-size: var(--size-meta);
     line-height: 1.45;
     color: var(--fg-soft);
+  }
+
+  .brag-credit-popover p + p {
+    margin-top: var(--space-2);
+  }
+
+  .brag-credit-popover__credit {
+    font-size: var(--size-micro);
+    color: var(--muted);
   }
 
   .brag-credit-popover a {
@@ -706,12 +770,10 @@ const fmtPostDate = (iso: string) =>
     color: var(--accent-hover);
   }
 
-  .brag-intro {
-    color: var(--fg-soft);
-    margin-bottom: var(--space-4);
-  }
-
   .brag-page > :global(.page-title) {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
     margin-bottom: var(--space-4);
   }
 
@@ -733,11 +795,14 @@ const fmtPostDate = (iso: string) =>
   }
 
   .brag-hero__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
     min-width: 0;
   }
 
   .brag-hero__headline {
-    margin: 0 0 var(--space-2);
+    margin: 0;
     font-size: clamp(1.1875rem, 2.8vw, 1.4375rem);
     font-weight: 600;
     line-height: 1.2;
@@ -746,21 +811,19 @@ const fmtPostDate = (iso: string) =>
   }
 
   .brag-hero__role {
-    margin: 0 0 var(--space-2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    margin: 0;
     font-size: var(--size-micro);
     line-height: 1.45;
     color: var(--muted-strong);
   }
 
-  .brag-hero__role a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px solid color-mix(in srgb, var(--border-strong) 70%, transparent);
-  }
-
-  .brag-hero__role a:hover {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
+  .brag-hero__role i {
+    font-size: 1.15em;
+    color: var(--muted);
+    line-height: 1;
   }
 
   .brag-hero__bio {
@@ -772,20 +835,37 @@ const fmtPostDate = (iso: string) =>
   }
 
   .brag-now {
-    margin-bottom: var(--space-5);
-    padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    background: var(--bg-elevated);
+    margin-bottom: var(--space-4);
   }
 
-  .brag-now__heading {
-    margin: 0 0 var(--space-2);
-    font-size: var(--size-micro);
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
+  .brag-skills {
+    margin-bottom: var(--space-5);
+  }
+
+  .brag-skills__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-4);
+    row-gap: var(--space-2);
+  }
+
+  .brag-skills__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-size: var(--size-meta);
+    line-height: 1.45;
+    color: var(--fg-soft);
+  }
+
+  .brag-skills__item i {
+    flex-shrink: 0;
+    margin-top: 0.15em;
+    font-size: 0.95em;
+    color: var(--accent);
   }
 
   .brag-now__list {
@@ -830,10 +910,14 @@ const fmtPostDate = (iso: string) =>
   }
 
   @media (max-width: 480px) {
+    .brag-skills__list {
+      grid-template-columns: 1fr;
+    }
+
     .brag-hero {
       flex-direction: column;
-      align-items: center;
-      text-align: center;
+      align-items: flex-start;
+      text-align: left;
     }
 
     .brag-hero__bio {
@@ -896,6 +980,46 @@ const fmtPostDate = (iso: string) =>
 
   .brag-item-previews .brag-preview--posts {
     grid-column: 1 / -1;
+  }
+
+  .brag-item-testimonial {
+    grid-column: 2;
+    margin: 0;
+    min-width: 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: var(--space-3);
+    box-sizing: border-box;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .brag-item-testimonial:hover {
+    background: var(--glass-active-bg);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-color: var(--glass-border);
+    box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  .brag-item-testimonial .work-testimonial-quote {
+    margin: 0 0 var(--space-3);
+    padding: 0;
+    border: none;
+    font-size: var(--size-meta);
+    color: var(--fg-soft);
+    line-height: 1.6;
+  }
+
+  .brag-item-testimonial .work-testimonial-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
   }
 
   .brag-preview {
@@ -968,14 +1092,10 @@ const fmtPostDate = (iso: string) =>
     color: var(--muted);
   }
 
-  .brag-stats-panel--aggregate {
-    padding: var(--space-3) var(--space-4);
-    background: color-mix(in srgb, var(--accent) 5%, var(--bg));
-  }
-
   .brag-stat-aggregate {
+    --brag-action-height: calc(2 * 6px + 2 * 1px + 1.2 * var(--size-meta));
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     gap: var(--space-3);
     flex-wrap: wrap;
@@ -986,14 +1106,16 @@ const fmtPostDate = (iso: string) =>
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    flex: 0 1 auto;
+    flex: 1 1 100%;
+    width: 100%;
     min-width: 0;
   }
 
   .brag-stat-hero {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
+    flex: 1 1 auto;
     min-width: 0;
   }
 
@@ -1002,8 +1124,8 @@ const fmtPostDate = (iso: string) =>
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
+    width: var(--brag-action-height);
+    height: var(--brag-action-height);
     padding: 0;
     border: 1px solid var(--border);
     border-radius: var(--radius-pill);
@@ -1017,13 +1139,20 @@ const fmtPostDate = (iso: string) =>
   }
 
   .brag-stat-cycle i {
-    font-size: 15px;
+    font-size: 13px;
+    transition: transform 0.25s ease;
   }
 
-  .brag-stat-cycle:hover {
+  .brag-stat-cycle:hover,
+  .brag-stats-panel--aggregate:hover .brag-stat-cycle {
     color: var(--accent);
     border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
     background: var(--accent-soft);
+  }
+
+  .brag-stat-cycle:hover i,
+  .brag-stats-panel--aggregate:hover .brag-stat-cycle i {
+    transform: rotate(60deg);
   }
 
   .brag-stat-cycle:focus-visible {
@@ -1034,46 +1163,32 @@ const fmtPostDate = (iso: string) =>
   .brag-stat-hero__value {
     margin: 0;
     flex-shrink: 0;
-    font-size: clamp(2.5rem, 7vw, 3.25rem);
+    font-size: calc(clamp(1.75rem, 5vw, 2.375rem) + 2px);
     font-weight: 600;
     line-height: 1;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.03em;
     color: var(--fg);
     font-variant-numeric: tabular-nums;
   }
 
-  .brag-stat-hero__copy {
+  .brag-stat-hero__label {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-  }
-
-  .brag-stat-hero__kicker {
-    margin: 0;
-    font-size: var(--size-micro);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    line-height: 1.2;
-  }
-
-  .brag-stat-hero__title {
-    margin: 0;
-    font-size: var(--size-lead);
-    line-height: 1.2;
-    font-weight: 500;
-    color: var(--fg);
-  }
-
-  .brag-stat-hero__since {
-    margin: 0;
+    justify-content: center;
+    gap: 0.1em;
+    min-height: calc(2 * 1.35 * 1em);
     font-size: var(--size-meta);
-    line-height: 1.3;
     font-weight: 400;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
+    line-height: 1.35;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+
+  .brag-stat-hero__label-line {
+    display: block;
   }
 
   .brag-stats-panel--aggregate .brag-stats-more {
@@ -1083,7 +1198,6 @@ const fmtPostDate = (iso: string) =>
 
   .brag-stats-more {
     margin-top: var(--space-2);
-    border-bottom: none;
   }
 
   .brag-preview--link {
@@ -1093,7 +1207,6 @@ const fmtPostDate = (iso: string) =>
   }
 
   .brag-link-pill {
-    border-bottom: none;
     width: fit-content;
   }
 
@@ -1195,29 +1308,6 @@ const fmtPostDate = (iso: string) =>
     line-height: 1.55;
     color: var(--fg-soft);
     text-wrap: pretty;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
-  }
-
-  .brag-item-links {
-    margin: 0;
-    font-size: var(--size-micro);
-    color: var(--muted);
-  }
-
-  .brag-item-links a {
-    color: var(--muted-strong);
-    font-weight: 500;
-    border-bottom: none;
-    text-decoration: none;
-  }
-
-  .brag-item-links a:hover {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1235,6 +1325,11 @@ const fmtPostDate = (iso: string) =>
       transform: none;
       transition: none;
     }
+
+    .brag-stat-cycle i {
+      transition: none;
+      transform: none;
+    }
   }
 </style>
 
@@ -1245,9 +1340,7 @@ const fmtPostDate = (iso: string) =>
   main.main .brag-page .brag-preview--experience,
   main.main .brag-page .brag-preview--posts,
   main.main .brag-page .brag-preview--stats,
-  main.main .brag-page .brag-preview--link,
-  main.main .brag-page .brag-stats-more,
-  main.main .brag-page .brag-link-pill {
+  main.main .brag-page .brag-preview--link {
     border-bottom: none;
   }
 

@@ -1562,7 +1562,9 @@ main.main .footer-links a:hover { color: var(--accent); }
   gap: var(--space-2);
 }
 .about-page .about-exp-group,
-.brag-page .about-exp-group {
+.brag-page .about-exp-group,
+.brag-page .brag-now,
+.brag-page .brag-stats-panel--aggregate {
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--bg);
@@ -1575,6 +1577,8 @@ main.main .footer-links a:hover { color: var(--accent); }
 }
 .about-page .about-exp-group:hover,
 .brag-page .about-exp-group:hover,
+.brag-page .brag-now:hover,
+.brag-page .brag-stats-panel--aggregate:hover,
 .brag-page .brag-preview--experience:hover .about-exp-group {
   background: var(--glass-active-bg);
   -webkit-backdrop-filter: blur(12px);
@@ -1583,7 +1587,8 @@ main.main .footer-links a:hover { color: var(--accent); }
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 .about-page .about-exp-group__title,
-.brag-page .about-exp-group__title {
+.brag-page .about-exp-group__title,
+.brag-page .brag-now__heading {
   margin: 0 0 var(--space-3);
   font-size: var(--size-micro);
   font-weight: 600;
@@ -1670,10 +1675,12 @@ main.main .footer-links a:hover { color: var(--accent); }
     background 0.15s ease;
 }
 /* Beats `main.main a` (0,2,1): slightly darker bottom edge than pill sides — reference hairline */
-main.main .about-page .about-exp-pill--link {
+main.main .about-page .about-exp-pill--link,
+main.main .brag-page .about-exp-pill--link {
   border-bottom: 1px solid var(--border-strong);
 }
-main.main .about-page .about-exp-pill--link:hover {
+main.main .about-page .about-exp-pill--link:hover,
+main.main .brag-page .about-exp-pill--link:hover {
   color: var(--accent);
   border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
   border-bottom-color: color-mix(in srgb, var(--accent) 42%, var(--border-strong));

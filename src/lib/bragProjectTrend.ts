@@ -11,6 +11,12 @@ export type BragStatCycle = {
 
 const MS_YEAR = 365.25 * 24 * 60 * 60 * 1000;
 
+function formatAvgPerYear(n: number): string {
+  if (n >= 10) return `~${Math.round(n)}`;
+  const rounded = Math.round(n * 10) / 10;
+  return rounded % 1 === 0 ? `~${rounded}` : `~${rounded.toFixed(1)}`;
+}
+
 /** Fun stats to cycle in the aggregate brag panel (total first). */
 export function computeBragStatCycles(
   projects: CollectionEntry<'projects'>[],
@@ -55,6 +61,17 @@ export function computeBragStatCycles(
     if (!cycles.some((c) => c.id === slide.id)) cycles.push(slide);
   };
 
+  const spanYears = currentYear - startYear + 1;
+  if (spanYears >= 2) {
+    push({
+      id: 'avg-per-year',
+      kicker: 'Average',
+      value: formatAvgPerYear(dated.length / spanYears),
+      title: 'project starts',
+      subtitle: 'per calendar year',
+    });
+  }
+
   if (currentCount >= 2) {
     push({
       id: 'trending-year',
@@ -88,7 +105,6 @@ export function computeBragStatCycles(
     });
   }
 
-  const spanYears = currentYear - startYear + 1;
   const avgMonths = Math.round((spanYears * 12) / dated.length);
   if (dated.length >= 5 && avgMonths <= 10) {
     push({

@@ -117,7 +117,7 @@ export const testimonials: Testimonial[] = [
   {
     quote: "Derek helped me revamp Scenery's brand, logo, and website in the first two months of my tenure and was a crucial, fun partner to work with throughout the process. Derek had a well defined process, integrated into the team well, and came up with creative approaches when they were most needed — at both the start and finish of the project. Thank you Derek!",
     author: 'Barrett Johnson',
-    role: 'Product & Marketing at Mercury',
+    role: 'Former Head of Marketing at Scenery',
     context: "Barrett was Derek's client · Nov 2023",
   },
   {

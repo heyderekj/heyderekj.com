@@ -1,5 +1,8 @@
 /** Content for `/brag/`. Edit here; layout lives in `src/pages/brag/index.astro`. */
 
+import type { Testimonial } from './about';
+import { testimonials } from './about';
+
 export type BragFavoritePost = {
   title: string;
   href: string;
@@ -9,6 +12,20 @@ export type BragFavoritePost = {
   likes?: string;
   external?: boolean;
 };
+
+const X_SNOWFLAKE_EPOCH_MS = 1288834974657;
+
+/** Sort key for favorite-post lists (newest first). */
+export function bragFavoritePostTime(post: BragFavoritePost): number {
+  if (post.date) return new Date(`${post.date}T12:00:00Z`).getTime();
+  const statusId = post.href.match(/status\/(\d+)/)?.[1];
+  if (statusId) return Number((BigInt(statusId) >> 22n) + BigInt(X_SNOWFLAKE_EPOCH_MS));
+  return 0;
+}
+
+export function sortBragFavoritePosts(posts: BragFavoritePost[]): BragFavoritePost[] {
+  return [...posts].sort((a, b) => bragFavoritePostTime(b) - bragFavoritePostTime(a));
+}
 
 export type BragProjectStat = {
   name: string;
@@ -44,10 +61,14 @@ export type BragClipping = {
   /** Supporting copy — three complete lines at default width (~180 chars); no mid-sentence clamp */
   summary: string;
   href?: string;
-  relatedLinks?: { label: string; href: string }[];
+  /** Client recommendation — same copy as `/work/` testimonials */
+  testimonial?: Testimonial;
   /** One or more visual references (project shots, work thumbs, icons) */
   preview?: BragPreview | BragPreview[];
 };
+
+const barrettJohnsonTestimonial =
+  testimonials.find((t) => t.author === 'Barrett Johnson') ?? testimonials[0]!;
 
 export const bragMeta = {
   title: 'Brag — Derek Castelli',
@@ -55,16 +76,13 @@ export const bragMeta = {
     'Derek Castelli — making websites and apps. Webflow freelancer in Des Moines; native Mac apps and faith-tech on the side.',
 };
 
-export const bragIntro =
-  'Here are things I tell my best friends. Not a résumé — just things I wanna brag about (humbly)...';
-
 /** Hero copy aligned with linkedin.com/in/heyderekj */
 export const bragHero = {
   photoSrc: '/assets/about/derek-photo.jpeg',
   photoAlt: 'Derek Castelli',
   headline: 'Derek Castelli',
-  role: 'Freelance web designer · Des Moines metro',
-  bio: 'Self-taught designer designing brands and making websites for non-profits and startups since 2018, with native Mac apps and faith-tech side projects.',
+  location: 'Des Moines, Iowa metro',
+  bio: 'Self-taught designer designing brands and making websites for non-profits and startups since 2010. Oh and always working on a side project or three.',
   profileHref: 'https://www.linkedin.com/in/heyderekj',
 };
 
@@ -89,10 +107,32 @@ export const bragRightNow: BragRightNowItem[] = [
   },
 ];
 
+/** Skills reflected across the brag feed — two-column checklist below Right now. */
+export const bragSkills: string[] = [
+  'Webflow & website design',
+  'UI/UX thinking',
+  'Brand & logo design',
+  'Front-end development',
+  'Visual design',
+  'Prompt communication',
+  'Customer support',
+  'Writing in public',
+  'Actively using AI tools',
+  'Faith-tech product design',
+];
+
+export const bragConnect = [
+  { label: 'x.com/heyderekj', href: 'https://x.com/heyderekj' },
+  { label: 'linkedin.com/in/heyderekj', href: 'https://www.linkedin.com/in/heyderekj' },
+  { label: 'derekj@hey.com', href: 'mailto:derekj@hey.com' },
+];
+
 export const bragEpigraphNote =
   'I miss Robin. I’d like to think we’d be good friends if we ever met.';
 
 export const bragCredit = {
+  intent:
+    'A /brag page is a quick snapshot of who you are, what you’re up to, and what you’re proud of.',
   episodeLabel: 'Episode 132 of Mostly Technical',
   episodeUrl: 'https://youtu.be/4_UDsQ_I7vQ',
 };
@@ -105,10 +145,6 @@ export const bragClippings: BragClipping[] = [
     summary:
       'Binky sorts Downloads with rules; Dinky compresses images and PDFs. Sorting demos hit 1.4k+ likes and 180k+ views; Dinky 2.0 drew 455 likes and 300+ GitHub stars. Native Mac tools still win.',
     href: '/projects/binky/',
-    relatedLinks: [
-      { label: 'Binky', href: 'https://binkyfiles.com' },
-      { label: 'Dinky', href: '/projects/dinky/' },
-    ],
     preview: [
       {
         src: '/assets/images/projects/binky-sorting-2.webp',
@@ -127,13 +163,13 @@ export const bragClippings: BragClipping[] = [
         alt: 'Mac app posts on X',
         favoritePosts: [
           {
-            title: 'Binky Downloads sorting',
+            title: 'Binky sorting animation',
             href: 'https://x.com/heyderekj/status/2051669495995912305',
             likes: '1.5k',
             external: true,
           },
           {
-            title: 'Dinky 2.0 — website + smarter compression',
+            title: 'Dinky 2.0',
             href: 'https://x.com/heyderekj/status/2044833721748988188',
             likes: '455',
             external: true,
@@ -143,7 +179,7 @@ export const bragClippings: BragClipping[] = [
     ],
   },
   {
-    publication: 'Faith & Code',
+    publication: 'Church & Code',
     dateline: '2024 — NOW',
     headline: 'Faith-Tech Side Projects',
     summary:
@@ -167,15 +203,26 @@ export const bragClippings: BragClipping[] = [
         alt: 'Faith-tech posts on X',
         favoritePosts: [
           {
-            title: 'Button animation',
-            href: 'https://x.com/heyderekj/status/1893052042295287981',
-            likes: '785',
-            external: true,
+            title: 'The 48 hour project',
+            href: '/posts/2026-03-22-the-48-hour-project/',
+            date: '2026-03-22',
           },
           {
             title: 'I accidentally made a free crowdsourced database of churches in America.',
             href: 'https://x.com/heyderekj/status/2030730217140994310',
             likes: '137',
+            external: true,
+          },
+          {
+            title: 'Splash page',
+            href: 'https://x.com/heyderekj/status/1993165228700209195',
+            likes: '476',
+            external: true,
+          },
+          {
+            title: 'Button animation',
+            href: 'https://x.com/heyderekj/status/1893052042295287981',
+            likes: '785',
             external: true,
           },
           {
@@ -185,23 +232,18 @@ export const bragClippings: BragClipping[] = [
             external: true,
           },
           {
-            title: 'Splash page',
-            href: 'https://x.com/heyderekj/status/1993165228700209195',
-            likes: '476',
-            external: true,
+            title: 'My church I once designed for',
+            href: '/posts/2022-01-06-my-church-i-once-designed-for/',
+            date: '2022-01-06',
           },
         ],
       },
     ],
-    relatedLinks: [
-      { label: 'harvous.com', href: 'https://harvous.com' },
-      { label: "Here's My Church", href: '/projects/heres-my-church/' },
-    ],
   },
   {
-    publication: 'Design Review',
+    publication: 'The Client Desk',
     dateline: '2023 — 2025',
-    headline: 'Webflow Client Wins',
+    headline: 'Marketing Sites That Scale',
     summary:
       'Claimable through Kem Design—marketing and engineering praised the Mast build for easy new pages. For Scenery I did brand, logo, and site before Adobe acquired them.',
     href: '/work/claimable/',
@@ -219,7 +261,50 @@ export const bragClippings: BragClipping[] = [
         caption: 'Scenery',
       },
     ],
-    relatedLinks: [{ label: 'Scenery', href: '/work/scenery/' }],
+    testimonial: barrettJohnsonTestimonial,
+  },
+  {
+    publication: 'The Builder’s Journal',
+    dateline: '2008 — 2026',
+    headline: 'Learning by Doing',
+    summary:
+      'Apple Retail, then design lead at a large church, then indie full-time in 2020. Since then: Kem, clients, my own apps, open source, and family—still chasing rectangles that matter.',
+    href: '/about/',
+    preview: {
+      variant: 'stats',
+      alt: 'Project count',
+      href: '/projects/',
+      linkLabel: 'All projects',
+      aggregateProjects: true,
+    },
+  },
+  {
+    publication: 'The First Client',
+    dateline: '2010',
+    headline: 'A $100 Logo for Chris Ducker',
+    summary:
+      'The year was 2010. I was still in college playing in Sketch. Business man across the pond, Chris Ducker, would pay me $100 for a logo he still uses today (slightly revised).',
+    href: '/about/',
+    preview: {
+      variant: 'link',
+      alt: 'First client project',
+      href: 'https://www.chrisducker.com/',
+      linkLabel: 'chrisducker.com',
+    },
+  },
+  {
+    publication: 'Iowa State Daily',
+    dateline: '2010 — 2014',
+    headline: 'Name in the Paper',
+    summary:
+      'I was a columnist for the Iowa State Daily. I wrote about Apple, social media, and campus life. It started the habit of publishing in public—before design blogs, clients, or my own site.',
+    href: 'https://iowastatedaily.com/staff_name/derek-jensen/',
+    preview: {
+      variant: 'link',
+      alt: 'Iowa State Daily writing',
+      href: 'https://iowastatedaily.com/staff_name/derek-jensen/',
+      linkLabel: 'Articles at Iowa State Daily',
+    },
   },
   {
     publication: 'The Public Feed',
@@ -233,14 +318,14 @@ export const bragClippings: BragClipping[] = [
       alt: 'Favorite posts',
       favoritePosts: [
         {
+          title: 'The AI Checkbox Fallacy',
+          href: '/posts/2025-03-01-the-ai-checkbox-fallacy/',
+          date: '2025-03-01',
+        },
+        {
           title: 'Faith apps deserve a wow',
           href: '/posts/2026-02-15-faith-apps-deserve-a-wow/',
           date: '2026-02-15',
-        },
-        {
-          title: 'Dogfood or die because of AI',
-          href: '/posts/2026-02-22-dogfood-or-die-because-of-ai/',
-          date: '2026-02-22',
         },
         {
           title: 'Goodbye to Webflow for my personal site',
@@ -249,61 +334,18 @@ export const bragClippings: BragClipping[] = [
           external: true,
         },
         {
-          title: "Predicting Max Verstappen's retirement",
-          href: 'https://x.com/heyderekj/status/1939330079362040099',
-          likes: '1.3k',
-          external: true,
-        },
-        {
           title: 'SimCity 3000 nostalgia',
           href: 'https://x.com/heyderekj/status/2038750666714182107',
           likes: '882',
           external: true,
         },
+        {
+          title: "Predicting Max Verstappen's retirement",
+          href: 'https://x.com/heyderekj/status/1939330079362040099',
+          likes: '1.3k',
+          external: true,
+        },
       ],
-    },
-  },
-  {
-    publication: 'The Builder’s Journal',
-    dateline: '2008 — 2026',
-    headline: 'Learning by Playing',
-    summary:
-      'Apple Retail, then design lead at a large church, then indie full-time in 2020. Since then: Kem, clients, my own apps, open source, and family—still chasing rectangles that matter.',
-    href: '/about/',
-    preview: {
-      variant: 'stats',
-      alt: 'Project count',
-      href: '/projects/',
-      linkLabel: 'All projects',
-      aggregateProjects: true,
-    },
-  },
-  {
-    publication: 'Client Zero',
-    dateline: '2010',
-    headline: 'A $100 Logo for Chris Ducker',
-    summary:
-      'Chris Ducker was my first client—a $100 blog logo in college, 2010. Themeforest themes, design blogs, and a Daily opinion column followed. The mark’s refined; the core still shows.',
-    href: '/about/',
-    preview: {
-      variant: 'link',
-      alt: 'First client project',
-      href: 'https://www.chrisducker.com/',
-      linkLabel: 'chrisducker.com',
-    },
-  },
-  {
-    publication: 'Iowa State Daily',
-    dateline: '2010 — 2014',
-    headline: 'Opinion Column in the Student Paper',
-    summary:
-      'At Iowa State I wrote a Daily opinion column on Apple, social media, and campus life. It started the habit of publishing in public—before design blogs, clients, or my own site.',
-    href: 'https://iowastatedaily.com/staff_name/derek-jensen/',
-    preview: {
-      variant: 'link',
-      alt: 'Iowa State Daily writing',
-      href: 'https://iowastatedaily.com/staff_name/derek-jensen/',
-      linkLabel: 'Articles at Iowa State Daily',
     },
   },
 ];
