@@ -56,7 +56,7 @@ export const bragMeta = {
 };
 
 export const bragIntro =
-  'Here are things I tell my best friends. Not a résumé — just things I wanna brag about...';
+  'Here are things I tell my best friends. Not a résumé — just things I wanna brag about (humbly)...';
 
 /** Hero copy aligned with linkedin.com/in/heyderekj */
 export const bragHero = {
@@ -78,6 +78,10 @@ export const bragRightNow: BragRightNowItem[] = [
   {
     label: 'Designing & developing websites with Kem Design',
     href: 'https://kemdesign.co',
+  },
+  {
+    label: 'Making websites with other various clients',
+    href: '/work/',
   },
   {
     label: 'Making 3 apps on the side',
