@@ -52,11 +52,38 @@ export type BragClipping = {
 export const bragMeta = {
   title: 'Brag — Derek Castelli',
   description:
-    'Selected wins as news clippings — macOS apps, faith-tech, Webflow client work, and writing.',
+    'Derek Castelli — making websites and apps. Webflow freelancer in Des Moines; native Mac apps and faith-tech on the side.',
 };
 
 export const bragIntro =
   'Here are things I tell my best friends. Not a résumé — just things I wanna brag about...';
+
+/** Hero copy aligned with linkedin.com/in/heyderekj */
+export const bragHero = {
+  photoSrc: '/assets/about/derek-photo.jpeg',
+  photoAlt: 'Derek Castelli',
+  headline: 'Derek Castelli',
+  role: 'Freelance web designer · Des Moines metro',
+  bio: 'Self-taught designer designing brands and making websites for non-profits and startups since 2018, with native Mac apps and faith-tech side projects.',
+  profileHref: 'https://www.linkedin.com/in/heyderekj',
+};
+
+export type BragRightNowItem = {
+  label: string;
+  href?: string;
+};
+
+/** Active focus — surfaced above the clippings feed. */
+export const bragRightNow: BragRightNowItem[] = [
+  {
+    label: 'Designing & developing websites with Kem Design',
+    href: 'https://kemdesign.co',
+  },
+  {
+    label: 'Making 3 apps on the side',
+    href: 'https://testamentmade.com',
+  },
+];
 
 export const bragEpigraphNote =
   'I miss Robin. I’d like to think we’d be good friends if we ever met.';

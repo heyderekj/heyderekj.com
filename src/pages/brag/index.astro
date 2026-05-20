@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageTitle from '../../components/PageTitle.astro';
-import { bragMeta, bragIntro, bragEpigraphNote, bragCredit, bragClippings } from '../../data/brag';
+import { bragMeta, bragIntro, bragHero, bragEpigraphNote, bragCredit, bragClippings, bragRightNow } from '../../data/brag';
 import type { BragPreview } from '../../data/brag';
 import { projectStartTime } from '../../lib/projectStart';
 import { computeBragStatCycles } from '../../lib/bragProjectTrend';
@@ -58,23 +58,41 @@ const fmtPostDate = (iso: string) =>
         </div>
       </span>
     </PageTitle>
-    <p class="brag-intro">{bragIntro}</p>
 
-    <div class="brag-epigraph-wrap" tabindex="0">
-      <blockquote class="brag-epigraph-plaque">
-        <p class="brag-epigraph-plaque__quote">
-          You’re only given a little spark of madness.<br />
-          You mustn’t lose it.
+    <header class="brag-hero">
+      <img
+        class="brag-hero__photo"
+        src={bragHero.photoSrc}
+        alt={bragHero.photoAlt}
+        width={112}
+        height={112}
+        decoding="async"
+      />
+      <div class="brag-hero__copy">
+        <h2 class="brag-hero__headline">{bragHero.headline}</h2>
+        <p class="brag-hero__role">
+          <a href={bragHero.profileHref} target="_blank" rel="noopener noreferrer">{bragHero.role}</a>
         </p>
-        <footer class="brag-epigraph-plaque__attrib">
-          <span class="brag-epigraph-plaque__rule" aria-hidden="true"></span>
-          <cite>Robin Williams</cite>
-        </footer>
-      </blockquote>
-      <aside class="brag-epigraph-note" data-brag-epigraph-note aria-label="Personal note about Robin Williams">
-        <p id="brag-epigraph-note-text" class="brag-epigraph-note__text">{bragEpigraphNote}</p>
-      </aside>
-    </div>
+        <p class="brag-hero__bio">{bragHero.bio}</p>
+      </div>
+    </header>
+
+    <section class="brag-now" aria-labelledby="brag-now-heading">
+      <h2 id="brag-now-heading" class="brag-now__heading">Right now</h2>
+      <ol class="brag-now__list" role="list">
+        {bragRightNow.map((item) => (
+          <li class="brag-now__item">
+            {item.href ? (
+              <a href={item.href}>{item.label}</a>
+            ) : (
+              item.label
+            )}
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <p class="brag-intro">{bragIntro}</p>
 
     <ol class="brag-feed" role="list">
       {bragClippings.map((clip) => {
@@ -310,6 +328,22 @@ const fmtPostDate = (iso: string) =>
         );
       })}
     </ol>
+
+    <div class="brag-epigraph-wrap" tabindex="0">
+      <blockquote class="brag-epigraph-plaque">
+        <p class="brag-epigraph-plaque__quote">
+          You’re only given a little spark of madness.<br />
+          You mustn’t lose it.
+        </p>
+        <footer class="brag-epigraph-plaque__attrib">
+          <span class="brag-epigraph-plaque__rule" aria-hidden="true"></span>
+          <cite>Robin Williams</cite>
+        </footer>
+      </blockquote>
+      <aside class="brag-epigraph-note" data-brag-epigraph-note aria-label="Personal note about Robin Williams">
+        <p id="brag-epigraph-note-text" class="brag-epigraph-note__text">{bragEpigraphNote}</p>
+      </aside>
+    </div>
   </article>
 
   <script>
@@ -440,7 +474,7 @@ const fmtPostDate = (iso: string) =>
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    margin: 0 0 var(--space-5);
+    margin: var(--space-5) 0 0;
     max-width: 100%;
   }
 
@@ -675,6 +709,136 @@ const fmtPostDate = (iso: string) =>
   .brag-intro {
     color: var(--fg-soft);
     margin-bottom: var(--space-4);
+  }
+
+  .brag-page > :global(.page-title) {
+    margin-bottom: var(--space-4);
+  }
+
+  .brag-hero {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .brag-hero__photo {
+    flex-shrink: 0;
+    width: 5.5rem;
+    height: 5.5rem;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+  }
+
+  .brag-hero__copy {
+    min-width: 0;
+  }
+
+  .brag-hero__headline {
+    margin: 0 0 var(--space-2);
+    font-size: clamp(1.1875rem, 2.8vw, 1.4375rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.022em;
+    color: var(--fg);
+  }
+
+  .brag-hero__role {
+    margin: 0 0 var(--space-2);
+    font-size: var(--size-micro);
+    line-height: 1.45;
+    color: var(--muted-strong);
+  }
+
+  .brag-hero__role a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-strong) 70%, transparent);
+  }
+
+  .brag-hero__role a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .brag-hero__bio {
+    margin: 0;
+    font-size: var(--size-body);
+    line-height: 1.45;
+    color: var(--fg-soft);
+    max-width: 42em;
+  }
+
+  .brag-now {
+    margin-bottom: var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+  }
+
+  .brag-now__heading {
+    margin: 0 0 var(--space-2);
+    font-size: var(--size-micro);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .brag-now__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: brag-now;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .brag-now__item {
+    display: grid;
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    column-gap: var(--space-2);
+    align-items: baseline;
+    counter-increment: brag-now;
+    font-size: var(--size-meta);
+    line-height: 1.45;
+    color: var(--fg-soft);
+  }
+
+  .brag-now__item::before {
+    content: counter(brag-now, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: var(--size-micro);
+    font-weight: 700;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .brag-now__item a {
+    color: var(--fg);
+    text-decoration: none;
+    border-bottom: none;
+  }
+
+  .brag-now__item a:hover {
+    color: var(--accent);
+    border-bottom: none;
+  }
+
+  @media (max-width: 480px) {
+    .brag-hero {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .brag-hero__bio {
+      max-width: none;
+    }
   }
 
   .brag-feed {
@@ -1076,6 +1240,7 @@ const fmtPostDate = (iso: string) =>
 
 <style is:global>
   main.main .brag-page .brag-item-title a,
+  main.main .brag-page .brag-now__item a,
   main.main .brag-page .brag-credit-popover a,
   main.main .brag-page .brag-preview--experience,
   main.main .brag-page .brag-preview--posts,
@@ -1103,7 +1268,8 @@ const fmtPostDate = (iso: string) =>
     border-bottom-color: color-mix(in srgb, var(--accent) 35%, var(--border));
   }
 
-  main.main .brag-page .brag-item-title a:hover {
+  main.main .brag-page .brag-item-title a:hover,
+  main.main .brag-page .brag-now__item a:hover {
     border-bottom-color: transparent;
   }
 
