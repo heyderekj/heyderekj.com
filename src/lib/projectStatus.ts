@@ -8,3 +8,9 @@ export function displayProjectStatus(status: ProjectStatus): string {
   if (status === 'paused') return 'Back Burner';
   return status;
 }
+
+/** Still on the stove — active (front) or paused (back), not retired. */
+export function isOngoingProject(project: CollectionEntry<'projects'>): boolean {
+  const { status } = project.data;
+  return status === 'active' || status === 'paused';
+}
