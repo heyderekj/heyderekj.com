@@ -12,7 +12,7 @@ const items = [
   <ul class="about-toc__list" role="list">
     {items.map((item) => (
       <li>
-        <a class="about-toc__link" href={`#${item.id}`} data-toc-link={item.id}>
+        <a class="about-toc__link" href={`#${item.id}`} data-toc-link={item.id} data-url-chip={`#${item.id}`}>
           <span class="about-toc__dot" aria-hidden="true"></span>
           <span class="about-toc__text">{item.label}</span>
         </a>
