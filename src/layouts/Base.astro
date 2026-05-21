@@ -46,20 +46,14 @@ const mainNav = [
   { href: '/posts/',    label: 'Posts',    icon: 'ph-read-cv-logo' },
   { href: '/work/',     label: 'Work',     icon: 'ph-briefcase' },
   { href: '/projects/', label: 'Projects', icon: 'ph-folder-open' },
+  { href: '/about/',    label: 'About',    icon: 'ph-user' },
 ];
-const extraNav: { href: string; label: string; icon: string }[] = [];
 
 const current = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => {
   const n = href.replace(/\/$/, '') || '/';
   return current === n || (n !== '/' && current.startsWith(n));
 };
-
-const onAbout  = isActive('/about/');
-const onPeople = isActive('/people/');
-const onBrag   = isActive('/brag/');
-const onFork   = onAbout || onPeople || onBrag;
-const forkIcon = onBrag ? 'ph-lightning' : onPeople ? 'ph-users' : 'ph-user';
 
 const year = new Date().getFullYear();
 ---
@@ -136,50 +130,6 @@ const year = new Date().getFullYear();
                 <span aria-hidden="true">{label}</span>
               </a>
             ))}
-            {/* About / People fork toggle */}
-            <div class="nav-fork" id="nav-fork">
-              <button
-                type="button"
-                class={`nav-fork-trigger${onFork ? ' active' : ''}`}
-                aria-expanded="false"
-                aria-label="About, People, or Brag"
-                id="nav-fork-trigger"
-              >
-                <i class={`${onFork ? 'ph-fill' : 'ph-bold'} ${forkIcon}`} aria-hidden="true"></i>
-              </button>
-              <div class="nav-fork-menu" id="nav-fork-menu" hidden>
-                {!onAbout && (
-                  <a href="/about/">
-                    <i class="ph-bold ph-user" aria-hidden="true"></i>
-                    <span aria-hidden="true">About</span>
-                  </a>
-                )}
-                {!onPeople && (
-                  <a href="/people/">
-                    <i class="ph-bold ph-users" aria-hidden="true"></i>
-                    <span aria-hidden="true">People</span>
-                  </a>
-                )}
-                {!onBrag && (
-                  <a href="/brag/">
-                    <i class="ph-bold ph-lightning" aria-hidden="true"></i>
-                    <span aria-hidden="true">Brag</span>
-                  </a>
-                )}
-              </div>
-            </div>
-
-            {extraNav.map(({ href, label, icon }) => (
-              <a
-                href={href}
-                class={isActive(href) ? 'active' : ''}
-                aria-current={isActive(href) ? 'page' : undefined}
-                aria-label={label}
-              >
-                <i class={`${isActive(href) ? 'ph-fill' : 'ph-bold'} ${icon}`} aria-hidden="true"></i>
-                <span aria-hidden="true">{label}</span>
-              </a>
-            ))}
           </nav>
         </aside>
 
@@ -207,28 +157,5 @@ const year = new Date().getFullYear();
     </div>
   <script src="../client/url-chip.ts"></script>
   <script src="../client/easter-egg.ts"></script>
-  <script>
-    const trigger = document.getElementById('nav-fork-trigger');
-    const menu    = document.getElementById('nav-fork-menu');
-
-    trigger?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = !menu?.hidden;
-      if (isOpen) {
-        menu?.setAttribute('hidden', '');
-        trigger.setAttribute('aria-expanded', 'false');
-      } else {
-        menu?.removeAttribute('hidden');
-        trigger.setAttribute('aria-expanded', 'true');
-      }
-    });
-
-    document.addEventListener('click', () => {
-      if (menu && !menu.hidden) {
-        menu.setAttribute('hidden', '');
-        trigger?.setAttribute('aria-expanded', 'false');
-      }
-    });
-  </script>
   </body>
 </html>

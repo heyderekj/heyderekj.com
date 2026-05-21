@@ -1,0 +1,391 @@
+---
+const items = [
+  { id: 'now',        label: 'Right now' },
+  { id: 'highlights', label: 'Highlights' },
+  { id: 'skills',     label: 'Skills' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'connect',    label: 'Connect' },
+];
+---
+<nav class="about-toc about-toc--desktop" aria-label="On this page">
+  <p class="about-toc__label">On this page</p>
+  <ul class="about-toc__list" role="list">
+    {items.map((item) => (
+      <li>
+        <a class="about-toc__link" href={`#${item.id}`} data-toc-link={item.id}>
+          <span class="about-toc__dot" aria-hidden="true"></span>
+          <span class="about-toc__text">{item.label}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<nav class="about-toc about-toc--mobile" aria-label="On this page" data-toc-mobile>
+  <button
+    type="button"
+    class="about-toc__trigger"
+    aria-expanded="false"
+    aria-controls="about-toc-mobile-panel"
+    data-toc-trigger
+  >
+    <span class="about-toc__trigger-label">
+      <span class="about-toc__trigger-kicker">On this page</span>
+      <span class="about-toc__trigger-current" data-toc-current>{items[0].label}</span>
+    </span>
+    <i class="ph-bold ph-caret-up about-toc__trigger-icon" aria-hidden="true"></i>
+  </button>
+  <div id="about-toc-mobile-panel" class="about-toc__panel" hidden>
+    <ul class="about-toc__list about-toc__list--mobile" role="list">
+      {items.map((item) => (
+        <li>
+          <a class="about-toc__link" href={`#${item.id}`} data-toc-link={item.id} data-toc-link-mobile>
+            <span class="about-toc__text">{item.label}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<script>
+  function initAboutToc() {
+    const links = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]')
+    );
+    if (!links.length) return;
+    const root = document.querySelector('.about-toc--desktop');
+    if (root && (root as HTMLElement).dataset.tocInit) return;
+    if (root) (root as HTMLElement).dataset.tocInit = '1';
+
+    const sections = Array.from(
+      new Set(links.map((l) => l.dataset.tocLink || ''))
+    )
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+
+    if (!sections.length) return;
+
+    const labelById = new Map<string, string>();
+    links.forEach((l) => {
+      const id = l.dataset.tocLink || '';
+      const text = l.querySelector('.about-toc__text')?.textContent || '';
+      if (id && !labelById.has(id)) labelById.set(id, text);
+    });
+
+    const currentEl = document.querySelector<HTMLElement>('[data-toc-current]');
+
+    const setActive = (id: string) => {
+      links.forEach((l) => {
+        const isActive = l.dataset.tocLink === id;
+        l.classList.toggle('is-active', isActive);
+        if (isActive) l.setAttribute('aria-current', 'location');
+        else l.removeAttribute('aria-current');
+      });
+      const label = labelById.get(id);
+      if (currentEl && label) currentEl.textContent = label;
+    };
+
+    setActive(sections[0]!.id);
+
+    const pickActive = () => {
+      const probe = 96;
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
+      if (atBottom) {
+        setActive(sections[sections.length - 1]!.id);
+        return;
+      }
+      let best = sections[0]!.id;
+      for (const s of sections) {
+        const top = s.getBoundingClientRect().top;
+        if (top - probe <= 0) best = s.id;
+      }
+      setActive(best);
+    };
+
+    pickActive();
+    window.addEventListener('scroll', pickActive, { passive: true });
+    window.addEventListener('resize', pickActive);
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    links.forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const id = link.dataset.tocLink;
+        if (!id) return;
+        const target = document.getElementById(id);
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({
+          behavior: reduceMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
+        if (history.replaceState) {
+          history.replaceState(null, '', `#${id}`);
+        }
+        closeMobile();
+      });
+    });
+
+    const mobileWrap = document.querySelector<HTMLElement>('[data-toc-mobile]');
+    const trigger = document.querySelector<HTMLButtonElement>('[data-toc-trigger]');
+    const panel = document.getElementById('about-toc-mobile-panel');
+
+    const closeMobile = () => {
+      if (!mobileWrap || !trigger || !panel) return;
+      mobileWrap.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+      panel.hidden = true;
+    };
+
+    const openMobile = () => {
+      if (!mobileWrap || !trigger || !panel) return;
+      mobileWrap.classList.add('is-open');
+      trigger.setAttribute('aria-expanded', 'true');
+      panel.hidden = false;
+    };
+
+    if (trigger && mobileWrap && panel) {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (mobileWrap.classList.contains('is-open')) closeMobile();
+        else openMobile();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!mobileWrap.classList.contains('is-open')) return;
+        const t = e.target;
+        if (t instanceof Node && (mobileWrap.contains(t))) return;
+        closeMobile();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMobile();
+      });
+
+      let lastY = window.scrollY;
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (!mobileWrap.classList.contains('is-open')) {
+            lastY = window.scrollY;
+            return;
+          }
+          if (Math.abs(window.scrollY - lastY) > 24) closeMobile();
+        },
+        { passive: true }
+      );
+    }
+  }
+
+  initAboutToc();
+  document.addEventListener('astro:page-load', initAboutToc);
+</script>
+
+<style>
+  .about-toc__label {
+    margin: 0 0 var(--space-2);
+    font-size: var(--size-micro);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .about-toc__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .about-toc__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    font-size: var(--size-meta);
+    line-height: 1.3;
+    color: var(--muted-strong);
+    text-decoration: none;
+    border-bottom: none;
+    transition:
+      color 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .about-toc__link:hover,
+  .about-toc__link:focus-visible {
+    color: var(--accent);
+    font-weight: 600;
+    background: transparent;
+    border-bottom: none;
+  }
+
+  .about-toc__link.is-active {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .about-toc__dot {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+
+  .about-toc__link:hover .about-toc__dot,
+  .about-toc__link:focus-visible .about-toc__dot,
+  .about-toc__link.is-active .about-toc__dot {
+    background: var(--accent);
+    transform: scale(1.4);
+  }
+
+  .about-toc__text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* ---------- Desktop sticky ---------- */
+  .about-toc--desktop {
+    display: none;
+  }
+
+  @media (min-width: 1100px) {
+    .about-toc--desktop {
+      display: block;
+      position: fixed;
+      top: calc(var(--space-4) + 6rem);
+      left: calc(
+        50%
+        - var(--layout-max) / 2
+        + var(--sidebar-w)
+        + var(--layout-gap)
+        + var(--max-main)
+        + var(--space-4)
+      );
+      width: 12rem;
+      max-height: calc(100vh - var(--space-4) * 2 - 6rem);
+      overflow-y: auto;
+      z-index: 5;
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg);
+    }
+  }
+
+  /* ---------- Mobile floating bar ---------- */
+  .about-toc--mobile {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 30;
+    width: min(22rem, calc(100vw - var(--space-4) * 2));
+    pointer-events: auto;
+  }
+
+  @media (min-width: 1100px) {
+    .about-toc--mobile {
+      display: none;
+    }
+  }
+
+  .about-toc__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    width: 100%;
+    padding: 10px var(--space-3);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-pill);
+    background: var(--glass-active-bg);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: var(--glass-inset), 0 6px 24px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    color: var(--fg);
+    text-align: left;
+    font: inherit;
+  }
+
+  .about-toc__trigger-label {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .about-toc__trigger-kicker {
+    font-size: var(--size-micro);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.2;
+  }
+
+  .about-toc__trigger-current {
+    font-size: var(--size-meta);
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .about-toc__trigger-icon {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: var(--muted-strong);
+    transition: transform 0.2s var(--easing);
+  }
+
+  .about-toc--mobile.is-open .about-toc__trigger-icon {
+    transform: rotate(180deg);
+  }
+
+  .about-toc__panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(100% + 8px);
+    padding: var(--space-2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    background: var(--glass-active-bg);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: var(--glass-inset), 0 12px 32px rgba(0, 0, 0, 0.16);
+    transform-origin: bottom center;
+    animation: about-toc-pop 0.18s var(--easing);
+  }
+
+  @keyframes about-toc-pop {
+    from { opacity: 0; transform: translateY(6px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-toc__panel { animation: none; }
+    .about-toc__trigger-icon { transition: none; }
+    .about-toc__dot { transition: none; }
+  }
+
+  .about-toc__list--mobile {
+    gap: 0;
+  }
+
+  .about-toc__list--mobile .about-toc__link {
+    padding: 10px var(--space-2);
+    font-size: var(--size-body);
+  }
+</style>
