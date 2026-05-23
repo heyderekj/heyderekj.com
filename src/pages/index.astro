@@ -56,23 +56,23 @@ const githubData = await fetchGitHubActivity();
 <Base jsonLd={homeJsonLd}>
   <section class="intro">
     <p>
-      An agentic design engineer and Christian making websites with{' '}
-      <a href="https://kemdesign.co" rel="noopener noreferrer">Kem Design</a> and apps on the side. I write about my life, faith, and tech, drawing on work in Apple Retail, design work for a church, and freelance work since 2020.
+      An agentic design engineer and Christian doing branding, websites, and product strategy for startups and nonprofits — with{' '}
+      <a href="https://kemdesign.co" rel="noopener noreferrer">Kem Design</a> and on my own.
     </p>
   </section>
+
+  <h2 class="section-title"><a href="/work/">/ work</a></h2>
+  {homeHighlightedWork.length > 0 ? (
+    <FeaturedWorkGrid work={homeHighlightedWork} />
+  ) : (
+    <p style="color: var(--muted);">No highlighted work posts yet.</p>
+  )}
 
   <h2 class="section-title"><a href="/posts/">/ posts</a></h2>
   {recentPosts.length > 0 ? (
     <PostList entries={recentPosts} />
   ) : (
     <p style="color: var(--muted);">No posts yet — adding soon.</p>
-  )}
-
-  <h2 class="section-title"><a href="/work/">/ work</a></h2>
-{homeHighlightedWork.length > 0 ? (
-    <FeaturedWorkGrid work={homeHighlightedWork} />
-  ) : (
-    <p style="color: var(--muted);">No highlighted work posts yet.</p>
   )}
 
   <h2 class="section-title"><a href="/projects/">/ projects</a></h2>
