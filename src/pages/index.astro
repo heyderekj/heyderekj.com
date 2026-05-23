@@ -39,7 +39,7 @@ const recentPosts = (await getCollection('posts', ({ data }) => !data.draft))
 const highlightedWork = (await getCollection('work', ({ data }) => !data.draft && data.highlight)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
-const homeHighlightedWork = highlightedWork.filter(({ slug }) => slug !== 'harvouscom').slice(0, 2);
+const homeHighlightedWork = highlightedWork.filter(({ slug }) => ['claimable', 'exodus51'].includes(slug));
 
 const allProjects = await getCollection('projects', ({ data }) => !data.draft);
 /** Front Burner only — active projects shown on the home page. */
