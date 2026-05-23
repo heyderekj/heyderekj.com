@@ -56,8 +56,8 @@ const githubData = await fetchGitHubActivity();
 <Base jsonLd={homeJsonLd}>
   <section class="intro">
     <p>
-      An agentic design engineer and Christian doing branding, websites, and product strategy for startups and nonprofits — with{' '}
-      <a href="https://kemdesign.co" rel="noopener noreferrer">Kem Design</a> and on my own.
+      A freelance designer and Christian making brands, websites, and apps for startups, nonprofits, small businesses, and myself. I've been designing since 2018 and currently partner with{' '}
+      <a href="https://kemdesign.co" rel="noopener noreferrer">Kem Design</a>.
     </p>
   </section>
 
@@ -114,6 +114,10 @@ const githubData = await fetchGitHubActivity();
 </Base>
 
 <style>
+  .intro p {
+    max-width: 420px;
+  }
+
   .home-status-summaries {
     margin-top: var(--space-4);
   }
