@@ -14,9 +14,9 @@ export const lawnstarterLetter = {
   from: 'Derek Castelli',
   salutation: 'Hey LawnStarter team,',
   paragraphs: [
-    'I’m applying for the Senior Webflow Designer role because it’s the work I already do. From what I’ve read—and how your team describes working together—it sounds like design happens in Webflow, not in a Figma handoff. That’s how I work. When the system is built right, the team can ship landing pages and tests without engineering jumping in every time.',
-    'I’ve been in Webflow since 2018 and full-time on marketing sites since 2020—local businesses, startups, and health tech, often with Kem Design. Lately that’s meant Mast-based component libraries and CMS structures where marketing can spin up a new landing page in minutes. At Claimable, they demoed that in front of engineering—and it worked because the templates and collections were built for it.',
-    'What draws me to LawnStarter—something Rachel Vorm and I talked through—isn’t really the size of the company. It’s how small and nimble the team is. A designer, Technical Growth Manager, and CRO Specialist in the same loop can move fast when the system’s built for it. That’s the kind of team I do my best work with. The cards below are the proof.',
+    'I’m applying for the Senior Webflow Designer role because it’s the work I already do—marketing sites in Webflow where a growth team can ship landing pages and tests without a designer or engineer in every loop.',
+    'I’ve been in Webflow since 2018 and full-time on marketing sites since 2020, mostly with Kem Design across local businesses, startups, and health tech. I usually start in Figma for a fast first pass, then iterate in the Designer. Lately that’s meant Mast-based component libraries and CMS structures built for scale—at Claimable, marketing demoed a new medication landing page in front of engineering, and it held because the templates and collections were built for it.',
+    'What draws me to LawnStarter—something Rachel Vorm and I talked through—isn’t the size of the company. It’s how small and nimble the team is: a designer, Technical Growth Manager, and CRO Specialist in the same loop, moving fast when the system supports it. That’s the kind of team I do my best work with. The cards below are the proof.',
   ],
 };
 
