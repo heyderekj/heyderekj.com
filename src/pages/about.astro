@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageTitle from '../components/PageTitle.astro';
 import AboutToc from '../components/AboutToc.astro';
+import BragSkillsList from '../components/BragSkillsList.astro';
 import {
   bragMeta,
   bragHero,
@@ -342,16 +343,8 @@ const fmtPostDate = (iso: string) =>
       </aside>
     </div>
 
-    <section id="skills" class="brag-skills about-anchor" aria-label="Skills">
-      <h2 id="about-skills-heading" class="sr-only">Skills</h2>
-      <ul class="brag-skills__list" role="list">
-        {bragSkills.map((skill) => (
-          <li class="brag-skills__item">
-            <i class="ph-bold ph-check" aria-hidden="true"></i>
-            <span>{skill}</span>
-          </li>
-        ))}
-      </ul>
+    <section id="skills" class="about-anchor">
+      <BragSkillsList skills={bragSkills} label="Skills" />
     </section>
 
     <section id="experience" class="about-experience about-anchor" aria-labelledby="about-exp-heading">
@@ -756,37 +749,6 @@ function initBragEpigraphNote() {
 
   .brag-now {
     margin-bottom: var(--space-5);
-  }
-
-  .brag-skills {
-    margin-top: var(--space-5);
-    margin-bottom: var(--space-4);
-  }
-
-  .brag-skills__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--space-4);
-    row-gap: var(--space-2);
-  }
-
-  .brag-skills__item {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-2);
-    font-size: var(--size-meta);
-    line-height: 1.45;
-    color: var(--fg-soft);
-  }
-
-  .brag-skills__item i {
-    flex-shrink: 0;
-    margin-top: 0.15em;
-    font-size: 0.95em;
-    color: var(--accent);
   }
 
   .brag-now__list {

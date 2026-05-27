@@ -123,13 +123,13 @@ export const testimonials: Testimonial[] = [
   {
     quote: 'I highly recommend Derek Jensen for his exceptional skills in User Interface (UI) design and Webflow Development. Derek\'s creative approach to UI consistently delivers visually exceptional and user-friendly interfaces that drives results. His proficiency in Webflow empowers him to bring his designs to life with seamless functionality and responsiveness. Derek\'s attention to detail, collaborative nature, and commitment to staying current with design trends makes him a valuable asset to any project.',
     author: 'Danny Begnoche',
-    role: 'Award winning branding and Webflow sites · webflow.com/@onebranding',
+    role: 'Owner at One Branding',
     context: 'Danny worked with Derek on the same team · Aug 2023',
   },
   {
     quote: 'Derek is an incredibly talented Designer and Webflow Developer with a unique drive to always seek out the best solution and learn new things along the way.',
     author: 'Corey Moen',
-    role: 'Lead Brand Designer and Web Developer',
+    role: 'Former Brand/Web Designer at Webflow',
     context: "Corey was Derek's mentor · Apr 2023",
   },
 ];

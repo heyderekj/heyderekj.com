@@ -128,56 +128,6 @@ const githubData = await fetchGitHubActivity();
     max-width: 420px;
   }
 
-  .intro-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-top: var(--space-4);
-  }
-
-  .intro-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: var(--radius-pill);
-    font-size: var(--size-meta);
-    font-weight: 500;
-    line-height: 1.2;
-    border: 1px solid var(--border);
-    border-bottom-color: var(--border-strong);
-    background: var(--glass-bg);
-    color: var(--fg-soft);
-    text-decoration: none;
-    transition:
-      color 0.15s ease,
-      border-color 0.15s ease,
-      background 0.15s ease;
-  }
-
-  .intro-pill i {
-    font-size: 14px;
-    color: var(--muted-strong);
-    flex-shrink: 0;
-  }
-
-  .intro-pill:hover {
-    color: var(--accent);
-    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
-    border-bottom-color: color-mix(in srgb, var(--accent) 42%, var(--border-strong));
-    background: var(--accent-soft);
-  }
-
-  .intro-pill:hover i {
-    color: var(--accent);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .intro-pill {
-      background: var(--bg-elevated);
-    }
-  }
-
   .home-status-summaries {
     margin-top: var(--space-4);
   }

@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import PageTitle from '../components/PageTitle.astro';
+import BragClippingFeed from '../components/BragClippingFeed.astro';
+import TestimonialCarousel from '../components/TestimonialCarousel.astro';
+import { testimonials } from '../data/about';
+import { lawnstarterMeta, lawnstarterLetter, lawnstarterClippings } from '../data/lawnstarter';
+
+const letter = lawnstarterLetter;
+---
+
+<Base
+  title={lawnstarterMeta.title}
+  description={lawnstarterMeta.description}
+  ogImage={lawnstarterMeta.ogImage}
+  noindex={true}
+>
+  <PageTitle path="/lawnstarter" />
+
+  <section class="lawnstarter-letter" aria-label="Cover letter">
+    <div class="lawnstarter-letter__sheet">
+      <header class="lawnstarter-letter__address">
+        <p>
+          <span class="lawnstarter-letter__label">To:</span>
+          {letter.to}
+        </p>
+        <p>
+          <span class="lawnstarter-letter__label">From:</span>
+          {letter.from}
+        </p>
+      </header>
+
+      <hr class="lawnstarter-letter__rule" aria-hidden="true" />
+
+      <p class="lawnstarter-letter__salutation">{letter.salutation}</p>
+
+      {letter.paragraphs.map((paragraph) => (
+        <p class="lawnstarter-letter__paragraph">{paragraph}</p>
+      ))}
+    </div>
+  </section>
+
+  <BragClippingFeed clippings={lawnstarterClippings} />
+
+  <TestimonialCarousel testimonials={testimonials} headingId="lawnstarter-testimonials-heading" />
+
+  <nav class="lawnstarter-footer intro-links" aria-label="More on this site">
+    <a href="/work/" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      Work
+    </a>
+    <a href="/posts/" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      Posts
+    </a>
+  </nav>
+</Base>
+
+<style>
+  .lawnstarter-letter {
+    --letter-frame: color-mix(in srgb, #6b5a45 10%, var(--border-strong));
+    --letter-rule: color-mix(in srgb, #6b5a45 8%, var(--border));
+    --letter-surface-top: color-mix(in srgb, #f7f3ea 55%, var(--bg-elevated));
+    --letter-surface-bottom: color-mix(in srgb, #e8e0d4 35%, var(--bg));
+    margin-bottom: var(--space-5);
+    max-width: 100%;
+  }
+
+  .lawnstarter-letter__sheet {
+    position: relative;
+    padding: var(--space-4) var(--space-4) var(--space-5);
+    border: 1px solid var(--letter-frame);
+    border-radius: var(--radius-sm);
+    background: linear-gradient(180deg, var(--letter-surface-top), var(--letter-surface-bottom));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, white 40%, transparent),
+      0 1px 3px color-mix(in srgb, var(--fg) 5%, transparent);
+  }
+
+  .lawnstarter-letter__sheet::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px solid var(--letter-frame);
+    border-radius: calc(var(--radius-sm) - 3px);
+    pointer-events: none;
+    opacity: 0.65;
+  }
+
+  .lawnstarter-letter__address {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: var(--size-meta);
+    line-height: 1.65;
+    color: var(--fg-soft);
+  }
+
+  .lawnstarter-letter__address p {
+    margin: 0;
+  }
+
+  .lawnstarter-letter__address p + p {
+    margin-top: 0.15em;
+  }
+
+  .lawnstarter-letter__label {
+    display: inline-block;
+    min-width: 2.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--size-micro);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .lawnstarter-letter__rule {
+    margin: var(--space-3) 0;
+    border: 0;
+    border-top: 1px solid var(--letter-rule);
+  }
+
+  .lawnstarter-letter__salutation,
+  .lawnstarter-letter__paragraph {
+    margin: 0 0 var(--space-3);
+    font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+
+  .lawnstarter-letter__salutation {
+    margin-bottom: var(--space-2);
+  }
+
+  .lawnstarter-letter__paragraph:last-of-type {
+    margin-bottom: 0;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .lawnstarter-letter {
+      --letter-frame: color-mix(in srgb, #c9a86c 8%, var(--border-strong));
+      --letter-rule: color-mix(in srgb, #c9a86c 6%, var(--border));
+      --letter-surface-top: color-mix(in srgb, #c9a86c 4%, var(--bg-elevated));
+      --letter-surface-bottom: color-mix(in srgb, #6b5a45 6%, #0a0a0a);
+    }
+  }
+
+  .lawnstarter-footer {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-4);
+  }
+</style>
