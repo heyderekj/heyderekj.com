@@ -66,11 +66,11 @@ export const lawnstarterClippings: BragClipping[] = [
     ],
   },
   {
-    publication: 'Ship fast',
-    dateline: 'Webflow · custom code',
-    headline: 'Speed first, AI when the panel stops',
+    publication: 'Building fast',
+    dateline: 'AI for assist',
+    headline: 'Webflow first, code when it helps',
     summary:
-      'A lot of the job is moving quickly inside the system—Matter’s sales landing page went from Figma to live Webflow in a day. When a test or interaction needs more than native Webflow, I use Claude and Cursor to draft custom JavaScript and CSS, then ship. AI Explorer was that case: a BIOS-style hype page built in about ten hours, with code the Designer panel couldn’t get to on its own.',
+      'Matter’s sales landing page went from Figma to live Webflow in a day. When native Webflow isn’t enough, I use Claude and Cursor to draft custom JS and CSS—AI Explorer’s BIOS-style page shipped in about ten hours.',
     preview: [
       {
         src: '/images/work/matter/gallery-01.webp',
