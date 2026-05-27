@@ -17,7 +17,7 @@ const letter = lawnstarterLetter;
 >
   <PageTitle path="/lawnstarter" />
 
-  <section class="lawnstarter-letter" aria-label="Cover letter">
+  <section class="lawnstarter-letter" aria-label="Cover letter" tabindex="0" data-lawnstarter-letter>
     <div class="lawnstarter-letter__sheet">
       <header class="lawnstarter-letter__address">
         <p>
@@ -56,14 +56,41 @@ const letter = lawnstarterLetter;
   </nav>
 </Base>
 
+<script>
+  function initLawnstarterLetter() {
+    document.querySelectorAll('[data-lawnstarter-letter]').forEach((section) => {
+      if (!(section instanceof HTMLElement) || section.dataset.lsLetterInit) return;
+      section.dataset.lsLetterInit = '1';
+
+      section.addEventListener('click', (e) => {
+        if (window.matchMedia('(hover: hover)').matches) return;
+        const target = e.target;
+        if (!(target instanceof Node) || !section.contains(target)) return;
+        if (target instanceof Element && target.closest('a')) return;
+        section.classList.toggle('is-open');
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') section.classList.remove('is-open');
+      });
+    });
+  }
+
+  initLawnstarterLetter();
+  document.addEventListener('astro:page-load', initLawnstarterLetter);
+</script>
+
 <style>
   .lawnstarter-letter {
     --letter-frame: color-mix(in srgb, #6b5a45 10%, var(--border-strong));
     --letter-rule: color-mix(in srgb, #6b5a45 8%, var(--border));
     --letter-surface-top: color-mix(in srgb, #f7f3ea 55%, var(--bg-elevated));
     --letter-surface-bottom: color-mix(in srgb, #e8e0d4 35%, var(--bg));
+    --letter-collapsed-max: 26rem;
+    --letter-expanded-max: 55rem;
     margin-bottom: var(--space-5);
     max-width: 100%;
+    cursor: default;
   }
 
   .lawnstarter-letter__sheet {
@@ -75,6 +102,41 @@ const letter = lawnstarterLetter;
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, white 40%, transparent),
       0 1px 3px color-mix(in srgb, var(--fg) 5%, transparent);
+    overflow: hidden;
+    max-height: var(--letter-collapsed-max);
+    transition:
+      max-height 0.45s var(--easing),
+      box-shadow 0.3s ease;
+  }
+
+  .lawnstarter-letter:is(:hover, :focus-within, .is-open) .lawnstarter-letter__sheet {
+    max-height: var(--letter-expanded-max);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, white 40%, transparent),
+      0 2px 12px color-mix(in srgb, var(--fg) 8%, transparent);
+  }
+
+  .lawnstarter-letter__sheet::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4.5rem;
+    border-radius: 0 0 calc(var(--radius-sm) - 1px) calc(var(--radius-sm) - 1px);
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in srgb, var(--letter-surface-bottom) 55%, transparent) 35%,
+      var(--letter-surface-bottom)
+    );
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.35s ease;
+  }
+
+  .lawnstarter-letter:is(:hover, :focus-within, .is-open) .lawnstarter-letter__sheet::after {
+    opacity: 0;
   }
 
   .lawnstarter-letter__sheet::before {
@@ -85,6 +147,7 @@ const letter = lawnstarterLetter;
     border-radius: calc(var(--radius-sm) - 3px);
     pointer-events: none;
     opacity: 0.65;
+    z-index: 1;
   }
 
   .lawnstarter-letter__address {
@@ -144,6 +207,23 @@ const letter = lawnstarterLetter;
       --letter-rule: color-mix(in srgb, #c9a86c 6%, var(--border));
       --letter-surface-top: color-mix(in srgb, #c9a86c 4%, var(--bg-elevated));
       --letter-surface-bottom: color-mix(in srgb, #6b5a45 6%, #0a0a0a);
+    }
+
+    .lawnstarter-letter:is(:hover, :focus-within, .is-open) .lawnstarter-letter__sheet {
+      box-shadow:
+        inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
+        0 2px 12px color-mix(in srgb, black 45%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lawnstarter-letter__sheet {
+      max-height: none;
+      transition: none;
+    }
+
+    .lawnstarter-letter__sheet::after {
+      display: none;
     }
   }
 
