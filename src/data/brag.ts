@@ -54,18 +54,53 @@ export type BragPreview = {
   aggregateProjects?: boolean;
 };
 
+export type BragSummaryLink = {
+  text: string;
+  href: string;
+};
+
 export type BragClipping = {
   publication: string;
   dateline: string;
   headline: string;
   /** Supporting copy — three complete lines at default width (~180 chars); no mid-sentence clamp */
   summary: string;
+  /** Inline links matched by exact `text` in `summary` */
+  summaryLinks?: BragSummaryLink[];
   href?: string;
   /** Client recommendation — same copy as `/work/` testimonials */
   testimonial?: Testimonial;
   /** One or more visual references (project shots, work thumbs, icons) */
   preview?: BragPreview | BragPreview[];
 };
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function escapeAttr(value: string): string {
+  return escapeHtml(value).replace(/'/g, '&#39;');
+}
+
+/** Escape summary text and wrap configured phrases in external links. */
+export function bragSummaryHtml(summary: string, links?: BragSummaryLink[]): string {
+  let html = escapeHtml(summary);
+  if (!links?.length) return html;
+
+  for (const { text, href } of links) {
+    const needle = escapeHtml(text);
+    const index = html.indexOf(needle);
+    if (index === -1) continue;
+    const anchor = `<a href="${escapeAttr(href)}" target="_blank" rel="noopener noreferrer">${needle}</a>`;
+    html = html.slice(0, index) + anchor + html.slice(index + needle.length);
+  }
+
+  return html;
+}
 
 const barrettJohnsonTestimonial =
   testimonials.find((t) => t.author === 'Barrett Johnson') ?? testimonials[0]!;

@@ -25,9 +25,9 @@ export const lawnstarterClippings: BragClipping[] = [
   {
     publication: 'Webflow',
     dateline: '2018 — now',
-    headline: 'Design and build, not handoff',
+    headline: 'Figma first, then build in Webflow',
     summary:
-      'Started in Webflow in 2018; full-time on marketing sites since 2020. Local businesses, startups, and nonprofits—typically 5–15 pages that grow into larger CMS portfolios when Growth needs scale.',
+      'Started in Webflow in 2018; full-time on marketing sites since 2020. Local businesses, startups, and nonprofits—typically 5–15 pages that grow into larger CMS when marketing teams need more.',
     preview: [
       {
         src: '/images/work/david-energy/thumbnail.webp',
@@ -44,11 +44,12 @@ export const lawnstarterClippings: BragClipping[] = [
     ],
   },
   {
-    publication: 'The growth desk',
-    dateline: '2023 — 2025',
-    headline: 'Marketing sites that scale',
+    publication: 'Using Mast',
+    dateline: '2023 — now',
+    headline: 'Marketing sites that scale fast',
     summary:
-      'At Claimable, marketing demoed a new medication landing page in front of engineering—in minutes, not hours or days. Mast framework on a 12-column grid: reusable blocks so the same build logic could stretch across four brands the way Home Gnome, LawnStarter, Lawn Love, and ProBase share a foundation without drifting.',
+      'At Claimable, marketing demoed a new medication landing page in front of engineering—in minutes, not hours or days. Mast framework on a 12-column grid: reusable blocks so the same build logic could be applied to multiple brands.',
+    summaryLinks: [{ text: 'Mast framework', href: 'https://www.nocodesupply.co/mast' }],
     href: '/work/claimable/',
     preview: [
       {
@@ -66,23 +67,23 @@ export const lawnstarterClippings: BragClipping[] = [
     ],
   },
   {
-    publication: 'Building fast',
-    dateline: 'AI for assist',
-    headline: 'Webflow first, code when it helps',
+    publication: 'Custom Code',
+    dateline: '',
+    headline: 'Webflow and custom code with AI',
     summary:
-      'Matter’s sales landing page went from Figma to live Webflow in a day. When native Webflow isn’t enough, I use Claude and Cursor to draft custom JS and CSS—AI Explorer’s BIOS-style page shipped in about ten hours.',
+      'When native Webflow isn’t enough, I use Claude and Cursor to draft custom JS and CSS—AI Explorer’s BIOS-style page shipped in about ten hours. On Matter, that meant custom sliders and marketing form logic not native to Webflow.',
     preview: [
-      {
-        src: '/images/work/matter/gallery-01.webp',
-        alt: 'Matter sales landing page in Webflow',
-        href: '/work/matter/',
-        caption: 'Matter · 1 day',
-      },
       {
         src: '/images/work/ai-explorer/gallery-01.png',
         alt: 'AI Explorer BIOS-style landing page with custom code',
         href: '/work/ai-explorer/',
-        caption: 'AI Explorer · custom JS',
+        caption: 'AI Explorer',
+      },
+      {
+        src: '/images/work/matter/gallery-01.webp',
+        alt: 'Matter sales landing page in Webflow',
+        href: '/work/matter/',
+        caption: 'Matter',
       },
     ],
   },

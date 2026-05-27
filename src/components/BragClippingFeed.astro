@@ -1,5 +1,5 @@
 ---
-import type { BragClipping, BragPreview } from '../data/brag';
+import { bragSummaryHtml, type BragClipping, type BragPreview } from '../data/brag';
 
 interface Props {
   clippings: BragClipping[];
@@ -27,8 +27,12 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
           <div class="brag-item-copy">
             <p class="brag-item-kicker">
               <span class="brag-item-pub">{clip.publication}</span>
-              <span class="brag-item-kicker-dot" aria-hidden="true">·</span>
-              <time class="brag-item-date" datetime={clip.dateline}>{clip.dateline}</time>
+              {clip.dateline ? (
+                <>
+                  <span class="brag-item-kicker-dot" aria-hidden="true">·</span>
+                  <time class="brag-item-date" datetime={clip.dateline}>{clip.dateline}</time>
+                </>
+              ) : null}
             </p>
 
             {clip.href ? (
@@ -39,7 +43,11 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
               <h2 class="brag-item-title">{clip.headline}</h2>
             )}
 
-            <p class="brag-item-summary">{clip.summary}</p>
+            {clip.summaryLinks?.length ? (
+              <p class="brag-item-summary" set:html={bragSummaryHtml(clip.summary, clip.summaryLinks)} />
+            ) : (
+              <p class="brag-item-summary">{clip.summary}</p>
+            )}
           </div>
 
           {previews.length > 0 && (
