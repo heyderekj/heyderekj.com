@@ -14,9 +14,9 @@ export const lawnstarterLetter = {
   from: 'Derek Castelli',
   salutation: 'Hey LawnStarter team,',
   paragraphs: [
-    'I’m applying for the Senior Webflow Designer role because it’s the work I already do—marketing sites in Webflow where a marketing team can ship landing pages and tests without a designer or engineer.',
+    'I’m applying for the Senior Webflow Designer role because this is the type of work I already do with various other marketing teams and would like to focus on one.',
     'I’ve been in Webflow since 2018 and full-time on marketing sites since 2020, mostly with Kem Design across local businesses, startups, and health tech. I usually start in Figma for a fast first pass, then iterate in the Designer. Lately that’s meant Mast-based component libraries and CMS structures built for scale—at Claimable, marketing demoed a new medication landing page in front of engineering, and it held because the templates and collections were built for it.',
-    'What draws me to LawnStarter (something I confirmed with Rachel Vorm) is the small and nimble team where I’d imagine it’s less about process and more about just doing the work and communicating the said work.',
+    'What I like most about LawnStarter (something I confirmed with Rachel Vorm) is the small and nimble team.',
   ],
 };
 
