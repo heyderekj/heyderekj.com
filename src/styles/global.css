@@ -969,7 +969,6 @@ body.work-lightbox-open { overflow: hidden; }
   font-weight: 500;
   line-height: 1.2;
   border: 1px solid var(--border);
-  border-bottom-color: var(--border-strong);
   background: var(--glass-bg);
   color: var(--fg-soft);
   text-decoration: none;
@@ -988,7 +987,6 @@ body.work-lightbox-open { overflow: hidden; }
 main.main .intro-pill:hover {
   color: var(--accent);
   border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
-  border-bottom-color: color-mix(in srgb, var(--accent) 42%, var(--border-strong));
   background: var(--accent-soft);
   text-decoration: none;
 }
