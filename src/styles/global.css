@@ -451,7 +451,9 @@ main.main .cta,
 main.main .back-link a,
 main.main .work-link-pill,
 main.main .intro .now-line a,
-main.main .about-hero__credit-link {
+main.main .about-hero__credit-link,
+main.main .about-page .about-exp-pill--link,
+main.main .brag-page .about-exp-pill--link {
   border-bottom: none;
 }
 
@@ -1715,25 +1717,24 @@ main.main .footer-links a:hover { color: var(--accent); }
   color: var(--muted-strong);
   flex-shrink: 0;
 }
-.about-page .about-exp-pill--link {
+.about-page .about-exp-pill--link,
+.brag-page .about-exp-pill--link {
   text-decoration: none;
   color: var(--fg-soft);
   transition:
     color 0.15s ease,
     border-color 0.15s ease,
-    border-bottom-color 0.15s ease,
     background 0.15s ease;
 }
-/* Beats `main.main a` (0,2,1): slightly darker bottom edge than pill sides — reference hairline */
+/* Restore full pill box border after `main.main a` / exclusion zero the bottom edge */
 main.main .about-page .about-exp-pill--link,
 main.main .brag-page .about-exp-pill--link {
-  border-bottom: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border);
 }
 main.main .about-page .about-exp-pill--link:hover,
 main.main .brag-page .about-exp-pill--link:hover {
   color: var(--accent);
   border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
-  border-bottom-color: color-mix(in srgb, var(--accent) 42%, var(--border-strong));
   background: var(--accent-soft);
 }
 .about-page .about-exp-pill--link:hover i {
