@@ -450,6 +450,7 @@ main.main .section-title a,
 main.main .cta,
 main.main .back-link a,
 main.main .work-link-pill,
+main.main .intro-pill,
 main.main .intro .now-line a,
 main.main .about-hero__credit-link,
 main.main .about-page .about-exp-pill--link,
@@ -978,6 +979,10 @@ body.work-lightbox-open { overflow: hidden; }
     color 0.15s ease,
     border-color 0.15s ease,
     background 0.15s ease;
+}
+/* Restore full pill box border after `main.main a` / exclusion zero the bottom edge */
+main.main .intro-pill {
+  border-bottom: 1px solid var(--border);
 }
 
 .intro-pill i {
