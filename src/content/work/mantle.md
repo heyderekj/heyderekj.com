@@ -11,7 +11,6 @@ dateCompleted: 2025-07-16
 thumbnail: "/images/work/mantle/thumbnail.png"
 liveLink: "https://www.mantletherapeutics.com/"
 partnership: "Kem Design"
-partnershipWorkLink: "https://www.kemdesign.co/pitch-decks"
 soloOrAgency: "Agency"
 brief: |
   Mantle Therapeutics is a biotech company focused on rare CNS disease. Together with Kem Design, the brand started on the [pitch deck](https://www.kemdesign.co/pitch-decks)—distilling complex science into a cohesive visual narrative and introducing a geometric visual anchor their CEO called among the best decks he had seen.

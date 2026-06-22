@@ -1,10 +1,15 @@
 /** Content for `/cadence/` — curated for Cadence Brand Designer application. */
 
 export const cadenceMeta = {
-  title: 'Derek Castelli — Brand portfolio (Cadence)',
+  title: 'Derek Castelli — For Cadence',
   description:
     'Healthcare brand design, enterprise storytelling, and scalable design systems—curated for the Cadence team.',
   ogImage: '/images/work/care-continuity/thumbnail.png',
+};
+
+export const cadenceIntro = {
+  photoSrc: '/assets/about/derek-photo.jpeg',
+  photoAlt: 'Derek Castelli',
 };
 
 export const cadenceLetter = {
@@ -12,10 +17,18 @@ export const cadenceLetter = {
   from: 'Derek Castelli',
   salutation: 'Hey Cadence team,',
   paragraphs: [
-    "I'm applying for the Brand Designer role because healthcare brand work is where I've been spending most of my time lately, and Cadence is the kind of company I want to put that energy toward.",
-    "With Kem Design, I recently rebuilt Care Continuity's marketing presence for enterprise buyers—hospitals, ACOs, and health plans. We reworked the IA around patients, health systems, and providers, evolved the brand to feel more human without losing authority, and shipped modular solution pages for ED Connect, Referral IQ, Readmission IQ, and CarePath IQ in four weeks. That's the same problem Cadence faces: complex clinical outcomes that need to land with a skeptical audience.",
-    "On Claimable, I built a Mast-based Webflow system for a health tech startup selling AI-assisted insurance appeals. The site had to look credible to patients and payers while giving marketing reusable templates to launch medication pages in minutes—not days. Same muscle: translate something technical into something clear, and build a system so the team doesn't start from scratch every time.",
-    "Before agency work, I spent years in Apple Retail—and that still shapes how I work with clients. Empathy and customer support weren't buzzwords; they were how you showed up when someone needed help understanding something complicated. I bring that to every client relationship, including Claimable and Care Continuity: I'm not on the front line with patients or buyers, but I care deeply about getting their story right for the people they're trying to reach.",
-    'What draws me to Cadence is that you\'re a full clinical care delivery organization, not a software vendor pitching from the sidelines. Your mission—proactive care for people with chronic disease—and "Drivers, not passengers" especially resonates with me. I want to act before being asked and own the work end to end—and to me, that\'s how you establish trust, which, I believe, is the most important thing you can do.',
+    "My favorite part of brand design is the psychology. Not the pixels or the type pairings—the moment you find a feeling that’s good and right. Where design becomes problem solving for emotion.",
+    "That happened on Care Continuity. We’d moved from dated illustrations to real photography, vibrant gradients, and a ribbon motif for the patient–provider connection. When the client saw it they didn’t just approve the direction—they saw their own mission clearly for the first time. That reaction is the part of branding I live for.",
+    "I’ve been spending most of my time in healthcare lately. Care Continuity was an enterprise marketing rebuild for hospitals, ACOs, and health plans—reworked the IA, shipped modular solution pages, four weeks in Webflow with Mast. Claimable was AI-assisted insurance appeals that needed to look credible to both patients and payers while giving marketing self-serve templates. And Mantle was a biotech pitch deck (with Kem Design) that the CEO called among the best he’d seen—then I extended that brand to a live web presence.",
+    "Complex clinical work for skeptical audiences on tight timelines. That’s the Cadence problem.",
+    "I’ve been freelancing full-time since 2020, juggling clients across industries. I’m ready to stop juggling and go all-in on one mission—especially one with a real deadline and real impact on real lives.",
+    "Oh, and a brand that literally has rhythm in its name and logo? Evolving that would be a lot of fun.",
   ],
 };
+
+export const cadenceWhyParagraphs: string[] = [
+  `The founder of Sweetgreen once talked about how the constraints of their first physical space pushed the team to rethink everything for the better. Justin Berg was there for it—grew the design team, led the rebrand ahead of IPO, designed the store of the future. His philosophy of “deadlines are our friends” and “impact over perfection” is how I already operate. Shipping <a href="/work/care-continuity/" class="cadence-chip cadence-chip--cc"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i>Care Continuity</a> in four weeks wasn’t rushed. It was focused.`,
+  `Before agency work I spent years in Apple Retail—and that still shapes how I show up. Empathy wasn’t a buzzword; it was how you helped someone understand something complicated. I learned to read rooms, act before being asked, and own the outcome.`,
+  `At <a href="/work/claimable/" class="cadence-chip cadence-chip--claimable"><i class="ph-bold ph-shield-check" aria-hidden="true"></i>Claimable</a> I didn’t just build a site—I built a system. Mast components, CMS collections, reusable templates. Then I trained their marketing team on it—and they demoed it to engineering themselves. Assembled a new medication page in minutes. Everyone was impressed. That’s what “Drivers, not passengers” looks like to me. You own solutions end to end and never assume the work is done.`,
+  `Cadence’s mission isn’t vague. “By the end of the decade” is a real timeline attached to real lives. I can see my work helping people—not just clients, not just stakeholders—actual patients managing chronic disease. That’s the kind of thing worth driving toward.`,
+];

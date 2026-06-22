@@ -2,13 +2,14 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageTitle from '../components/PageTitle.astro';
+import CadenceToc from '../components/CadenceToc.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
 import TestimonialCarousel from '../components/TestimonialCarousel.astro';
 import { testimonials } from '../data/about';
-import { cadenceMeta, cadenceLetter } from '../data/cadence';
+import { cadenceMeta, cadenceIntro, cadenceLetter, cadenceWhyParagraphs } from '../data/cadence';
 
 const letter = cadenceLetter;
-const cadenceWorkSlugs = ['care-continuity', 'claimable'] as const;
+const cadenceWorkSlugs = ['care-continuity', 'claimable', 'mantle'] as const;
 const allWork = await getCollection('work', ({ data }) => !data.draft);
 const cadenceWork = cadenceWorkSlugs
   .map((slug) => allWork.find((entry) => entry.slug === slug))
@@ -23,37 +24,60 @@ const cadenceWork = cadenceWorkSlugs
 >
   <PageTitle path="/cadence" />
 
-  <section class="cadence-letter" aria-label="Cover letter">
-    <div class="cadence-letter__frame">
-      <div class="cadence-letter__scroll">
-        <header class="cadence-letter__address">
-          <p>
-            <span class="cadence-letter__label">To:</span>
-            {letter.to}
-          </p>
-          <p>
-            <span class="cadence-letter__label">From:</span>
-            {letter.from}
-          </p>
-        </header>
+  <CadenceToc />
 
-        <hr class="cadence-letter__rule" aria-hidden="true" />
+  <p class="cadence-intro">
+    Hey, I'm <span class="cadence-chip"><img class="cadence-chip__avatar" src={cadenceIntro.photoSrc} alt={cadenceIntro.photoAlt} width={20} height={20} decoding="async" />Derek</span>, a full-time designer in Des Moines, Iowa since 2018. Primarily working with startups and non-profits, lately focused on <span class="cadence-chip cadence-chip--health"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i>healthcare</span>. I'm applying for <strong>Brand Designer</strong>, so here's my work and why I want in.
+  </p>
 
-        <p class="cadence-letter__salutation">{letter.salutation}</p>
+  <section id="letter" class="cadence-letter" aria-label="Cover letter">
+    <div class="cadence-letter__sheet">
+      <header class="cadence-letter__address">
+        <p>
+          <span class="cadence-letter__label">To:</span>
+          {letter.to}
+        </p>
+        <p>
+          <span class="cadence-letter__label">From:</span>
+          {letter.from}
+        </p>
+      </header>
 
-        {letter.paragraphs.map((paragraph) => (
-          <p class="cadence-letter__paragraph">{paragraph}</p>
-        ))}
-      </div>
+      <hr class="cadence-letter__rule" aria-hidden="true" />
+
+      <p class="cadence-letter__salutation">{letter.salutation}</p>
+
+      {letter.paragraphs.map((paragraph) => (
+        <p class="cadence-letter__paragraph">{paragraph}</p>
+      ))}
     </div>
   </section>
 
-  <h2 class="section-title"><a href="/work/">/ related work</a></h2>
+  <h2 id="healthcare-work" class="section-title"><a href="/work/">/ healthcare work</a></h2>
   {cadenceWork.length > 0 && <FeaturedWorkGrid work={cadenceWork} preserveOrder />}
 
-  <TestimonialCarousel testimonials={testimonials} headingId="cadence-testimonials-heading" />
+  <section id="why-cadence" class="cadence-why" aria-labelledby="cadence-why-heading">
+    <h2 id="cadence-why-heading" class="section-title">/ why cadence</h2>
+    {cadenceWhyParagraphs.map((p) => (
+      <p class="cadence-why__paragraph" set:html={p} />
+    ))}
+    <p class="cadence-why__paragraph">
+      I also ship my own products. <a href="/projects/harvous/" class="cadence-chip cadence-chip--harvous"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> is a Bible notes app I designed and built with Claude. <a href="/projects/dinky/" class="cadence-chip cadence-chip--dinky"><i class="ph-bold ph-file-arrow-down" aria-hidden="true"></i>Dinky</a> is a macOS compression app. <a href="/projects/heres-my-church/" class="cadence-chip cadence-chip--church"><i class="ph-bold ph-church" aria-hidden="true"></i>Here's My Church</a> maps every Christian church in the US—designed in Figma, built in 48 hours with AI. I'm not waiting for an engineering team. I design it, then I ship it.
+    </p>
+    <p class="cadence-why__paragraph">
+      That same energy is what I'd bring to Cadence.
+    </p>
+  </section>
 
-  <nav class="cadence-footer intro-links" aria-label="More on this site">
+  <div id="recommendations">
+    <TestimonialCarousel testimonials={testimonials} headingId="cadence-testimonials-heading" />
+  </div>
+
+  <nav id="connect" class="cadence-footer intro-links" aria-label="More on this site">
+    <a href="mailto:derekj@hey.com" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      derekj@hey.com
+    </a>
     <a href="/work/" class="intro-pill">
       <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
       Work
@@ -69,19 +93,130 @@ const cadenceWork = cadenceWorkSlugs
   </nav>
 </Base>
 
+<style is:global>
+  [id="why-cadence"] .cadence-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 10px 2px 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    font-weight: 600;
+    color: var(--fg);
+    white-space: nowrap;
+    vertical-align: middle;
+    translate: 0 -1px;
+    text-decoration: none;
+  }
+
+  [id="why-cadence"] .cadence-chip[href] {
+    border-bottom: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 30%, var(--border));
+  }
+
+  [id="why-cadence"] .cadence-chip[href]:hover {
+    border-bottom: 1px solid var(--chip-color, var(--border));
+  }
+
+  [id="why-cadence"] .cadence-chip--cc {
+    --chip-color: #65a30d;
+    color: var(--chip-color);
+    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
+    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
+  }
+
+  [id="why-cadence"] .cadence-chip--cc i { font-size: 0.85em; }
+
+  [id="why-cadence"] .cadence-chip--claimable {
+    --chip-color: #9f62bf;
+    color: var(--chip-color);
+    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
+    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
+  }
+
+  [id="why-cadence"] .cadence-chip--claimable i { font-size: 0.85em; }
+</style>
+
 <style>
+  .cadence-intro {
+    margin: 0 0 var(--space-4);
+    font-size: var(--size-lead);
+    line-height: 1.55;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+
+  .cadence-intro strong {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .cadence-chip {
+    --cadence-blue: #4462ec;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 10px 2px 4px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    font-weight: 600;
+    color: var(--fg);
+    white-space: nowrap;
+    vertical-align: middle;
+    translate: 0 -1px;
+  }
+
+  .cadence-chip__avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .cadence-chip--health {
+    padding: 2px 10px 2px 8px;
+    color: var(--cadence-blue);
+    border-color: color-mix(in srgb, var(--cadence-blue) 30%, var(--border));
+    background: color-mix(in srgb, var(--cadence-blue) 6%, var(--bg-elevated));
+  }
+
+  .cadence-chip--health i {
+    font-size: 0.85em;
+  }
+
+  .cadence-chip[href] {
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 30%, var(--border));
+  }
+
+  .cadence-chip[href]:hover {
+    border-bottom: 1px solid var(--chip-color, var(--border));
+  }
+
+  .cadence-chip--harvous,
+  .cadence-chip--dinky,
+  .cadence-chip--church {
+    padding: 2px 10px 2px 8px;
+  }
+
+  .cadence-chip--harvous i,
+  .cadence-chip--dinky i,
+  .cadence-chip--church i { font-size: 0.85em; }
+
+
   .cadence-letter {
     --letter-frame: color-mix(in srgb, #6b5a45 10%, var(--border-strong));
     --letter-rule: color-mix(in srgb, #6b5a45 8%, var(--border));
     --letter-surface-top: color-mix(in srgb, #f7f3ea 55%, var(--bg-elevated));
     --letter-surface-bottom: color-mix(in srgb, #e8e0d4 35%, var(--bg));
-    --letter-scroll-max: calc(27rem - 12px);
     margin-bottom: var(--space-5);
     max-width: 100%;
   }
 
-  .cadence-letter__frame {
+  .cadence-letter__sheet {
     position: relative;
+    padding: var(--space-4) var(--space-4) var(--space-5);
     border: 1px solid var(--letter-frame);
     border-radius: var(--radius-sm);
     background: linear-gradient(180deg, var(--letter-surface-top), var(--letter-surface-bottom));
@@ -90,7 +225,7 @@ const cadenceWork = cadenceWorkSlugs
       0 1px 3px color-mix(in srgb, var(--fg) 5%, transparent);
   }
 
-  .cadence-letter__frame::before {
+  .cadence-letter__sheet::before {
     content: '';
     position: absolute;
     inset: 5px;
@@ -99,16 +234,6 @@ const cadenceWork = cadenceWorkSlugs
     pointer-events: none;
     opacity: 0.65;
     z-index: 1;
-  }
-
-  .cadence-letter__scroll {
-    position: relative;
-    z-index: 0;
-    padding: var(--space-4) var(--space-4) var(--space-5);
-    max-height: var(--letter-scroll-max);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
   }
 
   .cadence-letter__address {
@@ -169,6 +294,24 @@ const cadenceWork = cadenceWorkSlugs
       --letter-surface-top: color-mix(in srgb, #c9a86c 4%, var(--bg-elevated));
       --letter-surface-bottom: color-mix(in srgb, #6b5a45 6%, #0a0a0a);
     }
+
+  }
+
+  .cadence-why {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+
+  .cadence-why__paragraph {
+    margin: 0 0 var(--space-3);
+    font-size: var(--size-lead);
+    line-height: 1.55;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+
+  .cadence-why__paragraph:last-of-type {
+    margin-bottom: 0;
   }
 
   .cadence-footer {
