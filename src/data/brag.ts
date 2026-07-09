@@ -205,7 +205,7 @@ export const bragClippings: BragClipping[] = [
           },
           {
             title: 'Dinky 2.0',
-            href: 'https://x.com/heyderekj/status/2044833721748988188',
+            href: 'https://x.com/heyderekj/status/2044789183613460545?s=20',
             likes: '455',
             external: true,
           },
