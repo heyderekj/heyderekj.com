@@ -3,15 +3,15 @@
    ============================================================ */
 :root {
   /* Surfaces */
-  --bg: #faf9f6;
-  --bg-elevated: #f0ede7;
+  --bg: #f6f6f6;
+  --bg-elevated: #ececec;
   --bg-hover: rgba(234, 88, 12, 0.06);
 
   /* Ink */
   --fg: #1a1a1a;
   --fg-soft: #3d3d3d;
-  --muted: #8a8580;
-  --muted-strong: #6a6660;
+  --muted: #757575;
+  --muted-strong: #5c5c5c;
 
   /* Lines */
   --border: rgba(0, 0, 0, 0.08);
@@ -77,10 +77,10 @@
     --bg: #000000;
     --bg-elevated: #0d0d0d;
     --bg-hover: rgba(251, 146, 60, 0.08);
-    --fg: #f2f0ec;
-    --fg-soft: #c9c6c0;
-    --muted: #7f7c76;
-    --muted-strong: #a09d96;
+    --fg: #f0f0f0;
+    --fg-soft: #c4c4c4;
+    --muted: #8a8a8a;
+    --muted-strong: #a3a3a3;
     --border: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.14);
     --accent: #fb923c;
@@ -91,11 +91,11 @@
       var(--accent) 3%,
       color-mix(in srgb, var(--fg) 0.7%, var(--bg))
     );
-    --glass-bg: rgba(34, 30, 26, 0.64);
+    --glass-bg: rgba(28, 28, 28, 0.64);
     --glass-border: rgba(255, 255, 255, 0.1);
     --glass-shadow: 0 2px 24px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
     --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    --glass-active-bg: rgba(24, 21, 18, 0.94);
+    --glass-active-bg: rgba(18, 18, 18, 0.94);
     --highlight: rgba(250, 204, 21, 0.2);
     --code-bg: rgba(255, 255, 255, 0.05);
   }
@@ -699,7 +699,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 
 /* Same panel treatment as / activity (`.wopr-terminal` / `.wopr-section` vars) */
 .work-facts {
-  --wopr-bg: #f9f7f3;
+  --wopr-bg: #f0f0f0;
   --wopr-border: color-mix(in srgb, var(--accent) 22%, var(--border-strong));
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -720,7 +720,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 
 @media (prefers-color-scheme: dark) {
   .work-facts {
-    --wopr-bg: #0c0800;
+    --wopr-bg: #0a0a0a;
     --wopr-border: color-mix(in srgb, var(--accent) 18%, transparent);
   }
 }
@@ -1856,13 +1856,13 @@ html.orange-mode {
 
 .wopr-section {
   margin-top: var(--space-5);
-  --wopr-bg: #f9f7f3;
+  --wopr-bg: #f0f0f0;
   --wopr-border: color-mix(in srgb, var(--accent) 22%, var(--border-strong));
 }
 
 @media (prefers-color-scheme: dark) {
   .wopr-section {
-    --wopr-bg: #0c0800;
+    --wopr-bg: #0a0a0a;
     --wopr-border: color-mix(in srgb, var(--accent) 18%, transparent);
   }
 }

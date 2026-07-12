@@ -86,10 +86,10 @@ const letter = lawnstarterLetter;
 
 <style>
   .lawnstarter-letter {
-    --letter-frame: color-mix(in srgb, #6b5a45 10%, var(--border-strong));
-    --letter-rule: color-mix(in srgb, #6b5a45 8%, var(--border));
-    --letter-surface-top: color-mix(in srgb, #f7f3ea 55%, var(--bg-elevated));
-    --letter-surface-bottom: color-mix(in srgb, #e8e0d4 35%, var(--bg));
+    --letter-frame: color-mix(in srgb, #5a5a5a 10%, var(--border-strong));
+    --letter-rule: color-mix(in srgb, #5a5a5a 8%, var(--border));
+    --letter-surface-top: color-mix(in srgb, #f2f2f2 55%, var(--bg-elevated));
+    --letter-surface-bottom: color-mix(in srgb, #e0e0e0 35%, var(--bg));
     --letter-collapsed-max: 26rem;
     --letter-expanded-max: 55rem;
     margin-bottom: var(--space-5);
@@ -207,10 +207,10 @@ const letter = lawnstarterLetter;
 
   @media (prefers-color-scheme: dark) {
     .lawnstarter-letter {
-      --letter-frame: color-mix(in srgb, #c9a86c 8%, var(--border-strong));
-      --letter-rule: color-mix(in srgb, #c9a86c 6%, var(--border));
-      --letter-surface-top: color-mix(in srgb, #c9a86c 4%, var(--bg-elevated));
-      --letter-surface-bottom: color-mix(in srgb, #6b5a45 6%, #0a0a0a);
+      --letter-frame: color-mix(in srgb, #a8a8a8 8%, var(--border-strong));
+      --letter-rule: color-mix(in srgb, #a8a8a8 6%, var(--border));
+      --letter-surface-top: color-mix(in srgb, #a8a8a8 4%, var(--bg-elevated));
+      --letter-surface-bottom: color-mix(in srgb, #5a5a5a 6%, #0a0a0a);
     }
 
     .lawnstarter-letter:is(:hover, :focus-within, .is-open) .lawnstarter-letter__sheet {
