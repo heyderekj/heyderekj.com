@@ -3,26 +3,26 @@
    ============================================================ */
 :root {
   /* Surfaces */
-  --bg: #f6f6f6;
-  --bg-elevated: #ececec;
+  --bg: #fafafa;
+  --bg-elevated: #f3f3f3;
   --bg-hover: rgba(234, 88, 12, 0.06);
 
   /* Ink */
-  --fg: #1a1a1a;
-  --fg-soft: #3d3d3d;
-  --muted: #757575;
-  --muted-strong: #5c5c5c;
+  --fg: #1f1f1f;
+  --fg-soft: #4a4a4a;
+  --muted: #8c8c8c;
+  --muted-strong: #6e6e6e;
 
   /* Lines */
-  --border: rgba(0, 0, 0, 0.08);
-  --border-strong: rgba(0, 0, 0, 0.14);
+  --border: rgba(0, 0, 0, 0.05);
+  --border-strong: rgba(0, 0, 0, 0.09);
 
   /* Orange */
   --accent: #ea580c;
   --accent-hover: #f97316;
   --accent-soft: rgba(234, 88, 12, 0.1);
   /* Nav current page: barely off --bg, neutral gray (keep very subtle) */
-  --nav-active-bg: color-mix(in srgb, var(--fg) 6%, var(--bg));
+  --nav-active-bg: color-mix(in srgb, var(--fg) 4%, var(--bg));
 
   /* Liquid Glass — light */
   --glass-bg: rgba(255, 255, 255, 0.55);
@@ -33,7 +33,7 @@
   --glass-blur: blur(20px) saturate(160%);
 
   --highlight: rgba(250, 204, 21, 0.35);
-  --code-bg: rgba(0, 0, 0, 0.04);
+  --code-bg: rgba(0, 0, 0, 0.03);
 
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
@@ -689,7 +689,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 
 /* Same panel treatment as / activity (`.wopr-terminal` / `.wopr-section` vars) */
 .work-facts {
-  --wopr-bg: #f0f0f0;
+  --wopr-bg: #f4f4f4;
   --wopr-border: color-mix(in srgb, var(--accent) 22%, var(--border-strong));
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1843,7 +1843,7 @@ html.orange-mode {
 
 .wopr-section {
   margin-top: var(--space-5);
-  --wopr-bg: #f0f0f0;
+  --wopr-bg: #f4f4f4;
   --wopr-border: color-mix(in srgb, var(--accent) 22%, var(--border-strong));
 }
 
