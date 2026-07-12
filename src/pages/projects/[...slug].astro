@@ -1,7 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { formatProjectStartLabel } from '../../lib/projectStart';
+import { formatProjectStartLabel, formatProjectUpdatedLabel } from '../../lib/projectStart';
 import { displayProjectStatus } from '../../lib/projectStatus';
 import { schemaPersonId } from '../../lib/schemaIds';
 
@@ -21,8 +21,9 @@ const { project } = Astro.props;
 const { Content } = await project.render();
 
 const startLabel = formatProjectStartLabel(project);
+const updatedLabel = formatProjectUpdatedLabel(project);
 const status = project.data.status;
-const showMeta = Boolean(startLabel || status);
+const showMeta = Boolean(startLabel || updatedLabel || status);
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
 const pageUrl = new URL(`/projects/${project.slug}/`, `${siteOrigin}/`).toString();
@@ -54,7 +55,7 @@ if (project.data.url) {
       )}
       {showMeta && (
         <div class="meta project-meta">
-          {(startLabel || status) && (
+          {(startLabel || updatedLabel || status) && (
             <span class="project-meta-lead">
               {status && (
                 <span class={`detail-status detail-status--${status}`}>
@@ -62,6 +63,12 @@ if (project.data.url) {
                 </span>
               )}
               {startLabel && <span class="project-meta-start">Started {startLabel}</span>}
+              {updatedLabel && (
+                <>
+                  {startLabel && <span class="project-meta-gap">·</span>}
+                  <span class="project-meta-updated">Updated {updatedLabel}</span>
+                </>
+              )}
             </span>
           )}
         </div>
@@ -171,6 +178,16 @@ if (project.data.url) {
     .detail-status--retired {
       background: rgba(255, 255, 255, 0.04);
     }
+  }
+
+  .project-meta-start,
+  .project-meta-updated {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .project-meta-gap {
+    color: var(--muted);
+    user-select: none;
   }
 
   .project-summary {

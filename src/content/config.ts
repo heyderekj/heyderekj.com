@@ -61,6 +61,8 @@ const projects = defineCollection({
     year: z.number().optional(),
     /** Prefer this for card footer; falls back to Jan 1 of `year` if omitted */
     started: z.coerce.date().optional(),
+    /** Last meaningful update; shown when different from `started` month */
+    updated: z.coerce.date().optional(),
     role: z.string().optional(),
     stack: z.array(z.string()).optional(),
     /** From Webflow / legacy exports (e.g. App, Blog) */
@@ -68,6 +70,8 @@ const projects = defineCollection({
     /** From Webflow / legacy exports (e.g. Front Burner) */
     burnerLevel: z.string().optional(),
     image: z.string().optional(),
+    /** Square app icon for card thumbnails; falls back to `image` */
+    icon: z.string().optional(),
     featured: z.boolean().default(false),
     order: z.number().default(0),
     status: z.enum(['active', 'maintained', 'paused', 'retired']).default('active'),

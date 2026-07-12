@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { formatProjectStartLabel, projectStartTime } from '../lib/projectStart';
+import { formatProjectStartLabel, formatProjectUpdatedLabel, projectStartTime } from '../lib/projectStart';
 import { displayProjectStatus } from '../lib/projectStatus';
 
 interface Props {
@@ -14,16 +14,18 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
 <ul class="project-cards">
   {sorted.map((project) => {
     const startStr = formatProjectStartLabel(project);
+    const updatedStr = formatProjectUpdatedLabel(project);
     const stackStr = project.data.stack?.length ? project.data.stack.join(', ') : '';
+    const thumbSrc = project.data.icon ?? project.data.image;
     return (
       <li class="project-card">
         <a href={`/projects/${project.slug}/`} class="project-card-link">
           <div class="card-thumb">
-            {project.data.image ? (
+            {thumbSrc ? (
               <img
-                src={project.data.image}
+                src={thumbSrc}
                 alt={project.data.name}
-                class="card-thumb-img"
+                class={`card-thumb-img${project.data.icon ? ' card-thumb-img--icon' : ''}`}
                 loading="lazy"
                 decoding="async"
               />
@@ -43,9 +45,19 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
                     {displayProjectStatus(project.data.status)}
                   </span>
                 )}
-                {startStr && <span class="card-foot-date">{startStr}</span>}
+                {startStr && (
+                  <span class="card-foot-date">
+                    {updatedStr ? `Started ${startStr}` : startStr}
+                  </span>
+                )}
+                {updatedStr && (
+                  <>
+                    {startStr && <span class="card-foot-gap">·</span>}
+                    <span class="card-foot-date">Updated {updatedStr}</span>
+                  </>
+                )}
               </span>
-              {stackStr && (startStr || project.data.status) && (
+              {stackStr && (startStr || updatedStr || project.data.status) && (
                 <span class="card-foot-gap">·</span>
               )}
               {stackStr && <span class="card-foot-stack">{stackStr}</span>}
@@ -121,6 +133,12 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
   object-position: top center;
   display: block;
   transition: transform 0.3s ease;
+}
+
+.card-thumb-img--icon {
+  object-fit: contain;
+  padding: 10px;
+  background: var(--bg-elevated);
 }
 
 :global(main.main) .project-card-link:hover .card-thumb-img {

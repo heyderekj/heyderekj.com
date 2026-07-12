@@ -1,18 +1,20 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { formatProjectStartLabel, projectStartTime } from '../lib/projectStart';
+import { formatProjectStartLabel, formatProjectUpdatedLabel, projectStartTime } from '../lib/projectStart';
 import { displayProjectStatus } from '../lib/projectStatus';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
-  /** Hides tagline and stack; keeps title + status/date row. */
-  variant?: 'default' | 'compact';
+  /** `default` = thumb + tagline; `compact` = thumb + meta; `row` = condensed inline row. */
+  variant?: 'default' | 'compact' | 'row';
   /** `desc` = newest first (default); `asc` = oldest first. */
   startedOrder?: 'asc' | 'desc';
 }
 
 const { projects, variant = 'default', startedOrder = 'desc' } = Astro.props;
 const compact = variant === 'compact';
+const isRow = variant === 'row';
+const showThumb = !isRow;
 
 const sorted = [...projects].sort((a, b) => {
   const ta = projectStartTime(a);
@@ -20,37 +22,81 @@ const sorted = [...projects].sort((a, b) => {
   return startedOrder === 'asc' ? ta - tb : tb - ta;
 });
 ---
-<ul class="project-cards">
+<ul class={`project-cards${isRow ? ' project-cards--row' : ''}`}>
   {sorted.map((project) => {
     const startStr = formatProjectStartLabel(project);
+    const updatedStr = formatProjectUpdatedLabel(project);
     const stackStr =
       project.data.stack && project.data.stack.length > 0 ? project.data.stack.join(', ') : '';
+    const thumbSrc = project.data.icon ?? project.data.image;
+    const isIcon = Boolean(project.data.icon);
     const showFoot = compact
-      ? Boolean(startStr || project.data.status)
-      : Boolean(startStr || project.data.status || stackStr);
+      ? Boolean(startStr || updatedStr || project.data.status)
+      : Boolean(startStr || updatedStr || project.data.status || stackStr);
+
+    if (isRow) {
+      return (
+        <li class="project-card">
+          <a href={`/projects/${project.slug}/`} class="project-card-link project-card-link--row">
+            <span class="card-name">{project.data.name}</span>
+            {startStr && <span class="card-row-date">{startStr}</span>}
+          </a>
+        </li>
+      );
+    }
+
     return (
       <li class="project-card">
-        <a href={`/projects/${project.slug}/`} class="project-card-link">
-          <span class="card-name">{project.data.name}</span>
-          {!compact && <p class="card-tagline">{project.data.tagline}</p>}
-          {showFoot && (
-            <p class="card-foot">
-              {(startStr || project.data.status) && (
-                <span class="card-foot-lead">
-                  {project.data.status && (
-                    <span class={`card-status card-status--${project.data.status}`}>
-                      {displayProjectStatus(project.data.status)}
-                    </span>
-                  )}
-                  {startStr && <span class="card-foot-date">{startStr}</span>}
-                </span>
+        <a href={`/projects/${project.slug}/`} class="project-card-link project-card-link--media">
+          {showThumb && (
+            <div class="card-thumb">
+              {thumbSrc ? (
+                <img
+                  src={thumbSrc}
+                  alt={project.data.name}
+                  class={`card-thumb-img${isIcon ? ' card-thumb-img--icon' : ''}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <div class="card-thumb-placeholder" aria-hidden="true">
+                  {project.data.name[0]}
+                </div>
               )}
-              {!compact && stackStr && (startStr || project.data.status) && (
-                <span class="card-foot-gap">·</span>
-              )}
-              {!compact && stackStr && <span class="card-foot-stack">{stackStr}</span>}
-            </p>
+            </div>
           )}
+          <div class="card-body">
+            <span class="card-name">{project.data.name}</span>
+            {!compact && <p class="card-tagline">{project.data.tagline}</p>}
+            {showFoot && (
+              <p class="card-foot">
+                {(startStr || updatedStr || project.data.status) && (
+                  <span class="card-foot-lead">
+                    {project.data.status && (
+                      <span class={`card-status card-status--${project.data.status}`}>
+                        {displayProjectStatus(project.data.status)}
+                      </span>
+                    )}
+                    {startStr && (
+                      <span class="card-foot-date">
+                        {updatedStr ? `Started ${startStr}` : startStr}
+                      </span>
+                    )}
+                    {updatedStr && (
+                      <>
+                        {startStr && <span class="card-foot-gap">·</span>}
+                        <span class="card-foot-date">Updated {updatedStr}</span>
+                      </>
+                    )}
+                  </span>
+                )}
+                {!compact && stackStr && (startStr || updatedStr || project.data.status) && (
+                  <span class="card-foot-gap">·</span>
+                )}
+                {!compact && stackStr && <span class="card-foot-stack">{stackStr}</span>}
+              </p>
+            )}
+          </div>
         </a>
       </li>
     );
@@ -76,20 +122,25 @@ const sorted = [...projects].sort((a, b) => {
 /* :global(main) beats `main.main a` hairline so full card border (incl. bottom) wins. */
 :global(main.main) .project-card-link {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-3);
   border-radius: var(--radius-md);
   border: 1px solid transparent;
   background: transparent;
   text-decoration: none;
   color: inherit;
-  min-height: 100%;
   box-sizing: border-box;
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+/* Media card: thumbnail + body (front / back / simmering) */
+:global(main.main) .project-card-link--media {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  min-height: 100%;
 }
 
 :global(main.main) .project-card-link:focus-visible {
@@ -106,6 +157,55 @@ const sorted = [...projects].sort((a, b) => {
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 
+/* Thumbnail */
+.card-thumb {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+
+.card-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.card-thumb-img--icon {
+  object-fit: contain;
+  padding: 7px;
+  background: var(--bg-elevated);
+}
+
+:global(main.main) .project-card-link:hover .card-thumb-img {
+  transform: scale(1.05);
+}
+
+.card-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--muted);
+  user-select: none;
+}
+
+.card-body {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
 .card-name {
   font-size: var(--size-body);
   font-weight: 600;
@@ -117,6 +217,33 @@ const sorted = [...projects].sort((a, b) => {
 
 :global(main.main) .project-card-link:hover .card-name {
   color: var(--accent);
+}
+
+/* Condensed inline row (retired) */
+.project-cards--row {
+  gap: 0;
+}
+
+:global(main.main) .project-card-link--row {
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 6px var(--space-3);
+}
+
+.project-card-link--row .card-name {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-row-date {
+  flex-shrink: 0;
+  font-size: var(--size-meta);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .card-status {

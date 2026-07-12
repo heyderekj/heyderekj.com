@@ -5,11 +5,13 @@ summary: Human-in-the-loop design review for agentic workflows—upload UI scree
 url: https://revisemy.com
 year: 2024
 started: 2024-09-01
+updated: 2026-07-01
 category: App
 burnerLevel: Front Burner
 role: Designer & builder
 stack: [Laravel, Livewire, Flux, MCP]
 image: /assets/images/projects/revisemy-og.svg
+icon: /assets/images/projects/revisemy-app-icon.png
 featured: true
 order: 2
 status: active
