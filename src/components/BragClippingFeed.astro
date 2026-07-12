@@ -167,8 +167,8 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
     margin: 0;
     min-width: 0;
     border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-    background: var(--bg);
+    border: 1px solid transparent;
+    background: transparent;
     padding: var(--space-3);
     box-sizing: border-box;
     transition:
@@ -181,7 +181,7 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
     background: var(--glass-active-bg);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    border-color: var(--glass-border);
+    border-color: transparent;
     box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
   }
 
@@ -210,14 +210,14 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
     color: inherit;
     border-radius: var(--radius-md);
     overflow: visible;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    transition: border-color 0.15s ease, transform 0.15s ease;
+    border: 1px solid transparent;
+    background: transparent;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
   .brag-preview:hover {
-    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
     transform: translateY(-1px);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
   }
 
   .brag-preview-media {

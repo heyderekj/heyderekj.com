@@ -151,6 +151,12 @@ if (project.data.url) {
     border: 1px solid rgba(234, 179, 8, 0.4);
   }
 
+  .detail-status--maintained {
+    color: var(--muted-strong);
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border);
+  }
+
   .detail-status--retired {
     color: var(--muted);
     background: rgba(0, 0, 0, 0.04);
@@ -158,6 +164,10 @@ if (project.data.url) {
   }
 
   @media (prefers-color-scheme: dark) {
+    .detail-status--maintained {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
     .detail-status--retired {
       background: rgba(255, 255, 255, 0.04);
     }
@@ -176,7 +186,6 @@ if (project.data.url) {
     margin-bottom: var(--space-4);
     border-radius: var(--radius-md);
     overflow: hidden;
-    border: 1px solid var(--border);
   }
 
   .project-detail-img {

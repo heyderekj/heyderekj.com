@@ -80,8 +80,8 @@ const sorted = [...projects].sort((a, b) => {
   gap: var(--space-2);
   padding: var(--space-3) var(--space-3);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--bg);
+  border: 1px solid transparent;
+  background: transparent;
   text-decoration: none;
   color: inherit;
   min-height: 100%;
@@ -102,7 +102,7 @@ const sorted = [...projects].sort((a, b) => {
   background-color: var(--glass-active-bg);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  border-color: var(--glass-border);
+  border-color: transparent;
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 
@@ -140,12 +140,21 @@ const sorted = [...projects].sort((a, b) => {
   background: rgba(234, 179, 8, 0.12);
 }
 
+.card-status--maintained {
+  color: var(--muted-strong);
+  background: rgba(0, 0, 0, 0.05);
+}
+
 .card-status--retired {
   color: var(--muted);
   background: rgba(0, 0, 0, 0.04);
 }
 
 @media (prefers-color-scheme: dark) {
+  .card-status--maintained {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
   .card-status--retired {
     background: rgba(255, 255, 255, 0.04);
   }

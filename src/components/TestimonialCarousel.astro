@@ -187,7 +187,7 @@ const count = testimonials.length;
     width: 2rem;
     height: 2rem;
     padding: 0;
-    border: 1px solid var(--border);
+    border: 1px solid transparent;
     border-radius: var(--radius-pill);
     background: var(--glass-bg);
     color: var(--muted-strong);
@@ -200,7 +200,7 @@ const count = testimonials.length;
 
   .testimonial-carousel__btn:hover {
     color: var(--accent);
-    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+    border-color: transparent;
     background: var(--accent-soft);
   }
 

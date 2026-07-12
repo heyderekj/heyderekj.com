@@ -39,7 +39,7 @@ const recentPosts = (await getCollection('posts', ({ data }) => !data.draft))
 const highlightedWork = (await getCollection('work', ({ data }) => !data.draft && data.highlight)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
-const homeHighlightedWork = highlightedWork.filter(({ slug }) => ['claimable', 'exodus51'].includes(slug));
+const homeHighlightedWork = highlightedWork.filter(({ slug }) => ['claimable', 'care-continuity'].includes(slug));
 
 const allProjects = await getCollection('projects', ({ data }) => !data.draft);
 /** Front Burner only — active projects shown on the home page. */
@@ -47,8 +47,10 @@ const homeGridProjects = allProjects
   .filter((p) => p.data.status === 'active')
   .sort((a, b) => projectStartTime(b) - projectStartTime(a));
 const pausedProjects = allProjects.filter((p) => p.data.status === 'paused');
+const maintainedProjects = allProjects.filter((p) => p.data.status === 'maintained');
 const retiredProjects = allProjects.filter((p) => p.data.status === 'retired');
 const pausedCount = pausedProjects.length;
+const maintainedCount = maintainedProjects.length;
 const retiredCount = retiredProjects.length;
 
 const githubData = await fetchGitHubActivity();
@@ -91,7 +93,7 @@ const githubData = await fetchGitHubActivity();
   ) : (
     <p style="color: var(--muted);">No active projects yet.</p>
   )}
-  {(pausedCount > 0 || retiredCount > 0) && (
+  {(pausedCount > 0 || maintainedCount > 0 || retiredCount > 0) && (
     <ul class="entries home-status-summaries">
       {pausedCount > 0 && (
         <li>
@@ -101,6 +103,18 @@ const githubData = await fetchGitHubActivity();
             </span>
             <span class="entry-title home-status-summary-title">
               {pausedCount} back-burner {pausedCount === 1 ? 'project' : 'projects'}
+            </span>
+          </a>
+        </li>
+      )}
+      {maintainedCount > 0 && (
+        <li>
+          <a href="/projects/#simmering" class="entry-link home-status-summary-link">
+            <span class="home-status-summary-pill-wrap">
+              <span class="card-status card-status--maintained">Simmering</span>
+            </span>
+            <span class="entry-title home-status-summary-title">
+              {maintainedCount} simmering {maintainedCount === 1 ? 'project' : 'projects'}
             </span>
           </a>
         </li>
@@ -169,12 +183,21 @@ const githubData = await fetchGitHubActivity();
     background: rgba(234, 179, 8, 0.12);
   }
 
+  .card-status--maintained {
+    color: var(--muted-strong);
+    background: rgba(0, 0, 0, 0.05);
+  }
+
   .card-status--retired {
     color: var(--muted);
     background: rgba(0, 0, 0, 0.04);
   }
 
   @media (prefers-color-scheme: dark) {
+    .card-status--maintained {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
     .card-status--retired {
       background: rgba(255, 255, 255, 0.04);
     }

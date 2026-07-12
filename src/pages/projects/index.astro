@@ -9,6 +9,9 @@ const projects = await getCollection('projects', ({ data }) => !data.draft);
 const activeProjects = projects
   .filter((p) => p.data.status === 'active')
   .sort((a, b) => projectStartTime(b) - projectStartTime(a));
+const maintainedProjects = projects
+  .filter((p) => p.data.status === 'maintained')
+  .sort((a, b) => projectStartTime(b) - projectStartTime(a));
 const pausedProjects = projects
   .filter((p) => p.data.status === 'paused')
   .sort((a, b) => projectStartTime(b) - projectStartTime(a));
@@ -27,6 +30,16 @@ const retiredProjects = projects
       <h2 class="projects-section-title" id="front-burner">Front Burner</h2>
       <p class="projects-section-lede">Current focus—shipping and active builds.</p>
       <ProjectList projects={activeProjects} />
+    </>
+  )}
+
+  {maintainedProjects.length > 0 && (
+    <>
+      <h2 class="projects-section-title" id="simmering">Simmering</h2>
+      <p class="projects-section-lede">
+        Live projects kept warm—maintained and open, but not the current focus.
+      </p>
+      <ProjectList projects={maintainedProjects} variant="compact" startedOrder="desc" />
     </>
   )}
 

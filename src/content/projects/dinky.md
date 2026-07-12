@@ -10,7 +10,8 @@ stack: [Swift]
 image: /assets/images/projects/dinky-og.png
 featured: true
 order: 3
-status: active
+status: paused
+burnerLevel: Back Burner
 ---
 
 ## About

@@ -10,7 +10,8 @@ stack: [Swift]
 image: /assets/images/projects/binky-sorting-2.webp
 featured: true
 order: 4
-status: active
+status: paused
+burnerLevel: Back Burner
 ---
 
 ## About

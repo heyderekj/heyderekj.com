@@ -80,8 +80,8 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
   gap: var(--space-3);
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--bg);
+  border: 1px solid transparent;
+  background: transparent;
   text-decoration: none;
   color: inherit;
   box-sizing: border-box;
@@ -100,7 +100,7 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
   background-color: var(--glass-active-bg);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  border-color: var(--glass-border);
+  border-color: transparent;
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 
@@ -223,6 +223,11 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
 .card-status--paused {
   color: var(--muted-strong);
   background: rgba(234, 179, 8, 0.12);
+}
+
+.card-status--maintained {
+  color: var(--muted-strong);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* Arrow */

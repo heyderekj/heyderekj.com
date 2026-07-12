@@ -21,12 +21,8 @@
   --accent: #ea580c;
   --accent-hover: #f97316;
   --accent-soft: rgba(234, 88, 12, 0.1);
-  /* Nav current page: barely off --bg, whisper of --accent (keep very subtle) */
-  --nav-active-bg: color-mix(
-    in srgb,
-    var(--accent) 4%,
-    color-mix(in srgb, var(--fg) 1.4%, var(--bg))
-  );
+  /* Nav current page: barely off --bg, neutral gray (keep very subtle) */
+  --nav-active-bg: color-mix(in srgb, var(--fg) 6%, var(--bg));
 
   /* Liquid Glass — light */
   --glass-bg: rgba(255, 255, 255, 0.55);
@@ -86,11 +82,7 @@
     --accent: #fb923c;
     --accent-hover: #fdba74;
     --accent-soft: rgba(251, 146, 60, 0.12);
-    --nav-active-bg: color-mix(
-      in srgb,
-      var(--accent) 3%,
-      color-mix(in srgb, var(--fg) 0.7%, var(--bg))
-    );
+    --nav-active-bg: color-mix(in srgb, var(--fg) 7%, var(--bg));
     --glass-bg: rgba(28, 28, 28, 0.64);
     --glass-border: rgba(255, 255, 255, 0.1);
     --glass-shadow: 0 2px 24px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
@@ -467,7 +459,6 @@ code, kbd, samp {
   background: var(--code-bg);
   padding: 2px 6px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
 }
 pre {
   font-family: var(--font-mono);
@@ -477,7 +468,6 @@ pre {
   font-size: 13px;
   line-height: 1.6;
   background: var(--code-bg);
-  border: 1px solid var(--border);
 }
 pre code { background: transparent; padding: 0; border: 0; border-radius: 0; }
 
@@ -740,7 +730,6 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   width: 100%;
   height: auto;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
   background: var(--bg-elevated);
 }
 
@@ -756,7 +745,6 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   width: 100%;
   height: auto;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
   background: var(--bg-elevated);
 }
 .work-devices figcaption {
@@ -795,7 +783,6 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   display: block;
   width: 100%;
   height: auto;
-  border: 1px solid var(--border);
   background: var(--bg-elevated);
   border-radius: inherit;
   transition: transform 0.2s var(--easing);
@@ -971,7 +958,7 @@ body.work-lightbox-open { overflow: hidden; }
   font-size: var(--size-meta);
   font-weight: 500;
   line-height: 1.2;
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   background: var(--glass-bg);
   color: var(--fg-soft);
   text-decoration: none;
@@ -982,7 +969,7 @@ body.work-lightbox-open { overflow: hidden; }
 }
 /* Restore full pill box border after `main.main a` / exclusion zero the bottom edge */
 main.main .intro-pill {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid transparent;
 }
 
 .intro-pill i {
@@ -993,7 +980,7 @@ main.main .intro-pill {
 
 main.main .intro-pill:hover {
   color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-color: transparent;
   background: var(--accent-soft);
   text-decoration: none;
 }
@@ -1168,7 +1155,7 @@ main.main .cta {
   font-size: var(--size-meta);
   padding: 6px 14px;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(234, 88, 12, 0.2);
+  border: 1px solid transparent;
   background: rgba(234, 88, 12, 0.06);
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -1177,14 +1164,14 @@ main.main .cta:hover {
   color: var(--accent-hover);
   text-decoration: none;
   background: rgba(234, 88, 12, 0.1);
-  border-color: rgba(234, 88, 12, 0.35);
+  border-color: transparent;
   box-shadow: 0 2px 8px rgba(234, 88, 12, 0.12);
 }
 main.main .cta:hover .arrow { transform: translateX(3px); }
 
 @media (prefers-color-scheme: dark) {
-  main.main .cta { border-color: rgba(251, 146, 60, 0.2); background: rgba(251, 146, 60, 0.07); }
-  main.main .cta:hover { background: rgba(251, 146, 60, 0.12); border-color: rgba(251, 146, 60, 0.35); box-shadow: 0 2px 8px rgba(251, 146, 60, 0.1); }
+  main.main .cta { border-color: transparent; background: rgba(251, 146, 60, 0.07); }
+  main.main .cta:hover { background: rgba(251, 146, 60, 0.12); border-color: transparent; box-shadow: 0 2px 8px rgba(251, 146, 60, 0.1); }
 }
 
 .back-link { margin-top: var(--space-5); font-size: var(--size-meta); }
@@ -1196,7 +1183,7 @@ main.main .work-link-pill {
   color: var(--muted-strong);
   padding: 6px 12px;
   border-radius: var(--radius-pill);
-  border: 1px solid var(--border-strong);
+  border: 1px solid transparent;
   background: var(--glass-bg);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
@@ -1218,7 +1205,7 @@ main.main .back-link a:hover,
 main.main .work-link-pill:hover {
   color: var(--accent);
   background: var(--glass-active-bg);
-  border-color: rgba(234, 88, 12, 0.25);
+  border-color: transparent;
   text-decoration: none;
 }
 main.main .back-link a:hover .arrow { transform: translateX(-3px); }
@@ -1623,8 +1610,8 @@ main.main .footer-links a:hover { color: var(--accent); }
 .brag-page .brag-now,
 .brag-page .brag-stats-panel--aggregate {
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--bg);
+  border: 1px solid transparent;
+  background: transparent;
   padding: var(--space-3);
   box-sizing: border-box;
   transition:
@@ -1640,7 +1627,7 @@ main.main .footer-links a:hover { color: var(--accent); }
   background: var(--glass-active-bg);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  border-color: var(--glass-border);
+  border-color: transparent;
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 .about-page .about-exp-group__title,
@@ -1712,7 +1699,7 @@ main.main .footer-links a:hover { color: var(--accent); }
   font-size: var(--size-meta);
   font-weight: 500;
   line-height: 1.2;
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   background: var(--glass-bg);
   color: var(--fg-soft);
 }
@@ -1734,12 +1721,12 @@ main.main .footer-links a:hover { color: var(--accent); }
 /* Restore full pill box border after `main.main a` / exclusion zero the bottom edge */
 main.main .about-page .about-exp-pill--link,
 main.main .brag-page .about-exp-pill--link {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid transparent;
 }
 main.main .about-page .about-exp-pill--link:hover,
 main.main .brag-page .about-exp-pill--link:hover {
   color: var(--accent);
-  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-color: transparent;
   background: var(--accent-soft);
 }
 .about-page .about-exp-pill--link:hover i {
@@ -1766,8 +1753,8 @@ main.main .brag-page .about-exp-pill--link:hover {
 }
 .work-testimonial-card {
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--bg);
+  border: 1px solid transparent;
+  background: transparent;
   padding: var(--space-3);
   transition:
     background 0.2s ease,
@@ -1778,7 +1765,7 @@ main.main .brag-page .about-exp-pill--link:hover {
   background: var(--glass-active-bg);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  border-color: var(--glass-border);
+  border-color: transparent;
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 .work-testimonial-quote {
