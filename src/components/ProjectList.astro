@@ -137,7 +137,7 @@ const sorted = [...projects].sort((a, b) => {
 /* Media card: thumbnail + body (front / back / simmering) */
 :global(main.main) .project-card-link--media {
   flex-direction: row;
-  align-items: center;
+  align-items: stretch;
   gap: var(--space-3);
   padding: var(--space-3);
   min-height: 100%;
@@ -157,11 +157,17 @@ const sorted = [...projects].sort((a, b) => {
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 
-/* Thumbnail */
+/* Thumbnail — matches content height, stays square, capped */
 .card-thumb {
   flex-shrink: 0;
-  width: 48px;
-  height: 48px;
+  align-self: stretch;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  width: auto;
+  min-width: 56px;
+  min-height: 56px;
+  max-width: 80px;
+  max-height: 80px;
   border-radius: var(--radius-sm);
   overflow: hidden;
   background: var(--bg-elevated);
@@ -178,7 +184,7 @@ const sorted = [...projects].sort((a, b) => {
 
 .card-thumb-img--icon {
   object-fit: contain;
-  padding: 7px;
+  padding: 12%;
   background: var(--bg-elevated);
 }
 
