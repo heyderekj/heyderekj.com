@@ -3,26 +3,26 @@
    ============================================================ */
 :root {
   /* Surfaces */
-  --bg: #fafafa;
-  --bg-elevated: #f3f3f3;
+  --bg: #fcfcfc;
+  --bg-elevated: #f6f6f6;
   --bg-hover: rgba(234, 88, 12, 0.06);
 
   /* Ink */
-  --fg: #1f1f1f;
-  --fg-soft: #4a4a4a;
-  --muted: #8c8c8c;
-  --muted-strong: #6e6e6e;
+  --fg: #222222;
+  --fg-soft: #545454;
+  --muted: #9a9a9a;
+  --muted-strong: #787878;
 
   /* Lines */
-  --border: rgba(0, 0, 0, 0.05);
-  --border-strong: rgba(0, 0, 0, 0.09);
+  --border: rgba(0, 0, 0, 0.04);
+  --border-strong: rgba(0, 0, 0, 0.07);
 
   /* Orange */
   --accent: #ea580c;
   --accent-hover: #f97316;
   --accent-soft: rgba(234, 88, 12, 0.1);
   /* Nav current page: barely off --bg, neutral gray (keep very subtle) */
-  --nav-active-bg: color-mix(in srgb, var(--fg) 4%, var(--bg));
+  --nav-active-bg: color-mix(in srgb, var(--fg) 2.5%, var(--bg));
 
   /* Liquid Glass — light */
   --glass-bg: rgba(255, 255, 255, 0.55);
@@ -82,7 +82,7 @@
     --accent: #fb923c;
     --accent-hover: #fdba74;
     --accent-soft: rgba(251, 146, 60, 0.12);
-    --nav-active-bg: color-mix(in srgb, var(--fg) 7%, var(--bg));
+    --nav-active-bg: color-mix(in srgb, var(--fg) 5%, var(--bg));
     --glass-bg: rgba(28, 28, 28, 0.64);
     --glass-border: rgba(255, 255, 255, 0.1);
     --glass-shadow: 0 2px 24px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);

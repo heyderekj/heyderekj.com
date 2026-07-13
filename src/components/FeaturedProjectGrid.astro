@@ -88,7 +88,7 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
 :global(main.main) .project-card-link {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: stretch;
   gap: var(--space-3);
   padding: var(--space-3);
   border-radius: var(--radius-md);
@@ -116,14 +116,16 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
 }
 
-/* Thumbnail */
+/* Thumbnail — matches content height, stays square */
 .card-thumb {
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+  align-self: stretch;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  width: auto;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background: var(--border);
+  background: var(--bg-elevated);
 }
 
 .card-thumb-img {
@@ -137,7 +139,7 @@ const sorted = [...projects].sort((a, b) => projectStartTime(b) - projectStartTi
 
 .card-thumb-img--icon {
   object-fit: contain;
-  padding: 10px;
+  padding: 12%;
   background: var(--bg-elevated);
 }
 
