@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageTitle from '../components/PageTitle.astro';
-import CadenceToc from '../components/CadenceToc.astro';
+import ApplicationToc from '../components/ApplicationToc.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
 import TestimonialCarousel from '../components/TestimonialCarousel.astro';
 import { testimonials } from '../data/about';
@@ -14,6 +14,14 @@ const allWork = await getCollection('work', ({ data }) => !data.draft);
 const cadenceWork = cadenceWorkSlugs
   .map((slug) => allWork.find((entry) => entry.slug === slug))
   .filter((entry): entry is NonNullable<typeof entry> => entry != null);
+
+const tocItems = [
+  { id: 'letter', label: 'Letter' },
+  { id: 'healthcare-work', label: 'Healthcare work' },
+  { id: 'why-cadence', label: 'Why Cadence' },
+  { id: 'recommendations', label: 'Recommendations' },
+  { id: 'connect', label: 'Connect' },
+];
 ---
 
 <Base
@@ -24,7 +32,7 @@ const cadenceWork = cadenceWorkSlugs
 >
   <PageTitle path="/cadence" />
 
-  <CadenceToc />
+  <ApplicationToc items={tocItems} />
 
   <p class="cadence-intro">
     Hey, I'm <span class="cadence-chip"><img class="cadence-chip__avatar" src={cadenceIntro.photoSrc} alt={cadenceIntro.photoAlt} width={20} height={20} decoding="async" />Derek</span>, a full-time designer in Des Moines, Iowa since 2018. Primarily working with startups and non-profits, lately focused on <span class="cadence-chip cadence-chip--health"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i>healthcare</span>. I'm applying for <strong>Brand Designer</strong>, so here's my work and why I want in.

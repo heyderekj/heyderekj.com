@@ -1,0 +1,507 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageTitle from '../components/PageTitle.astro';
+import ApplicationToc from '../components/ApplicationToc.astro';
+import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
+import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
+import TestimonialCarousel from '../components/TestimonialCarousel.astro';
+import { testimonials } from '../data/about';
+import {
+  customerioMeta,
+  customerioIntro,
+  customerioLetter,
+  customerioLetterAiNotes,
+  customerioProofLead,
+  customerioProofBlocks,
+  customerioProofProjectSlugs,
+  customerioFoundationsLead,
+  customerioFoundationsParagraphs,
+  customerioWhyParagraphs,
+} from '../data/customerio';
+
+const letter = customerioLetter;
+const letterBeforeAiNotes = letter.paragraphs.slice(0, 4);
+const letterAfterAiNotes = letter.paragraphs.slice(4);
+
+const allProjects = await getCollection('projects', ({ data }) => !data.draft);
+const proofProjects = customerioProofProjectSlugs
+  .map((slug) => allProjects.find((entry) => entry.slug === slug))
+  .filter((entry): entry is NonNullable<typeof entry> => entry != null);
+
+const workSlugs = ['claimable', 'care-continuity'] as const;
+const allWork = await getCollection('work', ({ data }) => !data.draft);
+const foundationWork = workSlugs
+  .map((slug) => allWork.find((entry) => entry.slug === slug))
+  .filter((entry): entry is NonNullable<typeof entry> => entry != null);
+
+const tocItems = [
+  { id: 'letter', label: 'Letter to Matt' },
+  { id: 'proof', label: 'Proof' },
+  { id: 'foundations', label: 'Foundations' },
+  { id: 'why-customerio', label: 'Why Customer.io' },
+  { id: 'recommendations', label: 'Recommendations' },
+  { id: 'connect', label: 'Connect' },
+];
+---
+
+<Base
+  title={customerioMeta.title}
+  description={customerioMeta.description}
+  ogImage={customerioMeta.ogImage}
+  noindex={true}
+>
+  <PageTitle path="/customerio" />
+
+  <ApplicationToc items={tocItems} />
+
+  <p class="cio-intro">
+    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" src={customerioIntro.photoSrc} alt={customerioIntro.photoAlt} width={18} height={18} decoding="async" />Derek</span>, a designer in the Des Moines, Iowa area. I ship websites and build products on the side. I'm applying for <strong>Senior Product Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-lightning" aria-hidden="true"></i>Customer.io</span>. This is the websites-into-product move I’ve been aiming for, and it feels like the right time and company.
+  </p>
+
+  <section id="letter" class="cio-letter" aria-label="Cover letter">
+    <div class="cio-letter__sheet">
+      <header class="cio-letter__address">
+        <p>
+          <span class="cio-letter__label">To:</span>
+          {letter.to}
+        </p>
+        <p>
+          <span class="cio-letter__label">From:</span>
+          {letter.from}
+        </p>
+      </header>
+
+      <hr class="cio-letter__rule" aria-hidden="true" />
+
+      <p class="cio-letter__salutation">{letter.salutation}</p>
+
+      {letterBeforeAiNotes.map((paragraph) => (
+        <p class="cio-letter__paragraph">{paragraph}</p>
+      ))}
+
+      <aside class="cio-letter__ai-notes" aria-label="Writing on AI">
+        <p class="cio-letter__ai-notes-lead">{customerioLetterAiNotes.lead}</p>
+        <ol class="cio-letter__ai-notes-list">
+          {customerioLetterAiNotes.posts.map((post) => (
+            <li>
+              <a href={post.href}>
+                <span>{post.title}</span>
+                <i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </aside>
+
+      {letterAfterAiNotes.map((paragraph) => (
+        <p class="cio-letter__paragraph">{paragraph}</p>
+      ))}
+
+      <p class="cio-letter__signoff">{letter.signoff}</p>
+    </div>
+  </section>
+
+  <section id="proof" class="cio-proof" aria-labelledby="cio-proof-heading">
+    <h2 id="cio-proof-heading" class="section-title"><a href="/projects/">/ proof</a></h2>
+    <p class="cio-section-lead">{customerioProofLead}</p>
+    {customerioProofBlocks.map((block) => (
+      <>
+        {block.figure && (
+          <figure class="cio-figure">
+            <img
+              src={block.figure.src}
+              alt={block.figure.alt}
+              class="cio-figure__img"
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption class="cio-figure__caption">{block.figure.caption}</figcaption>
+          </figure>
+        )}
+        <p class="cio-body" set:html={block.html} />
+      </>
+    ))}
+    {proofProjects.length > 0 && (
+      <FeaturedProjectGrid projects={proofProjects} preserveOrder variant="work" />
+    )}
+  </section>
+
+  <section id="foundations" class="cio-foundations" aria-labelledby="cio-foundations-heading">
+    <h2 id="cio-foundations-heading" class="section-title">/ foundations</h2>
+    <p class="cio-section-lead">{customerioFoundationsLead}</p>
+    {customerioFoundationsParagraphs.map((p) => (
+      <p class="cio-body" set:html={p} />
+    ))}
+    {foundationWork.length > 0 && <FeaturedWorkGrid work={foundationWork} preserveOrder />}
+  </section>
+
+  <section id="why-customerio" class="cio-why" aria-labelledby="cio-why-heading">
+    <h2 id="cio-why-heading" class="section-title">/ why customer.io</h2>
+    {customerioWhyParagraphs.map((p) => (
+      <p class="cio-body" set:html={p} />
+    ))}
+  </section>
+
+  <div id="recommendations">
+    <TestimonialCarousel testimonials={testimonials} headingId="cio-testimonials-heading" />
+  </div>
+
+  <nav id="connect" class="cio-footer intro-links" aria-label="More on this site">
+    <a href="mailto:derekj@hey.com" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      derekj@hey.com
+    </a>
+    <a href="/work/" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      Work
+    </a>
+    <a href="/projects/" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      Projects
+    </a>
+    <a href="/posts/" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      Posts
+    </a>
+  </nav>
+</Base>
+
+<style is:global>
+  [id="proof"] .cio-chip {
+    display: inline;
+    padding: 0.12em 0.5em 0.12em 0.35em;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    font-size: 0.94em;
+    font-weight: 600;
+    line-height: inherit;
+    color: var(--fg);
+    white-space: nowrap;
+    text-decoration: none;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  [id="proof"] .cio-chip[href] {
+    border-bottom: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 30%, var(--border));
+  }
+
+  [id="proof"] .cio-chip[href]:hover {
+    border-bottom: 1px solid var(--chip-color, var(--border));
+  }
+
+  [id="proof"] .cio-chip i {
+    font-size: 0.85em;
+    margin-right: 0.2em;
+    vertical-align: -0.05em;
+  }
+
+  [id="proof"] .cio-chip--harvous {
+    --chip-color: #006eff;
+    color: var(--chip-color);
+    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
+    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
+  }
+
+  [id="proof"] .cio-chip--dinky {
+    --chip-color: #1d4ed8;
+    color: var(--chip-color);
+    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
+    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
+  }
+
+  [id="proof"] .cio-chip--hmc {
+    --chip-color: #6b21a8;
+    color: var(--chip-color);
+    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
+    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    [id="proof"] .cio-chip--hmc {
+      --chip-color: #c084fc;
+    }
+  }
+
+  [id="proof"] .cio-chip--revisemy {
+    --chip-color: #e11d48;
+    color: var(--chip-color);
+    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
+    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
+  }
+</style>
+
+<style>
+  .cio-intro {
+    margin: 0 0 var(--space-4);
+    font-size: var(--size-lead);
+    line-height: 1.75;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+
+  .cio-intro strong {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .cio-chip {
+    --cio-spruce: #0b363b;
+    display: inline;
+    padding: 0.12em 0.55em 0.12em 0.25em;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    font-size: 0.94em;
+    font-weight: 600;
+    line-height: inherit;
+    color: var(--fg);
+    white-space: nowrap;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  .cio-chip__avatar {
+    display: inline-block;
+    width: 1.15em;
+    height: 1.15em;
+    margin-right: 0.25em;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: -0.2em;
+  }
+
+  .cio-chip--brand {
+    padding: 0.12em 0.55em 0.12em 0.4em;
+    color: var(--cio-spruce);
+    border-color: color-mix(in srgb, var(--cio-spruce) 28%, var(--border));
+    background: color-mix(in srgb, var(--cio-spruce) 7%, var(--bg-elevated));
+  }
+
+  .cio-chip i {
+    font-size: 0.85em;
+    margin-right: 0.2em;
+    vertical-align: -0.05em;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .cio-chip {
+      --cio-spruce: #7eb0b6;
+    }
+  }
+
+  .cio-letter {
+    --letter-frame: color-mix(in srgb, #0b363b 12%, var(--border-strong));
+    --letter-rule: color-mix(in srgb, #0b363b 8%, var(--border));
+    --letter-surface-top: color-mix(in srgb, #f7faf9 60%, var(--bg-elevated));
+    --letter-surface-bottom: color-mix(in srgb, #e4eceb 40%, var(--bg));
+    margin-bottom: var(--space-5);
+    max-width: 100%;
+  }
+
+  .cio-letter__sheet {
+    position: relative;
+    padding: var(--space-4) var(--space-4) var(--space-5);
+    border: 1px solid var(--letter-frame);
+    border-radius: var(--radius-sm);
+    background: linear-gradient(180deg, var(--letter-surface-top), var(--letter-surface-bottom));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, white 40%, transparent),
+      0 1px 3px color-mix(in srgb, var(--fg) 5%, transparent);
+  }
+
+  .cio-letter__sheet::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px solid var(--letter-frame);
+    border-radius: calc(var(--radius-sm) - 3px);
+    pointer-events: none;
+    opacity: 0.35;
+    z-index: 1;
+  }
+
+  .cio-letter__address {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: var(--size-meta);
+    line-height: 1.65;
+    color: var(--fg-soft);
+  }
+
+  .cio-letter__address p {
+    margin: 0;
+  }
+
+  .cio-letter__address p + p {
+    margin-top: 0.15em;
+  }
+
+  .cio-letter__label {
+    display: inline-block;
+    min-width: 2.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--size-micro);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .cio-letter__rule {
+    margin: var(--space-3) 0;
+    border: 0;
+    border-top: 1px solid var(--letter-rule);
+  }
+
+  .cio-letter__salutation,
+  .cio-letter__paragraph {
+    margin: 0 0 var(--space-3);
+    font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+
+  .cio-letter__salutation {
+    margin-bottom: var(--space-2);
+  }
+
+  .cio-letter__ai-notes {
+    margin: 0 0 var(--space-3);
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--letter-rule);
+    border-bottom: 1px solid var(--letter-rule);
+  }
+
+  .cio-letter__ai-notes-lead {
+    margin: 0 0 var(--space-1);
+    font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .cio-letter__ai-notes-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: cio-ai-note;
+  }
+
+  .cio-letter__ai-notes-list li {
+    margin: 0;
+    counter-increment: cio-ai-note;
+  }
+
+  .cio-letter__ai-notes-list a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4em;
+    padding: 0.2em 0;
+    font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--fg-soft);
+    text-decoration: none;
+    border-bottom: none;
+  }
+
+  .cio-letter__ai-notes-list a::before {
+    content: counter(cio-ai-note) '.';
+    flex: 0 0 auto;
+    min-width: 1.4em;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cio-letter__ai-notes-list a span {
+    flex: 1 1 auto;
+  }
+
+  .cio-letter__ai-notes-list a i {
+    flex: 0 0 auto;
+    font-size: 0.8em;
+    color: var(--muted);
+    transform: translateY(0.05em);
+  }
+
+  .cio-letter__ai-notes-list a:hover {
+    color: var(--fg);
+    border-bottom: none;
+  }
+
+  .cio-letter__ai-notes-list a:hover i {
+    color: var(--fg);
+  }
+
+  .cio-letter__signoff {
+    margin: var(--space-4) 0 0;
+    font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--fg-soft);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .cio-letter {
+      --letter-frame: color-mix(in srgb, #7eb0b6 10%, var(--border-strong));
+      --letter-rule: color-mix(in srgb, #7eb0b6 6%, var(--border));
+      --letter-surface-top: color-mix(in srgb, #7eb0b6 5%, var(--bg-elevated));
+      --letter-surface-bottom: color-mix(in srgb, #0b363b 10%, #0a0a0a);
+    }
+  }
+
+  .cio-proof,
+  .cio-foundations,
+  .cio-why {
+    margin-bottom: var(--space-5);
+  }
+
+  .cio-section-lead,
+  .cio-body {
+    margin: 0 0 var(--space-3);
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--fg);
+    text-wrap: pretty;
+  }
+
+  .cio-body:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .cio-figure {
+    margin: 0 0 var(--space-4);
+  }
+
+  .cio-figure__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+  }
+
+  .cio-figure__caption {
+    margin: var(--space-2) 0 0;
+    font-size: var(--size-meta);
+    line-height: 1.45;
+    color: var(--muted-strong);
+    text-wrap: pretty;
+  }
+
+  .cio-proof :global(.project-grid),
+  .cio-foundations :global(.project-grid) {
+    margin-top: var(--space-4);
+  }
+
+  .cio-footer {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-4);
+  }
+</style>

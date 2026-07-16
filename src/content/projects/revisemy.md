@@ -3,14 +3,14 @@ name: ReviseMy
 tagline: Mark feedback for your agent.
 summary: Human-in-the-loop design review for agentic workflows—upload UI screenshots, mark what matters, approve or request changes, and let your agent read structured work packets.
 url: https://revisemy.com
-year: 2024
-started: 2024-09-01
+year: 2026
+started: 2026-07-01
 updated: 2026-07-01
 category: App
 burnerLevel: Front Burner
 role: Designer & builder
 stack: [Laravel, Livewire, Flux, MCP]
-image: /assets/images/projects/revisemy-og.svg
+image: /assets/images/projects/revisemy-og.png
 icon: /assets/images/projects/revisemy-app-icon.png
 featured: true
 order: 2

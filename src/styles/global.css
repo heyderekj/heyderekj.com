@@ -143,6 +143,7 @@ body {
 .sidebar {
   position: sticky;
   top: var(--space-4);
+  align-self: start;
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -958,7 +959,7 @@ body.work-lightbox-open { overflow: hidden; }
   font-size: var(--size-meta);
   font-weight: 500;
   line-height: 1.2;
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
   background: var(--glass-bg);
   color: var(--fg-soft);
   text-decoration: none;
@@ -969,7 +970,7 @@ body.work-lightbox-open { overflow: hidden; }
 }
 /* Restore full pill box border after `main.main a` / exclusion zero the bottom edge */
 main.main .intro-pill {
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid var(--border);
 }
 
 .intro-pill i {
@@ -1753,8 +1754,8 @@ main.main .brag-page .about-exp-pill--link:hover {
 }
 .work-testimonial-card {
   border-radius: var(--radius-md);
-  border: 1px solid transparent;
-  background: transparent;
+  border: 1px solid var(--border);
+  background: #fff;
   padding: var(--space-3);
   transition:
     background 0.2s ease,
@@ -1762,11 +1763,15 @@ main.main .brag-page .about-exp-pill--link:hover {
     box-shadow 0.2s ease;
 }
 .work-testimonial-card:hover {
-  background: var(--glass-active-bg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  border-color: transparent;
-  box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
+  background: #fff;
+  border-color: var(--border-strong);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+@media (prefers-color-scheme: dark) {
+  .work-testimonial-card,
+  .work-testimonial-card:hover {
+    background: var(--bg-elevated);
+  }
 }
 .work-testimonial-quote {
   font-size: var(--size-meta);

@@ -1,46 +1,51 @@
 ---
-const items = [
-  { id: 'letter',          label: 'Letter' },
-  { id: 'healthcare-work', label: 'Healthcare work' },
-  { id: 'why-cadence',     label: 'Why Cadence' },
-  { id: 'recommendations', label: 'Recommendations' },
-  { id: 'connect',         label: 'Connect' },
-];
+interface TocItem {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  items: TocItem[];
+}
+
+const { items } = Astro.props;
+const panelId = 'application-toc-mobile-panel';
 ---
-<nav class="cadence-toc cadence-toc--desktop" aria-label="On this page">
-  <p class="cadence-toc__label">On this page</p>
-  <ul class="cadence-toc__list" role="list">
+
+<nav class="app-toc app-toc--desktop" aria-label="On this page">
+  <p class="app-toc__label">On this page</p>
+  <ul class="app-toc__list" role="list">
     {items.map((item) => (
       <li>
-        <a class="cadence-toc__link" href={`#${item.id}`} data-cadence-toc-link={item.id}>
-          <span class="cadence-toc__dot" aria-hidden="true"></span>
-          <span class="cadence-toc__text">{item.label}</span>
+        <a class="app-toc__link" href={`#${item.id}`} data-app-toc-link={item.id}>
+          <span class="app-toc__dot" aria-hidden="true"></span>
+          <span class="app-toc__text">{item.label}</span>
         </a>
       </li>
     ))}
   </ul>
 </nav>
 
-<nav class="cadence-toc cadence-toc--mobile" aria-label="On this page" data-cadence-toc-mobile>
+<nav class="app-toc app-toc--mobile" aria-label="On this page" data-app-toc-mobile>
   <button
     type="button"
-    class="cadence-toc__trigger"
+    class="app-toc__trigger"
     aria-expanded="false"
-    aria-controls="cadence-toc-mobile-panel"
-    data-cadence-toc-trigger
+    aria-controls={panelId}
+    data-app-toc-trigger
   >
-    <span class="cadence-toc__trigger-label">
-      <span class="cadence-toc__trigger-kicker">On this page</span>
-      <span class="cadence-toc__trigger-current" data-cadence-toc-current>{items[0].label}</span>
+    <span class="app-toc__trigger-label">
+      <span class="app-toc__trigger-kicker">On this page</span>
+      <span class="app-toc__trigger-current" data-app-toc-current>{items[0]?.label}</span>
     </span>
-    <i class="ph-bold ph-caret-up cadence-toc__trigger-icon" aria-hidden="true"></i>
+    <i class="ph-bold ph-caret-up app-toc__trigger-icon" aria-hidden="true"></i>
   </button>
-  <div id="cadence-toc-mobile-panel" class="cadence-toc__panel" hidden>
-    <ul class="cadence-toc__list cadence-toc__list--mobile" role="list">
+  <div id={panelId} class="app-toc__panel" hidden>
+    <ul class="app-toc__list app-toc__list--mobile" role="list">
       {items.map((item) => (
         <li>
-          <a class="cadence-toc__link" href={`#${item.id}`} data-cadence-toc-link={item.id} data-cadence-toc-link-mobile>
-            <span class="cadence-toc__text">{item.label}</span>
+          <a class="app-toc__link" href={`#${item.id}`} data-app-toc-link={item.id} data-app-toc-link-mobile>
+            <span class="app-toc__text">{item.label}</span>
           </a>
         </li>
       ))}
@@ -49,17 +54,17 @@ const items = [
 </nav>
 
 <script>
-  function initCadenceToc() {
+  function initApplicationToc() {
     const links = Array.from(
-      document.querySelectorAll<HTMLAnchorElement>('[data-cadence-toc-link]')
+      document.querySelectorAll<HTMLAnchorElement>('[data-app-toc-link]')
     );
     if (!links.length) return;
-    const root = document.querySelector('.cadence-toc--desktop');
+    const root = document.querySelector('.app-toc--desktop');
     if (root && (root as HTMLElement).dataset.tocInit) return;
     if (root) (root as HTMLElement).dataset.tocInit = '1';
 
     const sections = Array.from(
-      new Set(links.map((l) => l.dataset.cadenceTocLink || ''))
+      new Set(links.map((l) => l.dataset.appTocLink || ''))
     )
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => Boolean(el));
@@ -68,16 +73,16 @@ const items = [
 
     const labelById = new Map<string, string>();
     links.forEach((l) => {
-      const id = l.dataset.cadenceTocLink || '';
-      const text = l.querySelector('.cadence-toc__text')?.textContent || '';
+      const id = l.dataset.appTocLink || '';
+      const text = l.querySelector('.app-toc__text')?.textContent || '';
       if (id && !labelById.has(id)) labelById.set(id, text);
     });
 
-    const currentEl = document.querySelector<HTMLElement>('[data-cadence-toc-current]');
+    const currentEl = document.querySelector<HTMLElement>('[data-app-toc-current]');
 
     const setActive = (id: string) => {
       links.forEach((l) => {
-        const isActive = l.dataset.cadenceTocLink === id;
+        const isActive = l.dataset.appTocLink === id;
         l.classList.toggle('is-active', isActive);
         if (isActive) l.setAttribute('aria-current', 'location');
         else l.removeAttribute('aria-current');
@@ -110,7 +115,7 @@ const items = [
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     links.forEach((link) => {
       link.addEventListener('click', (e) => {
-        const id = link.dataset.cadenceTocLink;
+        const id = link.dataset.appTocLink;
         if (!id) return;
         const target = document.getElementById(id);
         if (!target) return;
@@ -126,9 +131,9 @@ const items = [
       });
     });
 
-    const mobileWrap = document.querySelector<HTMLElement>('[data-cadence-toc-mobile]');
-    const trigger = document.querySelector<HTMLButtonElement>('[data-cadence-toc-trigger]');
-    const panel = document.getElementById('cadence-toc-mobile-panel');
+    const mobileWrap = document.querySelector<HTMLElement>('[data-app-toc-mobile]');
+    const trigger = document.querySelector<HTMLButtonElement>('[data-app-toc-trigger]');
+    const panel = document.getElementById('application-toc-mobile-panel');
 
     const closeMobile = () => {
       if (!mobileWrap || !trigger || !panel) return;
@@ -154,7 +159,7 @@ const items = [
       document.addEventListener('click', (e) => {
         if (!mobileWrap.classList.contains('is-open')) return;
         const t = e.target;
-        if (t instanceof Node && (mobileWrap.contains(t))) return;
+        if (t instanceof Node && mobileWrap.contains(t)) return;
         closeMobile();
       });
 
@@ -177,12 +182,12 @@ const items = [
     }
   }
 
-  initCadenceToc();
-  document.addEventListener('astro:page-load', initCadenceToc);
+  initApplicationToc();
+  document.addEventListener('astro:page-load', initApplicationToc);
 </script>
 
 <style>
-  .cadence-toc__label {
+  .app-toc__label {
     margin: 0 0 var(--space-2);
     font-size: var(--size-micro);
     font-weight: 600;
@@ -191,7 +196,7 @@ const items = [
     color: var(--muted);
   }
 
-  .cadence-toc__list {
+  .app-toc__list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -200,7 +205,7 @@ const items = [
     gap: 2px;
   }
 
-  .cadence-toc__link {
+  .app-toc__link {
     display: flex;
     align-items: center;
     gap: var(--space-2);
@@ -216,20 +221,20 @@ const items = [
       background 0.15s ease;
   }
 
-  .cadence-toc__link:hover,
-  .cadence-toc__link:focus-visible {
+  .app-toc__link:hover,
+  .app-toc__link:focus-visible {
     color: var(--accent);
     font-weight: 600;
     background: transparent;
     border-bottom: none;
   }
 
-  .cadence-toc__link.is-active {
+  .app-toc__link.is-active {
     color: var(--accent);
     font-weight: 600;
   }
 
-  .cadence-toc__dot {
+  .app-toc__dot {
     flex-shrink: 0;
     width: 6px;
     height: 6px;
@@ -238,49 +243,23 @@ const items = [
     transition: background 0.15s ease, transform 0.15s ease;
   }
 
-  .cadence-toc__link:hover .cadence-toc__dot,
-  .cadence-toc__link:focus-visible .cadence-toc__dot,
-  .cadence-toc__link.is-active .cadence-toc__dot {
+  .app-toc__link:hover .app-toc__dot,
+  .app-toc__link:focus-visible .app-toc__dot,
+  .app-toc__link.is-active .app-toc__dot {
     background: var(--accent);
     transform: scale(1.4);
   }
 
-  .cadence-toc__text {
+  .app-toc__text {
     flex: 1 1 auto;
     min-width: 0;
   }
 
-  /* ---------- Desktop sticky ---------- */
-  .cadence-toc--desktop {
+  .app-toc--desktop {
     display: none;
   }
 
-  @media (min-width: 1100px) {
-    .cadence-toc--desktop {
-      display: block;
-      position: fixed;
-      top: calc(var(--space-4) + 6rem);
-      left: calc(
-        50%
-        - var(--layout-max) / 2
-        + var(--sidebar-w)
-        + var(--layout-gap)
-        + var(--max-main)
-        + var(--space-4)
-      );
-      width: 12rem;
-      max-height: calc(100vh - var(--space-4) * 2 - 6rem);
-      overflow-y: auto;
-      z-index: 5;
-      padding: var(--space-3);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: var(--bg);
-    }
-  }
-
-  /* ---------- Mobile floating bar ---------- */
-  .cadence-toc--mobile {
+  .app-toc--mobile {
     position: fixed;
     left: 50%;
     bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
@@ -290,13 +269,7 @@ const items = [
     pointer-events: auto;
   }
 
-  @media (min-width: 1100px) {
-    .cadence-toc--mobile {
-      display: none;
-    }
-  }
-
-  .cadence-toc__trigger {
+  .app-toc__trigger {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -315,7 +288,7 @@ const items = [
     font: inherit;
   }
 
-  .cadence-toc__trigger-label {
+  .app-toc__trigger-label {
     display: flex;
     flex-direction: column;
     gap: 1px;
@@ -323,7 +296,7 @@ const items = [
     flex: 1 1 auto;
   }
 
-  .cadence-toc__trigger-kicker {
+  .app-toc__trigger-kicker {
     font-size: var(--size-micro);
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -332,7 +305,7 @@ const items = [
     line-height: 1.2;
   }
 
-  .cadence-toc__trigger-current {
+  .app-toc__trigger-current {
     font-size: var(--size-meta);
     font-weight: 600;
     color: var(--fg);
@@ -342,18 +315,18 @@ const items = [
     white-space: nowrap;
   }
 
-  .cadence-toc__trigger-icon {
+  .app-toc__trigger-icon {
     flex-shrink: 0;
     font-size: 14px;
     color: var(--muted-strong);
     transition: transform 0.2s var(--easing);
   }
 
-  .cadence-toc--mobile.is-open .cadence-toc__trigger-icon {
+  .app-toc--mobile.is-open .app-toc__trigger-icon {
     transform: rotate(180deg);
   }
 
-  .cadence-toc__panel {
+  .app-toc__panel {
     position: absolute;
     left: 0;
     right: 0;
@@ -366,25 +339,25 @@ const items = [
     backdrop-filter: blur(14px);
     box-shadow: var(--glass-inset), 0 12px 32px rgba(0, 0, 0, 0.16);
     transform-origin: bottom center;
-    animation: cadence-toc-pop 0.18s var(--easing);
+    animation: app-toc-pop 0.18s var(--easing);
   }
 
-  @keyframes cadence-toc-pop {
+  @keyframes app-toc-pop {
     from { opacity: 0; transform: translateY(6px) scale(0.98); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .cadence-toc__panel { animation: none; }
-    .cadence-toc__trigger-icon { transition: none; }
-    .cadence-toc__dot { transition: none; }
+    .app-toc__panel { animation: none; }
+    .app-toc__trigger-icon { transition: none; }
+    .app-toc__dot { transition: none; }
   }
 
-  .cadence-toc__list--mobile {
+  .app-toc__list--mobile {
     gap: 0;
   }
 
-  .cadence-toc__list--mobile .cadence-toc__link {
+  .app-toc__list--mobile .app-toc__link {
     padding: 10px var(--space-2);
     font-size: var(--size-body);
   }
