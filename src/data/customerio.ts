@@ -17,7 +17,7 @@ export const customerioLetter = {
   from: 'Derek Castelli',
   salutation: 'Hey Matt,',
   paragraphs: [
-    "When Will King sent me this opportunity it made my day! I want this because it’s real product ownership end to end, and because the work helps people reach and support their customers. My strength is the whole journey: where people get stuck, whether it works, and staying close enough to build and ship until it does.",
+    "When Will King sent me this opportunity it made my day! What I care about is helping teams reach people in a way that actually feels useful—as if every company were a small local business. My strength is the whole journey: where people get stuck, whether it works, and staying close enough to build and ship until it does.",
     "I’ve always been a little unconventional about this, and self-taught. I learn by building, tweaking, shipping, and paying close attention to what real users do—oh, and I’m the first real user. I often don’t know what direction things will take until I start messing around, and I learn a lot by experimenting and iterating until the shape of the thing becomes clear.",
     "While I care about how it all looks, I care even more about whether it works: flows that don’t lose people, where friction lives, and whether the thing does what we intended. I want to understand the problems before trying to solve them. That’s why I’m a designer.",
     "AI has completely changed my world as a designer who loves building. I can go further, faster—from idea to a real flow people can try, not just a polished frame. I’ve actually written about how I think AI should show up in products: subtle, useful, not a checkbox on my personal blog.",
