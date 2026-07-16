@@ -248,7 +248,9 @@ const tocItems = [
   }
 
   .cio-chip {
-    --cio-spruce: #0b363b;
+    /* Customer.io brand: evergreen teal + verdant mint (logo accent) */
+    --cio-brand: #1f6f78;
+    --cio-verdant: #abffae;
     display: inline;
     padding: 0.12em 0.55em 0.12em 0.25em;
     border-radius: var(--radius-pill);
@@ -275,9 +277,9 @@ const tocItems = [
 
   .cio-chip--brand {
     padding: 0.12em 0.55em 0.12em 0.4em;
-    color: var(--cio-spruce);
-    border-color: color-mix(in srgb, var(--cio-spruce) 28%, var(--border));
-    background: color-mix(in srgb, var(--cio-spruce) 7%, var(--bg-elevated));
+    color: var(--cio-brand);
+    border-color: color-mix(in srgb, var(--cio-brand) 40%, var(--border));
+    background: color-mix(in srgb, var(--cio-verdant) 28%, var(--bg-elevated));
   }
 
   .cio-chip i {
@@ -287,15 +289,17 @@ const tocItems = [
   }
 
   @media (prefers-color-scheme: dark) {
-    .cio-chip {
-      --cio-spruce: #7eb0b6;
+    .cio-chip--brand {
+      color: var(--cio-verdant);
+      border-color: color-mix(in srgb, var(--cio-verdant) 35%, var(--border));
+      background: color-mix(in srgb, var(--cio-verdant) 10%, var(--bg-elevated));
     }
   }
 
   .cio-letter {
-    --letter-frame: color-mix(in srgb, #0b363b 12%, var(--border-strong));
-    --letter-rule: color-mix(in srgb, #0b363b 8%, var(--border));
-    --letter-surface-top: color-mix(in srgb, #f7faf9 60%, var(--bg-elevated));
+    --letter-frame: color-mix(in srgb, #1f6f78 14%, var(--border-strong));
+    --letter-rule: color-mix(in srgb, #1f6f78 10%, var(--border));
+    --letter-surface-top: color-mix(in srgb, #abffae 8%, var(--bg-elevated));
     --letter-surface-bottom: color-mix(in srgb, #e4eceb 40%, var(--bg));
     margin-bottom: var(--space-5);
     max-width: 100%;
@@ -449,10 +453,10 @@ const tocItems = [
 
   @media (prefers-color-scheme: dark) {
     .cio-letter {
-      --letter-frame: color-mix(in srgb, #7eb0b6 10%, var(--border-strong));
-      --letter-rule: color-mix(in srgb, #7eb0b6 6%, var(--border));
-      --letter-surface-top: color-mix(in srgb, #7eb0b6 5%, var(--bg-elevated));
-      --letter-surface-bottom: color-mix(in srgb, #0b363b 10%, #0a0a0a);
+      --letter-frame: color-mix(in srgb, #abffae 12%, var(--border-strong));
+      --letter-rule: color-mix(in srgb, #abffae 8%, var(--border));
+      --letter-surface-top: color-mix(in srgb, #0e464d 18%, var(--bg-elevated));
+      --letter-surface-bottom: color-mix(in srgb, #0e464d 12%, #0a0a0a);
     }
   }
 
