@@ -46,9 +46,11 @@
   --size-h2: 19px;
 
   --max-main: 530px;
+  --max-text: 500px;
   --sidebar-w: 56px;
-  --layout-gap: 88px;
+  --layout-gap: 40px;
   --layout-max: 980px;
+  --content-group-w: calc(var(--sidebar-w) + var(--layout-gap) + var(--max-main));
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -126,12 +128,13 @@ body {
 
 .layout {
   display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr;
+  /* Main is the centered middle column so the reading content sits at true
+     viewport center (matching the fixed TOC pill). The sidebar rides in the
+     left column, pinned to its inner edge, without shifting main off-center. */
+  grid-template-columns: 1fr minmax(0, var(--max-main)) 1fr;
   grid-template-rows: 1fr;
   gap: var(--layout-gap);
   width: 100%;
-  max-width: var(--layout-max);
-  margin: 0 auto;
   flex: 1 1 auto;
   min-height: 0;
   align-items: stretch;
@@ -143,6 +146,7 @@ body {
 .sidebar {
   position: sticky;
   top: var(--space-4);
+  justify-self: end;
   align-self: start;
   z-index: 1;
   display: flex;
@@ -150,6 +154,7 @@ body {
   gap: 2px;
   padding: var(--space-2);
   overflow: visible;
+  width: max-content;
 }
 
 /* ============================================================
@@ -388,13 +393,18 @@ body {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: var(--space-5) var(--space-5) var(--space-6) 0;
+  padding: var(--space-5) 0 var(--space-6);
 }
 
 /* ============================================================
    Typography
    ============================================================ */
 .prose { max-width: var(--max-main); }
+/* Keep body-copy measure readable inside the wider column; media spans full width */
+.prose p,
+.prose ul,
+.prose ol,
+.prose blockquote { max-width: var(--max-text); }
 
 .page-title {
   display: flex;
@@ -765,7 +775,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 }
 .work-gallery-item { margin: 0; }
 /* Lightbox openers — unstyled control + light lift on hover (hero, devices, gallery) */
-.work-casestudy .work-lightbox-trigger {
+.work-lightbox-trigger {
   display: block;
   width: 100%;
   padding: 0;
@@ -780,7 +790,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 .work-hero-figure .work-lightbox-trigger {
   border-radius: var(--radius-md);
 }
-.work-casestudy .work-lightbox-trigger img {
+.work-lightbox-trigger img {
   display: block;
   width: 100%;
   height: auto;
@@ -788,8 +798,8 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   border-radius: inherit;
   transition: transform 0.2s var(--easing);
 }
-.work-casestudy .work-lightbox-trigger:hover img,
-.work-casestudy .work-lightbox-trigger:focus-visible img {
+.work-lightbox-trigger:hover img,
+.work-lightbox-trigger:focus-visible img {
   transform: translateY(-1px);
 }
 
@@ -939,7 +949,7 @@ body.work-lightbox-open { overflow: hidden; }
 .intro p {
   font-size: var(--size-lead);
   line-height: 1.55;
-  max-width: var(--max-main);
+  max-width: var(--max-text);
   margin-bottom: var(--space-2);
 }
 
@@ -1306,6 +1316,8 @@ main.main .footer-links a:hover { color: var(--accent); }
   }
   .sidebar {
     position: static;
+    justify-self: stretch;
+    width: auto;
     flex-direction: row;
     align-items: center;
     gap: 2px;

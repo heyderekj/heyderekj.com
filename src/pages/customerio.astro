@@ -6,6 +6,7 @@ import ApplicationToc from '../components/ApplicationToc.astro';
 import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
 import TestimonialCarousel from '../components/TestimonialCarousel.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { testimonials } from '../data/about';
 import {
   customerioMeta,
@@ -56,7 +57,7 @@ const tocItems = [
   <ApplicationToc items={tocItems} />
 
   <p class="cio-intro">
-    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" src={customerioIntro.photoSrc} alt={customerioIntro.photoAlt} width={18} height={18} decoding="async" />Derek</span>, a designer in the Des Moines, Iowa area. I ship websites and build products on the side. I'm applying for <strong>Senior Product Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-lightning" aria-hidden="true"></i>Customer.io</span>. This is the websites-into-product move I’ve been aiming for, and it feels like the right time and company.
+    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" src={customerioIntro.photoSrc} alt={customerioIntro.photoAlt} width={18} height={18} decoding="async" />Derek</span>, a designer in Des Moines. I ship websites and build products on the side—and I'm applying for <strong>Senior Product Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-lightning" aria-hidden="true"></i>Customer.io</span>.
   </p>
 
   <section id="letter" class="cio-letter" aria-label="Cover letter">
@@ -109,13 +110,20 @@ const tocItems = [
       <>
         {block.figure && (
           <figure class="cio-figure">
-            <img
-              src={block.figure.src}
-              alt={block.figure.alt}
-              class="cio-figure__img"
-              loading="lazy"
-              decoding="async"
-            />
+            <button
+              type="button"
+              class="work-lightbox-trigger"
+              aria-label="View image at full size"
+              data-lb-src={block.figure.src}
+            >
+              <img
+                src={block.figure.src}
+                alt={block.figure.alt}
+                class="cio-figure__img"
+                loading="lazy"
+                decoding="async"
+              />
+            </button>
             <figcaption class="cio-figure__caption">{block.figure.caption}</figcaption>
           </figure>
         )}
@@ -165,12 +173,19 @@ const tocItems = [
       Posts
     </a>
   </nav>
+
+  <Lightbox />
 </Base>
 
 <style is:global>
-  [id="proof"] .cio-chip {
+  /* Chips must be global: proof-section chips arrive via set:html and never get
+     Astro's scoped attribute. One definition covers intro + proof chips. */
+  .cio-chip {
+    /* Customer.io brand: evergreen teal + verdant mint (logo accent) */
+    --cio-brand: #1f6f78;
+    --cio-verdant: #abffae;
     display: inline;
-    padding: 0.12em 0.5em 0.12em 0.35em;
+    padding: 0.02em 0.5em 0.02em 0.35em;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border);
     background: var(--bg-elevated);
@@ -184,85 +199,20 @@ const tocItems = [
     box-decoration-break: clone;
   }
 
-  [id="proof"] .cio-chip[href] {
-    border-bottom: 1px solid color-mix(in srgb, var(--chip-color, var(--border)) 30%, var(--border));
+  .cio-chip[href] {
+    border-bottom-color: color-mix(in srgb, var(--chip-color, var(--fg)) 30%, var(--border));
+    transition: background 0.15s ease, border-color 0.15s ease;
   }
 
-  [id="proof"] .cio-chip[href]:hover {
-    border-bottom: 1px solid var(--chip-color, var(--border));
+  .cio-chip[href]:hover {
+    border-color: color-mix(in srgb, var(--chip-color, var(--fg)) 55%, var(--border));
+    background: color-mix(in srgb, var(--chip-color, var(--fg)) 12%, var(--bg-elevated));
   }
 
-  [id="proof"] .cio-chip i {
+  .cio-chip i {
     font-size: 0.85em;
     margin-right: 0.2em;
     vertical-align: -0.05em;
-  }
-
-  [id="proof"] .cio-chip--harvous {
-    --chip-color: #006eff;
-    color: var(--chip-color);
-    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
-    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
-  }
-
-  [id="proof"] .cio-chip--dinky {
-    --chip-color: #1d4ed8;
-    color: var(--chip-color);
-    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
-    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
-  }
-
-  [id="proof"] .cio-chip--hmc {
-    --chip-color: #6b21a8;
-    color: var(--chip-color);
-    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
-    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
-  }
-
-  @media (prefers-color-scheme: dark) {
-    [id="proof"] .cio-chip--hmc {
-      --chip-color: #c084fc;
-    }
-  }
-
-  [id="proof"] .cio-chip--revisemy {
-    --chip-color: #e11d48;
-    color: var(--chip-color);
-    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
-    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
-  }
-</style>
-
-<style>
-  .cio-intro {
-    margin: 0 0 var(--space-4);
-    font-size: var(--size-lead);
-    line-height: 1.75;
-    color: var(--fg-soft);
-    text-wrap: pretty;
-  }
-
-  .cio-intro strong {
-    color: var(--fg);
-    font-weight: 600;
-  }
-
-  .cio-chip {
-    /* Customer.io brand: evergreen teal + verdant mint (logo accent) */
-    --cio-brand: #1f6f78;
-    --cio-verdant: #abffae;
-    display: inline;
-    padding: 0.12em 0.55em 0.12em 0.25em;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border);
-    background: var(--bg-elevated);
-    font-size: 0.94em;
-    font-weight: 600;
-    line-height: inherit;
-    color: var(--fg);
-    white-space: nowrap;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
   }
 
   .cio-chip__avatar {
@@ -276,24 +226,63 @@ const tocItems = [
   }
 
   .cio-chip--brand {
-    padding: 0.12em 0.55em 0.12em 0.4em;
+    padding-left: 0.4em;
     color: var(--cio-brand);
     border-color: color-mix(in srgb, var(--cio-brand) 40%, var(--border));
     background: color-mix(in srgb, var(--cio-verdant) 28%, var(--bg-elevated));
   }
 
-  .cio-chip i {
-    font-size: 0.85em;
-    margin-right: 0.2em;
-    vertical-align: -0.05em;
+  .cio-chip--harvous {
+    --chip-color: #006eff;
+  }
+
+  .cio-chip--dinky {
+    --chip-color: #1d4ed8;
+  }
+
+  .cio-chip--hmc {
+    --chip-color: #6b21a8;
+  }
+
+  .cio-chip--revisemy {
+    --chip-color: #e11d48;
+  }
+
+  .cio-chip--harvous,
+  .cio-chip--dinky,
+  .cio-chip--hmc,
+  .cio-chip--revisemy {
+    color: var(--chip-color);
+    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
+    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
   }
 
   @media (prefers-color-scheme: dark) {
+    .cio-chip--hmc {
+      --chip-color: #c084fc;
+    }
+
     .cio-chip--brand {
       color: var(--cio-verdant);
       border-color: color-mix(in srgb, var(--cio-verdant) 35%, var(--border));
       background: color-mix(in srgb, var(--cio-verdant) 10%, var(--bg-elevated));
     }
+  }
+</style>
+
+<style>
+  .cio-intro {
+    margin: 0 0 var(--space-4);
+    max-width: 93%;
+    font-size: var(--size-lead);
+    line-height: 1.75;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+
+  .cio-intro strong {
+    color: var(--fg);
+    font-weight: 600;
   }
 
   .cio-letter {
@@ -301,6 +290,9 @@ const tocItems = [
     --letter-rule: color-mix(in srgb, #1f6f78 10%, var(--border));
     --letter-surface-top: color-mix(in srgb, #abffae 8%, var(--bg-elevated));
     --letter-surface-bottom: color-mix(in srgb, #e4eceb 40%, var(--bg));
+    /* Secondary ink pulled toward the brand teal so it matches the green surface temperature */
+    --letter-ink-soft: color-mix(in srgb, #1f6f78 26%, var(--fg-soft));
+    --letter-ink-muted: color-mix(in srgb, #1f6f78 32%, var(--muted));
     margin-bottom: var(--space-5);
     max-width: 100%;
   }
@@ -332,7 +324,7 @@ const tocItems = [
     font-family: var(--font-sans);
     font-size: var(--size-meta);
     line-height: 1.65;
-    color: var(--fg-soft);
+    color: var(--letter-ink-soft);
   }
 
   .cio-letter__address p {
@@ -351,7 +343,7 @@ const tocItems = [
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--muted);
+    color: var(--letter-ink-muted);
   }
 
   .cio-letter__rule {
@@ -366,7 +358,7 @@ const tocItems = [
     font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
     font-size: 1.0625rem;
     line-height: 1.65;
-    color: var(--fg-soft);
+    color: var(--letter-ink-soft);
     text-wrap: pretty;
   }
 
@@ -387,7 +379,7 @@ const tocItems = [
     font-size: 0.9375rem;
     line-height: 1.55;
     font-style: italic;
-    color: var(--muted);
+    color: var(--letter-ink-muted);
   }
 
   .cio-letter__ai-notes-list {
@@ -410,7 +402,7 @@ const tocItems = [
     font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
     font-size: 0.9375rem;
     line-height: 1.55;
-    color: var(--fg-soft);
+    color: var(--letter-ink-soft);
     text-decoration: none;
     border-bottom: none;
   }
@@ -419,7 +411,7 @@ const tocItems = [
     content: counter(cio-ai-note) '.';
     flex: 0 0 auto;
     min-width: 1.4em;
-    color: var(--muted);
+    color: var(--letter-ink-muted);
     font-variant-numeric: tabular-nums;
   }
 
@@ -430,7 +422,7 @@ const tocItems = [
   .cio-letter__ai-notes-list a i {
     flex: 0 0 auto;
     font-size: 0.8em;
-    color: var(--muted);
+    color: var(--letter-ink-muted);
     transform: translateY(0.05em);
   }
 
@@ -448,7 +440,7 @@ const tocItems = [
     font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
     font-size: 1.0625rem;
     line-height: 1.65;
-    color: var(--fg-soft);
+    color: var(--letter-ink-soft);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -457,6 +449,8 @@ const tocItems = [
       --letter-rule: color-mix(in srgb, #abffae 8%, var(--border));
       --letter-surface-top: color-mix(in srgb, #0e464d 18%, var(--bg-elevated));
       --letter-surface-bottom: color-mix(in srgb, #0e464d 12%, #0a0a0a);
+      --letter-ink-soft: color-mix(in srgb, #abffae 14%, var(--fg-soft));
+      --letter-ink-muted: color-mix(in srgb, #abffae 18%, var(--muted));
     }
   }
 
@@ -469,6 +463,7 @@ const tocItems = [
   .cio-section-lead,
   .cio-body {
     margin: 0 0 var(--space-3);
+    max-width: 93%;
     font-size: 16px;
     line-height: 1.8;
     color: var(--fg);

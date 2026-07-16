@@ -94,7 +94,8 @@ export const customerioFoundationsParagraphs: string[] = [
 ];
 
 export const customerioWhyParagraphs: string[] = [
-  `I see Customer.io as the best setup for sending the most relevant messages—as if every company were a small local business. What pulls me in is the work itself: helping teams send messages people actually want, grounded in real behavior. That’s where I want to spend my time—thinking through the whole experience, where things get confusing, and whether it works as intended.`,
-  `I do my best work by asking lots of questions and hunting for the real problems to fix—not the ones that look good in a deck. A remote-first team that values empathy and curiosity is the kind of place I can keep doing that.`,
-  `Finally, it feels like a place where end-to-end ownership, craft, implementation, and AI as a real design factor all count. Embracing AI to iterate quicker and experiment more is already how I work—and I could keep getting better at that while going full circle to help people reach and support their customers.`,
+  `Honestly, three things.`,
+  `I'd get to stay close to a product all the way through—design into what actually ships—which is already how I work, even if it hasn't been the job title yet. And it feels like the right place to go deeper into product, with a team treating AI as something that should actually help people, not just check a box (I've written about that more than once).`,
+  `Billions of messages a day is billions of chances for software to feel like a small local business that knows you—that's a problem worth sweating.`,
+  `And it's remote, so I keep building from Iowa (or wherever my wife needs to be for her education and work).`,
 ];
