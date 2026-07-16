@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageTitle from '../../components/PageTitle.astro';
+import FeaturedProjectGrid from '../../components/FeaturedProjectGrid.astro';
 import ProjectList from '../../components/ProjectList.astro';
 import { projectStartTime } from '../../lib/projectStart';
 
@@ -29,7 +30,7 @@ const retiredProjects = projects
     <>
       <h2 class="projects-section-title" id="front-burner">Front Burner</h2>
       <p class="projects-section-lede">Current focus—shipping and active builds.</p>
-      <ProjectList projects={activeProjects} />
+      <FeaturedProjectGrid projects={activeProjects} preserveOrder variant="work" />
     </>
   )}
 
@@ -39,7 +40,7 @@ const retiredProjects = projects
       <p class="projects-section-lede">
         Live projects kept warm—maintained and open, but not the current focus.
       </p>
-      <ProjectList projects={maintainedProjects} variant="compact" startedOrder="desc" />
+      <FeaturedProjectGrid projects={maintainedProjects} preserveOrder variant="work" />
     </>
   )}
 
@@ -49,7 +50,7 @@ const retiredProjects = projects
       <p class="projects-section-lede">
         {`${pausedProjects.length} ${pausedProjects.length === 1 ? 'project' : 'projects'} on the back burner—they may still continue.`}
       </p>
-      <ProjectList projects={pausedProjects} variant="compact" startedOrder="desc" />
+      <FeaturedProjectGrid projects={pausedProjects} preserveOrder variant="work" />
     </>
   )}
 

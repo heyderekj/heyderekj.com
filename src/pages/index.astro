@@ -89,7 +89,7 @@ const githubData = await fetchGitHubActivity();
 
   <h2 class="section-title"><a href="/projects/">/ projects</a></h2>
   {homeGridProjects.length > 0 ? (
-    <FeaturedProjectGrid projects={homeGridProjects} />
+    <FeaturedProjectGrid projects={homeGridProjects} variant="work" />
   ) : (
     <p style="color: var(--muted);">No active projects yet.</p>
   )}
