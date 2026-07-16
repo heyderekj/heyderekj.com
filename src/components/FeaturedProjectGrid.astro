@@ -24,6 +24,7 @@ const sorted = preserveOrder
       const startStr = formatProjectStartLabel(project);
       const thumbSrc = project.data.image ?? project.data.icon;
       const isIconOnly = !project.data.image && Boolean(project.data.icon);
+      const isFramed = !isIconOnly && project.data.imageFit === 'contain';
       return (
         <li class="project-grid-item">
           <a href={`/projects/${project.slug}/`} class="project-grid-card">
@@ -32,7 +33,7 @@ const sorted = preserveOrder
                 <img
                   src={thumbSrc}
                   alt={project.data.name}
-                  class={`project-grid-img${isIconOnly ? ' project-grid-img--icon' : ''}`}
+                  class={`project-grid-img${isIconOnly ? ' project-grid-img--icon' : ''}${isFramed ? ' project-grid-img--framed' : ''}`}
                   loading="lazy"
                   decoding="async"
                 />
@@ -159,6 +160,14 @@ const sorted = preserveOrder
     object-fit: contain;
     object-position: center;
     padding: 18%;
+  }
+
+  /* Framed screenshots: sit on the elevated tile instead of cropping at the edges */
+  .project-grid-img--framed {
+    object-fit: contain;
+    object-position: center;
+    padding: 6%;
+    background: var(--bg-elevated);
   }
 
   :global(main.main) .project-grid-card:hover .project-grid-img {

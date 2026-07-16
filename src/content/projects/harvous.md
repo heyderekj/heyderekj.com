@@ -10,6 +10,14 @@ burnerLevel: Front Burner
 role: Designer & builder
 stack: [React, Hono, Supabase, Clerk]
 image: /assets/images/projects/harvous-preview.webp
+imageFit: contain
+media:
+  - src: /assets/images/projects/harvous-app-scripture.png
+    alt: An inline scripture card in Harvous showing Exodus 5:1-5 with a translation picker open (BSB, ESV, KJV, NKJV) and verse-range controls
+    caption: Scripture surfaces inline — translation picker and verse-range controls right on the card, no app switching.
+  - src: /assets/images/projects/harvous-app-note.png
+    alt: The Harvous note editor with the formatting toolbar — bold, italic, lists, headings, links
+    caption: The editor stays out of the way — one quiet formatting row, the note itself first.
 featured: true
 order: 1
 status: active
@@ -17,13 +25,18 @@ status: active
 
 ## About
 
-Harvous is a web-based notes app for Bible study. It is meant to be the place you save, organize, and find again what mattered from reading, sermons, or small group—without replacing your favorite Bible reader. Notes live in threads (flexible groupings) and spaces for focused study; type a reference like `Romans 8:28` and the text can surface inline; highlights, cross-references, and keyword-aware tags help you reconnect ideas later.
+Harvous is a web-based notes app for Bible study—the place you save, organize, and find again what mattered from reading, sermons, or small group, without replacing your favorite Bible reader. Notes live in threads and spaces; type `Romans 8:28` and the text surfaces inline; highlights, cross-references, and tags help you reconnect ideas later. It's open source, free at the core, and I'm building it because I need to remember Scripture better.
 
-Keep your Bible app; add Harvous. The product is deliberately notes-first: capture from your physical Bible, a reader app, or conversation, then search across scripture, threads, and tags when you need that thought again. Supported translations today include BSB, ESV, KJV, NKJV, NIV, NLT, and NET (more planned).
+## Iterations
 
-Notes are private by default (the [marketing site](https://harvous.com/) describes them as encrypted); you can share a note, a whole thread, or a shared space with a link when you want to study with others—useful for small groups or church without turning the whole app into a social network. Everything works in the browser; on mobile, add to Home Screen gives an app-like shell. Offline is partial: you can create notes offline and sync when you are back online (sync status lives under profile / data). You can export everything as CSV from Profile → My Data.
+![Harvous — from first wireframes to the launched app.](/assets/images/projects/harvous-start-to-launch.png)
 
-Harvous is open source, free at the core, and published under Testament Made LLC. I am building it because I need to remember Scripture better—and to prove you can ship faith-rooted software with a clear point of view and AI in the background, not as the headline feature.
+Two years, one massive messy Figma file. The decisions that shaped each version—what changed, and why:
+
+- **Start small on purpose.** V1 shipped with no sharing, no stickers, no captures. The core loop had to work first: save a note, organize it into threads, find it again. Everything else waited until that loop earned it. Captures came in v1.5; sharing, stickers, and groups in v2; shared stickers in v2.5.
+- **The redesign.** Real feedback said the old note view was heavy—tabs and chrome stacked around the thing you came for. The new version puts the note itself first and moves actions out of the way. Getting there wasn't a coat of paint: it took a refactor and a database migration, because the old shape had stopped serving the people using it.
+- **Sweating the small decisions.** Thread colors alone went through four side-by-side options before one won. Same with app icons, onboarding (two full redesign rounds), and the mobile menu. The messy Figma file is the receipt.
+- **Support as a feature.** Staying close to users mattered enough that I built Harvous its own internal support ticketing system instead of bolting on a third-party widget.
 
 ## Tools & process
 

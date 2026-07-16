@@ -33,6 +33,7 @@ industry:
   - "enterprise"
 dateCompleted: 2026-04-09
 thumbnail: "/images/work/care-continuity/thumbnail.png"
+thumbnailFit: contain
 gallery:
   - "/images/work/care-continuity/gallery-02.png"
   - "/images/work/care-continuity/gallery-03.png"

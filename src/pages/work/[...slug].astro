@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import { schemaPersonId } from '../../lib/schemaIds';
 import { mdStringToHtml } from '../../lib/mdString';
 
@@ -266,124 +267,7 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
       </div>
     )}
 
-    {hasLightbox && (
-      <>
-        <div
-          id="work-lightbox"
-          class="work-lightbox"
-          hidden
-          role="dialog"
-          aria-modal="true"
-          aria-label="Image gallery"
-        >
-          <div class="work-lightbox__backdrop" data-lb-backdrop tabindex="-1" />
-          <div class="work-lightbox__content">
-            <button type="button" class="work-lightbox__close" data-lb-close aria-label="Close">
-              <span class="work-lightbox__close-icon" aria-hidden="true">×</span>
-            </button>
-            {lightboxSrcs.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  class="work-lightbox__nav work-lightbox__prev"
-                  data-lb-prev
-                  aria-label="Previous image"
-                >
-                  ‹
-                </button>
-                <button
-                  type="button"
-                  class="work-lightbox__nav work-lightbox__next"
-                  data-lb-next
-                  aria-label="Next image"
-                >
-                  ›
-                </button>
-                <p class="work-lightbox__count" data-lb-count aria-live="polite" />
-              </>
-            )}
-            <div class="work-lightbox__frame">
-              <img class="work-lightbox__img" data-lb-img src="" alt="Full size preview" width="1" height="1" />
-            </div>
-          </div>
-        </div>
-
-        <script define:vars={{ lightboxSrcs }}>
-          (() => {
-            const urls = lightboxSrcs;
-            const root = document.getElementById('work-lightbox');
-            if (!root) return;
-
-            const backdrop = root.querySelector('[data-lb-backdrop]');
-            const closeBtn = root.querySelector('[data-lb-close]');
-            const prevBtn = root.querySelector('[data-lb-prev]');
-            const nextBtn = root.querySelector('[data-lb-next]');
-            const img = root.querySelector('[data-lb-img]');
-            const countEl = root.querySelector('[data-lb-count]');
-            if (!img) return;
-
-            const triggers = document.querySelectorAll('.work-lightbox-trigger');
-            let index = 0;
-            let lastActive = null;
-
-            function setUrl(i) {
-              if (!urls.length) return;
-              index = (i + urls.length) % urls.length;
-              img.src = urls[index];
-              img.removeAttribute('srcset');
-              if (countEl) countEl.textContent = `${index + 1} / ${urls.length}`;
-            }
-
-            function open(at) {
-              lastActive = document.activeElement;
-              setUrl(at);
-              root.removeAttribute('hidden');
-              document.body.classList.add('work-lightbox-open');
-              setTimeout(function () {
-                if (closeBtn && closeBtn.focus) closeBtn.focus();
-              }, 0);
-            }
-
-            function close() {
-              root.setAttribute('hidden', '');
-              document.body.classList.remove('work-lightbox-open');
-              if (lastActive && lastActive.focus) lastActive.focus();
-            }
-
-            triggers.forEach((btn) => {
-              btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                const i = parseInt(btn.getAttribute('data-lb-index') || '0', 10);
-                open(Number.isNaN(i) ? 0 : i);
-              });
-            });
-
-            if (closeBtn) closeBtn.addEventListener('click', close);
-            if (backdrop) backdrop.addEventListener('click', close);
-            if (prevBtn) prevBtn.addEventListener('click', function () { setUrl(index - 1); });
-            if (nextBtn) nextBtn.addEventListener('click', function () { setUrl(index + 1); });
-
-            root.addEventListener('click', function (e) {
-              if (e.target === root) close();
-            });
-
-            document.addEventListener('keydown', function (e) {
-              if (root.hasAttribute('hidden')) return;
-              if (e.key === 'Escape') {
-                e.preventDefault();
-                close();
-              } else if (e.key === 'ArrowLeft' && prevBtn) {
-                e.preventDefault();
-                setUrl(index - 1);
-              } else if (e.key === 'ArrowRight' && nextBtn) {
-                e.preventDefault();
-                setUrl(index + 1);
-              }
-            });
-          })();
-        </script>
-      </>
-    )}
+    {hasLightbox && <Lightbox srcs={lightboxSrcs} />}
 
     {briefHtml && (
       <section class="work-section" aria-labelledby="work-brief">

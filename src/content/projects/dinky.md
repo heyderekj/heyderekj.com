@@ -8,6 +8,22 @@ started: 2026-04-01
 role: Designer & builder
 stack: [Swift]
 image: /assets/images/projects/dinky-og.png
+media:
+  - src: /assets/images/projects/dinky-before-after.webp
+    alt: Dinky's before/after slider comparing a 3.82 MB original against the 0.07 MB compressed copy
+    caption: The before/after slider — proof over promises. Drag to compare the 3.82 MB original with the 0.07 MB copy.
+  - src: /assets/images/projects/dinky-drop-active.webp
+    alt: Dinky's drop zone lighting up as files are dragged over the window
+    caption: The drop zone lights up the moment files enter — the whole window is the target.
+  - src: /assets/images/projects/dinky-preset-selected.webp
+    alt: Dinky's sidebar with a compression preset selected
+    caption: Presets over magic numbers — pick a format, see exactly what you're trading.
+  - src: /assets/images/projects/dinky-results.webp
+    alt: Dinky's results list showing per-file savings after a batch compression
+    caption: Results show the savings per file, so batch runs feel earned.
+  - src: /assets/images/projects/dinky-watch-folder.webp
+    alt: Dinky's watch folder settings automatically compressing anything added to a folder
+    caption: Watch folders — drop files in a folder and Dinky handles them without the app open in front of you.
 featured: true
 order: 3
 status: paused

@@ -8,6 +8,10 @@ started: 2026-03-01
 role: Designer & builder
 stack: [React, Supabase]
 image: /assets/images/projects/heresmychurch-og.png
+media:
+  - src: /assets/images/projects/heresmychurch-map.png
+    alt: Here's My Church brand art — the logo over a purple choropleth map of the U.S. with a pill reading "churches across all 50 states"
+    caption: The brand in one frame — the map is the product, so the map is the identity.
 featured: true
 order: 2
 status: maintained

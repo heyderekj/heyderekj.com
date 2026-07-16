@@ -10,6 +10,7 @@ industry:
 dateCompleted: 2025-11-03
 weeksToComplete: 8
 thumbnail: "/images/work/claimable/thumbnail.webp"
+thumbnailFit: contain
 gallery:
   - "/images/work/claimable/gallery-01.webp"
   - "/images/work/claimable/gallery-02.webp"

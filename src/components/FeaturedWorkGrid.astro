@@ -24,7 +24,7 @@ const fmtDateWithYear = (d: Date) =>
             <img
               src={entry.data.thumbnail}
               alt={entry.data.title}
-              class="project-grid-img"
+              class={`project-grid-img${entry.data.thumbnailFit === 'contain' ? ' project-grid-img--framed' : ''}`}
               loading="lazy"
               decoding="async"
             />
@@ -83,6 +83,14 @@ const fmtDateWithYear = (d: Date) =>
   object-position: top center;
   display: block;
   transition: transform 0.3s ease;
+}
+
+/* Framed screenshots: sit on the elevated tile instead of cropping at the edges */
+.project-grid-img--framed {
+  object-fit: contain;
+  object-position: center;
+  padding: 6%;
+  background: var(--bg-elevated);
 }
 
 :global(main.main) .project-grid-card:hover .project-grid-img {

@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import { formatProjectStartLabel, formatProjectUpdatedLabel } from '../../lib/projectStart';
 import { displayProjectStatus } from '../../lib/projectStatus';
 import { schemaPersonId } from '../../lib/schemaIds';
@@ -38,6 +39,9 @@ const projectJsonLd: Record<string, unknown> = {
 if (project.data.url) {
   projectJsonLd.sameAs = [project.data.url];
 }
+
+const media = project.data.media ?? [];
+const hasMedia = media.length > 0;
 ---
 <Base title={`${project.data.name} — Derek Castelli`} description={metaDesc} jsonLd={projectJsonLd}>
   <article class="prose">
@@ -81,13 +85,20 @@ if (project.data.url) {
 
     {project.data.image && (
       <div class="project-detail-image">
-        <img
-          src={project.data.image}
-          alt={project.data.name}
-          class="project-detail-img"
-          loading="lazy"
-          decoding="async"
-        />
+        <button
+          type="button"
+          class="work-lightbox-trigger"
+          aria-label="View image at full size"
+          data-lb-src={project.data.image}
+        >
+          <img
+            src={project.data.image}
+            alt={project.data.name}
+            class="project-detail-img"
+            loading="lazy"
+            decoding="async"
+          />
+        </button>
       </div>
     )}
 
@@ -95,8 +106,74 @@ if (project.data.url) {
       <Content />
     </div>
 
+    {hasMedia && (
+      <section class="project-media" aria-label="Design details">
+        <h2 class="project-media-title">Design details</h2>
+        {media.map((m) =>
+          m.type === 'video' ? (
+            <figure class="project-media-item">
+              <video
+                class="project-media-video"
+                data-autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+                poster={m.poster}
+                aria-label={m.alt ?? m.caption}
+              >
+                <source src={m.src} type={m.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+              </video>
+              {m.caption && <figcaption class="project-media-caption">{m.caption}</figcaption>}
+            </figure>
+          ) : (
+            <figure class="project-media-item">
+              <button
+                type="button"
+                class="work-lightbox-trigger"
+                aria-label="View image at full size"
+                data-lb-src={m.src}
+              >
+                <img src={m.src} alt={m.alt ?? ''} loading="lazy" decoding="async" />
+              </button>
+              {m.caption && <figcaption class="project-media-caption">{m.caption}</figcaption>}
+            </figure>
+          ),
+        )}
+      </section>
+    )}
+
     <p class="back-link"><a href="/projects/"><span class="arrow">&larr;</span> all projects</a></p>
   </article>
+
+  <script is:inline>
+    // Make markdown body images zoomable: wrap them in lightbox triggers before
+    // the Lightbox script (below) collects triggers in DOM order.
+    document.querySelectorAll('.post-content img').forEach((img) => {
+      if (img.closest('.work-lightbox-trigger')) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'work-lightbox-trigger';
+      btn.setAttribute('aria-label', 'View image at full size');
+      img.parentNode.insertBefore(btn, img);
+      btn.appendChild(img);
+    });
+
+    // Muted video loops autoplay unless the visitor prefers reduced motion,
+    // in which case they get a poster + controls instead.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('video[data-autoplay]').forEach((video) => {
+      if (reduceMotion) {
+        video.controls = true;
+      } else {
+        video.autoplay = true;
+        const p = video.play();
+        if (p && p.catch) p.catch(() => {});
+      }
+    });
+  </script>
+
+  <Lightbox />
 </Base>
 
 <style>
@@ -211,5 +288,34 @@ if (project.data.url) {
     height: auto;
     object-fit: cover;
     object-position: top center;
+  }
+
+  .project-media {
+    margin-top: var(--space-5);
+  }
+
+  .project-media-title {
+    font-size: var(--size-h2);
+    margin: 0 0 var(--space-3);
+  }
+
+  .project-media-item {
+    margin: 0 0 var(--space-4);
+  }
+
+  .project-media-video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+  }
+
+  .project-media-caption {
+    margin: var(--space-2) 0 0;
+    font-size: var(--size-meta);
+    line-height: 1.45;
+    color: var(--muted-strong);
+    text-wrap: pretty;
   }
 </style>

@@ -44,6 +44,8 @@ const work = defineCollection({
     specificWork: z.string().optional(),
     /** Local public paths, e.g. /images/work/slug/... */
     thumbnail: z.string().optional(),
+    /** `contain` frames the thumbnail on a light background instead of cropping */
+    thumbnailFit: z.enum(['cover', 'contain']).default('cover'),
     desktop: z.string().optional(),
     mobile: z.string().optional(),
     gallery: z.array(z.string()).optional(),
@@ -70,8 +72,23 @@ const projects = defineCollection({
     /** From Webflow / legacy exports (e.g. Front Burner) */
     burnerLevel: z.string().optional(),
     image: z.string().optional(),
+    /** `contain` frames the card image on a light background instead of cropping */
+    imageFit: z.enum(['cover', 'contain']).default('cover'),
     /** Square app icon for card thumbnails; falls back to `image` */
     icon: z.string().optional(),
+    /** Design-detail money shots rendered after the body; videos are muted loops */
+    media: z
+      .array(
+        z.object({
+          type: z.enum(['image', 'video']).default('image'),
+          src: z.string(),
+          /** Video poster frame */
+          poster: z.string().optional(),
+          caption: z.string().optional(),
+          alt: z.string().optional(),
+        }),
+      )
+      .optional(),
     featured: z.boolean().default(false),
     order: z.number().default(0),
     status: z.enum(['active', 'maintained', 'paused', 'retired']).default('active'),
