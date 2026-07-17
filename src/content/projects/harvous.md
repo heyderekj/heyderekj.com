@@ -12,12 +12,24 @@ stack: [React, Hono, Supabase, Clerk]
 image: /assets/images/projects/harvous-preview.webp
 imageFit: contain
 media:
+  - src: /assets/images/projects/harvous-note-scripture.webp
+    alt: A Harvous note titled "God is faithful, even here" with inline scripture chips for Exodus 1:1-22, Genesis 50:20, and Romans 8:28
+    caption: The core loop — sermon notes with scripture pulled inline. Type a reference, the verse lives in the note.
+  - src: /assets/images/projects/harvous-today-passage.webp
+    alt: The Today's Passage card on My Home showing Matthew 7:7-8 with "Add to my Harvous" and "Create note" actions
+    caption: Today's Passage greets you on My Home — read it, save it, or start a note from it in one tap.
   - src: /assets/images/projects/harvous-app-scripture.png
-    alt: An inline scripture card in Harvous showing Exodus 5:1-5 with a translation picker open (BSB, ESV, KJV, NKJV) and verse-range controls
-    caption: Scripture surfaces inline — translation picker and verse-range controls right on the card, no app switching.
-  - src: /assets/images/projects/harvous-app-note.png
-    alt: The Harvous note editor with the formatting toolbar — bold, italic, lists, headings, links
-    caption: The editor stays out of the way — one quiet formatting row, the note itself first.
+    alt: An inline scripture card showing Exodus 5:1-5 with a translation picker open (BSB, ESV, KJV, NKJV) and verse-range controls
+    caption: Translation picker and verse-range controls right on the card — no app switching.
+  - src: /assets/images/projects/harvous-share-note.webp
+    alt: The Share Note sheet with "Only I can see this note" and "Shared with link to anyone" options plus a copyable link
+    caption: Sharing is a link, not a social network — private by default, shared when you say so.
+  - src: /assets/images/projects/harvous-new-ui.webp
+    alt: The new Harvous redesign at new.harvous.com — a minimal notes list and a "Pick a note to open" empty state
+    caption: The redesign in progress — chrome stripped back until the notes are the interface.
+  - src: /assets/images/projects/harvous-mac-app.webp
+    alt: An experimental native Harvous Mac app with a translucent sidebar and a No Note Selected empty state
+    caption: A native Mac app experiment — same notes, real Mac window chrome.
 featured: true
 order: 1
 status: active
@@ -25,7 +37,7 @@ status: active
 
 ## About
 
-Harvous is a web-based notes app for Bible study—the place you save, organize, and find again what mattered from reading, sermons, or small group, without replacing your favorite Bible reader. Notes live in threads and spaces; type `Romans 8:28` and the text surfaces inline; highlights, cross-references, and tags help you reconnect ideas later. It's open source, free at the core, and I'm building it because I need to remember Scripture better.
+Harvous is a web-based notes app for Bible study—the place you save, organize, and find again what mattered from reading, sermons, or small group, without replacing your favorite Bible reader. Notes live in threads and spaces; type `Romans 8:28` and the text surfaces inline; highlights, cross-references, and tags help you reconnect ideas later. It's open source, free at the core, and I'm building it because I need to remember Scripture better. Two years in, it's live at [app.harvous.com](https://app.harvous.com)—and I'm mid-redesign right now, stripping the chrome back until the notes are the interface.
 
 ## Iterations
 

@@ -50,7 +50,6 @@
   --sidebar-w: 56px;
   --layout-gap: 40px;
   --layout-max: 980px;
-  --content-group-w: calc(var(--sidebar-w) + var(--layout-gap) + var(--max-main));
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -131,7 +130,12 @@ body {
   /* Main is the centered middle column so the reading content sits at true
      viewport center (matching the fixed TOC pill). The sidebar rides in the
      left column, pinned to its inner edge, without shifting main off-center. */
-  grid-template-columns: 1fr minmax(0, var(--max-main)) 1fr;
+  /* Both side columns share a floor so the empty right one can't collapse and
+     shove main off-center when space gets tight. */
+  grid-template-columns:
+    minmax(var(--sidebar-w), 1fr)
+    minmax(0, var(--max-main))
+    minmax(var(--sidebar-w), 1fr);
   grid-template-rows: 1fr;
   gap: var(--layout-gap);
   width: 100%;

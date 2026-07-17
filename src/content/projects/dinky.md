@@ -12,6 +12,12 @@ media:
   - src: /assets/images/projects/dinky-before-after.webp
     alt: Dinky's before/after slider comparing a 3.82 MB original against the 0.07 MB compressed copy
     caption: The before/after slider — proof over promises. Drag to compare the 3.82 MB original with the 0.07 MB copy.
+  - src: /assets/images/projects/dinky-summary.webp
+    alt: Dinky's completion summary reading "Big in. Dinky out." — 9 files compressed, 193.6 MB saved, with per-file results and Undo buttons
+    caption: '"Big in. Dinky out." — the summary talks like a person, shows the receipts, and every file gets an Undo.'
+  - src: /assets/images/projects/dinky-queue.webp
+    alt: Dinky's queue processing nine JPGs to WebP with per-file progress and a "Working through the pile" status
+    caption: Batch runs narrate themselves — "Working through the pile," live progress per file, Stop always in reach.
   - src: /assets/images/projects/dinky-drop-active.webp
     alt: Dinky's drop zone lighting up as files are dragged over the window
     caption: The drop zone lights up the moment files enter — the whole window is the target.

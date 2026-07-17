@@ -9,9 +9,24 @@ role: Designer & builder
 stack: [React, Supabase]
 image: /assets/images/projects/heresmychurch-og.png
 media:
-  - src: /assets/images/projects/heresmychurch-map.png
-    alt: Here's My Church brand art — the logo over a purple choropleth map of the U.S. with a pill reading "churches across all 50 states"
-    caption: The brand in one frame — the map is the product, so the map is the identity.
+  - src: /assets/images/projects/hmc-us-map.webp
+    alt: The Here's My Church U.S. choropleth — 244,360 churches across 50 states with state-by-state density shading
+    caption: 244,360 churches across 50 states — the whole dataset at a glance, one person browsing with you now.
+  - src: /assets/images/projects/hmc-iowa-map.webp
+    alt: Iowa zoomed in — 5,176 churches plotted county by county with a filters panel
+    caption: Zoom into a state and every church is a dot — 5,176 in Iowa alone, filterable by size, denomination, and language.
+  - src: /assets/images/projects/hmc-church-detail.webp
+    alt: A church detail panel showing service times, estimated attendance, denomination, ministries, and a sentiment row
+    caption: A church page in one panel — service times, attendance, ministries, and how people feel about it.
+  - src: /assets/images/projects/hmc-update-panel.webp
+    alt: The Update Church Info panel for Parkside Baptist Church with missing fields flagged and a website submitted for review
+    caption: Crowd-sourced accuracy — missing fields are flagged, anyone can fill them in, edits queue for review.
+  - src: /assets/images/projects/hmc-review-queue.webp
+    alt: The review queue — proposed address and name changes with Approve and Reject actions
+    caption: The review queue keeps the crowd honest — every proposed change gets human eyes before it lands.
+  - src: /assets/images/projects/hmc-origin-figma-make.webp
+    alt: The Figma Make prototype that started it all — an interactive world conflict map built with Claude
+    caption: Where it started — a Figma Make conflict-map experiment. Swap the dataset, and a church directory was born.
 featured: true
 order: 2
 status: maintained

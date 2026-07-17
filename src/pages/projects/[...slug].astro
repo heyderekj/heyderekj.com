@@ -2,6 +2,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Lightbox from '../../components/Lightbox.astro';
+import MediaStepper from '../../components/MediaStepper.astro';
 import { formatProjectStartLabel, formatProjectUpdatedLabel } from '../../lib/projectStart';
 import { displayProjectStatus } from '../../lib/projectStatus';
 import { schemaPersonId } from '../../lib/schemaIds';
@@ -41,7 +42,11 @@ if (project.data.url) {
 }
 
 const media = project.data.media ?? [];
-const hasMedia = media.length > 0;
+const heroSlide =
+  project.data.image && !media.some((m) => m.src === project.data.image)
+    ? [{ type: 'image' as const, src: project.data.image, alt: project.data.name }]
+    : [];
+const slides = [...heroSlide, ...media];
 ---
 <Base title={`${project.data.name} — Derek Castelli`} description={metaDesc} jsonLd={projectJsonLd}>
   <article class="prose">
@@ -83,65 +88,33 @@ const hasMedia = media.length > 0;
       <p class="project-summary">{project.data.summary}</p>
     )}
 
-    {project.data.image && (
-      <div class="project-detail-image">
+    {slides.length >= 2 ? (
+      <MediaStepper items={slides} label={`${project.data.name} screenshots`} />
+    ) : slides.length === 1 ? (
+      <figure class="project-detail-image">
         <button
           type="button"
           class="work-lightbox-trigger"
           aria-label="View image at full size"
-          data-lb-src={project.data.image}
+          data-lb-src={slides[0].src}
         >
           <img
-            src={project.data.image}
-            alt={project.data.name}
+            src={slides[0].src}
+            alt={slides[0].alt ?? project.data.name}
             class="project-detail-img"
             loading="lazy"
             decoding="async"
           />
         </button>
-      </div>
-    )}
+        {'caption' in slides[0] && slides[0].caption && (
+          <figcaption class="project-detail-caption">{slides[0].caption}</figcaption>
+        )}
+      </figure>
+    ) : null}
 
     <div class="post-content">
       <Content />
     </div>
-
-    {hasMedia && (
-      <section class="project-media" aria-label="Design details">
-        <h2 class="project-media-title">Design details</h2>
-        {media.map((m) =>
-          m.type === 'video' ? (
-            <figure class="project-media-item">
-              <video
-                class="project-media-video"
-                data-autoplay
-                muted
-                loop
-                playsinline
-                preload="metadata"
-                poster={m.poster}
-                aria-label={m.alt ?? m.caption}
-              >
-                <source src={m.src} type={m.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
-              </video>
-              {m.caption && <figcaption class="project-media-caption">{m.caption}</figcaption>}
-            </figure>
-          ) : (
-            <figure class="project-media-item">
-              <button
-                type="button"
-                class="work-lightbox-trigger"
-                aria-label="View image at full size"
-                data-lb-src={m.src}
-              >
-                <img src={m.src} alt={m.alt ?? ''} loading="lazy" decoding="async" />
-              </button>
-              {m.caption && <figcaption class="project-media-caption">{m.caption}</figcaption>}
-            </figure>
-          ),
-        )}
-      </section>
-    )}
 
     <p class="back-link"><a href="/projects/"><span class="arrow">&larr;</span> all projects</a></p>
   </article>
@@ -268,7 +241,7 @@ const hasMedia = media.length > 0;
   }
 
   .project-summary {
-    margin: var(--space-4) 0 0;
+    margin: var(--space-3) 0 0;
     font-size: var(--size-body);
     color: var(--fg-soft);
     line-height: 1.6;
@@ -276,8 +249,10 @@ const hasMedia = media.length > 0;
   }
 
   .project-detail-image {
-    margin-top: var(--space-4);
-    margin-bottom: var(--space-4);
+    margin: var(--space-4) 0;
+  }
+
+  .project-detail-image :global(.work-lightbox-trigger) {
     border-radius: var(--radius-md);
     overflow: hidden;
   }
@@ -290,28 +265,7 @@ const hasMedia = media.length > 0;
     object-position: top center;
   }
 
-  .project-media {
-    margin-top: var(--space-5);
-  }
-
-  .project-media-title {
-    font-size: var(--size-h2);
-    margin: 0 0 var(--space-3);
-  }
-
-  .project-media-item {
-    margin: 0 0 var(--space-4);
-  }
-
-  .project-media-video {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: var(--radius-md);
-    background: var(--bg-elevated);
-  }
-
-  .project-media-caption {
+  .project-detail-caption {
     margin: var(--space-2) 0 0;
     font-size: var(--size-meta);
     line-height: 1.45;

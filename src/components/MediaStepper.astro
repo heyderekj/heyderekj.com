@@ -1,0 +1,477 @@
+---
+/**
+ * Pasito-style media stepper (joshpuckett.me/pasito, vanilla).
+ *
+ * A fixed-aspect frame with stacked slides and a dot stepper whose active dot
+ * expands into a pill. Click to jump, arrow keys to step, swipe on touch,
+ * optional autoplay with a progress fill. Respects prefers-reduced-motion.
+ *
+ * Slides are static server-rendered `.work-lightbox-trigger` buttons so the
+ * shared <Lightbox /> (whose inline script collects triggers at parse time)
+ * picks them up in DOM order — this component must never create triggers at
+ * runtime, only toggle attributes.
+ */
+interface MediaItem {
+  type?: 'image' | 'video';
+  src: string;
+  poster?: string;
+  caption?: string;
+  alt?: string;
+}
+
+interface Props {
+  items: MediaItem[];
+  /** aria-label for the carousel region. */
+  label?: string;
+  /** false (default) | true (5000ms) | ms per slide. */
+  autoplay?: number | boolean;
+  /** CSS aspect-ratio for the frame. */
+  aspect?: string;
+  /** Wrap image slides in lightbox triggers. */
+  lightbox?: boolean;
+}
+
+const {
+  items,
+  label = 'Screenshots',
+  autoplay = false,
+  aspect = '4 / 3',
+  lightbox = true,
+} = Astro.props;
+
+const autoplayMs = autoplay === true ? 5000 : typeof autoplay === 'number' ? autoplay : null;
+const count = items.length;
+---
+<figure
+  class="ms"
+  data-stepper
+  data-autoplay-ms={autoplayMs ?? undefined}
+  aria-roledescription="carousel"
+  aria-label={label}
+  data-captions={JSON.stringify(items.map((item) => item.caption ?? ''))}
+  style={`--ms-aspect: ${aspect};`}
+>
+  <div class="ms-frame" data-frame>
+    {items.map((item, i) => (
+      <div class="ms-slide" data-slide data-active={i === 0 ? 'true' : undefined} aria-hidden={i === 0 ? 'false' : 'true'}>
+        {item.type === 'video' ? (
+          <video
+            class="ms-video"
+            data-slide-video
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            poster={item.poster}
+            aria-label={item.alt ?? item.caption}
+          >
+            <source src={item.src} type={item.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+          </video>
+        ) : lightbox ? (
+          <button
+            type="button"
+            class="work-lightbox-trigger ms-trigger"
+            data-lb-src={item.src}
+            tabindex={i === 0 ? 0 : -1}
+            aria-label="View image at full size"
+          >
+            <img
+              src={item.src}
+              alt={item.alt ?? ''}
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </button>
+        ) : (
+          <img src={item.src} alt={item.alt ?? ''} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+        )}
+      </div>
+    ))}
+  </div>
+
+  <figcaption class="ms-caption" data-caption aria-live="polite">{items[0]?.caption ?? ''}</figcaption>
+
+  <div class="ms-stepper" role="tablist" aria-label="Choose slide">
+    {items.map((_, i) => (
+      <button
+        type="button"
+        class="ms-dot"
+        role="tab"
+        data-dot
+        data-index={i}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
+        aria-label={`Slide ${i + 1} of ${count}`}
+      >
+        <span class="ms-dot-fill" aria-hidden="true"></span>
+      </button>
+    ))}
+  </div>
+</figure>
+
+<style>
+  .ms {
+    margin: var(--space-4) 0;
+  }
+
+  .ms-frame {
+    display: grid;
+    aspect-ratio: var(--ms-aspect, 4 / 3);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  .ms-slide {
+    grid-area: 1 / 1;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(var(--dir, 12px));
+    transition:
+      opacity 500ms var(--easing),
+      transform 500ms var(--easing),
+      visibility 0s 500ms;
+  }
+
+  .ms-slide[data-active] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 500ms var(--easing),
+      transform 500ms var(--easing),
+      visibility 0s 0s;
+  }
+
+  /* Slide content fills the frame, contained on the elevated mat */
+  .ms-slide :global(.ms-trigger) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    cursor: zoom-in;
+    border-radius: 0;
+  }
+
+  .ms-slide img,
+  .ms-slide :global(.ms-trigger img),
+  .ms-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: none;
+    border-radius: 0;
+    transition: none;
+  }
+
+  .ms-slide :global(.ms-trigger:hover img),
+  .ms-slide :global(.ms-trigger:focus-visible img) {
+    transform: none;
+  }
+
+  .ms-slide :global(.ms-trigger:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  .ms-caption {
+    margin: var(--space-2) 0 0;
+    font-size: var(--size-meta);
+    line-height: 1.45;
+    color: var(--muted-strong);
+    text-wrap: pretty;
+    min-height: 2.9em;
+  }
+
+  /* ---------- Pasito stepper ---------- */
+  .ms-stepper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+  }
+
+  .ms-dot {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: var(--border-strong);
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+      width 500ms var(--easing),
+      background-color 300ms var(--easing);
+  }
+
+  /* ≥24px hit area without growing the visual dot */
+  .ms-dot::after {
+    content: '';
+    position: absolute;
+    inset: -9px;
+  }
+
+  .ms-dot:hover {
+    background: var(--muted);
+  }
+
+  .ms-dot:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .ms-dot[aria-selected='true'] {
+    width: 28px;
+    background: var(--accent-soft);
+  }
+
+  .ms-dot-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    border-radius: inherit;
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  .ms-dot[aria-selected='true'] .ms-dot-fill {
+    transform: scaleX(1);
+    transition: transform 300ms var(--easing);
+  }
+
+  .ms-dot[aria-selected='true'] .ms-dot-fill[data-filling] {
+    transform: scaleX(0);
+    transition: none;
+    animation: ms-fill var(--ms-interval, 5000ms) linear forwards;
+  }
+
+  @keyframes ms-fill {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ms-slide,
+    .ms-slide[data-active],
+    .ms-dot,
+    .ms-dot[aria-selected='true'] .ms-dot-fill {
+      transition-duration: 0.01ms;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function initStepper(root: HTMLElement) {
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-slide]'));
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-dot]'));
+    const captionEl = root.querySelector<HTMLElement>('[data-caption]');
+    const frame = root.querySelector<HTMLElement>('[data-frame]');
+    if (slides.length < 2 || !frame) return;
+
+    let slideCaptions: string[] = [];
+    try {
+      slideCaptions = JSON.parse(root.dataset.captions ?? '[]');
+    } catch {
+      slideCaptions = [];
+    }
+
+    let index = 0;
+    let timer: number | null = null;
+    let remaining = 0;
+    let cycleStart = 0;
+    let autoplayDead = false;
+
+    const autoplayMs = reduceMotion ? null : Number(root.dataset.autoplayMs) || null;
+
+    const lightboxOpen = () => document.body.classList.contains('work-lightbox-open');
+
+    function setSlideActive(slide: HTMLElement, active: boolean, dir: number) {
+      slide.style.setProperty('--dir', `${dir * 12}px`);
+      if (active) {
+        slide.setAttribute('data-active', 'true');
+        slide.setAttribute('aria-hidden', 'false');
+      } else {
+        slide.removeAttribute('data-active');
+        slide.setAttribute('aria-hidden', 'true');
+      }
+      const trigger = slide.querySelector<HTMLElement>('.work-lightbox-trigger');
+      if (trigger) trigger.tabIndex = active ? 0 : -1;
+      const video = slide.querySelector<HTMLVideoElement>('video');
+      if (video) {
+        if (active && !reduceMotion) {
+          const p = video.play();
+          if (p && p.catch) p.catch(() => {});
+        } else {
+          video.pause();
+          if (reduceMotion) video.controls = true;
+        }
+      }
+    }
+
+    function goTo(next: number, opts: { focusDot?: boolean } = {}) {
+      const n = slides.length;
+      const target = ((next % n) + n) % n;
+      if (target === index) return;
+      const dir = target > index ? 1 : -1;
+      setSlideActive(slides[index], false, -dir);
+      setSlideActive(slides[target], true, dir);
+      dots[index].setAttribute('aria-selected', 'false');
+      dots[index].tabIndex = -1;
+      dots[target].setAttribute('aria-selected', 'true');
+      dots[target].tabIndex = 0;
+      if (opts.focusDot) dots[target].focus();
+      if (captionEl) captionEl.textContent = slideCaptions[target] ?? '';
+      index = target;
+      restartCycle();
+    }
+
+    /* ---------- autoplay (opt-in) ---------- */
+    const activeFill = () => dots[index].querySelector<HTMLElement>('.ms-dot-fill');
+
+    function startFill(ms: number) {
+      const fill = activeFill();
+      if (!fill) return;
+      fill.removeAttribute('data-filling');
+      void fill.offsetWidth;
+      root.style.setProperty('--ms-interval', `${ms}ms`);
+      fill.setAttribute('data-filling', 'true');
+    }
+
+    function restartCycle() {
+      if (!autoplayMs || autoplayDead) return;
+      if (timer) window.clearTimeout(timer);
+      remaining = autoplayMs;
+      cycleStart = Date.now();
+      startFill(autoplayMs);
+      timer = window.setTimeout(tick, autoplayMs);
+    }
+
+    function tick() {
+      if (lightboxOpen()) {
+        // Don't advance under a modal; retry shortly.
+        timer = window.setTimeout(tick, 1000);
+        return;
+      }
+      goTo(index + 1);
+    }
+
+    function pauseCycle() {
+      if (!autoplayMs || autoplayDead || !timer) return;
+      window.clearTimeout(timer);
+      timer = null;
+      remaining -= Date.now() - cycleStart;
+      const fill = activeFill();
+      if (fill) fill.style.animationPlayState = 'paused';
+    }
+
+    function resumeCycle() {
+      if (!autoplayMs || autoplayDead || timer) return;
+      cycleStart = Date.now();
+      const fill = activeFill();
+      if (fill) fill.style.animationPlayState = '';
+      timer = window.setTimeout(tick, Math.max(remaining, 250));
+    }
+
+    function killAutoplay() {
+      autoplayDead = true;
+      if (timer) window.clearTimeout(timer);
+      timer = null;
+      const fill = activeFill();
+      if (fill) fill.removeAttribute('data-filling');
+    }
+
+    /* ---------- events ---------- */
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        killAutoplay();
+        goTo(i);
+      });
+    });
+
+    root.querySelector('[role="tablist"]')?.addEventListener('keydown', (e) => {
+      const key = (e as KeyboardEvent).key;
+      if (key === 'ArrowLeft') {
+        e.preventDefault();
+        killAutoplay();
+        goTo(index - 1, { focusDot: true });
+      } else if (key === 'ArrowRight') {
+        e.preventDefault();
+        killAutoplay();
+        goTo(index + 1, { focusDot: true });
+      } else if (key === 'Home') {
+        e.preventDefault();
+        killAutoplay();
+        goTo(0, { focusDot: true });
+      } else if (key === 'End') {
+        e.preventDefault();
+        killAutoplay();
+        goTo(slides.length - 1, { focusDot: true });
+      }
+    });
+
+    frame.addEventListener('keydown', (e) => {
+      if (lightboxOpen()) return; // lightbox owns the arrows while open
+      const key = (e as KeyboardEvent).key;
+      if (key === 'ArrowLeft') {
+        e.preventDefault();
+        killAutoplay();
+        goTo(index - 1);
+      } else if (key === 'ArrowRight') {
+        e.preventDefault();
+        killAutoplay();
+        goTo(index + 1);
+      }
+    });
+
+    /* Swipe: simple delta check, no drag-follow */
+    let startX = 0;
+    let startY = 0;
+    frame.addEventListener('pointerdown', (e) => {
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+    frame.addEventListener('pointerup', (e) => {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        killAutoplay();
+        goTo(index + (dx < 0 ? 1 : -1));
+      }
+    });
+
+    if (autoplayMs) {
+      root.addEventListener('mouseenter', pauseCycle);
+      root.addEventListener('mouseleave', resumeCycle);
+      root.addEventListener('focusin', pauseCycle);
+      root.addEventListener('focusout', (e) => {
+        if (!root.contains((e as FocusEvent).relatedTarget as Node)) resumeCycle();
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) pauseCycle();
+        else resumeCycle();
+      });
+      restartCycle();
+    }
+
+    // Videos in the initial slide state
+    slides.forEach((slide, i) => setSlideActive(slide, i === 0, 1));
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-stepper]').forEach(initStepper);
+</script>
