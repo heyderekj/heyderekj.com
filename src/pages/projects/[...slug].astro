@@ -42,11 +42,19 @@ if (project.data.url) {
 }
 
 const media = project.data.media ?? [];
-const heroSlide =
-  project.data.image && !media.some((m) => m.src === project.data.image)
-    ? [{ type: 'image' as const, src: project.data.image, alt: project.data.name }]
-    : [];
-const slides = [...heroSlide, ...media];
+/** Detail-page hero: `hero` wins; cards elsewhere keep using `image`. */
+const heroSrc = project.data.hero ?? project.data.image;
+const showHero = Boolean(heroSrc) && !media.some((m) => m.src === heroSrc);
+const heroPosition = project.data.heroPosition ?? 'top center';
+const heroZoom = project.data.heroZoom ?? 1;
+const heroImgStyle = [
+  `object-position: ${heroPosition}`,
+  heroZoom > 1
+    ? `transform: scale(${heroZoom}); transform-origin: ${heroPosition}; --pfig-zoom: scale(${heroZoom})`
+    : null,
+]
+  .filter(Boolean)
+  .join('; ');
 ---
 <Base title={`${project.data.name} — Derek Castelli`} description={metaDesc} jsonLd={projectJsonLd}>
   <article class="prose">
@@ -88,29 +96,28 @@ const slides = [...heroSlide, ...media];
       <p class="project-summary">{project.data.summary}</p>
     )}
 
-    {slides.length >= 2 ? (
-      <MediaStepper items={slides} label={`${project.data.name} screenshots`} />
-    ) : slides.length === 1 ? (
-      <figure class="project-detail-image">
+    {showHero && (
+      <figure class="pfig pfig--hero" data-zoomed={heroZoom > 1 ? '' : undefined}>
         <button
           type="button"
           class="work-lightbox-trigger"
           aria-label="View image at full size"
-          data-lb-src={slides[0].src}
+          data-lb-src={heroSrc}
         >
           <img
-            src={slides[0].src}
-            alt={slides[0].alt ?? project.data.name}
-            class="project-detail-img"
-            loading="lazy"
+            src={heroSrc}
+            alt={project.data.name}
+            loading="eager"
             decoding="async"
+            style={heroImgStyle}
           />
         </button>
-        {'caption' in slides[0] && slides[0].caption && (
-          <figcaption class="project-detail-caption">{slides[0].caption}</figcaption>
-        )}
       </figure>
-    ) : null}
+    )}
+
+    {media.length >= 2 && (
+      <MediaStepper items={media} label={`${project.data.name} screenshots`} />
+    )}
 
     <div class="post-content">
       <Content />
@@ -248,28 +255,179 @@ const slides = [...heroSlide, ...media];
     max-width: 52em;
   }
 
-  .project-detail-image {
+</style>
+
+<!-- Figure system for process-story pages. Global because body figures arrive
+     as raw HTML inside markdown (no Astro scoping), and the lightbox enhancer
+     wraps their <img> in trigger buttons at runtime. -->
+<style is:global>
+  .pfig {
     margin: var(--space-4) 0;
   }
 
-  .project-detail-image :global(.work-lightbox-trigger) {
+  .pfig .work-lightbox-trigger {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    cursor: zoom-in;
     border-radius: var(--radius-md);
     overflow: hidden;
   }
 
-  .project-detail-img {
+  .pfig img {
     display: block;
     width: 100%;
-    height: auto;
+    aspect-ratio: 3 / 2;
     object-fit: cover;
     object-position: top center;
+    box-sizing: border-box;
+    padding: 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: none;
   }
 
-  .project-detail-caption {
+  /* Keep per-hero crop zoom under the global lightbox hover lift */
+  .pfig[data-zoomed] .work-lightbox-trigger:hover img,
+  .pfig[data-zoomed] .work-lightbox-trigger:focus-visible img {
+    transform: var(--pfig-zoom, none);
+  }
+
+  /* Opt into letterboxed framing when a shot shouldn't crop */
+  .pfig[data-fit='contain'] img {
+    object-fit: contain;
+    padding: 14px;
+  }
+
+  .pfig > figcaption {
     margin: var(--space-2) 0 0;
     font-size: var(--size-meta);
     line-height: 1.45;
     color: var(--muted-strong);
     text-wrap: pretty;
   }
+
+  /* Two-up detail pairs; caption spans both cells */
+  .pfig--pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    align-items: start;
+  }
+
+  .pfig--pair img {
+    aspect-ratio: 3 / 2;
+  }
+
+  .pfig--pair[data-fit='contain'] img {
+    padding: 10px;
+  }
+
+  .pfig--pair.pfig--tall img {
+    aspect-ratio: 3 / 4;
+  }
+
+  .pfig--pair > figcaption {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  @media (max-width: 480px) {
+    .pfig--pair {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Tools & process accordion (em-dash lists → details/summary) */
+  .pacc {
+    margin: 0 0 var(--space-4);
+    max-width: var(--max-text);
+    border-top: 1px solid var(--border);
+  }
+
+  .pacc-item {
+    margin: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pacc-item > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 0.7em 0;
+    list-style: none;
+    cursor: pointer;
+    font-size: var(--size-body);
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.35;
+    user-select: none;
+    transition: color 0.15s ease;
+  }
+
+  .pacc-item > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pacc-item > summary::after {
+    content: '+';
+    flex: 0 0 auto;
+    font-size: 1.1em;
+    font-weight: 500;
+    color: var(--muted);
+    line-height: 1;
+    transition: color 0.15s ease, transform 0.2s var(--easing);
+  }
+
+  .pacc-item[open] > summary::after {
+    content: '−';
+  }
+
+  .pacc-item > summary:hover {
+    color: var(--fg);
+  }
+
+  .pacc-item > summary:hover::after {
+    color: var(--muted-strong);
+  }
+
+  .pacc-item > summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .pacc-item > p {
+    margin: 0 0 var(--space-3);
+    padding: 0 1.5em 0 0;
+    font-size: var(--size-meta);
+    line-height: 1.55;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
 </style>
+
+<script>
+  // Exclusive accordion: opening one row closes the others in the same group.
+  function initProjectAccordions() {
+    document.querySelectorAll('.pacc').forEach((root) => {
+      if ((root as HTMLElement).dataset.paccInit) return;
+      (root as HTMLElement).dataset.paccInit = '1';
+      root.querySelectorAll('details.pacc-item').forEach((item) => {
+        item.addEventListener('toggle', () => {
+          if (!(item as HTMLDetailsElement).open) return;
+          root.querySelectorAll('details.pacc-item').forEach((other) => {
+            if (other !== item) (other as HTMLDetailsElement).open = false;
+          });
+        });
+      });
+    });
+  }
+  initProjectAccordions();
+  document.addEventListener('astro:page-load', initProjectAccordions);
+</script>

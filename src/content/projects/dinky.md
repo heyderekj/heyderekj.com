@@ -8,41 +8,49 @@ started: 2026-04-01
 role: Designer & builder
 stack: [Swift]
 image: /assets/images/projects/dinky-og.png
-media:
-  - src: /assets/images/projects/dinky-before-after.webp
-    alt: Dinky's before/after slider comparing a 3.82 MB original against the 0.07 MB compressed copy
-    caption: The before/after slider — proof over promises. Drag to compare the 3.82 MB original with the 0.07 MB copy.
-  - src: /assets/images/projects/dinky-summary.webp
-    alt: Dinky's completion summary reading "Big in. Dinky out." — 9 files compressed, 193.6 MB saved, with per-file results and Undo buttons
-    caption: '"Big in. Dinky out." — the summary talks like a person, shows the receipts, and every file gets an Undo.'
-  - src: /assets/images/projects/dinky-queue.webp
-    alt: Dinky's queue processing nine JPGs to WebP with per-file progress and a "Working through the pile" status
-    caption: Batch runs narrate themselves — "Working through the pile," live progress per file, Stop always in reach.
-  - src: /assets/images/projects/dinky-drop-active.webp
-    alt: Dinky's drop zone lighting up as files are dragged over the window
-    caption: The drop zone lights up the moment files enter — the whole window is the target.
-  - src: /assets/images/projects/dinky-preset-selected.webp
-    alt: Dinky's sidebar with a compression preset selected
-    caption: Presets over magic numbers — pick a format, see exactly what you're trading.
-  - src: /assets/images/projects/dinky-results.webp
-    alt: Dinky's results list showing per-file savings after a batch compression
-    caption: Results show the savings per file, so batch runs feel earned.
-  - src: /assets/images/projects/dinky-watch-folder.webp
-    alt: Dinky's watch folder settings automatically compressing anything added to a folder
-    caption: Watch folders — drop files in a folder and Dinky handles them without the app open in front of you.
+hero: /assets/images/projects/dinky-hero.webp
 featured: true
 order: 3
 status: paused
 burnerLevel: Back Burner
 ---
 
-## About
+## The itch
 
-Dinky is a tiny macOS app that shrinks images, videos, and PDFs. Drag files onto the window, the Dock, or use the file picker—compressed copies land where you expect, with honest format choices (WebP, AVIF, HEIC, lossless PNG for stills; MP4 presets for video; flatten-or-preserve paths for PDFs). It is free and open source.
+The compressor I'd used for years kept crashing, so I built the tool I actually wanted: drag files onto the window, the Dock, or a watched folder—smaller copies land where you expect. Images, videos, and PDFs, with honest format choices (WebP, AVIF, HEIC, lossless PNG for stills; MP4 presets for video; flatten-or-preserve for PDFs). Free and open source.
 
-I care about clarity over magic numbers: presets, before/after preview, batch speed controls, watch folders, clipboard compress (⌘⇧V), URL-to-download-then-compress, Finder Quick Actions, and comparison pages that explain tradeoffs versus tools like ImageOptim, HandBrake, and Acrobat.
+## Honest by design
+
+Compression tools love magic numbers. Dinky shows its work instead: the before/after slider is proof over promises—drag it and compare the 3.82 MB original with the 0.07 MB copy yourself. Presets say exactly what you're trading, results show the savings per file, and every single file gets an Undo. Watch folders take it hands-off: drop files in, Dinky handles them without the app open in front of you.
+
+<figure class="pfig">
+  <img src="/assets/images/projects/dinky-watch-f.webp" alt="Dinky's watch folder settings — a global watched folder plus per-preset folders, compressing anything added automatically" loading="lazy" decoding="async" />
+  <figcaption>Watch folders — the app keeps working when you're not looking at it.</figcaption>
+</figure>
+
+## Personality in the details
+
+The copy is where Dinky smiles. Finish a batch and the summary reads "Big in. Dinky out."—nine files, 193.6 MB saved, "about what you'd expect for a feature-length SD rip." Mid-run, the status bar says "Working through the pile." Utilities don't have to sound like utilities.
+
+<figure class="pfig pfig--pair">
+  <img src="/assets/images/projects/dinky-summary-f.webp" alt="Dinky's completion summary reading Big in. Dinky out. — 9 files compressed, 193.6 MB saved, with per-file results and Undo buttons" loading="lazy" decoding="async" />
+  <img src="/assets/images/projects/dinky-queue-f.webp" alt="Dinky's queue processing nine JPGs to WebP with per-file progress and a Working through the pile status" loading="lazy" decoding="async" />
+  <figcaption>"Big in. Dinky out." and "Working through the pile" — the receipts, narrated like a person.</figcaption>
+</figure>
+
+## Traction
+
+I shipped it, shared it, and let real use decide what it became. The [GitHub repo](https://github.com/heyderekj/dinky) grew past 400 stars; people wanted it via Homebrew, so it installs with `brew install --cask dinky`; PRs and user replies steered it from an image compressor into a full file-compression app. It's calmly on the back burner now—stable, useful, and done being urgent.
 
 ## Tools & process
 
-- Swift — native macOS app (primary codebase per [the repo](https://github.com/heyderekj/dinky)); [dinkyfiles.com](https://dinkyfiles.com/) marketing and comparisons are HTML/CSS, with Python for small automation in the project.
-- Design & shipping — product UX, copy, and release flow; distribution via GitHub Releases and Homebrew (`brew install --cask dinky`).
+<div class="pacc">
+  <details class="pacc-item" open>
+    <summary>Swift</summary>
+    <p>Native macOS app (primary codebase per <a href="https://github.com/heyderekj/dinky">the repo</a>); <a href="https://dinkyfiles.com/">dinkyfiles.com</a> marketing and comparisons are HTML/CSS, with Python for small automation in the project.</p>
+  </details>
+  <details class="pacc-item">
+    <summary>Design &amp; shipping</summary>
+    <p>Product UX, copy, and release flow; distribution via GitHub Releases and Homebrew (<code>brew install --cask dinky</code>).</p>
+  </details>
+</div>

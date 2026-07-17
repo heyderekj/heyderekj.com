@@ -5,6 +5,7 @@ import PageTitle from '../components/PageTitle.astro';
 import ApplicationToc from '../components/ApplicationToc.astro';
 import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
+import MediaStepper from '../components/MediaStepper.astro';
 import TestimonialCarousel from '../components/TestimonialCarousel.astro';
 import Lightbox from '../components/Lightbox.astro';
 import { testimonials } from '../data/about';
@@ -14,6 +15,7 @@ import {
   customerioLetter,
   customerioLetterAiNotes,
   customerioProofLead,
+  customerioProofPreviewSlides,
   customerioProofBlocks,
   customerioProofProjectSlugs,
   customerioFoundationsLead,
@@ -106,6 +108,15 @@ const tocItems = [
   <section id="proof" class="cio-proof" aria-labelledby="cio-proof-heading">
     <h2 id="cio-proof-heading" class="section-title"><a href="/projects/">/ proof</a></h2>
     <p class="cio-section-lead">{customerioProofLead}</p>
+    <div class="cio-proof-preview">
+      <MediaStepper
+        items={[...customerioProofPreviewSlides]}
+        label="Preview of shipped product work"
+        aspect="16 / 10"
+        fit="cover"
+        autoplay
+      />
+    </div>
     {customerioProofBlocks.map((block) => (
       <>
         {block.figure && (
@@ -180,89 +191,130 @@ const tocItems = [
 <style is:global>
   /* Chips must be global: proof-section chips arrive via set:html and never get
      Astro's scoped attribute. One definition covers intro + proof chips. */
-  .cio-chip {
+  .cio-chip,
+  main.main a.cio-chip {
     /* Customer.io brand: evergreen teal + verdant mint (logo accent) */
     --cio-brand: #1f6f78;
     --cio-verdant: #abffae;
-    display: inline;
-    padding: 0.02em 0.5em 0.02em 0.35em;
+    --cio-chip-pad-y: 0.32em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28em;
+    padding: var(--cio-chip-pad-y) 0.65em var(--cio-chip-pad-y) 0.45em;
+    /* Pull the taller chip out of the line box so paragraph leading stays put */
+    margin-block: calc(var(--cio-chip-pad-y) * -1);
     border-radius: var(--radius-pill);
     border: 1px solid var(--border);
     background: var(--bg-elevated);
     font-size: 0.94em;
     font-weight: 600;
-    line-height: inherit;
+    line-height: 1.15;
     color: var(--fg);
     white-space: nowrap;
     text-decoration: none;
+    vertical-align: baseline;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
   }
 
-  .cio-chip[href] {
-    border-bottom-color: color-mix(in srgb, var(--chip-color, var(--fg)) 30%, var(--border));
-    transition: background 0.15s ease, border-color 0.15s ease;
+  /* Beat `main.main a` hairline / color: inherit on linked chips */
+  main.main a.cio-chip {
+    border: 1px solid var(--border);
+    border-bottom-style: solid;
+    color: var(--chip-color, var(--fg));
   }
 
-  .cio-chip[href]:hover {
+  main.main a.cio-chip:hover {
     border-color: color-mix(in srgb, var(--chip-color, var(--fg)) 55%, var(--border));
     background: color-mix(in srgb, var(--chip-color, var(--fg)) 12%, var(--bg-elevated));
   }
 
+  .cio-chip[href] {
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
   .cio-chip i {
     font-size: 0.85em;
-    margin-right: 0.2em;
-    vertical-align: -0.05em;
+    margin: 0;
+    line-height: 1;
   }
 
   .cio-chip__avatar {
-    display: inline-block;
+    display: block;
     width: 1.15em;
     height: 1.15em;
-    margin-right: 0.25em;
+    margin: 0;
     border-radius: 50%;
     object-fit: cover;
-    vertical-align: -0.2em;
+    flex-shrink: 0;
   }
 
-  .cio-chip--brand {
-    padding-left: 0.4em;
+  .cio-chip--brand,
+  main.main a.cio-chip--brand {
+    --chip-color: var(--cio-brand);
+    padding-left: 0.5em;
     color: var(--cio-brand);
     border-color: color-mix(in srgb, var(--cio-brand) 40%, var(--border));
     background: color-mix(in srgb, var(--cio-verdant) 28%, var(--bg-elevated));
   }
 
-  .cio-chip--harvous {
+  .cio-chip--harvous,
+  main.main a.cio-chip--harvous {
     --chip-color: #006eff;
   }
 
-  .cio-chip--dinky {
-    --chip-color: #1d4ed8;
+  .cio-chip--dinky,
+  main.main a.cio-chip--dinky {
+    --chip-color: #3b82f6;
   }
 
-  .cio-chip--hmc {
-    --chip-color: #6b21a8;
+  .cio-chip--hmc,
+  main.main a.cio-chip--hmc {
+    --chip-color: #a855f7;
   }
 
-  .cio-chip--revisemy {
-    --chip-color: #e11d48;
+  .cio-chip--revisemy,
+  main.main a.cio-chip--revisemy {
+    --chip-color: #fb7185;
   }
 
   .cio-chip--harvous,
   .cio-chip--dinky,
   .cio-chip--hmc,
-  .cio-chip--revisemy {
+  .cio-chip--revisemy,
+  main.main a.cio-chip--harvous,
+  main.main a.cio-chip--dinky,
+  main.main a.cio-chip--hmc,
+  main.main a.cio-chip--revisemy {
     color: var(--chip-color);
-    border-color: color-mix(in srgb, var(--chip-color) 30%, var(--border));
-    background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
+    border-color: color-mix(in srgb, var(--chip-color) 35%, var(--border));
+    background: color-mix(in srgb, var(--chip-color) 12%, var(--bg-elevated));
   }
 
   @media (prefers-color-scheme: dark) {
-    .cio-chip--hmc {
-      --chip-color: #c084fc;
+    .cio-chip--harvous,
+    main.main a.cio-chip--harvous {
+      --chip-color: #60a5fa;
     }
 
-    .cio-chip--brand {
+    .cio-chip--dinky,
+    main.main a.cio-chip--dinky {
+      --chip-color: #93c5fd;
+    }
+
+    .cio-chip--hmc,
+    main.main a.cio-chip--hmc {
+      --chip-color: #d8b4fe;
+    }
+
+    .cio-chip--revisemy,
+    main.main a.cio-chip--revisemy {
+      --chip-color: #fda4af;
+    }
+
+    .cio-chip--brand,
+    main.main a.cio-chip--brand {
+      --chip-color: var(--cio-verdant);
       color: var(--cio-verdant);
       border-color: color-mix(in srgb, var(--cio-verdant) 35%, var(--border));
       background: color-mix(in srgb, var(--cio-verdant) 10%, var(--bg-elevated));
@@ -472,6 +524,14 @@ const tocItems = [
 
   .cio-body:last-of-type {
     margin-bottom: 0;
+  }
+
+  .cio-proof-preview {
+    margin: 0 0 var(--space-4);
+  }
+
+  .cio-proof-preview :global(.ms) {
+    margin: 0;
   }
 
   .cio-figure {

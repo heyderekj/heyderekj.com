@@ -52,6 +52,70 @@ export const customerioLetterAiNotes = {
 export const customerioProofLead =
   "I’ve learned a lot by building things I actually use. These aren’t side demos—they’re products I ship, support, and keep improving until they work better in practice.";
 
+/** Pasito-style money shots across the proof projects — craft over marketing. */
+export const customerioProofPreviewSlides = [
+  {
+    src: '/assets/images/projects/harvous-scripture-inline.png',
+    alt: 'Inline scripture card with translation picker open and verse-range controls',
+    caption: 'Harvous — translation + verse range without leaving the note.',
+  },
+  {
+    src: '/assets/images/projects/harvous-share-note.png',
+    alt: 'Harvous Share Note sheet with private and shared-link options',
+    caption: 'Harvous — sharing is a link, not a social network.',
+  },
+  {
+    src: '/assets/images/projects/harvous-mac-app.png',
+    alt: 'Experimental native Harvous Mac app with translucent sidebar',
+    caption: 'Harvous — native Mac capture experiment.',
+  },
+  {
+    src: '/assets/images/projects/dinky-drop-active.png',
+    alt: "Dinky drop zone lighting up as files are dragged over the window",
+    caption: 'Dinky — the whole window is the drop target.',
+  },
+  {
+    src: '/assets/images/projects/dinky-summary.png',
+    alt: 'Dinky completion summary with savings badges and per-file Undo',
+    caption: 'Dinky — "Big in. Dinky out." Copy that earns the result.',
+  },
+  {
+    src: '/assets/images/projects/dinky-results.png',
+    alt: 'Dinky results list showing per-file savings after a batch compression',
+    caption: 'Dinky — receipts per file, Undo always available.',
+  },
+  {
+    src: '/assets/images/projects/hmc-church-detail.png',
+    alt: "Here's My Church detail panel over the map with times, attendance, and ministries",
+    caption: "Here's My Church — a church page that answers the real questions.",
+  },
+  {
+    src: '/assets/images/projects/hmc-verified-filter.png',
+    alt: "Here's My Church map with the verified filter open and criteria explained",
+    caption: "Here's My Church — verified means something you can trust.",
+  },
+  {
+    src: '/assets/images/projects/hmc-update-f.png',
+    alt: "Here's My Church Update Church Info panel with missing fields flagged",
+    caption: "Here's My Church — crowd edits, human review.",
+  },
+  {
+    src: '/assets/images/projects/hmc-summary-f.png',
+    alt: "Here's My Church summary — churches across 50 states",
+    caption: "Here's My Church — scale you can browse.",
+  },
+  {
+    src: '/assets/images/projects/revisemy-marks.png',
+    alt: 'ReviseMy marks panel with Must fix notes and second-opinion hints',
+    caption: 'ReviseMy — human marks win; second opinion stays optional.',
+  },
+  {
+    src: '/assets/images/projects/revisemy-share.png',
+    alt: 'ReviseMy Share menu with guest link and expiry options',
+    caption: 'ReviseMy — reviews travel as guest links.',
+  },
+] as const;
+
 /** Narrative proof blocks with project chips; optional figure after the paragraph. */
 export const customerioProofBlocks: {
   html: string;
@@ -59,11 +123,6 @@ export const customerioProofBlocks: {
 }[] = [
   {
     html: `<a href="/projects/harvous/" class="cio-chip cio-chip--harvous"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> is two years of product work—multiple iterations, a massive messy Figma file, then a complete redesign driven by real feedback that included a refactor and a database migration. Customer support mattered so much that I built Harvous its own internal support ticketing system. I stayed with it because the problem was mine first: remembering Scripture better. Long-term product thinking looks like that—willing to rebuild when the old shape stops serving the people using it.`,
-    figure: {
-      src: '/assets/images/projects/harvous-start-to-launch.png',
-      alt: 'Harvous UI evolution from early wireframes through intermediate designs to the launched product',
-      caption: 'Harvous — start → launched: the long messy path through the Figma file.',
-    },
   },
   {
     html: `<a href="/projects/dinky/" class="cio-chip cio-chip--dinky"><i class="ph-bold ph-file-arrow-down" aria-hidden="true"></i>Dinky</a> started as a local image-compression Mac app because the tool I normally used kept crashing. Then people wanted it too. I cared about clear tradeoffs—honest format choices, preview, batch controls—so people knew what they were getting, not magic. I tuned it, took PRs, replied to users on <a href="https://github.com/heyderekj/dinky">GitHub</a>, and it grew past 400 stars—from an image compressor into a full file compression app. That’s the loop I care about: ship something useful, listen, and let real use decide what it becomes.`,

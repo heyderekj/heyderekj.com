@@ -22,5 +22,13 @@ Unknowns go to Review so nothing silently disappears, and Binky includes optiona
 
 ## Tools & process
 
-- Swift - native macOS app in [the repo](https://github.com/heyderekj/binky).
-- Product + website - positioning, UX, and release flow on [binkyfiles.com](https://binkyfiles.com/), with distribution via GitHub Releases and Homebrew (`brew install --cask binky`).
+<div class="pacc">
+  <details class="pacc-item" open>
+    <summary>Swift</summary>
+    <p>Native macOS app in <a href="https://github.com/heyderekj/binky">the repo</a>.</p>
+  </details>
+  <details class="pacc-item">
+    <summary>Product + website</summary>
+    <p>Positioning, UX, and release flow on <a href="https://binkyfiles.com/">binkyfiles.com</a>, with distribution via GitHub Releases and Homebrew (<code>brew install --cask binky</code>).</p>
+  </details>
+</div>

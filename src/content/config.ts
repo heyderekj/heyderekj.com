@@ -72,6 +72,12 @@ const projects = defineCollection({
     /** From Webflow / legacy exports (e.g. Front Burner) */
     burnerLevel: z.string().optional(),
     image: z.string().optional(),
+    /** Detail-page hero; falls back to `image` (which cards keep using) */
+    hero: z.string().optional(),
+    /** CSS object-position for the detail hero (e.g. `left top`) */
+    heroPosition: z.string().optional(),
+    /** Extra crop-in for heroes with too much empty mat (e.g. `1.35`) */
+    heroZoom: z.number().min(1).max(2.5).optional(),
     /** `contain` frames the card image on a light background instead of cropping */
     imageFit: z.enum(['cover', 'contain']).default('cover'),
     /** Square app icon for card thumbnails; falls back to `image` */

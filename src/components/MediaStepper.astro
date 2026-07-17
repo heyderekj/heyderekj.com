@@ -17,6 +17,12 @@ interface MediaItem {
   poster?: string;
   caption?: string;
   alt?: string;
+  /** Per-slide object-fit; falls back to the stepper `fit` prop. */
+  fit?: 'contain' | 'cover';
+  /** CSS object-position, e.g. `left top`. */
+  position?: string;
+  /** Extra crop-in for slides with too much negative space (e.g. `1.2`). */
+  zoom?: number;
 }
 
 interface Props {
@@ -27,6 +33,8 @@ interface Props {
   autoplay?: number | boolean;
   /** CSS aspect-ratio for the frame. */
   aspect?: string;
+  /** How images fill the frame. Prefer crops with built-in margin when using `cover`. */
+  fit?: 'contain' | 'cover';
   /** Wrap image slides in lightbox triggers. */
   lightbox?: boolean;
 }
@@ -36,6 +44,7 @@ const {
   label = 'Screenshots',
   autoplay = false,
   aspect = '4 / 3',
+  fit = 'contain',
   lightbox = true,
 } = Astro.props;
 
@@ -43,7 +52,7 @@ const autoplayMs = autoplay === true ? 5000 : typeof autoplay === 'number' ? aut
 const count = items.length;
 ---
 <figure
-  class="ms"
+  class:list={['ms', fit === 'cover' && 'ms--cover']}
   data-stepper
   data-autoplay-ms={autoplayMs ?? undefined}
   aria-roledescription="carousel"
@@ -52,60 +61,92 @@ const count = items.length;
   style={`--ms-aspect: ${aspect};`}
 >
   <div class="ms-frame" data-frame>
-    {items.map((item, i) => (
-      <div class="ms-slide" data-slide data-active={i === 0 ? 'true' : undefined} aria-hidden={i === 0 ? 'false' : 'true'}>
-        {item.type === 'video' ? (
-          <video
-            class="ms-video"
-            data-slide-video
-            muted
-            loop
-            playsinline
-            preload="metadata"
-            poster={item.poster}
-            aria-label={item.alt ?? item.caption}
-          >
-            <source src={item.src} type={item.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
-          </video>
-        ) : lightbox ? (
-          <button
-            type="button"
-            class="work-lightbox-trigger ms-trigger"
-            data-lb-src={item.src}
-            tabindex={i === 0 ? 0 : -1}
-            aria-label="View image at full size"
-          >
+    {items.map((item, i) => {
+      const slideFit = item.fit ?? fit;
+      const zoom = item.zoom && item.zoom !== 1 ? item.zoom : null;
+      const origin = item.position ?? (slideFit === 'cover' ? 'top center' : 'center');
+      const mediaStyle = [
+        `object-fit: ${slideFit}`,
+        `object-position: ${origin}`,
+        zoom
+          ? `--ms-zoom: scale(${zoom}); transform: scale(${zoom}); transform-origin: ${origin}`
+          : null,
+      ]
+        .filter(Boolean)
+        .join('; ');
+      return (
+        <div class="ms-slide" data-slide data-active={i === 0 ? 'true' : undefined} aria-hidden={i === 0 ? 'false' : 'true'}>
+          {item.type === 'video' ? (
+            <video
+              class="ms-video"
+              data-slide-video
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              poster={item.poster}
+              aria-label={item.alt ?? item.caption}
+              style={mediaStyle}
+            >
+              <source src={item.src} type={item.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+            </video>
+          ) : lightbox ? (
+            <button
+              type="button"
+              class="work-lightbox-trigger ms-trigger"
+              data-lb-src={item.src}
+              tabindex={i === 0 ? 0 : -1}
+              aria-label="View image at full size"
+            >
+              <img
+                src={item.src}
+                alt={item.alt ?? ''}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                style={mediaStyle}
+              />
+            </button>
+          ) : (
             <img
               src={item.src}
               alt={item.alt ?? ''}
               loading={i === 0 ? 'eager' : 'lazy'}
               decoding="async"
+              style={mediaStyle}
             />
-          </button>
-        ) : (
-          <img src={item.src} alt={item.alt ?? ''} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
-        )}
-      </div>
-    ))}
+          )}
+        </div>
+      );
+    })}
   </div>
 
   <figcaption class="ms-caption" data-caption aria-live="polite">{items[0]?.caption ?? ''}</figcaption>
 
-  <div class="ms-stepper" role="tablist" aria-label="Choose slide">
-    {items.map((_, i) => (
-      <button
-        type="button"
-        class="ms-dot"
-        role="tab"
-        data-dot
-        data-index={i}
-        aria-selected={i === 0 ? 'true' : 'false'}
-        tabindex={i === 0 ? 0 : -1}
-        aria-label={`Slide ${i + 1} of ${count}`}
-      >
-        <span class="ms-dot-fill" aria-hidden="true"></span>
-      </button>
-    ))}
+  <div class="ms-controls">
+    <button type="button" class="ms-arrow" data-prev aria-label="Previous slide">
+      <i class="ph-bold ph-caret-left" aria-hidden="true"></i>
+    </button>
+
+    <div class="ms-stepper" role="tablist" aria-label="Choose slide">
+      {items.map((_, i) => (
+        <button
+          type="button"
+          class="ms-dot"
+          role="tab"
+          data-dot
+          data-index={i}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          tabindex={i === 0 ? 0 : -1}
+          aria-label={`Slide ${i + 1} of ${count}`}
+        >
+          <span class="ms-dot-fill" aria-hidden="true"></span>
+        </button>
+      ))}
+    </div>
+
+    <button type="button" class="ms-arrow" data-next aria-label="Next slide">
+      <i class="ph-bold ph-caret-right" aria-hidden="true"></i>
+    </button>
   </div>
 </figure>
 
@@ -168,14 +209,23 @@ const count = items.length;
     width: 100%;
     height: 100%;
     object-fit: contain;
+    object-position: center;
     background: none;
     border-radius: 0;
     transition: none;
   }
 
+  .ms--cover .ms-slide img,
+  .ms--cover .ms-slide :global(.ms-trigger img),
+  .ms--cover .ms-video {
+    object-fit: cover;
+    object-position: top center;
+  }
+
+  /* Don't let global lightbox hover lift override per-slide crop zoom */
   .ms-slide :global(.ms-trigger:hover img),
   .ms-slide :global(.ms-trigger:focus-visible img) {
-    transform: none;
+    transform: var(--ms-zoom, none);
   }
 
   .ms-slide :global(.ms-trigger:focus-visible) {
@@ -193,12 +243,51 @@ const count = items.length;
   }
 
   /* ---------- Pasito stepper ---------- */
+  .ms-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
   .ms-stepper {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: var(--space-1);
-    margin-top: var(--space-2);
+  }
+
+  .ms-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: var(--bg-elevated);
+    color: var(--muted-strong);
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      color 150ms ease,
+      border-color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .ms-arrow:hover {
+    color: var(--fg);
+    border-color: var(--border-strong);
+    background: var(--bg);
+  }
+
+  .ms-arrow:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   .ms-dot {
@@ -402,6 +491,16 @@ const count = items.length;
         killAutoplay();
         goTo(i);
       });
+    });
+
+    root.querySelector<HTMLButtonElement>('[data-prev]')?.addEventListener('click', () => {
+      killAutoplay();
+      goTo(index - 1);
+    });
+
+    root.querySelector<HTMLButtonElement>('[data-next]')?.addEventListener('click', () => {
+      killAutoplay();
+      goTo(index + 1);
     });
 
     root.querySelector('[role="tablist"]')?.addEventListener('keydown', (e) => {
