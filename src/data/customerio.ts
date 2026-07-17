@@ -19,7 +19,7 @@ export const customerioLetter = {
   paragraphs: [
     "When Will King sent me this opportunity it made my day! What I care about is helping teams reach people in a way that actually feels useful—as if every company were a small local business. My strength is the whole journey: where people get stuck, whether it works, and staying close enough to build and ship until it does.",
     "I’ve always been a little unconventional about this, and self-taught. I learn by building, tweaking, shipping, and paying close attention to what real users do—oh, and I’m the first real user. I often don’t know what direction things will take until I start messing around, and I learn a lot by experimenting and iterating until the shape of the thing becomes clear.",
-    "While I care about how it all looks, I care even more about whether it works: flows that don’t lose people, where friction lives, and whether the thing does what we intended. I want to understand the problems before trying to solve them. That’s why I’m a designer.",
+    "While I care about how it all looks, I care even more about whether it works: flows that don’t lose people, where friction lives, and whether the thing does what we intended. I want to understand the problems before trying to solve them. But also, being able to quickly prototype and experiment to really test what feels right is my favorite part of working with AI. That’s why I’m a designer.",
     "AI has completely changed my world as a designer who loves building. I can go further, faster—from idea to a real flow people can try, not just a polished frame. I’ve actually written about how I think AI should show up in products: subtle, useful, not a checkbox on my personal blog.",
     "This Senior Product Designer role would push me to ask lots of questions and look closely at actual user behavior, watching recordings (if any) and finding the real problems to fix. It would challenge me, I’d keep growing, and I’d be going full circle—helping people better reach and support their customers. That’s why Senior Product Designer at Customer.io, right now, just feels right.",
   ],
@@ -96,6 +96,6 @@ export const customerioFoundationsParagraphs: string[] = [
 export const customerioWhyParagraphs: string[] = [
   `Honestly, three things.`,
   `I'd get to stay close to a product all the way through—design into what actually ships—which is already how I work, even if it hasn't been the job title yet. And it feels like the right place to go deeper into product, with a team treating AI as something that should actually help people, not just check a box (I've written about that more than once).`,
-  `Billions of messages a day is billions of chances for software to feel like a small local business that knows you—that's a problem worth sweating.`,
+  `Secondly, billions of messages a day is billions of chances for software to feel like a small local business that knows you—that's a problem worth sweating.`,
   `And it's remote, so I keep building from Iowa (or wherever my wife needs to be for her education and work).`,
 ];
