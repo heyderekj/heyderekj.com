@@ -7,12 +7,21 @@ year: 2026
 started: 2026-04-01
 role: Designer & builder
 stack: [Swift]
-image: /assets/images/projects/dinky-og.png
-hero: /assets/images/projects/dinky-hero.webp
+image: /assets/images/projects/dinky-1.png
+hero: /assets/images/projects/dinky-3.webp
 featured: true
 order: 3
 status: paused
 burnerLevel: Back Burner
+media:
+  - type: video
+    src: /assets/images/projects/dinky-demo.mp4
+    poster: /assets/images/projects/dinky-demo-poster.webp
+    caption: Drop files in — watch them shrink, then undo any file you want.
+  - type: image
+    src: /assets/images/projects/dinky-4.webp
+    alt: Dinky Quality panel with Photo, Graphic, and Mixed image modes plus PDF, video, and audio quality choices
+    caption: Quality that says what you're trading — Photo vs Graphic, Balanced vs High, Max width when you need it.
 ---
 
 ## The itch
@@ -21,21 +30,16 @@ The compressor I'd used for years kept crashing, so I built the tool I actually 
 
 ## Honest by design
 
-Compression tools love magic numbers. Dinky shows its work instead: the before/after slider is proof over promises—drag it and compare the 3.82 MB original with the 0.07 MB copy yourself. Presets say exactly what you're trading, results show the savings per file, and every single file gets an Undo. Watch folders take it hands-off: drop files in, Dinky handles them without the app open in front of you.
+Compression tools love magic numbers. Dinky shows its work instead: format and quality choices that mean something, presets that say exactly what you're trading, and results you can undo file by file. Watch folders take it hands-off: drop files in, Dinky handles them without the app open in front of you.
 
-<figure class="pfig">
-  <img src="/assets/images/projects/dinky-watch-f.webp" alt="Dinky's watch folder settings — a global watched folder plus per-preset folders, compressing anything added automatically" loading="lazy" decoding="async" />
-  <figcaption>Watch folders — the app keeps working when you're not looking at it.</figcaption>
-</figure>
+## Casual and pro
 
-## Personality in the details
-
-The copy is where Dinky smiles. Finish a batch and the summary reads "Big in. Dinky out."—nine files, 193.6 MB saved, "about what you'd expect for a feature-length SD rip." Mid-run, the status bar says "Working through the pile." Utilities don't have to sound like utilities.
+The goal was to feel friendly for someone who just wants smaller files—and deep enough for someone who lives in presets. A “Websites” preset can lock WebP, max width, and H.264 in one place; the sidebar can stay simple or show every media type. Same app, two tempos.
 
 <figure class="pfig pfig--pair">
-  <img src="/assets/images/projects/dinky-summary-f.webp" alt="Dinky's completion summary reading Big in. Dinky out. — 9 files compressed, 193.6 MB saved, with per-file results and Undo buttons" loading="lazy" decoding="async" />
-  <img src="/assets/images/projects/dinky-queue-f.webp" alt="Dinky's queue processing nine JPGs to WebP with per-file progress and a Working through the pile status" loading="lazy" decoding="async" />
-  <figcaption>"Big in. Dinky out." and "Working through the pile" — the receipts, narrated like a person.</figcaption>
+  <img src="/assets/images/projects/dinky-5.webp" alt="Dinky Presets settings editing a Websites preset with Smart quality, media types, and format options" loading="lazy" decoding="async" />
+  <img src="/assets/images/projects/dinky-6.webp" alt="Dinky Sidebar settings with toggles for showing Images, Audio, Videos, and PDFs in the sidebar" loading="lazy" decoding="async" />
+  <figcaption>Presets for the workflow you repeat · a sidebar you can keep simple or fully loaded.</figcaption>
 </figure>
 
 ## Traction

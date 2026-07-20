@@ -9,12 +9,16 @@ category: App
 burnerLevel: Front Burner
 role: Designer & builder
 stack: [React, Hono, Supabase, Clerk]
-image: /assets/images/projects/harvous-preview.webp
-hero: /assets/images/projects/harvous-hero.webp
-imageFit: contain
+image: /assets/images/projects/harvous-1.png
+hero: /assets/images/projects/harvous-3.webp
 featured: true
 order: 1
 status: active
+media:
+  - type: video
+    src: /assets/images/projects/harvous-demo.mp4
+    poster: /assets/images/projects/harvous-demo-poster.webp
+    caption: "A quick tour of Harvous — capture a note, keep scripture in the flow, pick up where you left off."
 ---
 
 ## The itch
@@ -25,9 +29,14 @@ I'm making Harvous because I need to remember the Bible, better. My study was sc
 
 Two years, one massive messy Figma file. V1 shipped small on purpose—no sharing, no stickers, no captures—because the core loop had to earn everything else: save a note, organize it into threads, find it again. Captures came in v1.5; sharing, stickers, and groups in v2; shared stickers in v2.5. Then real feedback said the note view had gotten heavy—tabs and chrome stacked around the thing you came for—so I redesigned it. That wasn't a coat of paint: it took a refactor and a database migration, because the old shape had stopped serving the people using it. The small decisions got the same treatment—thread colors went through four side-by-side options before one won, onboarding through two full redesign rounds. The messy Figma file is the receipt.
 
-<figure class="pfig">
-  <img src="/assets/images/projects/harvous-note-detail.webp" alt="A Harvous note titled 'God is faithful, even here' with inline scripture chips for Exodus 1:1-22, Genesis 50:20, and Romans 8:28" loading="lazy" decoding="async" />
-  <figcaption>The note view after the redesign — the note itself first, actions tucked into the rail. Type a reference and the verse lives in the note.</figcaption>
+<figure class="pembed">
+  <iframe
+    title="Making Harvous 1.0 — sketches through first ship in Figma"
+    src="https://embed.figma.com/design/CHw1ZiUi48Cj1qmTFSNgYC/Making-Harvous-1.0--Copy-?node-id=13011-5625&embed-host=share"
+    allowfullscreen
+    loading="lazy"
+  ></iframe>
+  <figcaption>Sketches → Harvous 1.0 — the Figma trail before the redesign below.</figcaption>
 </figure>
 
 ## The craft
@@ -35,9 +44,9 @@ Two years, one massive messy Figma file. V1 shipped small on purpose—no sharin
 The detail I sweat most: scripture should show up where you're thinking, not a tab away. Type `Romans 8:28` and the verse surfaces inline, with a translation picker (BSB, ESV, KJV, NKJV, NIV, NLT, NET) and verse-range controls right on the card. And every morning, Today's Passage waits at the top of My Home—a small nudge that keeps the app pointed at the actual habit.
 
 <figure class="pfig pfig--pair">
-  <img src="/assets/images/projects/harvous-today-passage-f.webp" alt="The Today's Passage card on My Home showing Matthew 7:7-8 with Add to my Harvous and Create note actions" loading="lazy" decoding="async" />
-  <img src="/assets/images/projects/harvous-scripture-inline.webp" alt="An inline scripture card for Exodus 5:1-5 with the translation picker open and verse-range controls" loading="lazy" decoding="async" />
-  <figcaption>Today's Passage greets you at the door; inline scripture keeps you in the note. No app switching, no copy-paste.</figcaption>
+  <img src="/assets/images/projects/harvous-5.webp" alt="Harvous My Home with a personalized greeting, Today's Passage, and pick-up-where-you-left-off cards beside an empty note canvas" loading="lazy" decoding="async" />
+  <img src="/assets/images/projects/harvous-6.webp" alt="Inline Exodus scripture card with translation and verse-range controls open over a study note, plus highlight color swatches" loading="lazy" decoding="async" />
+  <figcaption>My Home nudges the habit; inline scripture keeps study in the note—translation and range right on the card.</figcaption>
 </figure>
 
 ## Staying close
@@ -45,19 +54,23 @@ The detail I sweat most: scripture should show up where you're thinking, not a t
 Notes are private by default—but when you want to study with others, a note, a thread, or a whole space shares with a link. Not a social network, just a link. Onboarding is written the way I'd explain it across the table. And customer support mattered enough that I built Harvous its own internal ticketing system instead of bolting on a third-party widget—staying close to the people using it is the whole point.
 
 <figure class="pfig pfig--pair">
-  <img src="/assets/images/projects/harvous-share-flow.webp" alt="The Share Note sheet with Only I can see this note and Shared with link to anyone options plus a copyable link" loading="lazy" decoding="async" />
-  <img src="/assets/images/projects/harvous-onboarding-f.webp" alt="The Finding your way around onboarding note with the note actions menu open" loading="lazy" decoding="async" />
-  <figcaption>Sharing is a link, not a network — and onboarding reads like a note, because it is one.</figcaption>
+  <img src="/assets/images/projects/harvous-7.webp" alt="A shared Harvous note page for Jesus: our passover lamb with Open app and Add to my Harvous actions" loading="lazy" decoding="async" />
+  <img src="/assets/images/projects/harvous-8.webp" alt="Harvous sign-in screen with Open your study Bible headline and email sign-in" loading="lazy" decoding="async" />
+  <figcaption>Sharing is a link, not a network — guests can read a note; signing in is how it becomes theirs.</figcaption>
+</figure>
+
+<figure class="pfig">
+  <img src="/assets/images/projects/harvous-11.webp" alt="Harvous admin Support inbox with ticket list, selected question from Derek Castelli, device context, and triage notes" loading="lazy" decoding="async" />
+  <figcaption>Custom support — tickets with app version, plan, and device context, plus triage notes. Built in-house so feedback stays next to the product.</figcaption>
 </figure>
 
 ## Where it stands
 
-Harvous is my front-burner product, open source under Testament Made LLC, and free at the core. Right now I'm mid-redesign—stripping the chrome back until the notes are the interface at [new.harvous.com](https://new.harvous.com)—and experimenting with a native Mac app for capture that feels instant. Same principle as always: app first, AI second.
+Harvous is my front-burner product, open source under Testament Made LLC, and free at the core. Right now I'm mid-redesign—stripping the chrome back until the notes are the interface at [new.harvous.com](https://new.harvous.com)—including appearance that feels like your study Bible, not a generic SaaS shell. Same principle as always: app first, AI second.
 
-<figure class="pfig pfig--pair">
-  <img src="/assets/images/projects/harvous-new-ui-f.webp" alt="The new Harvous redesign at new.harvous.com — a minimal notes list and a Pick a note to open empty state" loading="lazy" decoding="async" />
-  <img src="/assets/images/projects/harvous-mac-app.webp" alt="An experimental native Harvous Mac app with a translucent sidebar and a No Note Selected empty state" loading="lazy" decoding="async" />
-  <figcaption>What's cooking — the redesign in progress, and a native Mac app experiment. Both chasing capture without friction.</figcaption>
+<figure class="pfig">
+  <img src="/assets/images/projects/harvous-9.webp" alt="Harvous Appearance settings with Light Paper and Dark Night theme previews, Auto mode, and accent color swatches" loading="lazy" decoding="async" />
+  <figcaption>Appearance is part of the redesign — Paper or Night, Auto mode, and accents that feel personal without getting in the way.</figcaption>
 </figure>
 
 ## Tools & process
@@ -84,20 +97,12 @@ Harvous is my front-burner product, open source under Testament Made LLC, and fr
     <p>Authentication and session handling wired through the same stack as the API.</p>
   </details>
   <details class="pacc-item">
-    <summary>Mast</summary>
-    <p>Marketing site layout: modular, tight first impression for <a href="https://harvous.com/">harvous.com</a> (<a href="https://www.nocodesupply.co/mast/docs">Mast docs</a>).</p>
-  </details>
-  <details class="pacc-item">
     <summary>Cursor &amp; Claude</summary>
     <p>Feature work, refactors, and exploratory implementation with human-led product decisions.</p>
   </details>
   <details class="pacc-item">
     <summary>Vitest &amp; Playwright</summary>
     <p>Unit and E2E coverage for flows worth not regressing (shared spaces, invites, etc.).</p>
-  </details>
-  <details class="pacc-item">
-    <summary>Capacitor</summary>
-    <p>Native shell path in the repo for future iOS/Android packaging on top of the same web build.</p>
   </details>
   <details class="pacc-item">
     <summary>Principles</summary>

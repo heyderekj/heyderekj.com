@@ -3,13 +3,12 @@
  * Pasito-style media stepper (joshpuckett.me/pasito, vanilla).
  *
  * A fixed-aspect frame with stacked slides and a dot stepper whose active dot
- * expands into a pill. Click to jump, arrow keys to step, swipe on touch,
- * optional autoplay with a progress fill. Respects prefers-reduced-motion.
+ * expands into a pill. Click to jump, ←/→ (hover or focus) to step, swipe on
+ * touch, optional autoplay with a progress fill. Respects prefers-reduced-motion.
  *
- * Slides are static server-rendered `.work-lightbox-trigger` buttons so the
- * shared <Lightbox /> (whose inline script collects triggers at parse time)
- * picks them up in DOM order — this component must never create triggers at
- * runtime, only toggle attributes.
+ * The whole frame is a `.zoomable`; each slide's `.zoom-trigger` expands the
+ * frame to rail width via zoom.ts. Autoplay pauses (kills) while zoomed, via
+ * the `zoomchange` event.
  */
 interface MediaItem {
   type?: 'image' | 'video';
@@ -35,8 +34,10 @@ interface Props {
   aspect?: string;
   /** How images fill the frame. Prefer crops with built-in margin when using `cover`. */
   fit?: 'contain' | 'cover';
-  /** Wrap image slides in lightbox triggers. */
-  lightbox?: boolean;
+  /** Wrap image slides in zoom triggers (click to expand the frame). */
+  zoomable?: boolean;
+  /** Backdrop behind contained media (transparent window shots). */
+  mat?: 'macos-dark';
 }
 
 const {
@@ -45,14 +46,15 @@ const {
   autoplay = false,
   aspect = '4 / 3',
   fit = 'contain',
-  lightbox = true,
+  zoomable = true,
+  mat,
 } = Astro.props;
 
 const autoplayMs = autoplay === true ? 5000 : typeof autoplay === 'number' ? autoplay : null;
 const count = items.length;
 ---
 <figure
-  class:list={['ms', fit === 'cover' && 'ms--cover']}
+  class:list={['ms', 'zoomable', fit === 'cover' && 'ms--cover', mat === 'macos-dark' && 'ms--macos-dark']}
   data-stepper
   data-autoplay-ms={autoplayMs ?? undefined}
   aria-roledescription="carousel"
@@ -64,9 +66,9 @@ const count = items.length;
     {items.map((item, i) => {
       const slideFit = item.fit ?? fit;
       const zoom = item.zoom && item.zoom !== 1 ? item.zoom : null;
-      const origin = item.position ?? (slideFit === 'cover' ? 'top center' : 'center');
+      const origin = item.position ?? 'center center';
       const mediaStyle = [
-        `object-fit: ${slideFit}`,
+        `object-fit: ${slideFit === 'cover' ? 'contain' : slideFit}`,
         `object-position: ${origin}`,
         zoom
           ? `--ms-zoom: scale(${zoom}); transform: scale(${zoom}); transform-origin: ${origin}`
@@ -77,26 +79,36 @@ const count = items.length;
       return (
         <div class="ms-slide" data-slide data-active={i === 0 ? 'true' : undefined} aria-hidden={i === 0 ? 'false' : 'true'}>
           {item.type === 'video' ? (
-            <video
-              class="ms-video"
-              data-slide-video
-              muted
-              loop
-              playsinline
-              preload="metadata"
-              poster={item.poster}
-              aria-label={item.alt ?? item.caption}
-              style={mediaStyle}
+            <div
+              class="ms-video-shell zoom-trigger ms-trigger"
+              role="button"
+              tabindex={i === 0 ? 0 : -1}
+              aria-label="Zoom video"
+              aria-expanded="false"
             >
-              <source src={item.src} type={item.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
-            </video>
-          ) : lightbox ? (
+              <span class="ms-video-clip">
+                <video
+                  class="ms-video"
+                  data-slide-video
+                  muted
+                  loop
+                  playsinline
+                  preload="metadata"
+                  poster={item.poster}
+                  aria-label={item.alt ?? item.caption}
+                  style={mediaStyle}
+                >
+                  <source src={item.src} type={item.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'} />
+                </video>
+              </span>
+            </div>
+          ) : zoomable ? (
             <button
               type="button"
-              class="work-lightbox-trigger ms-trigger"
-              data-lb-src={item.src}
+              class="zoom-trigger ms-trigger"
               tabindex={i === 0 ? 0 : -1}
-              aria-label="View image at full size"
+              aria-label="Zoom image"
+              aria-expanded="false"
             >
               <img
                 src={item.src}
@@ -118,44 +130,49 @@ const count = items.length;
         </div>
       );
     })}
+
+    {count > 1 && (
+      <div class="ms-controls">
+        <button type="button" class="ms-arrow" data-prev aria-label="Previous slide">
+          <i class="ph-bold ph-caret-left" aria-hidden="true"></i>
+        </button>
+
+        <div class="ms-stepper" role="tablist" aria-label="Choose slide">
+          {items.map((_, i) => (
+            <button
+              type="button"
+              class="ms-dot"
+              role="tab"
+              data-dot
+              data-index={i}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+              aria-label={`Slide ${i + 1} of ${count}`}
+            >
+              <span class="ms-dot-fill" aria-hidden="true"></span>
+            </button>
+          ))}
+        </div>
+
+        <button type="button" class="ms-arrow" data-next aria-label="Next slide">
+          <i class="ph-bold ph-caret-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    )}
   </div>
 
   <figcaption class="ms-caption" data-caption aria-live="polite">{items[0]?.caption ?? ''}</figcaption>
-
-  <div class="ms-controls">
-    <button type="button" class="ms-arrow" data-prev aria-label="Previous slide">
-      <i class="ph-bold ph-caret-left" aria-hidden="true"></i>
-    </button>
-
-    <div class="ms-stepper" role="tablist" aria-label="Choose slide">
-      {items.map((_, i) => (
-        <button
-          type="button"
-          class="ms-dot"
-          role="tab"
-          data-dot
-          data-index={i}
-          aria-selected={i === 0 ? 'true' : 'false'}
-          tabindex={i === 0 ? 0 : -1}
-          aria-label={`Slide ${i + 1} of ${count}`}
-        >
-          <span class="ms-dot-fill" aria-hidden="true"></span>
-        </button>
-      ))}
-    </div>
-
-    <button type="button" class="ms-arrow" data-next aria-label="Next slide">
-      <i class="ph-bold ph-caret-right" aria-hidden="true"></i>
-    </button>
-  </div>
 </figure>
 
 <style>
   .ms {
-    margin: var(--space-4) 0;
+    /* Inline margins come from `.zoomable` / `.is-zoomed` — don't set them here.
+       No width:100% either: that locks the box and stops negative-margin breakout. */
+    margin-block: var(--space-4);
   }
 
   .ms-frame {
+    position: relative;
     display: grid;
     aspect-ratio: var(--ms-aspect, 4 / 3);
     background: var(--bg-elevated);
@@ -163,6 +180,20 @@ const count = items.length;
     border-radius: var(--radius-md);
     overflow: hidden;
     touch-action: pan-y;
+    box-sizing: border-box;
+  }
+
+  /* Expanded: keep contain + center with mat padding */
+  .ms.is-zoomed .ms-frame {
+    aspect-ratio: 4 / 3;
+    padding: clamp(1.25rem, 3.5vw, 2rem);
+  }
+
+  .ms.is-zoomed .ms-slide img,
+  .ms.is-zoomed .ms-slide :global(.ms-trigger img),
+  .ms.is-zoomed .ms-video {
+    object-fit: contain;
+    object-position: center center !important;
   }
 
   .ms-slide {
@@ -209,17 +240,57 @@ const count = items.length;
     width: 100%;
     height: 100%;
     object-fit: contain;
-    object-position: center;
+    object-position: center center;
     background: none;
     border-radius: 0;
     transition: none;
   }
 
+  /* Shell sizes to the letterboxed video so radius clips the window, not the mat */
+  .ms-video-shell {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 18px 24px;
+    box-sizing: border-box;
+  }
+
+  .ms.is-zoomed .ms-video-shell {
+    padding: 0;
+  }
+
+  .ms-video-clip {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    line-height: 0;
+    overflow: hidden;
+    /* Browser-window-ish; Dinky (macos-dark) uses a larger app-window radius */
+    border-radius: 0.7%;
+  }
+
+  .ms--macos-dark .ms-video-clip {
+    /* Soft clip for square-cropped Dinky window */
+    border-radius: 2.8%;
+  }
+
+  .ms-video-clip .ms-video {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+
   .ms--cover .ms-slide img,
   .ms--cover .ms-slide :global(.ms-trigger img),
   .ms--cover .ms-video {
-    object-fit: cover;
-    object-position: top center;
+    object-fit: contain;
+    object-position: center center;
   }
 
   /* Don't let global lightbox hover lift override per-slide crop zoom */
@@ -229,7 +300,7 @@ const count = items.length;
   }
 
   .ms-slide :global(.ms-trigger:focus-visible) {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--fg);
     outline-offset: -2px;
   }
 
@@ -238,17 +309,29 @@ const count = items.length;
     font-size: var(--size-meta);
     line-height: 1.45;
     color: var(--muted-strong);
+    text-align: center;
     text-wrap: pretty;
     min-height: 2.9em;
   }
 
-  /* ---------- Pasito stepper ---------- */
+  /* ---------- Pasito stepper — glass pill overlaid on the frame ---------- */
   .ms-controls {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: var(--space-2);
-    margin-top: var(--space-2);
+    padding: 4px 8px;
+    border-radius: var(--radius-pill);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    backdrop-filter: blur(10px) saturate(140%);
+    box-shadow: var(--glass-shadow);
   }
 
   .ms-stepper {
@@ -263,30 +346,25 @@ const count = items.length;
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     padding: 0;
-    border: 1px solid var(--border);
+    border: none;
     border-radius: var(--radius-pill);
-    background: var(--bg-elevated);
+    background: none;
     color: var(--muted-strong);
     font-size: 12px;
     line-height: 1;
     cursor: pointer;
-    transition:
-      color 150ms ease,
-      border-color 150ms ease,
-      background-color 150ms ease;
+    transition: color 150ms ease;
   }
 
   .ms-arrow:hover {
     color: var(--fg);
-    border-color: var(--border-strong);
-    background: var(--bg);
   }
 
   .ms-arrow:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--fg);
     outline-offset: 2px;
   }
 
@@ -297,7 +375,7 @@ const count = items.length;
     padding: 0;
     border: none;
     border-radius: var(--radius-pill);
-    background: var(--border-strong);
+    background: color-mix(in srgb, var(--fg) 22%, transparent);
     cursor: pointer;
     overflow: hidden;
     transition:
@@ -313,23 +391,23 @@ const count = items.length;
   }
 
   .ms-dot:hover {
-    background: var(--muted);
+    background: color-mix(in srgb, var(--fg) 40%, transparent);
   }
 
   .ms-dot:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--fg);
     outline-offset: 3px;
   }
 
   .ms-dot[aria-selected='true'] {
     width: 28px;
-    background: var(--accent-soft);
+    background: color-mix(in srgb, var(--fg) 20%, transparent);
   }
 
   .ms-dot-fill {
     position: absolute;
     inset: 0;
-    background: var(--accent);
+    background: var(--fg);
     border-radius: inherit;
     transform-origin: left;
     transform: scaleX(0);
@@ -388,7 +466,9 @@ const count = items.length;
 
     const autoplayMs = reduceMotion ? null : Number(root.dataset.autoplayMs) || null;
 
-    const lightboxOpen = () => document.body.classList.contains('work-lightbox-open');
+    // Zooming the frame (zoom.ts) fires `zoomchange`; kill autoplay for good so
+    // it never advances underneath an expanded frame.
+    const zoomed = () => root.classList.contains('is-zoomed');
 
     function setSlideActive(slide: HTMLElement, active: boolean, dir: number) {
       slide.style.setProperty('--dir', `${dir * 12}px`);
@@ -399,7 +479,7 @@ const count = items.length;
         slide.removeAttribute('data-active');
         slide.setAttribute('aria-hidden', 'true');
       }
-      const trigger = slide.querySelector<HTMLElement>('.work-lightbox-trigger');
+      const trigger = slide.querySelector<HTMLElement>('.zoom-trigger');
       if (trigger) trigger.tabIndex = active ? 0 : -1;
       const video = slide.querySelector<HTMLVideoElement>('video');
       if (video) {
@@ -452,11 +532,6 @@ const count = items.length;
     }
 
     function tick() {
-      if (lightboxOpen()) {
-        // Don't advance under a modal; retry shortly.
-        timer = window.setTimeout(tick, 1000);
-        return;
-      }
       goTo(index + 1);
     }
 
@@ -503,17 +578,35 @@ const count = items.length;
       goTo(index + 1);
     });
 
+    /* Arrow keys while this stepper is hovered, or (if none are) while focus
+       is inside it — no need to tab to the dots first. */
+    const editable = (el: Element | null) =>
+      !!el?.closest('input, textarea, select, [contenteditable="true"]');
+
+    const onArrowKey = (e: KeyboardEvent) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      if (editable(document.activeElement)) return;
+
+      const hoveredStepper = document.querySelector<HTMLElement>('[data-stepper]:hover');
+      const focusInside = root.contains(document.activeElement);
+      if (hoveredStepper) {
+        if (hoveredStepper !== root) return;
+      } else if (!focusInside) {
+        return;
+      }
+
+      e.preventDefault();
+      killAutoplay();
+      goTo(index + (e.key === 'ArrowRight' ? 1 : -1), {
+        focusDot: focusInside && !!document.activeElement?.closest('[role="tablist"]'),
+      });
+    };
+    document.addEventListener('keydown', onArrowKey);
+
     root.querySelector('[role="tablist"]')?.addEventListener('keydown', (e) => {
       const key = (e as KeyboardEvent).key;
-      if (key === 'ArrowLeft') {
-        e.preventDefault();
-        killAutoplay();
-        goTo(index - 1, { focusDot: true });
-      } else if (key === 'ArrowRight') {
-        e.preventDefault();
-        killAutoplay();
-        goTo(index + 1, { focusDot: true });
-      } else if (key === 'Home') {
+      if (key === 'Home') {
         e.preventDefault();
         killAutoplay();
         goTo(0, { focusDot: true });
@@ -521,20 +614,6 @@ const count = items.length;
         e.preventDefault();
         killAutoplay();
         goTo(slides.length - 1, { focusDot: true });
-      }
-    });
-
-    frame.addEventListener('keydown', (e) => {
-      if (lightboxOpen()) return; // lightbox owns the arrows while open
-      const key = (e as KeyboardEvent).key;
-      if (key === 'ArrowLeft') {
-        e.preventDefault();
-        killAutoplay();
-        goTo(index - 1);
-      } else if (key === 'ArrowRight') {
-        e.preventDefault();
-        killAutoplay();
-        goTo(index + 1);
       }
     });
 
@@ -553,6 +632,9 @@ const count = items.length;
         goTo(index + (dx < 0 ? 1 : -1));
       }
     });
+
+    // Expanding the frame inline kills autoplay (matches "any interaction stops it").
+    root.addEventListener('zoomchange', () => { if (zoomed()) killAutoplay(); });
 
     if (autoplayMs) {
       root.addEventListener('mouseenter', pauseCycle);

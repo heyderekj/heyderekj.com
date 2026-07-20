@@ -223,14 +223,14 @@ const panelId = 'application-toc-mobile-panel';
 
   .app-toc__link:hover,
   .app-toc__link:focus-visible {
-    color: var(--accent);
+    color: var(--fg);
     font-weight: 600;
     background: transparent;
     border-bottom: none;
   }
 
   .app-toc__link.is-active {
-    color: var(--accent);
+    color: var(--fg);
     font-weight: 600;
   }
 
@@ -246,7 +246,7 @@ const panelId = 'application-toc-mobile-panel';
   .app-toc__link:hover .app-toc__dot,
   .app-toc__link:focus-visible .app-toc__dot,
   .app-toc__link.is-active .app-toc__dot {
-    background: var(--accent);
+    background: color-mix(in srgb, var(--fg) 55%, transparent);
     transform: scale(1.4);
   }
 

@@ -31,18 +31,36 @@ const count = testimonials.length;
           <div class="testimonial-carousel__controls">
             <button
               type="button"
-              class="testimonial-carousel__btn"
+              class="testimonial-carousel__arrow"
               data-testimonial-prev
               aria-label="Previous recommendation"
             >
               <i class="ph-bold ph-caret-left" aria-hidden="true"></i>
             </button>
-            <p class="testimonial-carousel__status" data-testimonial-status aria-live="polite">
-              <span data-testimonial-current>1</span> / {count}
-            </p>
+
+            <div
+              class="testimonial-carousel__stepper"
+              role="tablist"
+              aria-label="Choose recommendation"
+            >
+              {testimonials.map((t, i) => (
+                <button
+                  type="button"
+                  class="testimonial-carousel__dot"
+                  role="tab"
+                  data-testimonial-dot={i}
+                  aria-label={`Show recommendation from ${t.author}`}
+                  aria-selected={i === 0 ? 'true' : 'false'}
+                  tabindex={i === 0 ? 0 : -1}
+                >
+                  <span class="testimonial-carousel__dot-fill" aria-hidden="true"></span>
+                </button>
+              ))}
+            </div>
+
             <button
               type="button"
-              class="testimonial-carousel__btn"
+              class="testimonial-carousel__arrow"
               data-testimonial-next
               aria-label="Next recommendation"
             >
@@ -70,22 +88,6 @@ const count = testimonials.length;
           ))}
         </ul>
       </div>
-
-      {count > 1 && (
-        <div class="testimonial-carousel__dots" role="tablist" aria-label="Recommendation slides">
-          {testimonials.map((t, i) => (
-            <button
-              type="button"
-              class="testimonial-carousel__dot"
-              role="tab"
-              data-testimonial-dot={i}
-              aria-label={`Show recommendation from ${t.author}`}
-              aria-selected={i === 0 ? 'true' : 'false'}
-              tabindex={i === 0 ? 0 : -1}
-            />
-          ))}
-        </div>
-      )}
     </section>
   )
 }
@@ -102,12 +104,11 @@ const count = testimonials.length;
       const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-testimonial-dot]')];
       const prev = root.querySelector<HTMLButtonElement>('[data-testimonial-prev]');
       const next = root.querySelector<HTMLButtonElement>('[data-testimonial-next]');
-      const currentEl = root.querySelector('[data-testimonial-current]');
 
       let index = slides.findIndex((s) => !s.hidden);
       if (index < 0) index = 0;
 
-      const show = (nextIndex: number) => {
+      const show = (nextIndex: number, opts: { focusDot?: boolean } = {}) => {
         index = ((nextIndex % slides.length) + slides.length) % slides.length;
         slides.forEach((slide, i) => {
           slide.hidden = i !== index;
@@ -117,7 +118,7 @@ const count = testimonials.length;
           dot.setAttribute('aria-selected', active ? 'true' : 'false');
           dot.tabIndex = active ? 0 : -1;
         });
-        if (currentEl) currentEl.textContent = String(index + 1);
+        if (opts.focusDot) dots[index]?.focus();
       };
 
       prev?.addEventListener('click', () => show(index - 1));
@@ -127,14 +128,44 @@ const count = testimonials.length;
         dot.addEventListener('click', () => show(i));
       });
 
-      root.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') {
+      root.querySelector('[role="tablist"]')?.addEventListener('keydown', (e) => {
+        const key = (e as KeyboardEvent).key;
+        if (key === 'ArrowLeft') {
           e.preventDefault();
-          show(index - 1);
-        } else if (e.key === 'ArrowRight') {
+          show(index - 1, { focusDot: true });
+        } else if (key === 'ArrowRight') {
           e.preventDefault();
-          show(index + 1);
+          show(index + 1, { focusDot: true });
+        } else if (key === 'Home') {
+          e.preventDefault();
+          show(0, { focusDot: true });
+        } else if (key === 'End') {
+          e.preventDefault();
+          show(slides.length - 1, { focusDot: true });
         }
+      });
+
+      // Same hover/focus ←/→ pattern as the image stepper
+      const editable = (el: Element | null) =>
+        !!el?.closest('input, textarea, select, [contenteditable="true"]');
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        if (e.altKey || e.ctrlKey || e.metaKey) return;
+        if (editable(document.activeElement)) return;
+
+        const hovered = document.querySelector<HTMLElement>('[data-testimonial-carousel]:hover');
+        const focusInside = root.contains(document.activeElement);
+        if (hovered) {
+          if (hovered !== root) return;
+        } else if (!focusInside) {
+          return;
+        }
+
+        e.preventDefault();
+        show(index + (e.key === 'ArrowRight' ? 1 : -1), {
+          focusDot: focusInside && !!document.activeElement?.closest('[role="tablist"]'),
+        });
       });
     });
   }
@@ -148,69 +179,124 @@ const count = testimonials.length;
     margin-top: var(--space-6);
   }
 
+  /* Title stays full-width so the section-title rule/ticks (100cqw math)
+     aren’t computed from a shrink-wrapped label beside the controls. */
   .testimonial-carousel__header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    column-gap: var(--space-3);
-    row-gap: var(--space-2);
+    position: relative;
+    display: block;
     margin-bottom: var(--space-3);
   }
 
-  .testimonial-carousel__header .section-title {
+  .testimonial-carousel.work-testimonials .testimonial-carousel__header .section-title {
     margin: 0;
+    width: 100%;
     min-width: 0;
+    /* Keep label clear of the pill */
+    padding-right: 9.5rem;
+    box-sizing: border-box;
   }
 
+  /* Pasito-style glass pill — same language as MediaStepper controls.
+     Sit in the label row (below the rule), vertically centered with the text. */
   .testimonial-carousel__controls {
+    position: absolute;
+    right: 0;
+    top: var(--space-4);
+    bottom: 0;
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: var(--space-2);
-    flex-shrink: 0;
-    align-self: center;
-  }
-
-  .testimonial-carousel__status {
-    margin: 0;
-    min-width: 2.75rem;
-    text-align: center;
-    font-family: var(--font-mono);
-    font-size: var(--size-micro);
-    font-variant-numeric: tabular-nums;
-    color: var(--muted);
-  }
-
-  .testimonial-carousel__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    padding: 0;
-    border: 1px solid transparent;
+    padding: 4px 4px;
     border-radius: var(--radius-pill);
     background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+    backdrop-filter: blur(10px) saturate(140%);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .testimonial-carousel__stepper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .testimonial-carousel__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: none;
     color: var(--muted-strong);
+    font-size: 12px;
+    line-height: 1;
     cursor: pointer;
-    transition:
-      color 0.15s ease,
-      border-color 0.15s ease,
-      background 0.15s ease;
+    transition: color 150ms ease;
   }
 
-  .testimonial-carousel__btn:hover {
-    color: var(--accent);
-    border-color: transparent;
-    background: var(--accent-soft);
+  .testimonial-carousel__arrow:hover {
+    color: var(--fg);
   }
 
-  .testimonial-carousel__btn:focus-visible {
-    outline: 2px solid var(--accent);
+  .testimonial-carousel__arrow:focus-visible {
+    outline: 2px solid var(--fg);
     outline-offset: 2px;
   }
 
-  .testimonial-carousel__btn i {
-    font-size: 14px;
+  .testimonial-carousel__dot {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--fg) 22%, transparent);
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+      width 500ms var(--easing),
+      background-color 300ms var(--easing);
+  }
+
+  .testimonial-carousel__dot::after {
+    content: '';
+    position: absolute;
+    inset: -9px;
+  }
+
+  .testimonial-carousel__dot:hover {
+    background: color-mix(in srgb, var(--fg) 40%, transparent);
+  }
+
+  .testimonial-carousel__dot:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 3px;
+  }
+
+  .testimonial-carousel__dot[aria-selected='true'] {
+    width: 28px;
+    background: color-mix(in srgb, var(--fg) 20%, transparent);
+  }
+
+  .testimonial-carousel__dot-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--fg);
+    border-radius: inherit;
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+
+  .testimonial-carousel__dot[aria-selected='true'] .testimonial-carousel__dot-fill {
+    transform: scaleX(1);
+    transition: transform 300ms var(--easing);
   }
 
   .testimonial-carousel__track {
@@ -227,37 +313,10 @@ const count = testimonials.length;
     display: none;
   }
 
-  .testimonial-carousel__dots {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-2);
-    margin-top: var(--space-3);
-  }
-
-  .testimonial-carousel__dot {
-    width: 7px;
-    height: 7px;
-    padding: 0;
-    border: none;
-    border-radius: 50%;
-    background: var(--border-strong);
-    cursor: pointer;
-    transition: background 0.15s ease, transform 0.15s ease;
-  }
-
-  .testimonial-carousel__dot[aria-selected='true'] {
-    background: var(--accent);
-    transform: scale(1.15);
-  }
-
-  .testimonial-carousel__dot:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .testimonial-carousel__btn {
-      background: var(--bg-elevated);
+  @media (prefers-reduced-motion: reduce) {
+    .testimonial-carousel__dot,
+    .testimonial-carousel__dot[aria-selected='true'] .testimonial-carousel__dot-fill {
+      transition: none;
     }
   }
 </style>

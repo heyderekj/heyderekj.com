@@ -5,7 +5,7 @@
   /* Surfaces */
   --bg: #fcfcfc;
   --bg-elevated: #f6f6f6;
-  --bg-hover: rgba(234, 88, 12, 0.06);
+  --bg-hover: color-mix(in srgb, var(--fg) 4%, transparent);
 
   /* Ink */
   --fg: #222222;
@@ -16,6 +16,14 @@
   /* Lines */
   --border: rgba(0, 0, 0, 0.04);
   --border-strong: rgba(0, 0, 0, 0.07);
+  /* Grid frame: hairline rails/rules + plus-sign ticks at intersections */
+  --rule: rgba(0, 0, 0, 0.08);
+  --tick: var(--accent);
+  --tick-size: 9px;
+  --frame-max: 880px;
+  --frame-pad-x: 0px;
+  /* Header/footer content inset from the rails (matches main on small screens) */
+  --header-pad-x: var(--space-3);
 
   /* Orange */
   --accent: #ea580c;
@@ -47,9 +55,6 @@
 
   --max-main: 530px;
   --max-text: 500px;
-  --sidebar-w: 56px;
-  --layout-gap: 40px;
-  --layout-max: 980px;
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -73,13 +78,14 @@
   :root {
     --bg: #000000;
     --bg-elevated: #0d0d0d;
-    --bg-hover: rgba(251, 146, 60, 0.08);
+    --bg-hover: color-mix(in srgb, var(--fg) 6%, transparent);
     --fg: #f0f0f0;
     --fg-soft: #c4c4c4;
     --muted: #8a8a8a;
     --muted-strong: #a3a3a3;
     --border: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.14);
+    --rule: rgba(255, 255, 255, 0.12);
     --accent: #fb923c;
     --accent-hover: #fdba74;
     --accent-soft: rgba(251, 146, 60, 0.12);
@@ -122,279 +128,174 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  padding: var(--space-4);
+  /* No vertical padding so the frame rails run the full window height */
+  padding: 0 var(--space-4);
 }
 
-.layout {
-  display: grid;
-  /* Main is the centered middle column so the reading content sits at true
-     viewport center (matching the fixed TOC pill). The sidebar rides in the
-     left column, pinned to its inner edge, without shifting main off-center. */
-  /* Both side columns share a floor so the empty right one can't collapse and
-     shove main off-center when space gets tight. */
-  grid-template-columns:
-    minmax(var(--sidebar-w), 1fr)
-    minmax(0, var(--max-main))
-    minmax(var(--sidebar-w), 1fr);
-  grid-template-rows: 1fr;
-  gap: var(--layout-gap);
+/* The grid frame: two hairline rails bounding everything, header/footer rules,
+   and plus-sign ticks at intersections. container-type makes 100cqw equal the
+   rail-to-rail width for exact full-bleed math anywhere inside. */
+.frame {
   width: 100%;
+  max-width: var(--frame-max);
+  margin-inline: auto;
   flex: 1 1 auto;
-  min-height: 0;
-  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  border-inline: 1px solid var(--rule);
+  container-type: inline-size;
+  container-name: frame;
+  padding-inline: var(--frame-pad-x);
 }
 
 /* ============================================================
-   Sidebar — minimal floating nav, no panel
+   Site header — brand left, text nav right, inside the frame
    ============================================================ */
-.sidebar {
-  position: sticky;
-  top: var(--space-4);
-  justify-self: end;
-  align-self: start;
+.site-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  /* Bleed through `--frame-pad-x` so the bottom rule meets the rails on mobile */
+  margin-inline: calc(-1 * var(--frame-pad-x));
+  padding-block: var(--space-3);
+  padding-inline: var(--header-pad-x);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Plus ticks straddling a horizontal rule where it meets the rails.
+   Header/footer already bleed through frame-pad, so only nudge by half a tick. */
+.site-header::after,
+.site-footer::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * (var(--tick-size) - 1px) / 2);
+  right: calc(-1 * (var(--tick-size) - 1px) / 2);
+  height: var(--tick-size);
+  pointer-events: none;
+  background:
+    linear-gradient(var(--tick), var(--tick)) left center / var(--tick-size) 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) calc((var(--tick-size) - 1px) / 2) center / 1px var(--tick-size) no-repeat,
+    linear-gradient(var(--tick), var(--tick)) right center / var(--tick-size) 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) calc(100% - (var(--tick-size) - 1px) / 2) center / 1px var(--tick-size) no-repeat;
+}
+
+.site-header::after { bottom: calc(var(--tick-size) / -2); }
+.site-footer::before { top: calc(var(--tick-size) / -2); }
+
+.site-brand {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  min-width: 0;
+}
+
+/* Signature sits as a faint light-gray watermark layered behind the name */
+.site-brand__sig {
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 150px;
+  height: auto;
+  opacity: 0.05;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .site-brand__sig { filter: invert(1); opacity: 0.08; }
+}
+
+.site-brand__text {
+  position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: var(--space-2);
-  overflow: visible;
-  width: max-content;
+  line-height: 1.25;
+  min-width: 0;
+  padding-left: 26px;
 }
 
-/* ============================================================
-   Site masthead — signature at top of main content
-   ============================================================ */
-.site-masthead {
-  margin-bottom: var(--space-3);
-  padding-bottom: 0;
-}
-.site-masthead a {
-  display: inline-block;
-  text-decoration: none;
-}
-.masthead-sig {
-  width: 140px;
-  height: auto;
-  display: block;
-}
-@media (prefers-color-scheme: dark) {
-  .masthead-sig { filter: invert(1); }
+.site-brand__name {
+  font-size: var(--size-meta);
+  font-weight: 600;
+  color: var(--fg);
+  white-space: nowrap;
 }
 
-/* ============================================================
-   Sidebar nav — icon always visible, label slides in
-   ============================================================ */
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  overflow: visible;
+.site-brand__role {
+  font-size: var(--size-micro);
+  color: var(--muted-strong);
+  white-space: nowrap;
 }
 
-.sidebar-nav a {
-  position: relative;
+.site-nav {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  padding: 7px 8px;
-  border-radius: var(--radius-squircle);
-  text-decoration: none;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.site-nav a {
+  position: relative;
   font-size: var(--size-meta);
   font-weight: 500;
-  line-height: 1.3;
-  transition: color 0.15s ease, background 0.15s ease;
-}
-
-.sidebar-nav a i {
-  display: inline-block;
-  font-size: 20px;
-  flex-shrink: 0;
-  transform: rotate(0deg);
-  transform-origin: center;
-  transition:
-    color 0.15s ease,
-    transform 0.14s cubic-bezier(0.2, 0.88, 0.2, 1);
-}
-
-/* Label floats to the right of the rail; plain text, hidden until hover */
-.sidebar-nav a span {
-  position: absolute;
-  left: calc(100% + 14px);
-  top: 50%;
-  z-index: 2;
-  pointer-events: none;
-  white-space: nowrap;
-  color: var(--fg-soft);
-  font-weight: 600;
-  opacity: 0;
-  transform: translate(-6px, -50%);
-  transition: opacity 0.18s ease, transform 0.22s var(--spring);
-}
-
-.sidebar-nav a:hover {
-  color: var(--fg-soft);
-  background: var(--nav-active-bg);
+  color: var(--muted-strong);
   text-decoration: none;
+  padding: 4px 2px;
+  transition: color 0.15s ease;
 }
 
-.sidebar-nav a:hover i {
-  color: var(--accent);
-  transform: rotate(-5deg);
+.site-nav a:hover { color: var(--fg); }
+.site-nav a.active { color: var(--fg); }
+
+/* Active marker: a small orange dot riding the header's bottom rule */
+.site-nav a.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(-1 * var(--space-3) - 2.5px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
-.sidebar-nav a:hover span {
-  opacity: 1;
-  transform: translate(0, -50%);
+.site-nav a:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
-
-.sidebar-nav a:active { transform: scale(0.97); transition-duration: 0.06s; }
-
-.sidebar-nav a.active {
-  color: var(--accent);
-  background: var(--nav-active-bg);
-}
-
-.sidebar-nav a.active i { color: var(--accent); }
-.sidebar-nav a.active:hover span { color: var(--fg); }
 
 /* ============================================================
-   Nav fork — About / People combined toggle (in-flow)
+   Site footer — pinned to the frame bottom
    ============================================================ */
-
-/* Wrapper flows inline with the sidebar-nav column */
-.nav-fork {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-/* Trigger mirrors .sidebar-nav a exactly */
-.nav-fork-trigger {
+.site-footer {
   position: relative;
+  margin-top: auto;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--muted);
-  padding: 7px 8px;
-  border-radius: var(--radius-squircle);
-  transition: color 0.15s ease, background 0.15s ease;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-inline: calc(-1 * var(--frame-pad-x));
+  padding-block: var(--space-3);
+  padding-inline: var(--header-pad-x);
+  border-top: 1px solid var(--rule);
 }
-
-.nav-fork-trigger i {
-  display: inline-block;
-  font-size: 20px;
-  flex-shrink: 0;
-  transition: color 0.15s ease, transform 0.14s cubic-bezier(0.2, 0.88, 0.2, 1);
-}
-
-.nav-fork-trigger:hover {
-  color: var(--fg-soft);
-  background: var(--nav-active-bg);
-}
-
-.nav-fork-trigger:hover i {
-  color: var(--accent);
-  transform: rotate(-5deg);
-}
-
-.nav-fork-trigger.active {
-  color: var(--accent);
-  background: var(--nav-active-bg);
-}
-
-.nav-fork-trigger.active i { color: var(--accent); }
-
-/* Expanded menu — in flow, same direction as sidebar-nav */
-.nav-fork-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.nav-fork-menu[hidden] { display: none; }
-
-/* Menu items mirror .sidebar-nav a styling but without bold labels */
-.nav-fork-menu a {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  padding: 7px 8px;
-  border-radius: var(--radius-squircle);
-  text-decoration: none;
-  border-bottom: none;
-  font-size: var(--size-meta);
-  font-weight: 400;
-  line-height: 1.3;
-  transition: color 0.15s ease, background 0.15s ease;
-}
-
-.nav-fork-menu a i {
-  display: inline-block;
-  font-size: 20px;
-  flex-shrink: 0;
-  transition: color 0.15s ease, transform 0.14s cubic-bezier(0.2, 0.88, 0.2, 1);
-}
-
-/* No floating labels for menu items */
-.nav-fork-menu a span {
-  position: absolute;
-  left: calc(100% + 14px);
-  top: 50%;
-  z-index: 2;
-  pointer-events: none;
-  white-space: nowrap;
-  color: var(--fg-soft);
-  font-weight: 400;
-  opacity: 0;
-  transform: translate(-6px, -50%);
-  transition: opacity 0.18s ease, transform 0.22s var(--spring);
-}
-
-.nav-fork-menu a:hover {
-  color: var(--fg-soft);
-  background: var(--nav-active-bg);
-  border-bottom: none;
-}
-
-.nav-fork-menu a:hover i { color: var(--accent); transform: rotate(-5deg); }
-
-.nav-fork-menu a:hover span {
-  opacity: 1;
-  transform: translate(0, -50%);
-}
-
-.nav-fork-menu a.active {
-  color: var(--accent);
-  background: var(--nav-active-bg);
-}
-
-.nav-fork-menu a.active i { color: var(--accent); }
-
-/* Mobile — sidebar-nav is horizontal, so fork flows horizontally too */
-@media (max-width: 660px) {
-  .nav-fork        { flex-direction: row; gap: 2px; }
-  .nav-fork-menu   { flex-direction: row; gap: 2px; }
-  .nav-fork-menu a span { display: none; }
-  .nav-fork-menu a i    { font-size: 22px; }
-  .nav-fork-trigger span { display: none; }
-  .nav-fork-trigger i    { font-size: 22px; }
-}
-
-
 
 /* ============================================================
    Main content area
    ============================================================ */
 .main {
+  width: 100%;
   max-width: var(--max-main);
+  margin-inline: auto;
   min-width: 0;
   min-height: 0;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   padding: var(--space-5) 0 var(--space-6);
@@ -445,19 +346,19 @@ main.main a:hover {
   border-bottom-color: color-mix(in srgb, currentColor 58%, transparent);
 }
 main.main a:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--fg);
   outline-offset: 3px;
 }
 
 /* Omit `main.main .entries a`: that selector is (0,2,2) and beats `.entries a.entry-link`
    (0,2,1), which zeroes the bottom edge of the row card border. */
-main.main .site-masthead a,
 main.main .footer-links a,
 main.main .section-title a,
 main.main .cta,
 main.main .back-link a,
 main.main .work-link-pill,
 main.main .intro-pill,
+main.main .text-chip,
 main.main .intro .now-line a,
 main.main .about-hero__credit-link,
 main.main .about-page .about-exp-pill--link,
@@ -489,7 +390,7 @@ pre code { background: transparent; padding: 0; border: 0; border-radius: 0; }
 blockquote {
   margin: var(--space-4) 0;
   padding: var(--space-2) var(--space-3);
-  border-left: 2px solid var(--accent);
+  border-left: 2px solid var(--border-strong);
   color: var(--fg-soft);
 }
 
@@ -499,6 +400,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
    Section titles — label + trailing hairline (agentation pattern)
    ============================================================ */
 .section-title {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -506,11 +408,37 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   font-weight: 600;
   color: var(--fg);
   margin: var(--space-6) 0 var(--space-3);
+  padding-top: var(--space-4);
   letter-spacing: -0.01em;
 }
-.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* Full-bleed rule rail-to-rail above the label (includes frame-pad on mobile) */
+.section-title::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc((100% - 100cqw) / 2 - var(--frame-pad-x));
+  width: calc(100cqw + 2 * var(--frame-pad-x));
+  height: 1px;
+  background: var(--rule);
+  pointer-events: none;
+}
+/* Plus ticks where the rule meets the two rails */
+.section-title::after {
+  content: '';
+  position: absolute;
+  top: calc((var(--tick-size) - 1px) / -2);
+  left: calc((100% - 100cqw) / 2 - (var(--tick-size) - 1px) / 2 - var(--frame-pad-x));
+  width: calc(100cqw + var(--tick-size) - 1px + 2 * var(--frame-pad-x));
+  height: var(--tick-size);
+  pointer-events: none;
+  background:
+    linear-gradient(var(--tick), var(--tick)) left center / var(--tick-size) 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) calc((var(--tick-size) - 1px) / 2) center / 1px var(--tick-size) no-repeat,
+    linear-gradient(var(--tick), var(--tick)) right center / var(--tick-size) 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) calc(100% - (var(--tick-size) - 1px) / 2) center / 1px var(--tick-size) no-repeat;
+}
 .section-title a { color: inherit; text-decoration: none; transition: color 0.15s ease; }
-.section-title a:hover { color: var(--accent); text-decoration: none; }
+.section-title a:hover { color: var(--fg); text-decoration: none; }
 
 /* ============================================================
    Entry lists (posts + projects) — glass card on hover
@@ -601,9 +529,9 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   margin-left: 0.45em;
   font-size: 0.62em;
   line-height: 0;
-  color: #f59e0b;
+  color: var(--accent);
   vertical-align: 0.06em;
-  filter: drop-shadow(0 0 0.3em color-mix(in srgb, #f59e0b 40%, transparent));
+  filter: drop-shadow(0 0 0.3em color-mix(in srgb, var(--accent) 30%, transparent));
   white-space: nowrap;
 }
 .entries .entry-title .entry-favorite .ph-star {
@@ -611,7 +539,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 }
 .entries li:hover .entry-title,
 .entries a.entry-link:hover .entry-title {
-  color: var(--accent);
+  color: var(--fg);
 }
 .entries .entry-meta { color: var(--muted); font-size: var(--size-meta); display: block; margin-top: 2px; }
 
@@ -668,9 +596,9 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   flex: 0 0 auto;
   line-height: 0;
   font-size: 1.35rem;
-  color: #f59e0b;
+  color: var(--accent);
   transform: translateY(-0.02em);
-  filter: drop-shadow(0 0 0.45em color-mix(in srgb, #f59e0b 45%, transparent));
+  filter: drop-shadow(0 0 0.45em color-mix(in srgb, var(--accent) 30%, transparent));
   white-space: nowrap;
 }
 .work-post-header .work-title-block .work-favorite .ph-star {
@@ -700,19 +628,34 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   font-size: var(--size-meta);
 }
 
+/*
+ * Dark macOS-style wallpaper mat — soft blue aurora over near-black.
+ * Used behind transparent window screenshots (Dinky, etc.).
+ */
+.mat-wallpaper--macos-dark {
+  --mat-wallpaper-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-color: #07090f;
+  background-image:
+    var(--mat-wallpaper-noise),
+    radial-gradient(ellipse 90% 70% at 18% 22%, rgba(88, 128, 210, 0.42), transparent 58%),
+    radial-gradient(ellipse 70% 55% at 88% 78%, rgba(48, 78, 160, 0.38), transparent 55%),
+    radial-gradient(ellipse 55% 40% at 55% 108%, rgba(28, 48, 110, 0.55), transparent 50%),
+    linear-gradient(165deg, #141824 0%, #0a0c14 42%, #06070c 100%);
+  background-blend-mode: soft-light, normal, normal, normal, normal;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
 /* Work external pills: shared with `main.main .back-link a` in CTA / back block below */
 
 /* Same panel treatment as / activity (`.wopr-terminal` / `.wopr-section` vars) */
 .work-facts {
-  --wopr-bg: #f4f4f4;
-  --wopr-border: color-mix(in srgb, var(--accent) 22%, var(--border-strong));
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-3) var(--space-4);
   margin: 0 0 var(--space-5);
   padding: var(--space-4);
-  background: var(--wopr-bg);
-  border: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   font-size: var(--size-meta);
   align-items: start;
@@ -720,13 +663,6 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 @media (max-width: 32rem) {
   .work-facts {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .work-facts {
-    --wopr-bg: #0a0a0a;
-    --wopr-border: color-mix(in srgb, var(--accent) 18%, transparent);
   }
 }
 .work-fact { margin: 0; }
@@ -739,13 +675,27 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 }
 .work-fact dd { margin: 0; color: var(--fg-soft); line-height: 1.4; }
 
-.work-hero-figure { margin: 0 0 var(--space-4); }
+.work-hero-figure { margin: 0; }
+.work-stage .work-hero-figure { margin: 0; }
+.work-hero-figure .zoom-trigger { border-radius: var(--radius-md); }
 .work-hero {
   display: block;
   width: 100%;
-  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  object-position: center center;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--bg-elevated);
+}
+.work-hero-figure.is-zoomed .work-hero {
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  object-position: center center !important;
+  box-sizing: border-box;
+  padding: clamp(1.25rem, 3.5vw, 2rem);
 }
 
 .work-devices {
@@ -758,7 +708,12 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 .work-devices img {
   display: block;
   width: 100%;
-  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  object-position: center center;
+  box-sizing: border-box;
+  padding: 14px;
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--bg-elevated);
 }
@@ -769,17 +724,62 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   text-align: center;
 }
 
+.work-stage { margin: 0 0 var(--space-5); }
+
 .work-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-2);
-  margin: 0 0 var(--space-5);
+  margin: var(--space-2) 0 0;
   list-style: none;
   padding: 0;
 }
-.work-gallery-item { margin: 0; }
-/* Lightbox openers — unstyled control + light lift on hover (hero, devices, gallery) */
-.work-lightbox-trigger {
+
+/* Thumbs swap the stage image — no zoom; only the hero figure expands */
+.work-gallery-item {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.work-gallery-item:hover,
+.work-gallery-item[aria-pressed='true'] {
+  border-color: color-mix(in srgb, var(--fg) 22%, var(--border));
+}
+.work-gallery-item:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+.work-gallery-item img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  object-position: center center;
+  box-sizing: border-box;
+  padding: 10px;
+  pointer-events: none;
+}
+
+/* Zoomed device-row media: span the full row, then break out like solo figures */
+.work-devices > figure.zoomable.is-zoomed {
+  grid-column: 1 / -1;
+  justify-self: start;
+  width: calc(100% + 2 * var(--z-bleed));
+  max-width: none;
+  margin-inline: calc(-1 * var(--z-bleed));
+}
+/* ============================================================
+   Inline zoom — figures expand to rail width in place, pushing
+   content down (replaces the old overlay lightbox). JS in
+   src/client/zoom.ts drives the height/margin animation.
+   ============================================================ */
+.zoom-trigger {
   display: block;
   width: 100%;
   padding: 0;
@@ -789,148 +789,64 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   cursor: zoom-in;
   font: inherit;
   text-align: left;
-  border-radius: var(--radius-sm);
-}
-.work-hero-figure .work-lightbox-trigger {
-  border-radius: var(--radius-md);
-}
-.work-lightbox-trigger img {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: var(--bg-elevated);
   border-radius: inherit;
-  transition: transform 0.2s var(--easing);
-}
-.work-lightbox-trigger:hover img,
-.work-lightbox-trigger:focus-visible img {
-  transform: translateY(-1px);
 }
 
-body.work-lightbox-open { overflow: hidden; }
-
-.work-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 20000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-3);
-  box-sizing: border-box;
-}
-.work-lightbox[hidden] { display: none; }
-
-.work-lightbox__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
+/* Kill UA `figure { margin-inline: 40px }` so resting media fills the column.
+   `--z-bleed` is the negative margin that grows a figure from the reading column
+   out toward the frame rails, stopping `--z-inset` short of each rail (and
+   accounting for `--frame-pad-x` on small screens).
+   Keep width:auto (not 100%) so negative margins actually widen the used width. */
+.zoomable {
+  margin-inline: 0;
+  --z-inset: var(--space-3);
+  --z-bleed: calc((100cqw - 100%) / 2 + var(--frame-pad-x) - var(--z-inset));
 }
 
-.work-lightbox__content {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: min(96vw, 56rem);
-  max-height: 92dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-  pointer-events: none;
-}
-.work-lightbox__content > * { pointer-events: auto; }
-
-.work-lightbox__frame {
-  max-width: 100%;
-  max-height: min(85dvh, 90vh);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-}
-.work-lightbox__img {
-  max-width: 100%;
-  max-height: min(85dvh, 90vh);
+/* Expanded: break out nearly to the rails (inset kept), pushing content down.
+   `width: auto` + negative margins → box grows into the bleed. */
+figure.zoomable.is-zoomed {
   width: auto;
+  margin-inline: calc(-1 * var(--z-bleed));
+  cursor: zoom-out;
+}
+
+.zoomable.is-zoomed .zoom-trigger { cursor: zoom-out; }
+
+/* A zoomed cell inside a pair grid spans the full row instead; the grid reflows
+   the remaining cells below it (no rail breakout — the grid owns the margins). */
+.pfig--pair .pfig-cell.is-zoomed {
+  grid-column: 1 / -1;
+  margin-inline: 0;
+}
+
+/* Non-stepper figures: expanded mat is 4:3, image contained inside.
+   Project-page `.pfig` rules also set this — keep both so work/cio figures match.
+   Video triggers keep their intrinsic AR (portrait app windows, browser captures). */
+.zoomable:not(.ms).is-zoomed .zoom-trigger:not(:has(video)) {
+  aspect-ratio: 4 / 3;
   height: auto;
+  max-height: 82dvh;
+}
+.zoomable:not(.ms).is-zoomed .zoom-trigger:has(video) {
+  aspect-ratio: auto;
+  height: auto;
+  max-height: 82dvh;
+}
+.zoomable:not(.ms).is-zoomed img {
+  aspect-ratio: auto;
   object-fit: contain;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+  object-position: center center !important;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: clamp(1.25rem, 3.5vw, 2rem);
+  background: transparent;
+  /* Undo any hero crop-in (heroZoom inline transform) when fully expanded */
+  transform: none !important;
 }
-
-.work-lightbox__count {
-  margin: 0;
-  font-size: var(--size-meta);
-  color: #e8e6e0;
-  text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.work-lightbox__close {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
-  z-index: 2;
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s ease;
-}
-.work-lightbox__close:hover,
-.work-lightbox__close:focus-visible {
-  background: rgba(255, 255, 255, 0.25);
-  outline: none;
-}
-.work-lightbox__close:focus-visible {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--accent);
-}
-
-.work-lightbox__close-icon { display: block; margin-top: -2px; }
-
-.work-lightbox__nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  font-size: 28px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s ease;
-  padding: 0 0 2px 0;
-}
-.work-lightbox__nav:hover,
-.work-lightbox__nav:focus-visible {
-  background: rgba(255, 255, 255, 0.25);
-  outline: none;
-}
-.work-lightbox__nav:focus-visible {
-  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--accent);
-}
-.work-lightbox__prev { left: var(--space-2); }
-.work-lightbox__next { right: var(--space-2); }
-
-@media (max-width: 520px) {
-  .work-lightbox__nav { width: 38px; height: 38px; font-size: 22px; }
+.zoomable:not(.ms).is-zoomed video {
+  max-height: calc(82dvh - 2.5rem);
 }
 
 .work-section { margin-bottom: var(--space-5); }
@@ -942,9 +858,18 @@ body.work-lightbox-open { overflow: hidden; }
 }
 .work-md p { font-size: 16px; line-height: 1.8; }
 .work-md p:first-child { margin-top: 0; }
+.work-md ul,
+.work-md ol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.work-md li {
+  line-height: 1.65;
+}
 .work-body { margin-top: var(--space-2); }
 .work-legacy { font-size: var(--size-meta); color: var(--muted-strong); }
-.work-legacy a { color: var(--accent); }
+.work-legacy a { color: var(--fg-soft); }
 
 /* ============================================================
    Home intro
@@ -952,9 +877,86 @@ body.work-lightbox-open { overflow: hidden; }
 .intro { margin-bottom: var(--space-3); }
 .intro p {
   font-size: var(--size-lead);
-  line-height: 1.55;
+  /* Tall enough for inline chips — tighter leading lets them collide across lines */
+  line-height: 1.75;
   max-width: var(--max-text);
   margin-bottom: var(--space-2);
+  text-wrap: pretty;
+}
+
+/* Inline name chips — elevated pills for people, studios, products in prose */
+.text-chip,
+main.main a.text-chip {
+  --chip-pad-y: 0.18em;
+  --chip-color: var(--fg);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28em;
+  padding: var(--chip-pad-y) 0.55em var(--chip-pad-y) 0.4em;
+  /* Keep a little air vs neighboring lines (full -pad made chips collide) */
+  margin-block: calc(var(--chip-pad-y) * -0.35);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  font-size: 0.94em;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--chip-color);
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+/* Default linked chip = same neutral mat as the Derek chip on /customerio */
+main.main a.text-chip {
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--fg);
+}
+
+main.main a.text-chip:hover {
+  border-color: color-mix(in srgb, var(--fg) 22%, var(--border));
+  background: color-mix(in srgb, var(--fg) 6%, var(--bg-elevated));
+  text-decoration: none;
+}
+
+.text-chip i {
+  font-size: 0.85em;
+  margin: 0;
+  line-height: 1;
+  align-self: center;
+  transform: translateY(0.05em);
+}
+
+.text-chip--harvous { --chip-color: #006eff; }
+.text-chip--dinky { --chip-color: #3b82f6; }
+.text-chip--hmc { --chip-color: #a855f7; }
+.text-chip--revisemy { --chip-color: #fb7185; }
+
+/* Colored project chips keep a soft brand tint */
+main.main a.text-chip--harvous,
+main.main a.text-chip--dinky,
+main.main a.text-chip--hmc,
+main.main a.text-chip--revisemy {
+  border-color: color-mix(in srgb, var(--chip-color) 28%, var(--border));
+  background: color-mix(in srgb, var(--chip-color) 10%, var(--bg-elevated));
+  color: var(--chip-color);
+}
+
+main.main a.text-chip--harvous:hover,
+main.main a.text-chip--dinky:hover,
+main.main a.text-chip--hmc:hover,
+main.main a.text-chip--revisemy:hover {
+  border-color: color-mix(in srgb, var(--chip-color) 50%, var(--border));
+  background: color-mix(in srgb, var(--chip-color) 16%, var(--bg-elevated));
+}
+
+@media (prefers-color-scheme: dark) {
+  .text-chip--harvous { --chip-color: #60a5fa; }
+  .text-chip--dinky { --chip-color: #93c5fd; }
+  .text-chip--hmc { --chip-color: #d8b4fe; }
+  .text-chip--revisemy { --chip-color: #fda4af; }
 }
 
 .intro-links {
@@ -994,14 +996,15 @@ main.main .intro-pill {
 }
 
 main.main .intro-pill:hover {
-  color: var(--accent);
+  color: #fff;
   border-color: transparent;
-  background: var(--accent-soft);
+  /* Same orange as the frame rail crossmarks (`--tick` → `--accent`) */
+  background: var(--tick);
   text-decoration: none;
 }
 
 main.main .intro-pill:hover i {
-  color: var(--accent);
+  color: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1024,7 +1027,7 @@ main.main .intro-pill:hover i {
   transition: color 0.15s ease;
 }
 .intro .now-line a:hover {
-  color: var(--accent);
+  color: var(--fg);
   text-decoration: none;
 }
 
@@ -1061,7 +1064,7 @@ main.main .intro .now-line .now-ticker__verse {
 
 .intro .now-line .now-ticker__verse:hover,
 .intro .now-line .now-ticker__verse:focus-visible {
-  color: var(--accent);
+  color: var(--fg);
   text-decoration: none;
 }
 
@@ -1166,28 +1169,22 @@ main.main .cta {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--accent);
+  color: var(--fg);
   font-size: var(--size-meta);
   padding: 6px 14px;
   border-radius: var(--radius-pill);
-  border: 1px solid transparent;
-  background: rgba(234, 88, 12, 0.06);
-  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 main.main .cta .arrow { display: inline-block; transition: transform 0.25s var(--easing); }
 main.main .cta:hover {
-  color: var(--accent-hover);
+  color: var(--fg);
   text-decoration: none;
-  background: rgba(234, 88, 12, 0.1);
-  border-color: transparent;
-  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.12);
+  background: color-mix(in srgb, var(--fg) 9%, transparent);
+  border-color: var(--border-strong);
 }
 main.main .cta:hover .arrow { transform: translateX(3px); }
-
-@media (prefers-color-scheme: dark) {
-  main.main .cta { border-color: transparent; background: rgba(251, 146, 60, 0.07); }
-  main.main .cta:hover { background: rgba(251, 146, 60, 0.12); border-color: transparent; box-shadow: 0 2px 8px rgba(251, 146, 60, 0.1); }
-}
 
 .back-link { margin-top: var(--space-5); font-size: var(--size-meta); }
 main.main .back-link a,
@@ -1218,7 +1215,7 @@ main.main .work-link-pill__icon {
 }
 main.main .back-link a:hover,
 main.main .work-link-pill:hover {
-  color: var(--accent);
+  color: var(--fg);
   background: var(--glass-active-bg);
   border-color: transparent;
   text-decoration: none;
@@ -1238,27 +1235,10 @@ main.main .work-link-pill:hover .work-link-pill__icon { transform: translate(2px
 /* ============================================================
    Footer
    ============================================================ */
-/* Fills leftover column height so the footer sits on the viewport bottom; collapses when content is long. */
-.main-prefooter-grow {
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
-.main-footer {
-  margin-top: var(--space-7);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border);
-  font-size: var(--size-micro);
-  color: var(--muted);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-}
+.site-footer { font-size: var(--size-micro); color: var(--muted); }
 .footer-links { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font-size: var(--size-meta); }
-main.main .footer-links a { color: var(--muted-strong); text-decoration: none; transition: color 0.15s ease; }
-main.main .footer-links a:hover { color: var(--accent); }
+.footer-links a { color: var(--muted-strong); text-decoration: none; transition: color 0.15s ease; }
+.footer-links a:hover { color: var(--fg); }
 .footer-version { color: var(--muted); }
 
 /* ============================================================
@@ -1310,42 +1290,24 @@ main.main .footer-links a:hover { color: var(--accent); }
 
 /* ============================================================
    Responsive
-   Below 660px: single column + top nav. Above: sidebar + main grid.
+   Below 660px: header wraps, rails stay, content gets breathing room.
    ============================================================ */
 @media (max-width: 660px) {
-  .app-window { padding: var(--space-3); }
-  .layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+  :root {
+    --frame-pad-x: 16px;
+    /* Same inset as main / page sections from the rails */
+    --header-pad-x: var(--frame-pad-x);
   }
-  .sidebar {
-    position: static;
-    justify-self: stretch;
-    width: auto;
-    flex-direction: row;
-    align-items: center;
-    gap: 2px;
-    padding: var(--space-2) var(--space-2);
+  .app-window { padding: 0 var(--space-3); }
+  .site-header { flex-wrap: wrap; row-gap: var(--space-2); }
+  .site-nav { width: 100%; justify-content: flex-start; }
+  /* Drop the desktop signature gutter so the name lines up with nav + body */
+  .site-brand__text { padding-left: 0; }
+  .site-brand__sig {
+    left: 0;
+    width: 140px;
   }
-  .sidebar-nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 2px;
-    flex: 1;
-  }
-  .sidebar-nav a {
-    padding: 8px;
-    justify-content: center;
-  }
-  .sidebar-nav a span { display: none; }
-  .sidebar-nav a i { font-size: 22px; }
-  .sidebar-nav a.active {
-    padding: 8px;
-    background: var(--nav-active-bg);
-  }
-  /* Match horizontal inset to .sidebar (app padding + sidebar padding) */
-  .main { padding: var(--space-4) var(--space-2) var(--space-5); }
-  .main-footer { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  .main { padding: var(--space-4) 0 var(--space-5); }
 
   .intro .now-line {
     display: flex;
@@ -1371,19 +1333,6 @@ main.main .footer-links a:hover { color: var(--accent); }
   .post-header h1 { font-size: 24px; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .sidebar-nav a span {
-    transition: opacity 0.12s ease;
-    transform: translate(0, -50%);
-  }
-  .sidebar-nav a i {
-    transition: color 0.15s ease;
-  }
-  .sidebar-nav a:hover i {
-    transform: none;
-  }
-}
-
 /* ============================================================
    About page
    ============================================================ */
@@ -1400,7 +1349,7 @@ main.main .footer-links a:hover { color: var(--accent); }
   outline: none;
 }
 .about-page .about-hero__visual-wrap:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--fg);
   outline-offset: 3px;
 }
 .about-page .about-hero__visual {
@@ -1559,13 +1508,13 @@ main.main .footer-links a:hover { color: var(--accent); }
 }
 .about-page .about-hero__credit-link {
   font-weight: 600;
-  color: var(--accent);
+  color: var(--fg);
   text-decoration: none;
   /* Whitespace between flex items can collapse; keep “by” and the name apart */
   margin-inline-start: 0.35em;
 }
 .about-page .about-hero__credit-link:hover {
-  color: var(--accent-hover);
+  color: var(--fg-soft);
 }
 .about-page .about-hero__headline {
   margin-top: 0;
@@ -1622,30 +1571,58 @@ main.main .footer-links a:hover { color: var(--accent); }
   flex-direction: column;
   gap: var(--space-2);
 }
+/* Glass panels: content flush with page; hover chrome bleeds via ::before */
 .about-page .about-exp-group,
 .brag-page .about-exp-group,
 .brag-page .brag-now,
-.brag-page .brag-stats-panel--aggregate {
+.brag-page .brag-stats-panel,
+.brag-page .brag-item-testimonial {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  padding: var(--space-3) 0;
+  margin-block: 0;
+  margin-inline: 0;
+  box-sizing: border-box;
+}
+.about-page .about-exp-group::before,
+.brag-page .about-exp-group::before,
+.brag-page .brag-now::before,
+.brag-page .brag-stats-panel::before,
+.brag-page .brag-item-testimonial::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(var(--space-2) * -1);
   border-radius: var(--radius-md);
   border: 1px solid transparent;
   background: transparent;
-  padding: var(--space-3);
-  box-sizing: border-box;
+  z-index: -1;
   transition:
     background 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
-.about-page .about-exp-group:hover,
-.brag-page .about-exp-group:hover,
-.brag-page .brag-now:hover,
-.brag-page .brag-stats-panel--aggregate:hover,
-.brag-page .brag-preview--experience:hover .about-exp-group {
+.about-page .about-exp-group:hover::before,
+.brag-page .about-exp-group:hover::before,
+.brag-page .brag-now:hover::before,
+.brag-page .brag-stats-panel--aggregate:hover::before,
+.brag-page .brag-item-testimonial:hover::before,
+.brag-page .brag-preview--experience:hover .about-exp-group::before {
   background: var(--glass-active-bg);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-color: transparent;
   box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Don’t let prose blockquote rules indent brag quotes */
+.brag-page .brag-item-testimonial .work-testimonial-quote {
+  max-width: none;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  border: none;
 }
 .about-page .about-exp-group__title,
 .brag-page .about-exp-group__title,
@@ -1742,12 +1719,14 @@ main.main .brag-page .about-exp-pill--link {
 }
 main.main .about-page .about-exp-pill--link:hover,
 main.main .brag-page .about-exp-pill--link:hover {
-  color: var(--accent);
+  color: #fff;
   border-color: transparent;
-  background: var(--accent-soft);
+  background: var(--tick);
+  text-decoration: none;
 }
-.about-page .about-exp-pill--link:hover i {
-  color: var(--accent);
+.about-page .about-exp-pill--link:hover i,
+.brag-page .about-exp-pill--link:hover i {
+  color: #fff;
 }
 @media (prefers-color-scheme: dark) {
   .about-page .about-exp-pill {
@@ -1812,8 +1791,7 @@ main.main .brag-page .about-exp-pill--link:hover {
   margin: 0;
 }
 .work-testimonial-context {
-  font-family: var(--font-mono);
-  font-size: var(--size-micro);
+  font-size: var(--size-meta);
   color: var(--muted);
   margin: var(--space-1) 0 0;
 }
@@ -1938,5 +1916,35 @@ html.orange-mode {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* ============================================================
+   Scroll reveal — subtle fade/rise + stagger (see client/reveal.ts)
+   Hidden state is instant (no transition) so refresh can play the
+   enter animation; `.is-in` runs @keyframes reveal-in.
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  html.reveal-ready .reveal:not(.is-in) {
+    opacity: 0;
+    transform: translate3d(0, 0.7rem, 0);
+  }
+
+  html.reveal-ready .reveal.is-in {
+    opacity: 1;
+    transform: none;
+    animation: reveal-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--reveal-i, 0) * 55ms);
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.7rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 

@@ -42,11 +42,10 @@ const ldGraph = ldExtra.length > 0 ? { '@context': 'https://schema.org', '@graph
 const ldJson = ldGraph ? JSON.stringify(ldGraph).replace(/</g, '\\u003c') : '';
 
 const mainNav = [
-  { href: '/',          label: 'Home',     icon: 'ph-house' },
-  { href: '/posts/',    label: 'Posts',    icon: 'ph-read-cv-logo' },
-  { href: '/work/',     label: 'Work',     icon: 'ph-briefcase' },
-  { href: '/projects/', label: 'Projects', icon: 'ph-folder-open' },
-  { href: '/about/',    label: 'About',    icon: 'ph-user' },
+  { href: '/posts/',    label: 'Posts' },
+  { href: '/work/',     label: 'Work' },
+  { href: '/projects/', label: 'Projects' },
+  { href: '/about/',    label: 'About' },
 ];
 
 const current = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -116,46 +115,46 @@ const year = new Date().getFullYear();
   </head>
   <body>
     <div class="app-window">
-      <div class="layout">
-        <aside class="sidebar">
-          <nav class="sidebar-nav" aria-label="Primary">
-            {mainNav.map(({ href, label, icon }) => (
+      <div class="frame">
+        <header class="site-header">
+          <a href="/" class="site-brand" aria-label="Derek Castelli — Home" data-url-chip="Derek Castelli">
+            <img src="/assets/brand/signature.svg" alt="" class="site-brand__sig" />
+            <span class="site-brand__text">
+              <span class="site-brand__name">Derek Castelli</span>
+              <span class="site-brand__role">Making rectangles</span>
+            </span>
+          </a>
+          <nav class="site-nav" aria-label="Primary">
+            {mainNav.map(({ href, label }) => (
               <a
                 href={href}
                 class={isActive(href) ? 'active' : ''}
                 aria-current={isActive(href) ? 'page' : undefined}
-                aria-label={label}
               >
-                <i class={`${isActive(href) ? 'ph-fill' : 'ph-bold'} ${icon}`} aria-hidden="true"></i>
-                <span aria-hidden="true">{label}</span>
+                {label}
               </a>
             ))}
           </nav>
-        </aside>
+        </header>
 
         <main class="main">
-          <header class="site-masthead">
-            <a href="/" aria-label="Derek Castelli — Home" data-url-chip="Derek Castelli">
-              <img src="/assets/brand/signature.svg" alt="Derek Castelli" class="masthead-sig" />
-            </a>
-          </header>
-
           <slot />
-
-          <div class="main-prefooter-grow" aria-hidden="true"></div>
-          <footer class="main-footer">
-            <div class="footer-links">
-              <a href="mailto:derekj@hey.com">Email</a>
-              <a href="https://x.com/heyderekj" target="_blank" rel="noopener">X.com</a>
-              <a href="https://github.com/heyderekj" target="_blank" rel="noopener">GitHub</a>
-              <a href="/rss.xml">RSS</a>
-            </div>
-            <div class="footer-version">&copy; {year}</div>
-          </footer>
         </main>
+
+        <footer class="site-footer">
+          <div class="footer-links">
+            <a href="mailto:derekj@hey.com">Email</a>
+            <a href="https://x.com/heyderekj" target="_blank" rel="noopener">X.com</a>
+            <a href="https://github.com/heyderekj" target="_blank" rel="noopener">GitHub</a>
+            <a href="/rss.xml">RSS</a>
+          </div>
+          <div class="footer-version">&copy; {year}</div>
+        </footer>
       </div>
     </div>
   <script src="../client/url-chip.ts"></script>
   <script src="../client/easter-egg.ts"></script>
+  <script src="../client/zoom.ts"></script>
+  <script src="../client/reveal.ts"></script>
   </body>
 </html>

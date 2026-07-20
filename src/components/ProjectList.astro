@@ -144,7 +144,7 @@ const sorted = [...projects].sort((a, b) => {
 }
 
 :global(main.main) .project-card-link:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--fg);
   outline-offset: 2px;
 }
 
@@ -176,14 +176,15 @@ const sorted = [...projects].sort((a, b) => {
 .card-thumb-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top center;
+  object-fit: contain;
+  object-position: center center;
+  box-sizing: border-box;
+  padding: 10%;
   display: block;
   transition: transform 0.3s ease;
 }
 
 .card-thumb-img--icon {
-  object-fit: contain;
   padding: 12%;
   background: var(--bg-elevated);
 }
@@ -222,12 +223,16 @@ const sorted = [...projects].sort((a, b) => {
 }
 
 :global(main.main) .project-card-link:hover .card-name {
-  color: var(--accent);
+  color: var(--fg);
 }
 
-/* Condensed inline row (retired) */
+/* Condensed inline row (retired) — bleed like .entries so text aligns with headings */
 .project-cards--row {
   gap: 0;
+}
+
+.project-cards--row .project-card {
+  margin: 0 calc(var(--space-2) * -1);
 }
 
 :global(main.main) .project-card-link--row {
@@ -235,7 +240,7 @@ const sorted = [...projects].sort((a, b) => {
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: 6px var(--space-3);
+  padding: 6px var(--space-2);
 }
 
 .project-card-link--row .card-name {
@@ -254,44 +259,35 @@ const sorted = [...projects].sort((a, b) => {
 
 .card-status {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: var(--radius-pill);
   line-height: 1.2;
-}
-
-.card-status--active {
   color: var(--muted-strong);
-  background: rgba(249, 115, 22, 0.14);
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  border: 1px solid var(--border);
 }
 
-.card-status--paused {
-  color: var(--muted-strong);
-  background: rgba(234, 179, 8, 0.12);
+.card-status::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
 }
 
-.card-status--maintained {
-  color: var(--muted-strong);
-  background: rgba(0, 0, 0, 0.035);
-}
+.card-status--active::before { background: var(--accent); }
+.card-status--paused::before { background: #eab308; }
+.card-status--maintained::before { background: #c4a574; }
 
-.card-status--retired {
-  color: var(--muted);
-  background: rgba(0, 0, 0, 0.03);
-}
-
-@media (prefers-color-scheme: dark) {
-  .card-status--maintained {
-    background: rgba(255, 255, 255, 0.05);
-  }
-
-  .card-status--retired {
-    background: rgba(255, 255, 255, 0.035);
-  }
-}
+.card-status--retired::before { background: var(--muted); }
 
 .card-tagline {
   margin: 0;

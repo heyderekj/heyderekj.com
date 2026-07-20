@@ -10,10 +10,9 @@ category: App
 burnerLevel: Front Burner
 role: Designer & builder
 stack: [Laravel, Livewire, Flux, MCP]
-image: /assets/images/projects/revisemy-og.png
-hero: /assets/images/projects/revisemy-board.webp
-heroPosition: right top
-heroZoom: 1.45
+image: /assets/images/projects/revisemy-1.webp
+hero: /assets/images/projects/revisemy-3.webp
+heroPosition: center center
 icon: /assets/images/projects/revisemy-app-icon.png
 featured: true
 order: 2
@@ -32,10 +31,10 @@ What finally unstuck it was a challenge: build on [Laravel Cloud](https://cloud.
 
 The product speaks in marks (rose rectangles + M1/M2 badges), not pins—human marks are authoritative. Drag to outline a region or click for a point note. Your marks become cards on the Board: Open (you) → In progress (agent) → Resolved → Verified (you again). Optional second-opinion hints queue a type-aware design checklist, but they stay hints until you accept them. Agents attach before/after evidence when resolving, and multi-pass checkups mean you can request changes and open pass 2+ without losing context.
 
-<figure class="pfig pfig--pair pfig--tall">
-  <img src="/assets/images/projects/revisemy-marks-f.webp" alt="The My marks panel with a Must fix and a Keep this mark, above a Second opinion panel of accept-or-dismiss hint cards" loading="lazy" decoding="async" />
-  <img src="/assets/images/projects/revisemy-share.webp" alt="The Share menu with copy guest link, generate new link, expiry options from 1 day to never, and disable comments" loading="lazy" decoding="async" />
-  <figcaption>Marks speak human — "Must fix," "Keep this." Hints stay hints until you accept them, and reviews travel as guest links with expiry you control.</figcaption>
+<figure class="pfig pfig--pair">
+  <img src="/assets/images/projects/revisemy-4.webp" alt="ReviseMy review of a Customer.io homepage hero with an M1 mark on the cookie banner, My marks panel open, and Second opinion hint cards" loading="lazy" decoding="async" />
+  <img src="/assets/images/projects/revisemy-5.webp" alt="ReviseMy guest link menu with copy link, generate new link, expiry options, and disable comments" loading="lazy" decoding="async" />
+  <figcaption>Your marks are authoritative; second-opinion hints stay optional. Guests get a link you can expire—not another account.</figcaption>
 </figure>
 
 ## Try it

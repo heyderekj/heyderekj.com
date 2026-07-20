@@ -74,7 +74,7 @@ const projects = defineCollection({
     image: z.string().optional(),
     /** Detail-page hero; falls back to `image` (which cards keep using) */
     hero: z.string().optional(),
-    /** CSS object-position for the detail hero (e.g. `left top`) */
+    /** CSS object-position for the detail hero (default `center center`) */
     heroPosition: z.string().optional(),
     /** Extra crop-in for heroes with too much empty mat (e.g. `1.35`) */
     heroZoom: z.number().min(1).max(2.5).optional(),

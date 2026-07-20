@@ -58,8 +58,7 @@ const githubData = await fetchGitHubActivity();
 <Base jsonLd={homeJsonLd}>
   <section class="intro">
     <p>
-      A Christian and freelance designer making websites, apps, and branding for startups and nonprofits. Currently partnered with{' '}
-      <a href="https://kemdesign.co" rel="noopener noreferrer">Kem Design</a>.
+      I live in the Des Moines, IA area with my wife and our little zoo. When I'm not at my Mac I'm at church or learning the drums. Right now, I make websites with <a href="https://kemdesign.co" class="text-chip" rel="noopener noreferrer"><i class="ph-bold ph-pencil-simple" aria-hidden="true"></i>Kem Design</a> and apps on the side—primarily <a href="/projects/harvous/" class="text-chip"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a>
     </p>
     <div class="intro-links">
       <a href="/about" class="intro-pill">
@@ -138,8 +137,9 @@ const githubData = await fetchGitHubActivity();
 </Base>
 
 <style>
+  .intro { padding-top: var(--space-4); }
   .intro p {
-    max-width: 420px;
+    max-width: var(--max-text);
   }
 
   .home-status-summaries {
@@ -164,42 +164,36 @@ const githubData = await fetchGitHubActivity();
   }
 
   :global(main.main) .home-status-summary-link:hover .home-status-summary-title {
-    color: var(--accent);
+    color: var(--fg);
   }
 
   .card-status {
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    padding: 2px 6px;
+    padding: 2px 7px;
     border-radius: var(--radius-pill);
     line-height: 1.2;
-  }
-
-  .card-status--paused {
     color: var(--muted-strong);
-    background: rgba(234, 179, 8, 0.12);
+    background: color-mix(in srgb, var(--fg) 4%, transparent);
+    border: 1px solid var(--border);
   }
 
-  .card-status--maintained {
-    color: var(--muted-strong);
-    background: rgba(0, 0, 0, 0.035);
+  .card-status::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
   }
 
-  .card-status--retired {
-    color: var(--muted);
-    background: rgba(0, 0, 0, 0.03);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .card-status--maintained {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .card-status--retired {
-      background: rgba(255, 255, 255, 0.035);
-    }
-  }
+  .card-status--active::before { background: var(--accent); }
+  .card-status--paused::before { background: #eab308; }
+  .card-status--maintained::before { background: #c4a574; }
 </style>

@@ -67,7 +67,7 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
                       src={preview.src}
                       alt={preview.alt}
                       width={320}
-                      height={200}
+                      height={320}
                       loading="lazy"
                       decoding="async"
                     />
@@ -129,12 +129,13 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
 
   .brag-item::before {
     content: counter(brag, decimal-leading-zero);
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
     font-size: var(--size-micro);
     font-weight: 700;
-    color: var(--muted);
-    line-height: 1.6;
-    padding-top: 2px;
+    letter-spacing: 0.04em;
+    color: var(--fg);
+    line-height: 1.4;
+    padding-top: 0;
   }
 
   .brag-item:last-child {
@@ -164,25 +165,7 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
 
   .brag-item-testimonial {
     grid-column: 2;
-    margin: 0;
     min-width: 0;
-    border-radius: var(--radius-md);
-    border: 1px solid transparent;
-    background: transparent;
-    padding: var(--space-3);
-    box-sizing: border-box;
-    transition:
-      background 0.2s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-
-  .brag-item-testimonial:hover {
-    background: var(--glass-active-bg);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    border-color: transparent;
-    box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
   }
 
   .brag-item-testimonial .work-testimonial-quote {
@@ -208,48 +191,51 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
     text-decoration: none;
     border-bottom: none;
     color: inherit;
-    border-radius: var(--radius-md);
+    border-radius: 0;
     overflow: visible;
-    border: 1px solid transparent;
+    border: none;
     background: transparent;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
 
-  .brag-preview:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
-  }
-
+  /* Square mat: contain + center + padding (same as project / work grids) */
   .brag-preview-media {
+    aspect-ratio: 1 / 1;
     overflow: hidden;
-    border-radius: calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px) 0 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
     background: var(--bg-elevated);
     flex-shrink: 0;
+    position: relative;
+    transition: background-color 0.2s ease;
   }
 
   .brag-preview-img {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    object-position: top center;
-    vertical-align: middle;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    box-sizing: border-box;
+    padding: 10%;
+  }
+
+  .brag-preview:hover .brag-preview-media {
+    background: color-mix(in srgb, var(--fg) 3%, var(--bg-elevated));
   }
 
   .brag-preview-caption {
     flex-shrink: 0;
-    padding: var(--space-2) var(--space-2) var(--space-3);
+    padding: var(--space-2) 0 0;
     font-family: var(--font-sans);
     font-size: var(--size-meta);
     font-weight: 600;
     letter-spacing: -0.01em;
     line-height: 1.3;
     color: var(--fg-soft);
-    border-radius: 0 0 calc(var(--radius-md) - 1px) calc(var(--radius-md) - 1px);
   }
 
   :global(main.main) .brag-preview:hover .brag-preview-caption {
-    color: var(--accent);
+    color: var(--fg);
   }
 
   .brag-item-kicker {
@@ -263,7 +249,7 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--fg);
   }
 
   .brag-item-kicker-dot {
@@ -291,7 +277,7 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
   }
 
   :global(main.main) .brag-item-title a:hover {
-    color: var(--accent);
+    color: var(--fg);
   }
 
   .brag-item-summary {

@@ -3,11 +3,8 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageTitle from '../components/PageTitle.astro';
 import ApplicationToc from '../components/ApplicationToc.astro';
-import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
-import MediaStepper from '../components/MediaStepper.astro';
 import TestimonialCarousel from '../components/TestimonialCarousel.astro';
-import Lightbox from '../components/Lightbox.astro';
 import { testimonials } from '../data/about';
 import {
   customerioMeta,
@@ -15,9 +12,7 @@ import {
   customerioLetter,
   customerioLetterAiNotes,
   customerioProofLead,
-  customerioProofPreviewSlides,
   customerioProofBlocks,
-  customerioProofProjectSlugs,
   customerioFoundationsLead,
   customerioFoundationsParagraphs,
   customerioWhyParagraphs,
@@ -26,11 +21,6 @@ import {
 const letter = customerioLetter;
 const letterBeforeAiNotes = letter.paragraphs.slice(0, 4);
 const letterAfterAiNotes = letter.paragraphs.slice(4);
-
-const allProjects = await getCollection('projects', ({ data }) => !data.draft);
-const proofProjects = customerioProofProjectSlugs
-  .map((slug) => allProjects.find((entry) => entry.slug === slug))
-  .filter((entry): entry is NonNullable<typeof entry> => entry != null);
 
 const workSlugs = ['claimable', 'care-continuity'] as const;
 const allWork = await getCollection('work', ({ data }) => !data.draft);
@@ -59,7 +49,7 @@ const tocItems = [
   <ApplicationToc items={tocItems} />
 
   <p class="cio-intro">
-    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" src={customerioIntro.photoSrc} alt={customerioIntro.photoAlt} width={18} height={18} decoding="async" />Derek</span>, a designer in Des Moines. I ship websites and build products on the side—and I'm applying for <strong>Senior Product Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-lightning" aria-hidden="true"></i>Customer.io</span>.
+    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" src={customerioIntro.photoSrc} alt={customerioIntro.photoAlt} width={18} height={18} decoding="async" /><span class="cio-chip__label">Derek</span></span>, a designer in Des Moines, IA. I've made websites full-time since 2018 and been designing apps on the side for the past 5 years. I'm applying for <strong>Senior Product Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-lightning" aria-hidden="true"></i><span class="cio-chip__label">Customer.io</span></span>
   </p>
 
   <section id="letter" class="cio-letter" aria-label="Cover letter">
@@ -108,42 +98,92 @@ const tocItems = [
   <section id="proof" class="cio-proof" aria-labelledby="cio-proof-heading">
     <h2 id="cio-proof-heading" class="section-title"><a href="/projects/">/ proof</a></h2>
     <p class="cio-section-lead">{customerioProofLead}</p>
-    <div class="cio-proof-preview">
-      <MediaStepper
-        items={[...customerioProofPreviewSlides]}
-        label="Preview of shipped product work"
-        aspect="16 / 10"
-        fit="cover"
-        autoplay
-      />
-    </div>
+
     {customerioProofBlocks.map((block) => (
-      <>
-        {block.figure && (
-          <figure class="cio-figure">
-            <button
-              type="button"
-              class="work-lightbox-trigger"
-              aria-label="View image at full size"
-              data-lb-src={block.figure.src}
-            >
-              <img
-                src={block.figure.src}
-                alt={block.figure.alt}
-                class="cio-figure__img"
-                loading="lazy"
-                decoding="async"
-              />
-            </button>
-            <figcaption class="cio-figure__caption">{block.figure.caption}</figcaption>
-          </figure>
-        )}
-        <p class="cio-body" set:html={block.html} />
-      </>
+      <article class="cio-proof-block">
+        {(Array.isArray(block.html) ? block.html : [block.html]).map((p) => (
+          <p class="cio-body" set:html={p} />
+        ))}
+
+        <figure class:list={['cio-shots', block.mat === 'macos-dark' && 'cio-shots--macos-dark']}>
+          {block.shots.map((shot) =>
+            shot.type === 'video' ? (
+              <div class="zoomable zoom-cell zoom-cell--video">
+                {/*
+                  Div trigger (not <button>): native video controls are invalid
+                  / broken inside a button once expanded.
+                */}
+                <div
+                  class:list={[
+                    'zoom-trigger',
+                    'cio-shot-video-shell',
+                    block.mat === 'macos-dark' && 'mat-wallpaper--macos-dark',
+                  ]}
+                  role="button"
+                  tabindex="0"
+                  aria-label="Zoom video"
+                  aria-expanded="false"
+                  style={[
+                    shot.width && shot.height
+                      ? `--cio-video-ar: ${shot.width} / ${shot.height}`
+                      : null,
+                    shot.windowRadius != null
+                      ? `--cio-window-radius: ${shot.windowRadius}`
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .join('; ')}
+                >
+                  {/*
+                    Clip wrapper: overflow+radius is more reliable on <video>
+                    than border-radius on the media element itself (WebKit).
+                    Radius is width-based (cqw) so corners stay circular.
+                  */}
+                  <span class="cio-shot-video-clip">
+                    <video
+                      class="cio-shot-video"
+                      data-autoplay
+                      muted
+                      loop
+                      playsinline
+                      preload="metadata"
+                      poster={shot.poster}
+                      width={shot.width}
+                      height={shot.height}
+                      aria-label={shot.alt}
+                    >
+                      <source src={shot.src} type="video/mp4" />
+                    </video>
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div class="zoomable zoom-cell">
+                <button
+                  type="button"
+                  class="zoom-trigger"
+                  aria-label="Zoom image"
+                  aria-expanded="false"
+                >
+                  <img
+                    src={shot.src}
+                    alt={shot.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </button>
+              </div>
+            ),
+          )}
+          <figcaption>{block.caption}</figcaption>
+        </figure>
+
+        <a href={block.href} class="cio-more">
+          More on {block.label}
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </article>
     ))}
-    {proofProjects.length > 0 && (
-      <FeaturedProjectGrid projects={proofProjects} preserveOrder variant="work" />
-    )}
   </section>
 
   <section id="foundations" class="cio-foundations" aria-labelledby="cio-foundations-heading">
@@ -185,7 +225,18 @@ const tocItems = [
     </a>
   </nav>
 
-  <Lightbox />
+  <script is:inline>
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('video[data-autoplay]').forEach((video) => {
+      if (reduceMotion) {
+        video.controls = true;
+      } else {
+        video.autoplay = true;
+        const p = video.play();
+        if (p && p.catch) p.catch(() => {});
+      }
+    });
+  </script>
 </Base>
 
 <style is:global>
@@ -198,7 +249,9 @@ const tocItems = [
     --cio-verdant: #abffae;
     --cio-chip-pad-y: 0.32em;
     display: inline-flex;
-    align-items: center;
+    /* Baseline from the label text — not the avatar (replaced elems baseline
+       at their bottom edge and lift the whole chip vs surrounding copy). */
+    align-items: baseline;
     gap: 0.28em;
     padding: var(--cio-chip-pad-y) 0.65em var(--cio-chip-pad-y) 0.45em;
     /* Pull the taller chip out of the line box so paragraph leading stays put */
@@ -233,20 +286,28 @@ const tocItems = [
     transition: background 0.15s ease, border-color 0.15s ease;
   }
 
+  .cio-chip__label {
+    display: inline;
+    line-height: 1.15;
+  }
+
   .cio-chip i {
     font-size: 0.85em;
     margin: 0;
     line-height: 1;
+    align-self: center;
+    transform: translateY(0.06em);
   }
 
   .cio-chip__avatar {
     display: block;
-    width: 1.15em;
-    height: 1.15em;
+    width: 1em;
+    height: 1em;
     margin: 0;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
+    align-self: center;
   }
 
   .cio-chip--brand,
@@ -526,35 +587,179 @@ const tocItems = [
     margin-bottom: 0;
   }
 
-  .cio-proof-preview {
-    margin: 0 0 var(--space-4);
+  /* Each project reads as one unit: story, its own two money shots, a way in. */
+  .cio-proof-block {
+    margin: 0 0 var(--space-6);
   }
 
-  .cio-proof-preview :global(.ms) {
+  .cio-proof-block:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .cio-shots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    align-items: start;
+    margin: var(--space-3) 0 0;
+  }
+
+  .cio-shots .zoom-cell {
     margin: 0;
+    min-width: 0;
   }
 
-  .cio-figure {
-    margin: 0 0 var(--space-4);
-  }
-
-  .cio-figure__img {
+  .cio-shots .zoom-trigger {
     display: block;
     width: 100%;
-    height: auto;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    cursor: zoom-in;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .cio-shots .zoom-cell.is-zoomed > .zoom-trigger {
+    cursor: zoom-out;
+  }
+
+  .cio-shots .zoom-cell.is-zoomed .cio-shot-video,
+  .cio-shots .zoom-cell.is-zoomed .cio-shot-video-clip {
+    cursor: default;
+  }
+
+  .cio-shots img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    object-position: center;
+    padding: 14px;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: var(--bg-elevated);
   }
 
-  .cio-figure__caption {
-    margin: var(--space-2) 0 0;
+  .cio-shots .cio-shot-video-shell {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    padding: 18px 22px;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+  }
+
+  .cio-shots .cio-shot-video-clip {
+    display: block;
+    width: 100%;
+    max-height: min(70dvh, 640px);
+    aspect-ratio: var(--cio-video-ar, auto);
+    container-type: inline-size;
+    overflow: hidden;
+    /* Circular corners from video width — per-shot --cio-window-radius */
+    border-radius: calc(var(--cio-window-radius, 0.01) * 100cqw);
+  }
+
+  .cio-shots .cio-shot-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* contain (not fill): avoid upscaling/stretch soft-blur past native pixels */
+    object-fit: contain;
+    object-position: center;
+    background: none;
+    border: none;
+    border-radius: 0;
+  }
+
+  /* Dark wallpaper only behind the video shell — stills use the normal elevated mat */
+  .cio-shots--macos-dark .cio-shot-video-shell {
+    /* Extra side inset so the portrait window floats on the wallpaper */
+    padding: 28px clamp(48px, 14%, 88px);
+    background-color: #07090f;
+    background-image:
+      radial-gradient(ellipse 90% 70% at 18% 22%, rgba(88, 128, 210, 0.42), transparent 58%),
+      radial-gradient(ellipse 70% 55% at 88% 78%, rgba(48, 78, 160, 0.38), transparent 55%),
+      radial-gradient(ellipse 55% 40% at 55% 108%, rgba(28, 48, 110, 0.55), transparent 50%),
+      linear-gradient(165deg, #141824 0%, #0a0c14 42%, #06070c 100%);
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Tour video leads full-width; stills sit as the pair below */
+  .cio-shots > .zoom-cell:has(.cio-shot-video) {
+    grid-column: 1 / -1;
+  }
+
+  /* Expanded: span the row, then break out toward the rails like project figures */
+  .cio-shots > .zoom-cell.is-zoomed {
+    grid-column: 1 / -1;
+    width: auto;
+    max-width: none;
+    margin-inline: calc(-1 * var(--z-bleed));
+  }
+
+  .cio-shots > .zoom-cell.is-zoomed img {
+    aspect-ratio: auto;
+    height: 100%;
+    max-height: none;
+    padding: clamp(1.25rem, 3.5vw, 2rem);
+  }
+
+  .cio-shots > .zoom-cell.is-zoomed .cio-shot-video-shell {
+    padding: clamp(1.25rem, 3.5vw, 2rem);
+  }
+
+  .cio-shots--macos-dark > .zoom-cell.is-zoomed .cio-shot-video-shell {
+    padding: clamp(1.5rem, 4vw, 2.25rem) clamp(48px, 12%, 96px);
+  }
+
+  .cio-shots > .zoom-cell.is-zoomed .cio-shot-video-clip {
+    max-height: calc(82dvh - 2.5rem);
+  }
+
+  .cio-shots > figcaption {
+    grid-column: 1 / -1;
+    margin: 0;
+    max-width: 360px;
     font-size: var(--size-meta);
     line-height: 1.45;
     color: var(--muted-strong);
+    text-align: left;
     text-wrap: pretty;
   }
 
-  .cio-proof :global(.project-grid),
+  .cio-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--space-3);
+    font-size: var(--size-meta);
+    color: var(--muted-strong);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  /* `main` lives in Base.astro and never carries this component's scope class,
+     so the ancestor must be :global() or the selector silently never matches. */
+  :global(main.main) .cio-more { border-bottom: none; }
+  :global(main.main) .cio-more:hover { color: var(--fg); border-bottom: none; }
+
+  .cio-more .arrow {
+    display: inline-block;
+    transition: transform 0.2s var(--easing);
+  }
+
+  :global(main.main) .cio-more:hover .arrow { transform: translateX(3px); }
+
+  @media (max-width: 480px) {
+    .cio-shots { grid-template-columns: 1fr; }
+  }
+
   .cio-foundations :global(.project-grid) {
     margin-top: var(--space-4);
   }

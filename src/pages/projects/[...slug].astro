@@ -1,7 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import Lightbox from '../../components/Lightbox.astro';
 import MediaStepper from '../../components/MediaStepper.astro';
 import { formatProjectStartLabel, formatProjectUpdatedLabel } from '../../lib/projectStart';
 import { displayProjectStatus } from '../../lib/projectStatus';
@@ -45,7 +44,7 @@ const media = project.data.media ?? [];
 /** Detail-page hero: `hero` wins; cards elsewhere keep using `image`. */
 const heroSrc = project.data.hero ?? project.data.image;
 const showHero = Boolean(heroSrc) && !media.some((m) => m.src === heroSrc);
-const heroPosition = project.data.heroPosition ?? 'top center';
+const heroPosition = project.data.heroPosition ?? 'center center';
 const heroZoom = project.data.heroZoom ?? 1;
 const heroImgStyle = [
   `object-position: ${heroPosition}`,
@@ -55,6 +54,17 @@ const heroImgStyle = [
 ]
   .filter(Boolean)
   .join('; ');
+/** Solo tour video — no stepper chrome when there's only one clip */
+const soloVideo = media.length === 1 && media[0]?.type === 'video' ? media[0] : null;
+/** Match Customer.io proof clips: browser chrome vs native app window */
+const soloVideoRadius =
+  project.slug === 'dinky' ? 0.028 : project.slug === 'harvous' ? 0.007 : 0.01;
+const soloVideoAr =
+  project.slug === 'dinky'
+    ? '440 / 492'
+    : project.slug === 'harvous'
+      ? '1240 / 770'
+      : undefined;
 ---
 <Base title={`${project.data.name} — Derek Castelli`} description={metaDesc} jsonLd={projectJsonLd}>
   <article class="prose">
@@ -97,12 +107,12 @@ const heroImgStyle = [
     )}
 
     {showHero && (
-      <figure class="pfig pfig--hero" data-zoomed={heroZoom > 1 ? '' : undefined}>
+      <figure class="pfig pfig--hero zoomable" data-zoomed={heroZoom > 1 ? '' : undefined}>
         <button
           type="button"
-          class="work-lightbox-trigger"
-          aria-label="View image at full size"
-          data-lb-src={heroSrc}
+          class="zoom-trigger"
+          aria-label="Zoom image"
+          aria-expanded="false"
         >
           <img
             src={heroSrc}
@@ -116,7 +126,48 @@ const heroImgStyle = [
     )}
 
     {media.length >= 2 && (
-      <MediaStepper items={media} label={`${project.data.name} screenshots`} />
+      <MediaStepper
+        items={media}
+        label={`${project.data.name} screenshots`}
+        mat={project.slug === 'dinky' ? 'macos-dark' : undefined}
+      />
+    )}
+
+    {soloVideo && (
+      <figure class="pvideo zoomable">
+        <div
+          class="zoom-trigger pvideo-shell"
+          role="button"
+          tabindex="0"
+          aria-label="Zoom video"
+          aria-expanded="false"
+          style={[
+            soloVideoAr ? `--pvideo-ar: ${soloVideoAr}` : null,
+            `--pvideo-window-radius: ${soloVideoRadius}`,
+          ]
+            .filter(Boolean)
+            .join('; ')}
+        >
+          <span class="pvideo-clip">
+            <video
+              class="pvideo-el"
+              data-autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              poster={soloVideo.poster}
+              aria-label={soloVideo.alt ?? soloVideo.caption ?? `${project.data.name} tour`}
+            >
+              <source
+                src={soloVideo.src}
+                type={soloVideo.src.endsWith('.webm') ? 'video/webm' : 'video/mp4'}
+              />
+            </video>
+          </span>
+        </div>
+        {soloVideo.caption && <figcaption>{soloVideo.caption}</figcaption>}
+      </figure>
     )}
 
     <div class="post-content">
@@ -127,16 +178,43 @@ const heroImgStyle = [
   </article>
 
   <script is:inline>
-    // Make markdown body images zoomable: wrap them in lightbox triggers before
-    // the Lightbox script (below) collects triggers in DOM order.
-    document.querySelectorAll('.post-content img').forEach((img) => {
-      if (img.closest('.work-lightbox-trigger')) return;
+    // Make body images zoomable. zoom.ts (delegated) handles the interaction.
+    // - Pair figures: each <img> becomes its own `.pfig-cell.zoomable` grid item,
+    //   so zooming one spans the row and the rest reflow below it.
+    // - Solo figures: the figure itself is the `.zoomable`, image wrapped in a trigger.
+    // - Bare markdown images: wrapped in a full `figure.zoomable.pfig`.
+    const triggerFor = (img) => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'work-lightbox-trigger';
-      btn.setAttribute('aria-label', 'View image at full size');
+      btn.className = 'zoom-trigger';
+      btn.setAttribute('aria-label', 'Zoom image');
+      btn.setAttribute('aria-expanded', 'false');
       img.parentNode.insertBefore(btn, img);
       btn.appendChild(img);
+      return btn;
+    };
+    document.querySelectorAll('.post-content .pfig').forEach((fig) => {
+      const imgs = [...fig.querySelectorAll(':scope > img')];
+      if (fig.classList.contains('pfig--pair')) {
+        imgs.forEach((img) => {
+          const cell = document.createElement('div');
+          cell.className = 'pfig-cell zoomable';
+          img.parentNode.insertBefore(cell, img);
+          cell.appendChild(img);
+          triggerFor(img);
+        });
+      } else {
+        fig.classList.add('zoomable');
+        imgs.forEach(triggerFor);
+      }
+    });
+    document.querySelectorAll('.post-content img').forEach((img) => {
+      if (img.closest('.pfig')) return;
+      const fig = document.createElement('figure');
+      fig.className = 'pfig zoomable';
+      img.parentNode.insertBefore(fig, img);
+      fig.appendChild(img);
+      triggerFor(img);
     });
 
     // Muted video loops autoplay unless the visitor prefers reduced motion,
@@ -152,8 +230,6 @@ const heroImgStyle = [
       }
     });
   </script>
-
-  <Lightbox />
 </Base>
 
 <style>
@@ -192,50 +268,36 @@ const heroImgStyle = [
     gap: 0.35rem;
   }
 
+  /* Neutral pill + a small colored status dot (orange survives only as the dot) */
   .detail-status {
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    padding: 2px 6px;
+    padding: 2px 8px;
     border-radius: var(--radius-pill);
     line-height: 1.2;
-  }
-
-  .detail-status--active {
-    color: #9a3412;
-    background: rgba(249, 115, 22, 0.14);
-    border: 1px solid rgba(249, 115, 22, 0.38);
-  }
-
-  .detail-status--paused {
     color: var(--muted-strong);
-    background: rgba(234, 179, 8, 0.12);
-    border: 1px solid rgba(234, 179, 8, 0.4);
-  }
-
-  .detail-status--maintained {
-    color: var(--muted-strong);
-    background: rgba(0, 0, 0, 0.035);
+    background: color-mix(in srgb, var(--fg) 4%, transparent);
     border: 1px solid var(--border);
   }
 
-  .detail-status--retired {
-    color: var(--muted);
-    background: rgba(0, 0, 0, 0.03);
-    border: 1px solid var(--border);
+  .detail-status::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .detail-status--maintained {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .detail-status--retired {
-      background: rgba(255, 255, 255, 0.035);
-    }
-  }
+  .detail-status--active::before { background: var(--accent); }
+  .detail-status--paused::before { background: #eab308; }
+  .detail-status--maintained::before { background: #c4a574; }
 
   .project-meta-start,
   .project-meta-updated {
@@ -265,42 +327,56 @@ const heroImgStyle = [
     margin: var(--space-4) 0;
   }
 
-  .pfig .work-lightbox-trigger {
+  /* Mat lives on the trigger so crop-in transforms can't widen past the column */
+  .pfig .zoom-trigger {
     display: block;
     width: 100%;
     padding: 0;
     margin: 0;
-    border: none;
-    background: none;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
     cursor: zoom-in;
     border-radius: var(--radius-md);
     overflow: hidden;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
   }
 
+  /* Expanded: mat is 4:3 (resting stays 1:1). Same sheet so it beats the rule above. */
+  .pfig.zoomable.is-zoomed > .zoom-trigger,
+  .pfig .pfig-cell.is-zoomed > .zoom-trigger {
+    aspect-ratio: 4 / 3;
+    height: auto;
+  }
+
+  /* Contained on the mat — never wider than the figure */
   .pfig img {
     display: block;
     width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    object-position: top center;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
     box-sizing: border-box;
-    padding: 0;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    padding: 14px 28px;
+    background: none;
+    border: none;
+    border-radius: 0;
     transition: none;
   }
 
-  /* Keep per-hero crop zoom under the global lightbox hover lift */
-  .pfig[data-zoomed] .work-lightbox-trigger:hover img,
-  .pfig[data-zoomed] .work-lightbox-trigger:focus-visible img {
-    transform: var(--pfig-zoom, none);
+  .pfig.zoomable.is-zoomed img,
+  .pfig .pfig-cell.is-zoomed img {
+    height: 100%;
+    aspect-ratio: auto;
+    padding: clamp(1.25rem, 3.5vw, 2rem);
   }
 
-  /* Opt into letterboxed framing when a shot shouldn't crop */
-  .pfig[data-fit='contain'] img {
-    object-fit: contain;
-    padding: 14px;
+  /* Markdown images before the zoom enhancer wraps them */
+  .pfig > img {
+    aspect-ratio: 1 / 1;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
   }
 
   .pfig > figcaption {
@@ -308,10 +384,99 @@ const heroImgStyle = [
     font-size: var(--size-meta);
     line-height: 1.45;
     color: var(--muted-strong);
+    text-align: center;
     text-wrap: pretty;
   }
 
-  /* Two-up detail pairs; caption spans both cells */
+  /* Solo tour video (no MediaStepper) */
+  .pvideo {
+    margin: var(--space-4) 0;
+  }
+
+  .pvideo-shell {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    padding: 18px 22px;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+    cursor: zoom-in;
+  }
+
+  .pvideo.zoomable.is-zoomed > .pvideo-shell {
+    aspect-ratio: auto;
+    max-height: 82dvh;
+    cursor: zoom-out;
+  }
+
+  /* Same clip pattern as Customer.io proof videos */
+  .pvideo-clip {
+    display: block;
+    width: 100%;
+    max-height: min(70dvh, 640px);
+    aspect-ratio: var(--pvideo-ar, 16 / 10);
+    container-type: inline-size;
+    overflow: hidden;
+    border-radius: calc(var(--pvideo-window-radius, 0.01) * 100cqw);
+  }
+
+  .pvideo-el {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* contain (not fill): avoid upscaling/stretch soft-blur past native pixels */
+    object-fit: contain;
+    object-position: center;
+    border-radius: 0;
+  }
+
+  .pvideo.zoomable.is-zoomed .pvideo-clip {
+    max-height: calc(82dvh - 2.5rem);
+  }
+
+  .pvideo.zoomable.is-zoomed .pvideo-el {
+    cursor: default;
+  }
+
+  .pvideo > figcaption {
+    margin: var(--space-2) auto 0;
+    max-width: var(--max-text);
+    font-size: var(--size-meta);
+    line-height: 1.45;
+    color: var(--muted-strong);
+    text-align: center;
+    text-wrap: pretty;
+  }
+
+  /* Embedded canvases (Figma, etc.) — full column width, 16:10 frame */
+  .pembed {
+    margin: var(--space-4) 0;
+  }
+
+  .pembed iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    height: auto;
+    min-height: 280px;
+    max-height: min(70dvh, 640px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+  }
+
+  .pembed > figcaption {
+    margin: var(--space-2) 0 0;
+    font-size: var(--size-meta);
+    line-height: 1.45;
+    color: var(--muted-strong);
+    text-align: center;
+    text-wrap: pretty;
+  }
+
+  /* Two-up detail pairs; each cell is its own zoomable, caption spans both */
   .pfig--pair {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -319,16 +484,9 @@ const heroImgStyle = [
     align-items: start;
   }
 
-  .pfig--pair img {
-    aspect-ratio: 3 / 2;
-  }
-
-  .pfig--pair[data-fit='contain'] img {
-    padding: 10px;
-  }
-
-  .pfig--pair.pfig--tall img {
-    aspect-ratio: 3 / 4;
+  .pfig-cell {
+    margin: 0;
+    min-width: 0;
   }
 
   .pfig--pair > figcaption {
@@ -354,6 +512,49 @@ const heroImgStyle = [
     border-bottom: 1px solid var(--border);
   }
 
+  /* JS wraps panel content + toggles [data-open] so close can finish animating
+     before the native `open` attribute is cleared. Transitions only after
+     `.is-ready` so the default-open row doesn't animate in on load. */
+  .pacc-body {
+    display: grid;
+    grid-template-rows: 0fr;
+  }
+
+  .pacc-item[data-open] > .pacc-body {
+    grid-template-rows: 1fr;
+  }
+
+  .pacc.is-ready .pacc-body {
+    transition: grid-template-rows 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pacc-body-inner {
+    overflow: hidden;
+    min-height: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  .pacc-item[data-open] > .pacc-body > .pacc-body-inner {
+    opacity: 1;
+    transform: none;
+  }
+
+  .pacc.is-ready .pacc-body-inner {
+    transition:
+      opacity 0.2s ease,
+      transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pacc.is-ready .pacc-item[data-open] > .pacc-body > .pacc-body-inner {
+    transition-delay: 0.05s, 0s;
+  }
+
+  .pacc.is-ready .pacc-item:not([data-open]) > .pacc-body > .pacc-body-inner {
+    transition-delay: 0s;
+    transition-duration: 0.16s, 0.28s;
+  }
+
   .pacc-item > summary {
     display: flex;
     align-items: center;
@@ -374,18 +575,25 @@ const heroImgStyle = [
     display: none;
   }
 
+  /* Square hit box so rotate(45deg) spins around the glyph center */
   .pacc-item > summary::after {
     content: '+';
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
     flex: 0 0 auto;
-    font-size: 1.1em;
+    width: 1.25em;
+    height: 1.25em;
+    font-size: 1.15em;
     font-weight: 500;
     color: var(--muted);
     line-height: 1;
-    transition: color 0.15s ease, transform 0.2s var(--easing);
+    transform-origin: center center;
+    transition: color 0.15s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .pacc-item[open] > summary::after {
-    content: '−';
+  .pacc-item[data-open] > summary::after {
+    transform: rotate(45deg);
   }
 
   .pacc-item > summary:hover {
@@ -397,12 +605,12 @@ const heroImgStyle = [
   }
 
   .pacc-item > summary:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--fg);
     outline-offset: 3px;
     border-radius: 2px;
   }
 
-  .pacc-item > p {
+  .pacc-body-inner > p {
     margin: 0 0 var(--space-3);
     padding: 0 1.5em 0 0;
     font-size: var(--size-meta);
@@ -410,22 +618,91 @@ const heroImgStyle = [
     color: var(--fg-soft);
     text-wrap: pretty;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pacc-body,
+    .pacc-body-inner,
+    .pacc-item > summary::after {
+      transition: none;
+    }
+
+    .pacc-body-inner {
+      transform: none;
+    }
+  }
 </style>
 
 <script>
-  // Exclusive accordion: opening one row closes the others in the same group.
+  // Exclusive accordion with animated open/close. We keep `open` true until the
+  // close transition ends so the panel isn't snapped shut by the UA stylesheet.
   function initProjectAccordions() {
-    document.querySelectorAll('.pacc').forEach((root) => {
-      if ((root as HTMLElement).dataset.paccInit) return;
-      (root as HTMLElement).dataset.paccInit = '1';
-      root.querySelectorAll('details.pacc-item').forEach((item) => {
-        item.addEventListener('toggle', () => {
-          if (!(item as HTMLDetailsElement).open) return;
-          root.querySelectorAll('details.pacc-item').forEach((other) => {
-            if (other !== item) (other as HTMLDetailsElement).open = false;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const DURATION = 340;
+    const closers = new WeakMap<HTMLDetailsElement, (animate: boolean) => void>();
+
+    document.querySelectorAll('.pacc').forEach((rootEl) => {
+      const root = rootEl as HTMLElement;
+      if (root.dataset.paccInit) return;
+      root.dataset.paccInit = '1';
+
+      const items = [...root.querySelectorAll('details.pacc-item')] as HTMLDetailsElement[];
+
+      items.forEach((details) => {
+        if (!details.querySelector(':scope > .pacc-body')) {
+          const body = document.createElement('div');
+          body.className = 'pacc-body';
+          const inner = document.createElement('div');
+          inner.className = 'pacc-body-inner';
+          [...details.children]
+            .filter((el) => el.tagName !== 'SUMMARY')
+            .forEach((el) => inner.appendChild(el));
+          body.appendChild(inner);
+          details.appendChild(body);
+        }
+
+        if (details.open) details.setAttribute('data-open', '');
+        else details.removeAttribute('data-open');
+
+        let closingTimer = 0;
+
+        const closeItem = (animate: boolean) => {
+          if (closingTimer) window.clearTimeout(closingTimer);
+          if (!details.hasAttribute('data-open') && !details.open) return;
+          details.removeAttribute('data-open');
+          if (!animate || reduceMotion) {
+            details.open = false;
+            closingTimer = 0;
+            return;
+          }
+          details.open = true;
+          closingTimer = window.setTimeout(() => {
+            details.open = false;
+            closingTimer = 0;
+          }, DURATION);
+        };
+
+        const openItem = () => {
+          if (closingTimer) {
+            window.clearTimeout(closingTimer);
+            closingTimer = 0;
+          }
+          items.forEach((other) => {
+            if (other !== details) closers.get(other)?.(true);
           });
+          details.open = true;
+          requestAnimationFrame(() => details.setAttribute('data-open', ''));
+        };
+
+        closers.set(details, closeItem);
+
+        details.querySelector('summary')?.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (details.hasAttribute('data-open')) closeItem(true);
+          else openItem();
         });
       });
+
+      requestAnimationFrame(() => root.classList.add('is-ready'));
     });
   }
   initProjectAccordions();

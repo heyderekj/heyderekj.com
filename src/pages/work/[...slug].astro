@@ -1,7 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import Lightbox from '../../components/Lightbox.astro';
 import { schemaPersonId } from '../../lib/schemaIds';
 import { mdStringToHtml } from '../../lib/mdString';
 
@@ -44,34 +43,10 @@ const solutionHtml = mdStringToHtml(d.solution);
 const specificWorkHtml = mdStringToHtml(d.specificWork);
 
 const hasDeviceRow = Boolean(d.desktop || d.mobile);
-const hasGallery = Boolean(d.gallery && d.gallery.length);
-
-/** Lightbox: desktop → mobile → gallery (deduped). Non-cover images first; hero `thumbnail` URL is only ever last (opens full cover there). */
-const thumb = d.thumbnail;
-const lightboxOrder: string[] = [];
-const pushLightbox = (u: string | undefined) => {
-  if (!u?.trim()) return;
-  if (!lightboxOrder.includes(u)) lightboxOrder.push(u);
-};
-pushLightbox(d.desktop);
-pushLightbox(d.mobile);
-for (const g of d.gallery ?? []) pushLightbox(g);
-
-const nonThumb = thumb ? lightboxOrder.filter((u) => u !== thumb) : [...lightboxOrder];
-
-let lightboxSrcs: string[];
-if (nonThumb.length > 0) {
-  lightboxSrcs = thumb ? [...nonThumb, thumb] : [...nonThumb];
-} else if (lightboxOrder.length > 0) {
-  lightboxSrcs = [...lightboxOrder];
-} else if (thumb) {
-  lightboxSrcs = [thumb];
-} else {
-  lightboxSrcs = [];
-}
-
-const hasLightbox =
-  lightboxSrcs.length > 0 && (hasGallery || hasDeviceRow || Boolean(thumb));
+/** Hero + gallery, deduped — thumbs swap the main stage; only the stage zooms. */
+const stageImages = [...new Set([d.thumbnail, ...(d.gallery ?? [])].filter(Boolean))] as string[];
+const hasStage = stageImages.length > 0;
+const hasGallery = stageImages.length > 1;
 
 const postJsonLd = {
   '@type': 'BlogPosting',
@@ -170,18 +145,14 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
       </dl>
     )}
 
-    {d.thumbnail && (
-      <figure class="work-hero-figure">
-        {hasLightbox && lightboxSrcs.indexOf(d.thumbnail) >= 0 ? (
-          <button
-            type="button"
-            class="work-lightbox-trigger"
-            data-lb-index={lightboxSrcs.indexOf(d.thumbnail)}
-            aria-label="View cover image at full size"
-          >
+    {hasStage && (
+      <div class="work-stage" data-work-stage>
+        <figure class="work-hero-figure zoomable">
+          <button type="button" class="zoom-trigger" aria-label="Zoom image" aria-expanded="false">
             <img
               class="work-hero"
-              src={d.thumbnail}
+              data-stage-img
+              src={stageImages[0]}
               alt=""
               width="1200"
               height="675"
@@ -189,85 +160,48 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
               decoding="async"
             />
           </button>
-        ) : (
-          <img
-            class="work-hero"
-            src={d.thumbnail}
-            alt=""
-            width="1200"
-            height="675"
-            loading="eager"
-            decoding="async"
-          />
+        </figure>
+
+        {hasGallery && (
+          <div class="work-gallery" role="list" aria-label="Choose image">
+            {stageImages.map((src, i) => (
+              <button
+                type="button"
+                class="work-gallery-item"
+                role="listitem"
+                data-stage-thumb
+                data-src={src}
+                aria-pressed={i === 0 ? 'true' : 'false'}
+                aria-label={`Show image ${i + 1} of ${stageImages.length}`}
+              >
+                <img src={src} alt="" loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+              </button>
+            ))}
+          </div>
         )}
-      </figure>
+      </div>
     )}
 
     {hasDeviceRow && (
       <div class="work-devices" aria-label="Desktop and mobile">
         {d.desktop && (
-          <figure>
-            {hasLightbox && lightboxSrcs.indexOf(d.desktop) >= 0 ? (
-              <button
-                type="button"
-                class="work-lightbox-trigger"
-                aria-label="View desktop image at full size"
-                data-lb-index={lightboxSrcs.indexOf(d.desktop)}
-              >
-                <img src={d.desktop} alt="Desktop" loading="lazy" decoding="async" />
-              </button>
-            ) : (
+          <figure class="zoomable">
+            <button type="button" class="zoom-trigger" aria-label="Zoom desktop image" aria-expanded="false">
               <img src={d.desktop} alt="Desktop" loading="lazy" decoding="async" />
-            )}
+            </button>
             <figcaption>Desktop</figcaption>
           </figure>
         )}
         {d.mobile && (
-          <figure>
-            {hasLightbox && d.mobile && lightboxSrcs.indexOf(d.mobile) >= 0 ? (
-              <button
-                type="button"
-                class="work-lightbox-trigger"
-                aria-label="View mobile image at full size"
-                data-lb-index={lightboxSrcs.indexOf(d.mobile)}
-              >
-                <img src={d.mobile} alt="Mobile" loading="lazy" decoding="async" />
-              </button>
-            ) : (
+          <figure class="zoomable">
+            <button type="button" class="zoom-trigger" aria-label="Zoom mobile image" aria-expanded="false">
               <img src={d.mobile} alt="Mobile" loading="lazy" decoding="async" />
-            )}
+            </button>
             <figcaption>Mobile</figcaption>
           </figure>
         )}
       </div>
     )}
-
-    {hasGallery && (
-      <div class="work-gallery" role="list">
-        {d.gallery!.map((src) => {
-          const lb = lightboxSrcs.indexOf(src);
-          const idx = lb >= 0 ? lb : 0;
-          return (
-            <figure class="work-gallery-item" role="listitem">
-              <button
-                type="button"
-                class="work-lightbox-trigger"
-                aria-label={
-                  hasLightbox
-                    ? `View image ${idx + 1} of ${lightboxSrcs.length} at full size`
-                    : 'View image at full size'
-                }
-                data-lb-index={idx}
-              >
-                <img src={src} alt="" loading="lazy" decoding="async" />
-              </button>
-            </figure>
-          );
-        })}
-      </div>
-    )}
-
-    {hasLightbox && <Lightbox srcs={lightboxSrcs} />}
 
     {briefHtml && (
       <section class="work-section" aria-labelledby="work-brief">
@@ -345,4 +279,28 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
       <a href="/work/"><span class="arrow">&larr;</span> all work</a>
     </p>
   </article>
+
+  <script>
+    function initWorkStages() {
+      document.querySelectorAll<HTMLElement>('[data-work-stage]').forEach((root) => {
+        const stage = root.querySelector<HTMLImageElement>('[data-stage-img]');
+        const thumbs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-stage-thumb]'));
+        if (!stage || thumbs.length < 2) return;
+
+        thumbs.forEach((thumb) => {
+          if (thumb.dataset.stageBound === '1') return;
+          thumb.dataset.stageBound = '1';
+          thumb.addEventListener('click', () => {
+            const src = thumb.dataset.src;
+            if (!src || stage.getAttribute('src') === src) return;
+            stage.src = src;
+            thumbs.forEach((t) => t.setAttribute('aria-pressed', t === thumb ? 'true' : 'false'));
+          });
+        });
+      });
+    }
+
+    initWorkStages();
+    document.addEventListener('astro:page-load', initWorkStages);
+  </script>
 </Base>

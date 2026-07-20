@@ -69,32 +69,32 @@ const fmtDateWithYear = (d: Date) =>
 }
 
 .project-grid-visual {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: var(--radius-md);
+  border: 1px solid var(--border);
   background: var(--bg-elevated);
   position: relative;
+  transition: background-color 0.2s ease;
 }
 
+/* Square canvas: image centered and scaled down on the mat (same as work gallery) */
 .project-grid-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
-  transition: transform 0.3s ease;
-}
-
-/* Framed screenshots: sit on the elevated tile instead of cropping at the edges */
-.project-grid-img--framed {
   object-fit: contain;
-  object-position: center;
-  padding: 6%;
-  background: var(--bg-elevated);
+  object-position: center center;
+  box-sizing: border-box;
+  padding: 10%;
+  display: block;
 }
 
-:global(main.main) .project-grid-card:hover .project-grid-img {
-  transform: scale(1.03);
+.project-grid-img--framed {
+  padding: 10%;
+}
+
+:global(main.main) .project-grid-card:hover .project-grid-visual {
+  background: color-mix(in srgb, var(--fg) 3%, var(--bg-elevated));
 }
 
 .project-grid-placeholder {
@@ -135,7 +135,7 @@ const fmtDateWithYear = (d: Date) =>
 }
 
 :global(main.main) .project-grid-card:hover .project-grid-name {
-  color: var(--accent);
+  color: var(--fg);
 }
 
 .project-grid-arrow {
@@ -147,12 +147,12 @@ const fmtDateWithYear = (d: Date) =>
 }
 
 :global(main.main) .project-grid-card:hover .project-grid-arrow {
-  color: var(--accent);
+  color: var(--fg);
   transform: translateX(2px);
 }
 
 :global(main.main) .project-grid-card:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--fg);
   outline-offset: 3px;
   border-radius: var(--radius-md);
 }

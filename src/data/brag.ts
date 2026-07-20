@@ -147,13 +147,12 @@ export const bragSkills: string[] = [
   'Webflow & website design',
   'UI/UX thinking',
   'Brand & logo design',
-  'Front-end development',
-  'Visual design',
+  'Working with teams',
+  'Product design',
   'Prompt communication',
   'Customer support',
   'Writing in public',
   'Actively using AI tools',
-  'Faith-tech product design',
 ];
 
 export const bragConnect = [

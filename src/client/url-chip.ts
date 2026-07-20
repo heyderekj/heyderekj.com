@@ -116,7 +116,7 @@ function initUrlChip(): void {
 
   const anchors = main.querySelectorAll<HTMLAnchorElement>('a[href]');
   anchors.forEach((link) => {
-    if (link.closest('.site-masthead') && !link.hasAttribute('data-url-chip')) return;
+    if (link.closest('.site-brand') && !link.hasAttribute('data-url-chip')) return;
     if (link.matches('.entries a, .project-card-link')) return;
     if (!chipTextForAnchor(link)) return;
 
