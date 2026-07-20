@@ -72,6 +72,8 @@ const fmtDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 
 const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/derekj-og.png';
+/** Kick off first media early: poster + stage (or stage alone when no video). */
+const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[];
 ---
 <Base
   title={`${d.title} — Derek Castelli`}
@@ -81,6 +83,7 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
   jsonLd={postJsonLd}
   canonical={postUrl}
   ogImage={ogImage}
+  preloadImages={preloadImages}
 >
   <article class="prose work-casestudy">
     <header class="post-header work-post-header">
@@ -185,7 +188,12 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
     )}
 
     {hasStage && (
-      <div class="work-stage" data-work-stage>
+      <div
+        class="work-stage"
+        data-work-stage
+        data-prefetch-images={JSON.stringify(stageImages)}
+        data-prefetch-idle
+      >
         <figure class="work-hero-figure zoomable">
           <button type="button" class="zoom-trigger" aria-label="Zoom image" aria-expanded="false">
             <img
@@ -195,7 +203,8 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
               alt=""
               width="1200"
               height="675"
-              loading={hasVideo ? 'lazy' : 'eager'}
+              loading="eager"
+              fetchpriority={hasVideo ? 'low' : 'high'}
               decoding="async"
             />
           </button>
@@ -213,7 +222,12 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
                 aria-pressed={i === 0 ? 'true' : 'false'}
                 aria-label={`Show image ${i + 1} of ${stageImages.length}`}
               >
-                <img src={src} alt="" loading={i === 0 && !hasVideo ? 'eager' : 'lazy'} decoding="async" />
+                <img
+                  src={src}
+                  alt=""
+                  loading={i < 2 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
               </button>
             ))}
           </div>

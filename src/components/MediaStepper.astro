@@ -52,11 +52,17 @@ const {
 
 const autoplayMs = autoplay === true ? 5000 : typeof autoplay === 'number' ? autoplay : null;
 const count = items.length;
+/** Still URLs + video posters — warmed before the stepper enters view. */
+const prefetchImages = items.flatMap((item) =>
+  item.type === 'video' ? (item.poster ? [item.poster] : []) : [item.src],
+);
 ---
 <figure
   class:list={['ms', 'zoomable', fit === 'cover' && 'ms--cover', mat === 'macos-dark' && 'ms--macos-dark']}
   data-stepper
   data-autoplay-ms={autoplayMs ?? undefined}
+  data-prefetch-images={JSON.stringify(prefetchImages)}
+  data-prefetch-idle
   aria-roledescription="carousel"
   aria-label={label}
   data-captions={JSON.stringify(items.map((item) => item.caption ?? ''))}
@@ -114,7 +120,8 @@ const count = items.length;
               <img
                 src={item.src}
                 alt={item.alt ?? ''}
-                loading={i === 0 ? 'eager' : 'lazy'}
+                loading={i < 2 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : undefined}
                 decoding="async"
                 style={mediaStyle}
               />
@@ -123,7 +130,8 @@ const count = items.length;
             <img
               src={item.src}
               alt={item.alt ?? ''}
-              loading={i === 0 ? 'eager' : 'lazy'}
+              loading={i < 2 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : undefined}
               decoding="async"
               style={mediaStyle}
             />
@@ -503,6 +511,22 @@ const count = items.length;
       }
     }
 
+    function warmSlide(i: number) {
+      const slide = slides[i];
+      if (!slide) return;
+      slide.querySelectorAll<HTMLImageElement>('img[src]').forEach((img) => {
+        if (img.loading === 'lazy') img.loading = 'eager';
+        const warm = new Image();
+        warm.decoding = 'async';
+        warm.src = img.currentSrc || img.src;
+      });
+      slide.querySelectorAll<HTMLVideoElement>('video[poster]').forEach((v) => {
+        const warm = new Image();
+        warm.decoding = 'async';
+        warm.src = v.poster;
+      });
+    }
+
     function goTo(next: number, opts: { focusDot?: boolean } = {}) {
       const n = slides.length;
       const target = ((next % n) + n) % n;
@@ -517,6 +541,9 @@ const count = items.length;
       if (opts.focusDot) dots[target].focus();
       if (captionEl) captionEl.textContent = slideCaptions[target] ?? '';
       index = target;
+      // Warm neighbors so the next step feels instant.
+      warmSlide((target + 1) % n);
+      warmSlide((target - 1 + n) % n);
       restartCycle();
     }
 

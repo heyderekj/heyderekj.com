@@ -17,6 +17,8 @@ interface Props {
   noindex?: boolean;
   /** When false, omits Fathom (e.g. 404s so non-existent URL hits do not pollute “top content”). */
   includeAnalytics?: boolean;
+  /** High-priority image URLs to `<link rel="preload">` (LCP / first media). */
+  preloadImages?: string[];
 }
 
 const {
@@ -31,7 +33,10 @@ const {
   jsonLd,
   noindex = false,
   includeAnalytics = true,
+  preloadImages = [],
 } = Astro.props;
+
+const preloadImageHrefs = [...new Set(preloadImages.filter(Boolean))];
 
 const siteUrl = Astro.site?.toString() ?? 'https://heyderekj.com';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).toString();
@@ -109,6 +114,10 @@ const year = new Date().getFullYear();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
 
+    {preloadImageHrefs.map((href) => (
+      <link rel="preload" as="image" href={href} fetchpriority="high" />
+    ))}
+
     {includeAnalytics && (
       <script src="https://cdn.usefathom.com/script.js" data-site="RILZSZAQ" defer is:inline></script>
     )}
@@ -168,6 +177,7 @@ const year = new Date().getFullYear();
   <script src="../client/easter-egg.ts"></script>
   <script src="../client/plyr-init.ts"></script>
   <script src="../client/zoom.ts"></script>
+  <script src="../client/media-prefetch.ts"></script>
   <script src="../client/reveal.ts"></script>
-  </body>
+</body>
 </html>

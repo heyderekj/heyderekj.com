@@ -65,8 +65,21 @@ const soloVideoAr =
     : project.slug === 'harvous'
       ? '1240 / 770'
       : undefined;
+
+/** First paint media — hero / poster / first still. */
+const preloadImages = [
+  showHero ? heroSrc : null,
+  soloVideo?.poster ?? null,
+  media.find((m) => m.type !== 'video')?.src ?? null,
+  media.find((m) => m.type === 'video')?.poster ?? null,
+].filter(Boolean) as string[];
 ---
-<Base title={`${project.data.name} — Derek Castelli`} description={metaDesc} jsonLd={projectJsonLd}>
+<Base
+  title={`${project.data.name} — Derek Castelli`}
+  description={metaDesc}
+  jsonLd={projectJsonLd}
+  preloadImages={preloadImages.slice(0, 2)}
+>
   <article class="prose">
     <header class="post-header project-detail-header">
       {project.data.url ? (
@@ -118,6 +131,7 @@ const soloVideoAr =
             src={heroSrc}
             alt={project.data.name}
             loading="eager"
+            fetchpriority="high"
             decoding="async"
             style={heroImgStyle}
           />
