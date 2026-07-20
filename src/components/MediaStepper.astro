@@ -89,6 +89,7 @@ const count = items.length;
               <span class="ms-video-clip">
                 <video
                   class="ms-video"
+                  data-plyr
                   data-slide-video
                   muted
                   loop
@@ -275,6 +276,15 @@ const count = items.length;
   .ms--macos-dark .ms-video-clip {
     /* Soft clip for square-cropped Dinky window */
     border-radius: 2.8%;
+  }
+
+  .ms-video-clip :global(.plyr) {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    border-radius: 0;
   }
 
   .ms-video-clip .ms-video {

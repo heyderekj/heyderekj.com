@@ -22,6 +22,7 @@
     "astro": "^4.16.19"
   },
   "dependencies": {
-    "marked": "^12.0.2"
+    "marked": "^12.0.2",
+    "plyr": "^3.8.4"
   }
 }

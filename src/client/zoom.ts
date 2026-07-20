@@ -52,16 +52,26 @@ function matOf(fig: HTMLElement): HTMLElement | null {
 }
 
 function imgOf(mat: HTMLElement | null): HTMLElement | null {
-  return mat?.querySelector<HTMLElement>('img, video') ?? null;
+  // Prefer img; for videos prefer the Plyr shell (padding/height FLIP target).
+  return (
+    mat?.querySelector<HTMLElement>('img') ??
+    mat?.querySelector<HTMLElement>('.plyr') ??
+    mat?.querySelector<HTMLElement>('video') ??
+    null
+  );
 }
 
-/** Expanded: native controls; collapsed: chrome off. Playback position is preserved. */
+/** Expanded: Plyr (or native) controls; collapsed: chrome off. Time preserved. */
 function syncVideoChrome(fig: HTMLElement, open: boolean) {
   fig.querySelectorAll('video').forEach((video) => {
     const wasPaused = video.paused;
     const t = video.currentTime;
-    video.controls = open;
-    // Re-apply time in case enabling controls glitches some engines.
+    // Plyr chrome is toggled via zoomchange in plyr-init; keep native off.
+    if (!video.hasAttribute('data-plyr')) {
+      video.controls = open;
+    } else {
+      video.controls = false;
+    }
     if (Math.abs(video.currentTime - t) > 0.05) video.currentTime = t;
     if (!wasPaused) {
       const p = video.play();
@@ -235,9 +245,14 @@ document.addEventListener('click', (e) => {
   const fig = trigger.closest<HTMLElement>('.zoomable');
   if (!fig) return;
 
-  // Expanded video: let native playback controls work; collapse via mat /
-  // padding click (outside <video>) or Escape — not by clicking the video.
-  if (fig.classList.contains('is-zoomed') && target.closest('video')) return;
+  // Expanded video: let Plyr / native controls work; collapse via mat padding
+  // click (outside the player) or Escape — not by clicking the video/chrome.
+  if (
+    fig.classList.contains('is-zoomed') &&
+    (target.closest('video') || target.closest('.plyr'))
+  ) {
+    return;
+  }
 
   e.preventDefault();
   if (fig.classList.contains('is-zoomed')) {

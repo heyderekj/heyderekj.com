@@ -849,6 +849,80 @@ figure.zoomable.is-zoomed {
   max-height: calc(82dvh - 2.5rem);
 }
 
+/* ============================================================
+   Plyr — demo videos (muted loop resting; chrome when zoomed)
+   Site orange on progress, hover, and the big play button.
+   ============================================================ */
+.plyr {
+  --plyr-color-main: var(--accent);
+  --plyr-video-control-color: #fff;
+  --plyr-video-control-color-hover: #fff;
+  --plyr-video-control-background-hover: var(--accent);
+  --plyr-audio-control-background-hover: var(--accent);
+  --plyr-range-fill-background: var(--accent);
+  --plyr-control-toggle-checked-background: var(--accent);
+  --plyr-focus-visible-color: var(--accent);
+  --plyr-video-progress-buffered-background: rgba(255, 255, 255, 0.25);
+  --plyr-menu-background: var(--bg-elevated);
+  --plyr-menu-color: var(--fg);
+  --plyr-tooltip-background: var(--bg-elevated);
+  --plyr-tooltip-color: var(--fg);
+  --plyr-font-family: inherit;
+  --plyr-border-radius: var(--radius-sm, 6px);
+  --plyr-control-radius: var(--radius-sm, 6px);
+}
+
+.plyr--video .plyr__control--overlaid,
+.plyr--video .plyr__control:hover,
+.plyr--video .plyr__control:focus-visible,
+.plyr--video .plyr__control[aria-expanded='true'] {
+  background: var(--accent);
+}
+
+.plyr--full-ui input[type='range'] {
+  color: var(--accent);
+}
+
+/* Resting demos: no chrome (zoom mat click expands). Expanded: full bar. */
+.zoomable:not(.is-zoomed) .plyr__controls,
+.zoomable:not(.is-zoomed) .plyr__control--overlaid {
+  display: none !important;
+}
+
+.cio-shot-video-clip .plyr,
+.pvideo-clip .plyr,
+.ms-video-clip .plyr {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: transparent;
+  border-radius: inherit;
+}
+
+.cio-shot-video-clip .plyr__video-wrapper,
+.pvideo-clip .plyr__video-wrapper,
+.ms-video-clip .plyr__video-wrapper {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.cio-shot-video-clip .plyr video,
+.pvideo-clip .plyr video,
+.ms-video-clip .plyr video,
+.cio-shot-video-clip video.cio-shot-video,
+.pvideo-clip video.pvideo-el {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.zoomable.is-zoomed .plyr {
+  cursor: default;
+}
+
 .work-section { margin-bottom: var(--space-5); }
 .work-section-title {
   font-size: var(--size-h2);

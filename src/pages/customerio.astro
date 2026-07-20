@@ -127,6 +127,7 @@ const tocItems = [
                     shot.width && shot.height
                       ? `--cio-video-ar: ${shot.width} / ${shot.height}`
                       : null,
+                    shot.width != null ? `--cio-video-w: ${shot.width}` : null,
                     shot.windowRadius != null
                       ? `--cio-window-radius: ${shot.windowRadius}`
                       : null,
@@ -142,6 +143,7 @@ const tocItems = [
                   <span class="cio-shot-video-clip">
                     <video
                       class="cio-shot-video"
+                      data-plyr
                       data-autoplay
                       muted
                       loop
@@ -626,7 +628,8 @@ const tocItems = [
   }
 
   .cio-shots .zoom-cell.is-zoomed .cio-shot-video,
-  .cio-shots .zoom-cell.is-zoomed .cio-shot-video-clip {
+  .cio-shots .zoom-cell.is-zoomed .cio-shot-video-clip,
+  .cio-shots .zoom-cell.is-zoomed .cio-shot-video-clip :global(.plyr) {
     cursor: default;
   }
 
@@ -656,7 +659,8 @@ const tocItems = [
 
   .cio-shots .cio-shot-video-clip {
     display: block;
-    width: 100%;
+    /* Cap at native encode width so we don't soft-upscale past the source */
+    width: min(100%, calc(var(--cio-video-w, 9999) * 1px));
     max-height: min(70dvh, 640px);
     aspect-ratio: var(--cio-video-ar, auto);
     container-type: inline-size;
@@ -665,16 +669,20 @@ const tocItems = [
     border-radius: calc(var(--cio-window-radius, 0.01) * 100cqw);
   }
 
+  .cio-shots .cio-shot-video-clip :global(.plyr),
   .cio-shots .cio-shot-video {
     display: block;
     width: 100%;
     height: 100%;
-    /* contain (not fill): avoid upscaling/stretch soft-blur past native pixels */
-    object-fit: contain;
-    object-position: center;
     background: none;
     border: none;
     border-radius: 0;
+  }
+
+  .cio-shots .cio-shot-video {
+    /* contain (not fill): avoid upscaling/stretch soft-blur past native pixels */
+    object-fit: contain;
+    object-position: center;
   }
 
   /* Dark wallpaper only behind the video shell — stills use the normal elevated mat */

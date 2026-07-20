@@ -117,7 +117,6 @@ export const customerioProofBlocks: {
     ],
     href: '/projects/dinky/',
     label: 'Dinky',
-    mat: 'macos-dark',
     shots: [
       {
         type: 'video',
