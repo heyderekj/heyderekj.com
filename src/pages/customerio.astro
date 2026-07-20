@@ -112,7 +112,12 @@ const tocItems = [
     <p class="cio-section-lead">{customerioProofLead}</p>
 
     {customerioProofBlocks.map((block) => (
-      <article class="cio-proof-block">
+      <article
+        class:list={[
+          'cio-proof-block',
+          block.shots.some((s) => s.type === 'video') && 'cio-proof-block--media-first',
+        ]}
+      >
         {(Array.isArray(block.html) ? block.html : [block.html]).map((p) => (
           <p class="cio-body" set:html={p} />
         ))}
@@ -695,6 +700,17 @@ const tocItems = [
 
   .cio-proof-block:last-of-type {
     margin-bottom: 0;
+  }
+
+  /* Harvous / Dinky: tour video leads, then the written beat */
+  .cio-proof-block--media-first {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cio-proof-block--media-first .cio-shots {
+    order: -1;
+    margin: 0 0 var(--space-3);
   }
 
   .cio-shots {
