@@ -34,9 +34,9 @@ Two years, one massive messy Figma file. V1 shipped small on purpose—no sharin
     title="Making Harvous 1.0 — sketches through first ship in Figma"
     src="https://embed.figma.com/design/CHw1ZiUi48Cj1qmTFSNgYC/Making-Harvous-1.0--Copy-?node-id=13011-5625&embed-host=share"
     allowfullscreen
-    loading="lazy"
+    loading="eager"
   ></iframe>
-  <figcaption>Sketches → Harvous 1.0 — the Figma trail before the redesign below.</figcaption>
+  <figcaption>The journey to Harvous 1.0 in Figma</figcaption>
 </figure>
 
 ## The craft

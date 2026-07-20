@@ -24,7 +24,7 @@ const { Content } = await project.render();
 const startLabel = formatProjectStartLabel(project);
 const updatedLabel = formatProjectUpdatedLabel(project);
 const status = project.data.status;
-const showMeta = Boolean(startLabel || updatedLabel || status);
+const showMeta = Boolean(startLabel || updatedLabel);
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
 const pageUrl = new URL(`/projects/${project.slug}/`, `${siteOrigin}/`).toString();
@@ -95,22 +95,15 @@ const preloadImages = [
       )}
       {showMeta && (
         <div class="meta project-meta">
-          {(startLabel || updatedLabel || status) && (
-            <span class="project-meta-lead">
-              {status && (
-                <span class={`detail-status detail-status--${status}`}>
-                  {displayProjectStatus(status)}
-                </span>
-              )}
-              {startLabel && <span class="project-meta-start">Started {startLabel}</span>}
-              {updatedLabel && (
-                <>
-                  {startLabel && <span class="project-meta-gap">·</span>}
-                  <span class="project-meta-updated">Updated {updatedLabel}</span>
-                </>
-              )}
-            </span>
-          )}
+          <span class="project-meta-lead">
+            {startLabel && <span class="project-meta-start">Started {startLabel}</span>}
+            {updatedLabel && (
+              <>
+                {startLabel && <span class="project-meta-gap">·</span>}
+                <span class="project-meta-updated">Updated {updatedLabel}</span>
+              </>
+            )}
+          </span>
         </div>
       )}
     </header>
@@ -189,7 +182,16 @@ const preloadImages = [
       <Content />
     </div>
 
-    <p class="back-link"><a href="/projects/"><span class="arrow">&larr;</span> all projects</a></p>
+    <div class="project-footer">
+      <div class="back-link">
+        <a href="/projects/"><span class="arrow">&larr;</span> all projects</a>
+      </div>
+      {status && (
+        <span class={`detail-status detail-status--${status}`}>
+          {displayProjectStatus(status)}
+        </span>
+      )}
+    </div>
   </article>
 
   <script is:inline>
@@ -244,10 +246,55 @@ const preloadImages = [
         if (p && p.catch) p.catch(() => {});
       }
     });
+
+    // Figma (etc.) embeds: scroll the page through them until click-to-interact.
+    function initPembeds() {
+      document.querySelectorAll('.pembed').forEach((fig) => {
+        if (!(fig instanceof HTMLElement) || fig.dataset.pembedBound === '1') return;
+        const iframe = fig.querySelector('iframe');
+        if (!iframe) return;
+        fig.dataset.pembedBound = '1';
+
+        const shield = document.createElement('button');
+        shield.type = 'button';
+        shield.className = 'pembed__shield';
+        shield.setAttribute('aria-label', 'Click to interact with embed');
+        const label = document.createElement('span');
+        label.className = 'pembed__shield-label';
+        label.textContent = 'Click to interact';
+        shield.appendChild(label);
+        iframe.insertAdjacentElement('afterend', shield);
+
+        const activate = () => {
+          fig.classList.add('is-interactive');
+          shield.setAttribute('aria-hidden', 'true');
+        };
+        const deactivate = () => {
+          fig.classList.remove('is-interactive');
+          shield.removeAttribute('aria-hidden');
+        };
+
+        shield.addEventListener('click', activate);
+        document.addEventListener('pointerdown', (e) => {
+          if (!fig.classList.contains('is-interactive')) return;
+          if (e.target instanceof Node && fig.contains(e.target)) return;
+          deactivate();
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && fig.classList.contains('is-interactive')) deactivate();
+        });
+      });
+    }
+    initPembeds();
+    document.addEventListener('astro:page-load', initPembeds);
   </script>
 </Base>
 
 <style>
+  .project-detail-header {
+    margin-bottom: var(--space-4);
+  }
+
   .project-header-title-row {
     display: flex;
     flex-wrap: wrap;
@@ -283,7 +330,28 @@ const preloadImages = [
     gap: 0.35rem;
   }
 
-  /* Neutral pill + a small colored status dot (orange survives only as the dot) */
+  .project-meta-start,
+  .project-meta-updated {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .project-footer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  .project-footer .back-link {
+    margin: 0;
+    max-width: none;
+    flex: 0 1 auto;
+  }
+
+  /* Burner chip — colored status dot, sits opposite “all projects” */
   .detail-status {
     flex-shrink: 0;
     display: inline-flex;
@@ -314,18 +382,13 @@ const preloadImages = [
   .detail-status--paused::before { background: #eab308; }
   .detail-status--maintained::before { background: #c4a574; }
 
-  .project-meta-start,
-  .project-meta-updated {
-    font-variant-numeric: tabular-nums;
-  }
-
   .project-meta-gap {
     color: var(--muted);
     user-select: none;
   }
 
   .project-summary {
-    margin: var(--space-3) 0 0;
+    margin: 0;
     font-size: var(--size-body);
     color: var(--fg-soft);
     line-height: 1.6;
@@ -395,7 +458,8 @@ const preloadImages = [
   }
 
   .pfig > figcaption {
-    margin: var(--space-2) 0 0;
+    margin: var(--space-2) auto 0;
+    max-width: var(--max-text);
     font-size: var(--size-meta);
     line-height: 1.45;
     color: var(--muted-strong);
@@ -405,25 +469,81 @@ const preloadImages = [
 
   /* .pvideo styles live in global.css (shared with work case studies) */
 
-  /* Embedded canvases (Figma, etc.) — full column width, 16:10 frame */
+  /* Embedded canvases (Figma, etc.) — rail-bleed + tall frame so the board reads.
+     Shield blocks wheel/scroll until click-to-interact (see script below). */
   .pembed {
-    margin: var(--space-4) 0;
+    --z-inset: var(--space-3);
+    --z-bleed: calc((100cqw - 100%) / 2 + var(--frame-pad-x) - var(--z-inset));
+    position: relative;
+    width: auto;
+    margin: var(--space-4) calc(-1 * var(--z-bleed));
   }
 
   .pembed iframe {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 16 / 11;
     height: auto;
-    min-height: 280px;
-    max-height: min(70dvh, 640px);
+    min-height: min(70dvh, 520px);
+    max-height: min(85dvh, 900px);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     background: var(--bg-elevated);
   }
 
+  .pembed:not(.is-interactive) iframe {
+    pointer-events: none;
+  }
+
+  .pembed__shield {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+  }
+
+  .pembed__shield-label {
+    opacity: 0;
+    transform: translateY(0.2rem);
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--fg) 12%, var(--border));
+    background: color-mix(in srgb, var(--bg-elevated) 88%, transparent);
+    backdrop-filter: blur(8px);
+    color: var(--fg-soft);
+    font-size: var(--size-meta);
+    line-height: 1.2;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .pembed__shield:hover .pembed__shield-label,
+  .pembed__shield:focus-visible .pembed__shield-label {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .pembed__shield:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 2px;
+  }
+
+  .pembed.is-interactive .pembed__shield {
+    display: none;
+  }
+
   .pembed > figcaption {
-    margin: var(--space-2) 0 0;
+    margin: var(--space-2) auto 0;
+    max-width: var(--max-text);
     font-size: var(--size-meta);
     line-height: 1.45;
     color: var(--muted-strong);
@@ -446,7 +566,8 @@ const preloadImages = [
 
   .pfig--pair > figcaption {
     grid-column: 1 / -1;
-    margin-top: 0;
+    margin: var(--space-2) auto 0;
+    max-width: var(--max-text);
   }
 
   @media (max-width: 480px) {
