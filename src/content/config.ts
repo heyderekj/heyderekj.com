@@ -49,6 +49,12 @@ const work = defineCollection({
     desktop: z.string().optional(),
     mobile: z.string().optional(),
     gallery: z.array(z.string()).optional(),
+    /** Optional tour clip leading the case study (same pattern as project pages) */
+    video: z.string().optional(),
+    videoPoster: z.string().optional(),
+    videoCaption: z.string().optional(),
+    /** CSS aspect-ratio value, e.g. `1538 / 928` */
+    videoAspect: z.string().optional(),
   }),
 });
 

@@ -112,6 +112,18 @@ const year = new Date().getFullYear();
     {includeAnalytics && (
       <script src="https://cdn.usefathom.com/script.js" data-site="RILZSZAQ" defer is:inline></script>
     )}
+
+    <!-- Hide main until reveal.ts stages targets — prevents media FOUC flash -->
+    <script is:inline>
+      try {
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          document.documentElement.classList.add('reveal-wait');
+          setTimeout(function () {
+            document.documentElement.classList.remove('reveal-wait');
+          }, 2500);
+        }
+      } catch (_) {}
+    </script>
   </head>
   <body>
     <div class="app-window">

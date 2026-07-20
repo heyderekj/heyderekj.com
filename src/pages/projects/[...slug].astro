@@ -389,72 +389,7 @@ const soloVideoAr =
     text-wrap: pretty;
   }
 
-  /* Solo tour video (no MediaStepper) */
-  .pvideo {
-    margin: var(--space-4) 0;
-  }
-
-  .pvideo-shell {
-    display: grid;
-    place-items: center;
-    width: 100%;
-    padding: 18px 22px;
-    box-sizing: border-box;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    background: var(--bg-elevated);
-    cursor: zoom-in;
-  }
-
-  .pvideo.zoomable.is-zoomed > .pvideo-shell {
-    aspect-ratio: auto;
-    max-height: 82dvh;
-    cursor: zoom-out;
-  }
-
-  /* Same clip pattern as Customer.io proof videos */
-  .pvideo-clip {
-    display: block;
-    width: 100%;
-    max-height: min(70dvh, 640px);
-    aspect-ratio: var(--pvideo-ar, 16 / 10);
-    container-type: inline-size;
-    overflow: hidden;
-    border-radius: calc(var(--pvideo-window-radius, 0.01) * 100cqw);
-  }
-
-  .pvideo-clip :global(.plyr),
-  .pvideo-el {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
-  }
-
-  .pvideo-el {
-    /* contain (not fill): avoid upscaling/stretch soft-blur past native pixels */
-    object-fit: contain;
-    object-position: center;
-  }
-
-  .pvideo.zoomable.is-zoomed .pvideo-clip {
-    max-height: calc(82dvh - 2.5rem);
-  }
-
-  .pvideo.zoomable.is-zoomed .pvideo-el,
-  .pvideo.zoomable.is-zoomed .pvideo-clip :global(.plyr) {
-    cursor: default;
-  }
-
-  .pvideo > figcaption {
-    margin: var(--space-2) auto 0;
-    max-width: var(--max-text);
-    font-size: var(--size-meta);
-    line-height: 1.45;
-    color: var(--muted-strong);
-    text-align: center;
-    text-wrap: pretty;
-  }
+  /* .pvideo styles live in global.css (shared with work case studies) */
 
   /* Embedded canvases (Figma, etc.) — full column width, 16:10 frame */
   .pembed {

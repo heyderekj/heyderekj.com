@@ -39,7 +39,9 @@ const recentPosts = (await getCollection('posts', ({ data }) => !data.draft))
 const highlightedWork = (await getCollection('work', ({ data }) => !data.draft && data.highlight)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
-const homeHighlightedWork = highlightedWork.filter(({ slug }) => ['claimable', 'care-continuity'].includes(slug));
+const homeHighlightedWork = highlightedWork
+  .filter(({ slug }) => ['throne', 'claimable', 'care-continuity'].includes(slug))
+  .slice(0, 2);
 
 const allProjects = await getCollection('projects', ({ data }) => !data.draft);
 /** Front Burner only — active projects shown on the home page. */

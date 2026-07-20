@@ -923,6 +923,63 @@ figure.zoomable.is-zoomed {
   cursor: default;
 }
 
+/* Solo tour video (work + project case studies) */
+.pvideo {
+  margin: 0 0 var(--space-5);
+}
+.pvideo-shell {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 18px 22px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  cursor: zoom-in;
+}
+.pvideo.zoomable.is-zoomed > .pvideo-shell {
+  aspect-ratio: auto;
+  max-height: 82dvh;
+  cursor: zoom-out;
+}
+.pvideo-clip {
+  display: block;
+  width: 100%;
+  max-height: min(70dvh, 640px);
+  aspect-ratio: var(--pvideo-ar, 16 / 10);
+  container-type: inline-size;
+  overflow: hidden;
+  border-radius: calc(var(--pvideo-window-radius, 0.01) * 100cqw);
+}
+.pvideo-clip .plyr,
+.pvideo-el {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+.pvideo-el {
+  object-fit: contain;
+  object-position: center;
+}
+.pvideo.zoomable.is-zoomed .pvideo-clip {
+  max-height: calc(82dvh - 2.5rem);
+}
+.pvideo.zoomable.is-zoomed .pvideo-el,
+.pvideo.zoomable.is-zoomed .pvideo-clip .plyr {
+  cursor: default;
+}
+.pvideo > figcaption {
+  margin: var(--space-2) auto 0;
+  max-width: var(--max-text);
+  font-size: var(--size-meta);
+  line-height: 1.45;
+  color: var(--muted-strong);
+  text-align: center;
+  text-wrap: pretty;
+}
+
 .work-section { margin-bottom: var(--space-5); }
 .work-section-title {
   font-size: var(--size-h2);
@@ -1993,32 +2050,32 @@ html.orange-mode {
 }
 
 /* ============================================================
-   Scroll reveal — subtle fade/rise + stagger (see client/reveal.ts)
-   Hidden state is instant (no transition) so refresh can play the
-   enter animation; `.is-in` runs @keyframes reveal-in.
+   Scroll reveal — fade/rise + stagger (see client/reveal.ts)
+   Transitions (not keyframes) so enter stays on the compositor
+   without fighting a separate transform on `.is-in`.
+
+   `reveal-wait` (set in <head> before paint) keeps main invisible
+   until targets are staged — avoids a flash of full media, then hide.
+   Stays on until JS clears it (not tied to reveal-ready) so the
+   opacity-0 reveal state can commit before the first paint.
    ============================================================ */
 @media (prefers-reduced-motion: no-preference) {
-  html.reveal-ready .reveal:not(.is-in) {
+  html.reveal-wait main.main {
+    visibility: hidden;
+  }
+
+  html.reveal-ready .reveal {
     opacity: 0;
-    transform: translate3d(0, 0.7rem, 0);
+    transform: translate3d(0, 0.45rem, 0);
+    transition:
+      opacity 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.72s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: calc(var(--reveal-i, 0) * 48ms);
   }
 
   html.reveal-ready .reveal.is-in {
     opacity: 1;
-    transform: none;
-    animation: reveal-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: calc(var(--reveal-i, 0) * 55ms);
-  }
-}
-
-@keyframes reveal-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 0.7rem, 0);
-  }
-  to {
-    opacity: 1;
-    transform: none;
+    transform: translate3d(0, 0, 0);
   }
 }
 

@@ -47,6 +47,7 @@ const hasDeviceRow = Boolean(d.desktop || d.mobile);
 const stageImages = [...new Set([d.thumbnail, ...(d.gallery ?? [])].filter(Boolean))] as string[];
 const hasStage = stageImages.length > 0;
 const hasGallery = stageImages.length > 1;
+const hasVideo = Boolean(d.video);
 
 const postJsonLd = {
   '@type': 'BlogPosting',
@@ -145,6 +146,44 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
       </dl>
     )}
 
+    {hasVideo && (
+      <figure class="pvideo zoomable">
+        <div
+          class="zoom-trigger pvideo-shell"
+          role="button"
+          tabindex="0"
+          aria-label="Zoom video"
+          aria-expanded="false"
+          style={[
+            d.videoAspect ? `--pvideo-ar: ${d.videoAspect}` : null,
+            '--pvideo-window-radius: 0.01',
+          ]
+            .filter(Boolean)
+            .join('; ')}
+        >
+          <span class="pvideo-clip">
+            <video
+              class="pvideo-el"
+              data-plyr
+              data-autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              poster={d.videoPoster}
+              aria-label={d.videoCaption ?? `${d.title} site tour`}
+            >
+              <source
+                src={d.video}
+                type={d.video!.endsWith('.webm') ? 'video/webm' : 'video/mp4'}
+              />
+            </video>
+          </span>
+        </div>
+        {d.videoCaption && <figcaption>{d.videoCaption}</figcaption>}
+      </figure>
+    )}
+
     {hasStage && (
       <div class="work-stage" data-work-stage>
         <figure class="work-hero-figure zoomable">
@@ -156,7 +195,7 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
               alt=""
               width="1200"
               height="675"
-              loading="eager"
+              loading={hasVideo ? 'lazy' : 'eager'}
               decoding="async"
             />
           </button>
@@ -174,7 +213,7 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
                 aria-pressed={i === 0 ? 'true' : 'false'}
                 aria-label={`Show image ${i + 1} of ${stageImages.length}`}
               >
-                <img src={src} alt="" loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+                <img src={src} alt="" loading={i === 0 && !hasVideo ? 'eager' : 'lazy'} decoding="async" />
               </button>
             ))}
           </div>
@@ -300,7 +339,22 @@ const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/der
       });
     }
 
+    function initWorkVideos() {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]').forEach((video) => {
+        if (reduceMotion) {
+          video.controls = true;
+        } else {
+          video.autoplay = true;
+          const p = video.play();
+          if (p && typeof p.catch === 'function') p.catch(() => {});
+        }
+      });
+    }
+
     initWorkStages();
+    initWorkVideos();
     document.addEventListener('astro:page-load', initWorkStages);
+    document.addEventListener('astro:page-load', initWorkVideos);
   </script>
 </Base>
