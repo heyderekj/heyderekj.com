@@ -181,13 +181,13 @@ export const bragClippings: BragClipping[] = [
     href: '/projects/binky/',
     preview: [
       {
-        src: '/assets/images/projects/binky-sorting-2.webp',
-        alt: 'Binky sorting files in the Downloads folder',
+        src: '/assets/images/projects/binky-1.png',
+        alt: 'Binky main window with Quick Sort for Downloads and routines in the sidebar',
         href: '/projects/binky/',
         caption: 'Binky',
       },
       {
-        src: '/assets/images/projects/dinky-og.png',
+        src: '/assets/images/projects/dinky-1.png',
         alt: 'Dinky file compression app on macOS',
         href: '/projects/dinky/',
         caption: 'Dinky',

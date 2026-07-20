@@ -474,17 +474,20 @@ const tocItems = [
     mask-image: linear-gradient(180deg, #000 40%, transparent 92%);
   }
 
-  .cio-letter__fold:not(.is-open)::after {
+  /* Fade lives on the sheet (not the fold) so it covers flush to the clip edge */
+  .cio-letter__fold:not(.is-open) .cio-letter__sheet::after {
     content: '';
     position: absolute;
-    left: 1px;
-    right: 1px;
-    bottom: 2.75rem;
-    height: 7rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 8.5rem;
     background: linear-gradient(
       180deg,
-      color-mix(in srgb, var(--letter-surface-bottom) 0%, transparent),
-      var(--letter-surface-bottom) 72%
+      color-mix(in srgb, var(--letter-surface-bottom) 0%, transparent) 0%,
+      color-mix(in srgb, var(--letter-surface-bottom) 55%, transparent) 45%,
+      var(--letter-surface-bottom) 78%,
+      var(--letter-surface-bottom) 100%
     );
     pointer-events: none;
     z-index: 2;
