@@ -53,45 +53,57 @@ const tocItems = [
   </p>
 
   <section id="letter" class="cio-letter" aria-label="Cover letter">
-    <div class="cio-letter__sheet">
-      <header class="cio-letter__address">
-        <p>
-          <span class="cio-letter__label">To:</span>
-          {letter.to}
-        </p>
-        <p>
-          <span class="cio-letter__label">From:</span>
-          {letter.from}
-        </p>
-      </header>
+    <div class="cio-letter__fold" data-letter-fold>
+      <div class="cio-letter__sheet" id="cio-letter-sheet">
+        <header class="cio-letter__address">
+          <p>
+            <span class="cio-letter__label">To:</span>
+            {letter.to}
+          </p>
+          <p>
+            <span class="cio-letter__label">From:</span>
+            {letter.from}
+          </p>
+        </header>
 
-      <hr class="cio-letter__rule" aria-hidden="true" />
+        <hr class="cio-letter__rule" aria-hidden="true" />
 
-      <p class="cio-letter__salutation">{letter.salutation}</p>
+        <p class="cio-letter__salutation">{letter.salutation}</p>
 
-      {letterBeforeAiNotes.map((paragraph) => (
-        <p class="cio-letter__paragraph">{paragraph}</p>
-      ))}
+        {letterBeforeAiNotes.map((paragraph) => (
+          <p class="cio-letter__paragraph">{paragraph}</p>
+        ))}
 
-      <aside class="cio-letter__ai-notes" aria-label="Writing on AI">
-        <p class="cio-letter__ai-notes-lead">{customerioLetterAiNotes.lead}</p>
-        <ol class="cio-letter__ai-notes-list">
-          {customerioLetterAiNotes.posts.map((post) => (
-            <li>
-              <a href={post.href}>
-                <span>{post.title}</span>
-                <i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i>
-              </a>
-            </li>
-          ))}
-        </ol>
-      </aside>
+        <aside class="cio-letter__ai-notes" aria-label="Writing on AI">
+          <p class="cio-letter__ai-notes-lead">{customerioLetterAiNotes.lead}</p>
+          <ol class="cio-letter__ai-notes-list">
+            {customerioLetterAiNotes.posts.map((post) => (
+              <li>
+                <a href={post.href}>
+                  <span>{post.title}</span>
+                  <i class="ph-bold ph-arrow-up-right" aria-hidden="true"></i>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </aside>
 
-      {letterAfterAiNotes.map((paragraph) => (
-        <p class="cio-letter__paragraph">{paragraph}</p>
-      ))}
+        {letterAfterAiNotes.map((paragraph) => (
+          <p class="cio-letter__paragraph">{paragraph}</p>
+        ))}
 
-      <p class="cio-letter__signoff">{letter.signoff}</p>
+        <p class="cio-letter__signoff">{letter.signoff}</p>
+      </div>
+
+      <button
+        type="button"
+        class="cio-letter__more"
+        data-letter-more
+        aria-expanded="false"
+        aria-controls="cio-letter-sheet"
+      >
+        Read the full letter
+      </button>
     </div>
   </section>
 
@@ -238,6 +250,19 @@ const tocItems = [
         if (p && p.catch) p.catch(() => {});
       }
     });
+
+    const fold = document.querySelector('[data-letter-fold]');
+    const more = document.querySelector('[data-letter-more]');
+    if (fold && more) {
+      more.addEventListener('click', () => {
+        const open = fold.classList.toggle('is-open');
+        more.setAttribute('aria-expanded', open ? 'true' : 'false');
+        more.textContent = open ? 'Show less' : 'Read the full letter';
+        if (!open) {
+          fold.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
+      });
+    }
   </script>
 </Base>
 
@@ -408,8 +433,13 @@ const tocItems = [
     /* Secondary ink pulled toward the brand teal so it matches the green surface temperature */
     --letter-ink-soft: color-mix(in srgb, #1f6f78 26%, var(--fg-soft));
     --letter-ink-muted: color-mix(in srgb, #1f6f78 32%, var(--muted));
+    --letter-fold-max: min(26rem, 48dvh);
     margin-bottom: var(--space-5);
     max-width: 100%;
+  }
+
+  .cio-letter__fold {
+    position: relative;
   }
 
   .cio-letter__sheet {
@@ -421,6 +451,75 @@ const tocItems = [
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, white 40%, transparent),
       0 1px 3px color-mix(in srgb, var(--fg) 5%, transparent);
+  }
+
+  .cio-letter__fold:not(.is-open) .cio-letter__sheet {
+    max-height: var(--letter-fold-max);
+    overflow: hidden;
+    border-bottom: 0;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+
+  /* Keep the inner frame, but fade its rails with the fold so sides don’t stub out */
+  .cio-letter__fold:not(.is-open) .cio-letter__sheet::before {
+    bottom: 0;
+    border-bottom: 0;
+    border-radius: calc(var(--radius-sm) - 3px) calc(var(--radius-sm) - 3px) 0 0;
+    -webkit-mask-image: linear-gradient(180deg, #000 40%, transparent 92%);
+    mask-image: linear-gradient(180deg, #000 40%, transparent 92%);
+  }
+
+  .cio-letter__fold:not(.is-open)::after {
+    content: '';
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    bottom: 2.75rem;
+    height: 7rem;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--letter-surface-bottom) 0%, transparent),
+      var(--letter-surface-bottom) 72%
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .cio-letter__more {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35em;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--letter-frame);
+    border-top: 0;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    background: var(--letter-surface-bottom);
+    color: var(--letter-ink-soft);
+    font-family: var(--font-sans);
+    font-size: var(--size-meta);
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .cio-letter__more:hover {
+    color: var(--fg);
+    background: color-mix(in srgb, var(--letter-surface-bottom) 70%, var(--bg-elevated));
+  }
+
+  .cio-letter__more:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 2px;
+  }
+
+  .cio-letter__fold.is-open .cio-letter__more {
+    margin-top: var(--space-2);
+    border-top: 1px solid var(--letter-frame);
+    border-radius: var(--radius-sm);
   }
 
   .cio-letter__sheet::before {
