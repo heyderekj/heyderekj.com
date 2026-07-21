@@ -236,25 +236,29 @@ body {
 
 .site-nav {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: var(--space-3);
   flex-shrink: 0;
+  align-self: stretch;
 }
 
 .site-nav a {
   position: relative;
+  display: inline-flex;
+  align-items: center;
   font-size: var(--size-meta);
   font-weight: 500;
   color: var(--muted-strong);
   text-decoration: none;
-  padding: 4px 2px;
+  padding: 0 2px;
   transition: color 0.15s ease;
 }
 
 .site-nav a:hover { color: var(--fg); }
 .site-nav a.active { color: var(--fg); }
 
-/* Active marker: a small orange dot riding the header's bottom rule */
+/* Active marker: centered on the header’s bottom rule.
+   Links stretch to the header content row so `bottom` clears only `--space-3`. */
 .site-nav a.active::after {
   content: '';
   position: absolute;
