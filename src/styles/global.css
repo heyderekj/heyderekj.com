@@ -184,8 +184,9 @@ body {
     linear-gradient(var(--tick), var(--tick)) calc(100% - (var(--tick-size) - 1px) / 2) center / 1px var(--tick-size) no-repeat;
 }
 
-.site-header::after { bottom: calc(var(--tick-size) / -2); }
-.site-footer::before { top: calc(var(--tick-size) / -2); }
+/* Half-tick + 0.5px so the cross centers on the 1px rule (not the padding edge). */
+.site-header::after { bottom: calc(var(--tick-size) / -2 - 0.5px); }
+.site-footer::before { top: calc(var(--tick-size) / -2 - 0.5px); }
 
 .site-brand {
   position: relative;
