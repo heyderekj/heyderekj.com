@@ -165,13 +165,16 @@ body {
 }
 
 /* Plus ticks straddling a horizontal rule where it meets the rails.
-   Header/footer already bleed through frame-pad, so only nudge by half a tick. */
+   Content sits 1px inside the border — expand the tick layer 1px farther
+   past each rail so the crosses center on the hairlines. Keep `left`/`right`
+   keywords for the horizontal arms: `%` calcs resolve against
+   (area − image) and shove the right bar the wrong way. */
 .site-header::after,
 .site-footer::before {
   content: '';
   position: absolute;
-  left: calc(-1 * (var(--tick-size) - 1px) / 2);
-  right: calc(-1 * (var(--tick-size) - 1px) / 2);
+  left: calc(-1 * (var(--tick-size) - 1px) / 2 - 1px);
+  right: calc(-1 * (var(--tick-size) - 1px) / 2 - 1px);
   height: var(--tick-size);
   pointer-events: none;
   background:
@@ -422,13 +425,13 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   background: var(--rule);
   pointer-events: none;
 }
-/* Plus ticks where the rule meets the two rails */
+/* Plus ticks where the rule meets the two rails (same 1px outward expand) */
 .section-title::after {
   content: '';
   position: absolute;
   top: calc((var(--tick-size) - 1px) / -2);
-  left: calc((100% - 100cqw) / 2 - (var(--tick-size) - 1px) / 2 - var(--frame-pad-x));
-  width: calc(100cqw + var(--tick-size) - 1px + 2 * var(--frame-pad-x));
+  left: calc((100% - 100cqw) / 2 - (var(--tick-size) - 1px) / 2 - 1px - var(--frame-pad-x));
+  width: calc(100cqw + var(--tick-size) - 1px + 2px + 2 * var(--frame-pad-x));
   height: var(--tick-size);
   pointer-events: none;
   background:

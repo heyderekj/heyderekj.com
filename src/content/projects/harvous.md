@@ -66,11 +66,11 @@ Notes are private by default—but when you want to study with others, a note, a
 
 ## Where it stands
 
-Harvous is my front-burner product, open source under Testament Made LLC, and free at the core. Right now I'm mid-redesign—stripping the chrome back until the notes are the interface at [new.harvous.com](https://new.harvous.com)—including appearance that feels like your study Bible, not a generic SaaS shell. Same principle as always: app first, AI second.
+Harvous is my front-burner product, open source under Testament Made LLC, and free at the core. The 2.0 UI is live at [app.harvous.com](https://app.harvous.com)—chrome stripped back until the notes are the interface, with appearance that feels like your study Bible, not a generic SaaS shell. Same principle as always: app first, AI second.
 
 <figure class="pfig">
   <img src="/assets/images/projects/harvous-9.webp" alt="Harvous Appearance settings with Light Paper and Dark Night theme previews, Auto mode, and accent color swatches" loading="lazy" decoding="async" />
-  <figcaption>Appearance is part of the redesign — Paper or Night, Auto mode, and accents that feel personal without getting in the way.</figcaption>
+  <figcaption>Appearance in 2.0 — Paper or Night, Auto mode, and accents that feel personal without getting in the way.</figcaption>
 </figure>
 
 ## Tools & process
