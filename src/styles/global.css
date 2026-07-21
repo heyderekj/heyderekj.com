@@ -668,8 +668,16 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   font-size: var(--size-meta);
   align-items: start;
 }
+.work-facts[data-fact-count='4'] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.work-facts[data-fact-count='2'] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 @media (max-width: 32rem) {
-  .work-facts {
+  .work-facts,
+  .work-facts[data-fact-count='4'],
+  .work-facts[data-fact-count='2'] {
     grid-template-columns: 1fr;
   }
 }
@@ -684,8 +692,13 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
 .work-fact dd { margin: 0; color: var(--fg-soft); line-height: 1.4; }
 
 .work-hero-figure { margin: 0; }
-.work-stage .work-hero-figure { margin: 0; }
-.work-hero-figure .zoom-trigger { border-radius: var(--radius-md); }
+.work-stage .work-hero-figure { margin: 0; overflow: visible; }
+.work-hero-figure .zoom-trigger {
+  border-radius: var(--radius-md);
+  overflow: visible;
+  display: block;
+  width: 100%;
+}
 .work-hero {
   display: block;
   width: 100%;
@@ -693,7 +706,8 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   object-fit: contain;
   object-position: center center;
   box-sizing: border-box;
-  padding: 14px;
+  /* Room for baked-in window shadows in the PNG */
+  padding: 28px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--bg-elevated);
@@ -752,7 +766,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   border-radius: var(--radius-sm);
   background: var(--bg-elevated);
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .work-gallery-item:hover,
@@ -770,7 +784,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   object-fit: contain;
   object-position: center center;
   box-sizing: border-box;
-  padding: 10px;
+  padding: 16px;
   pointer-events: none;
 }
 
@@ -994,6 +1008,28 @@ figure.zoomable.is-zoomed {
   font-weight: 600;
   margin: 0 0 var(--space-2);
   color: var(--fg);
+}
+.work-prior-rule {
+  margin: 0 0 var(--space-5);
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+.work-prior-label {
+  margin: 0 0 var(--space-3);
+  font-size: var(--size-meta);
+  color: var(--muted-strong);
+}
+.work-prior .ms {
+  margin: 0;
+}
+/* Let baked PNG shadows show; don't clip the slide frame */
+.work-prior .ms-frame {
+  overflow: visible;
+  padding: 28px;
+}
+.work-prior .ms-slide img,
+.work-prior .ms-slide :global(.ms-trigger img) {
+  object-fit: contain;
 }
 .work-md p { font-size: 16px; line-height: 1.8; }
 .work-md p:first-child { margin-top: 0; }

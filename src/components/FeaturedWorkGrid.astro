@@ -36,7 +36,14 @@ const fmtDateWithYear = (d: Date) =>
         </div>
         <div class="project-grid-footer">
           <div class="project-grid-info">
-            <span class="project-grid-name">{entry.data.title}</span>
+            <span class="project-grid-name">
+              {entry.data.title}
+              {entry.data.highlight && (
+                <span class="project-grid-favorite" title="A personal favorite">
+                  <i class="ph-fill ph-star" aria-hidden="true" />
+                </span>
+              )}
+            </span>
             <span class="project-grid-date">{fmtDateWithYear(entry.data.date)}</span>
           </div>
           <span class="project-grid-arrow" aria-hidden="true">→</span>
@@ -78,14 +85,15 @@ const fmtDateWithYear = (d: Date) =>
   transition: background-color 0.2s ease;
 }
 
-/* Square canvas: image centered and scaled down on the mat (same as work gallery) */
+/* Square canvas: image centered and scaled down on the mat (same as work gallery).
+   Extra padding so baked-in window shadows in the PNG aren't clipped. */
 .project-grid-img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: center center;
   box-sizing: border-box;
-  padding: 10%;
+  padding: 12%;
   display: block;
 }
 
@@ -132,6 +140,19 @@ const fmtDateWithYear = (d: Date) =>
   color: var(--fg);
   line-height: 1.25;
   transition: color 0.15s ease;
+}
+
+.project-grid-favorite {
+  display: inline-block;
+  margin-left: 0.35em;
+  font-size: 0.72em;
+  line-height: 0;
+  color: var(--accent);
+  vertical-align: 0.06em;
+}
+
+.project-grid-favorite .ph-star {
+  display: inline-block;
 }
 
 :global(main.main) .project-grid-card:hover .project-grid-name {

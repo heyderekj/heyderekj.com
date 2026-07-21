@@ -1,0 +1,35 @@
+---
+description: Work/project media — drop finished assets; gallery-01 is thumbnail + OG PNG
+alwaysApply: true
+---
+
+# Work & project media assets
+
+## Default workflow
+
+1. **You drop finished assets** into `public/images/work/{slug}/` (or project media folders). Prefer RGBA WebP with browser chrome + drop shadow and a transparent mat — same as existing work thumbs (e.g. Care Continuity).
+2. **Agent only wires paths** in frontmatter / components. Do not invent or “fix” images from CleanShot RGB-on-black exports.
+
+## Naming (required)
+
+| File | Role |
+|------|------|
+| `gallery-01.webp` | Lead stage image **and** card `thumbnail` |
+| `gallery-01.png` | **Open Graph** (`og:image`) — same art as `gallery-01.webp` |
+| `gallery-02.webp`… | Remaining gallery shots |
+
+Frontmatter pattern:
+
+```yaml
+thumbnail: "/images/work/{slug}/gallery-01.webp"
+gallery:
+  - "/images/work/{slug}/gallery-02.webp"
+  - "/images/work/{slug}/gallery-03.webp"
+```
+
+Work pages already map a `.webp` thumbnail → sibling `.png` for Open Graph. When wiring a new/updated entry, if `gallery-01.webp` exists and `gallery-01.png` does not, make a **lossless** WebP→PNG copy of gallery-01 only (OG requirement). No other image processing.
+
+## Do not
+
+- Black-mat punching, cropping, resizing, chrome compositing, synthetic shadows, or bulk format conversion
+- Point `thumbnail` at a separate `thumbnail.png` when `gallery-01` exists — gallery-01 is the thumb

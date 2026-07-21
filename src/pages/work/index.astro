@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageTitle from '../../components/PageTitle.astro';
-import PostList from '../../components/PostList.astro';
+import FeaturedWorkGrid from '../../components/FeaturedWorkGrid.astro';
 import { testimonials } from '../../data/about';
 
 const entries = (await getCollection('work', ({ data }) => !data.draft)).sort(
@@ -20,7 +20,7 @@ const entries = (await getCollection('work', ({ data }) => !data.draft)).sort(
   </p>
 
   {entries.length > 0 ? (
-    <PostList entries={entries} showYearHeaders={true} />
+    <FeaturedWorkGrid work={entries} />
   ) : (
     <p style="color: var(--muted);">No work entries yet.</p>
   )}

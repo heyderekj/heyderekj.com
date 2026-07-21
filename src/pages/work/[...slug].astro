@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import MediaStepper from '../../components/MediaStepper.astro';
 import { schemaPersonId } from '../../lib/schemaIds';
 import { mdStringToHtml } from '../../lib/mdString';
 
@@ -29,12 +30,24 @@ const published = post.data.date.toISOString();
 const d = post.data;
 
 const industryOrTags = d.industry?.length ? d.industry : d.tags ?? [];
+const priorImages = d.priorGallery ?? [];
+const priorStepperItems = priorImages.map((src) => ({ src, alt: `${d.title} earlier version` }));
+const workFactCount = [
+  d.workType,
+  d.soloOrAgency,
+  d.partnership,
+  d.estimatedTimeSpent,
+  d.weeksToComplete !== undefined && d.weeksToComplete !== null && String(d.weeksToComplete) !== ''
+    ? d.weeksToComplete
+    : null,
+].filter(Boolean).length;
 const hasMetaChips = Boolean(
   d.workType ||
     industryOrTags.length ||
     d.soloOrAgency ||
     d.estimatedTimeSpent ||
-    d.partnership,
+    d.partnership ||
+    d.weeksToComplete !== undefined,
 );
 
 const briefHtml = mdStringToHtml(d.brief);
@@ -61,9 +74,10 @@ const postJsonLd = {
   ...(industryOrTags.length ? { keywords: industryOrTags.join(', ') } : {}),
   ...(d.thumbnail
     ? {
-        image: d.thumbnail.startsWith('http')
-          ? d.thumbnail
-          : new URL(d.thumbnail, `${siteOrigin}/`).toString(),
+        image: (() => {
+          const src = d.thumbnail.replace(/\.webp$/i, '.png');
+          return src.startsWith('http') ? src : new URL(src, `${siteOrigin}/`).toString();
+        })(),
       }
     : {}),
 };
@@ -71,7 +85,11 @@ const postJsonLd = {
 const fmtDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 
-const ogImage = d.thumbnail && d.thumbnail.startsWith('/') ? d.thumbnail : '/derekj-og.png';
+/** Open Graph wants PNG; site thumbs are often WebP. Prefer sibling `.png` of the thumbnail. */
+const ogImage =
+  d.thumbnail && d.thumbnail.startsWith('/')
+    ? d.thumbnail.replace(/\.webp$/i, '.png')
+    : '/derekj-og.png';
 /** Kick off first media early: poster + stage (or stage alone when no video). */
 const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[];
 ---
@@ -111,7 +129,7 @@ const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[
     )}
 
     {hasMetaChips && (
-      <dl class="work-facts">
+      <dl class="work-facts" data-fact-count={workFactCount}>
         {d.workType && (
           <div class="work-fact">
             <dt>Type</dt>
@@ -288,6 +306,22 @@ const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[
       <Content />
     </div>
 
+    {priorStepperItems.length > 0 && (
+      <section class="work-section work-prior" aria-labelledby="work-prior">
+        <hr class="work-prior-rule" />
+        <h2 id="work-prior" class="work-section-title">Earlier version</h2>
+        {d.priorVersionLabel && (
+          <p class="work-prior-label">{d.priorVersionLabel}</p>
+        )}
+        <MediaStepper
+          items={priorStepperItems}
+          label={`${d.title} earlier version`}
+          aspect="16 / 10"
+          fit="contain"
+        />
+      </section>
+    )}
+
     {d.legacyUrl && (
       <p class="work-legacy">
         <a href={d.legacyUrl}>Previously published at a legacy URL</a>
@@ -296,22 +330,21 @@ const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[
 
     {(d.liveLink || d.waybackUrl || d.partnershipWorkLink) && (
       <ul class="work-links" aria-label="Project links">
-        {d.liveLink && (
+        {d.liveLink ? (
           <li>
             <a class="work-link-pill" href={d.liveLink} rel="noopener noreferrer" target="_blank">
               <span>Live site</span>
               <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
             </a>
           </li>
-        )}
-        {d.waybackUrl && (
+        ) : d.waybackUrl ? (
           <li>
             <a class="work-link-pill" href={d.waybackUrl} rel="noopener noreferrer" target="_blank">
               <span>Wayback Machine</span>
               <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
             </a>
           </li>
-        )}
+        ) : null}
         {d.partnershipWorkLink && (
           <li>
             <a

@@ -49,6 +49,10 @@ const work = defineCollection({
     desktop: z.string().optional(),
     mobile: z.string().optional(),
     gallery: z.array(z.string()).optional(),
+    /** Prior design stills for lightweight version history */
+    priorGallery: z.array(z.string()).optional(),
+    /** Label for prior version, e.g. "Jan 2026" */
+    priorVersionLabel: z.string().optional(),
     /** Optional tour clip leading the case study (same pattern as project pages) */
     video: z.string().optional(),
     videoPoster: z.string().optional(),

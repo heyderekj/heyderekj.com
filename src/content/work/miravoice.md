@@ -8,7 +8,10 @@ industry:
   - "startup"
   - "ai"
 dateCompleted: 2026-03-25
-thumbnail: "/images/work/miravoice/thumbnail.png"
+thumbnail: "/images/work/miravoice/gallery-01.webp"
+gallery:
+  - "/images/work/miravoice/gallery-02.webp"
+  - "/images/work/miravoice/gallery-03.webp"
 liveLink: "https://miravoice.com/"
 partnership: "Kem Design"
 partnershipWorkLink: "https://www.kemdesign.co/work/miravoice"
