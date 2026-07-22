@@ -32,7 +32,7 @@ problem: |
 
   The product needed a clear marketing surface and a review UI that made human marks authoritative, not another pinboard that died in Slack.
 solution: |
-  The site leads with the loop: try token on the homepage, paste MCP config, run a full agent↔human checkup in about two minutes. The product speaks in marks (rose rectangles + M1/M2 badges), not pins—drag a region or click a point; marks become Board cards (Open → In progress → Resolved → Verified).
+  The site leads with the loop: try token on the homepage, paste MCP config, run a full agent↔human checkup in about two minutes. The product speaks in marks (yellow rectangles + M1/M2 badges), not pins—drag a region or click a point; guest feedback lands in gray. Marks become Board cards (Open → In progress → Resolved → Verified).
 
   Optional second-opinion hints stay hints until you accept them. Guests get an expirable link, not another account. Open source so the loop is inspectable.
 specificWork: |

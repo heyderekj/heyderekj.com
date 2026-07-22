@@ -168,14 +168,14 @@ export const customerioProofBlocks: {
     shots: [
       {
         src: '/assets/images/projects/revisemy-1.png',
-        alt: 'ReviseMy review with an M1 mark on the design, My marks panel, and Second opinion hints',
+        alt: 'ReviseMy review of heyderekj.com with an M1 mark, My marks panel, and Second opinion hints',
       },
       {
         src: '/assets/images/projects/revisemy-2.png',
-        alt: 'ReviseMy guest link menu with expiry options and disable comments',
+        alt: 'ReviseMy Share menu with copy guest link, generate new link, and expiry options',
       },
     ],
-    caption: 'Marks you leave are the ones that count · guests review from a link you can expire.',
+    caption: 'Your marks are the ones that count · guests review from a link you can expire.',
   },
 ];
 
