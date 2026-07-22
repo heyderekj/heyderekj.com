@@ -15,51 +15,64 @@ const posts = defineCollection({
 /** Case studies / client work — from Webflow/CSV; lives under `/work/`. */
 const work = defineCollection({
   type: 'content',
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    description: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    draft: z.boolean().default(false),
-    legacyUrl: z.string().url().optional(),
-    /** From CSV: work type (e.g. design-dev, design, development) */
-    workType: z.string().optional(),
-    industry: z.array(z.string()).optional(),
-    dateCompleted: z.coerce.date().optional(),
-    weeksToComplete: z.union([z.number(), z.string()]).optional(),
-    /** Featured on index / cards */
-    highlight: z.boolean().default(false),
-    liveLink: z.string().url().optional(),
-    waybackUrl: z.string().url().optional(),
-    /** CMS row archived */
-    archived: z.boolean().default(false),
-    partnership: z.string().optional(),
-    partnershipWorkLink: z.string().url().optional(),
-    soloOrAgency: z.string().optional(),
-    estimatedTimeSpent: z.string().optional(),
-    /** Narrative blocks (markdown) */
-    brief: z.string().optional(),
-    problem: z.string().optional(),
-    solution: z.string().optional(),
-    specificWork: z.string().optional(),
-    /** Local public paths, e.g. /images/work/slug/... */
-    thumbnail: z.string().optional(),
-    /** `contain` frames the thumbnail on a light background instead of cropping */
-    thumbnailFit: z.enum(['cover', 'contain']).default('cover'),
-    desktop: z.string().optional(),
-    mobile: z.string().optional(),
-    gallery: z.array(z.string()).optional(),
-    /** Prior design stills for lightweight version history */
-    priorGallery: z.array(z.string()).optional(),
-    /** Label for prior version, e.g. "Jan 2026" */
-    priorVersionLabel: z.string().optional(),
-    /** Optional tour clip leading the case study (same pattern as project pages) */
-    video: z.string().optional(),
-    videoPoster: z.string().optional(),
-    videoCaption: z.string().optional(),
-    /** CSS aspect-ratio value, e.g. `1538 / 928` */
-    videoAspect: z.string().optional(),
-  }),
+  schema: z
+    .object({
+      title: z.string(),
+      date: z.coerce.date(),
+      description: z.string().optional(),
+      tags: z.array(z.string()).optional(),
+      draft: z.boolean().default(false),
+      legacyUrl: z.string().url().optional(),
+      /** From CSV: work type (e.g. design-dev, design, development) */
+      workType: z.string().optional(),
+      industry: z.array(z.string()).optional(),
+      dateCompleted: z.coerce.date().optional(),
+      weeksToComplete: z.union([z.number(), z.string()]).optional(),
+      /** Featured on index / cards */
+      highlight: z.boolean().default(false),
+      liveLink: z.string().url().optional(),
+      /** Required when both liveLink and waybackUrl are set — live is not (only) this case study */
+      liveLinkNote: z.string().optional(),
+      waybackUrl: z.string().url().optional(),
+      /** CMS row archived */
+      archived: z.boolean().default(false),
+      partnership: z.string().optional(),
+      partnershipWorkLink: z.string().url().optional(),
+      soloOrAgency: z.string().optional(),
+      estimatedTimeSpent: z.string().optional(),
+      /** Narrative blocks (markdown) */
+      brief: z.string().optional(),
+      problem: z.string().optional(),
+      solution: z.string().optional(),
+      specificWork: z.string().optional(),
+      /** Local public paths, e.g. /images/work/slug/... */
+      thumbnail: z.string().optional(),
+      /** `contain` frames the thumbnail on a light background instead of cropping */
+      thumbnailFit: z.enum(['cover', 'contain']).default('cover'),
+      desktop: z.string().optional(),
+      mobile: z.string().optional(),
+      gallery: z.array(z.string()).optional(),
+      /** Prior design stills for lightweight version history */
+      priorGallery: z.array(z.string()).optional(),
+      /** Label for prior version, e.g. "Jan 2026" */
+      priorVersionLabel: z.string().optional(),
+      /** Optional tour clip leading the case study (same pattern as project pages) */
+      video: z.string().optional(),
+      videoPoster: z.string().optional(),
+      videoCaption: z.string().optional(),
+      /** CSS aspect-ratio value, e.g. `1538 / 928` */
+      videoAspect: z.string().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.waybackUrl && data.liveLink && !data.liveLinkNote?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            'liveLinkNote is required when both liveLink and waybackUrl are set (Wayback = this design; live needs a disclaimer)',
+          path: ['liveLinkNote'],
+        });
+      }
+    }),
 });
 
 const projects = defineCollection({

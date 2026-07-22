@@ -329,36 +329,40 @@ const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[
     )}
 
     {(d.liveLink || d.waybackUrl || d.partnershipWorkLink) && (
-      <ul class="work-links" aria-label="Project links">
-        {d.liveLink ? (
-          <li>
-            <a class="work-link-pill" href={d.liveLink} rel="noopener noreferrer" target="_blank">
-              <span>Live site</span>
-              <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
-            </a>
-          </li>
-        ) : d.waybackUrl ? (
-          <li>
-            <a class="work-link-pill" href={d.waybackUrl} rel="noopener noreferrer" target="_blank">
-              <span>Wayback Machine</span>
-              <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
-            </a>
-          </li>
-        ) : null}
-        {d.partnershipWorkLink && (
-          <li>
-            <a
-              class="work-link-pill"
-              href={d.partnershipWorkLink}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <span>Partner case study</span>
-              <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
-            </a>
-          </li>
-        )}
-      </ul>
+      <>
+        <ul class="work-links" aria-label="Project links">
+          {d.waybackUrl && (
+            <li>
+              <a class="work-link-pill" href={d.waybackUrl} rel="noopener noreferrer" target="_blank">
+                <span>Wayback Machine</span>
+                <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
+              </a>
+            </li>
+          )}
+          {d.liveLink && (
+            <li>
+              <a class="work-link-pill" href={d.liveLink} rel="noopener noreferrer" target="_blank">
+                <span>Live site</span>
+                <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
+              </a>
+            </li>
+          )}
+          {d.partnershipWorkLink && (
+            <li>
+              <a
+                class="work-link-pill"
+                href={d.partnershipWorkLink}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <span>Partner case study</span>
+                <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
+              </a>
+            </li>
+          )}
+        </ul>
+        {d.liveLinkNote && <p class="work-legacy">{d.liveLinkNote}</p>}
+      </>
     )}
 
     <p class="back-link">

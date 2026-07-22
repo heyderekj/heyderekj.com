@@ -29,6 +29,7 @@ priorGallery:
   - "/images/work/harvouscom/prior/gallery-03.webp"
 priorVersionLabel: "Jan 2026"
 liveLink: "https://harvous.com"
+liveLinkNote: "The live site is the current redesign. Wayback Machine shows the prior Jan 2026 version."
 waybackUrl: "https://web.archive.org/web/20260419211900/https://www.harvous.com/"
 soloOrAgency: "Solo"
 description: "Marketing site for Harvous—the Bible notes app—redesigned around use cases, product proof, and a clearer path from curious visitor to signup."

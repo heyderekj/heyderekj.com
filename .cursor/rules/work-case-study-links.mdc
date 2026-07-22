@@ -1,0 +1,43 @@
+---
+description: Work case study links — Wayback means live needs a disclaimer note
+globs: src/content/work/**/*.md
+alwaysApply: false
+---
+
+# Work case study links (live vs Wayback)
+
+## Rule of thumb
+
+If a case study has a `waybackUrl`, the **live site is no longer (or not only) the design in the case study**. Do **not** hide the live link — show both, and always attach a `liveLinkNote` disclaimer when `liveLink` is also present.
+
+## Frontmatter
+
+| Field | When |
+|-------|------|
+| `waybackUrl` | Archive / staging / Webflow URL that shows **this** case study’s design |
+| `liveLink` | Current public URL (optional; keep when useful) |
+| `liveLinkNote` | **Required** whenever both `liveLink` and `waybackUrl` are set |
+
+Example (site replaced; live is not your design):
+
+```yaml
+liveLink: "https://example.org"
+liveLinkNote: "The live site is a different design and was not designed by me. Use the Wayback Machine link to see this work."
+waybackUrl: "https://web.archive.org/web/.../https://example.webflow.io/"
+```
+
+Example (your redesign is live; Wayback is a prior version):
+
+```yaml
+liveLink: "https://example.com"
+liveLinkNote: "The live site is the current redesign. Wayback Machine shows the prior version."
+waybackUrl: "https://web.archive.org/web/.../https://www.example.com/"
+```
+
+## Wayback only
+
+If there is no useful live URL (defunct product, acquired, etc.), set `waybackUrl` alone and omit `liveLink` / `liveLinkNote`.
+
+## UI
+
+Work detail pages render Wayback first, then Live, then `liveLinkNote` under the pills. Schema enforces the note when both URLs are set.

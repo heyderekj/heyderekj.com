@@ -10,7 +10,9 @@ thumbnail: "/images/work/exodus51/thumbnail.webp"
 gallery:
   - "/images/work/exodus51/gallery-01.webp"
   - "/images/work/exodus51/gallery-02.webp"
-liveLink: "http://exodus51.org"
+liveLink: "https://exodus51.org"
+liveLinkNote: "The live site is a different design and was not designed by me. Use the Wayback Machine link to see this work."
+waybackUrl: "https://web.archive.org/web/20260722143719/https://exodus-51.webflow.io/"
 soloOrAgency: "Solo"
 estimatedTimeSpent: "2 weeks"
 brief: |
@@ -20,4 +22,3 @@ problem: |
 solution: |
   Went back to the content for a solid foundation. The "We free slaves" was my bold attempt to quickly communicate what the organization does. The site would have various sections communicating what the org does, why them, and then overall very clear "donate" buttons.
 ---
-
