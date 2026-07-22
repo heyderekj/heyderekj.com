@@ -35,20 +35,6 @@ function wantsAutoplay(video: HTMLVideoElement): boolean {
   return video.hasAttribute('data-autoplay') || video.hasAttribute('autoplay');
 }
 
-function whenCanPlay(video: HTMLVideoElement): Promise<void> {
-  // HAVE_FUTURE_DATA — enough to start without stalling on the first frames.
-  if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
-    return Promise.resolve();
-  }
-  return new Promise((resolve) => {
-    const done = () => {
-      video.removeEventListener('canplay', done);
-      resolve();
-    };
-    video.addEventListener('canplay', done, { once: true });
-  });
-}
-
 function safePlay(player: Plyr) {
   const p = player.play();
   if (p && typeof p.catch === 'function') p.catch(() => {});
@@ -67,6 +53,16 @@ function initVideo(video: HTMLVideoElement) {
     video.removeAttribute('data-autoplay');
   }
 
+  // iOS often ignores preload and won't fire canplay until play() — so never
+  // gate muted autoplay on canplay (that deadlocks mobile).
+  if (autoplay) {
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    video.autoplay = true;
+  }
+
   const player = new Plyr(video, {
     controls: [...CONTROLS],
     hideControls: true,
@@ -76,7 +72,7 @@ function initVideo(video: HTMLVideoElement) {
     tooltips: { controls: false, seek: true },
     fullscreen: { enabled: true, fallback: true, iosNative: false },
     muted: true,
-    autoplay: false, // we gate on canplay below
+    autoplay,
     loop: { active: video.hasAttribute('loop') },
     // Local sprite — CDN misses leave orange control chrome with blank icons.
     iconUrl: '/vendor/plyr.svg',
@@ -97,7 +93,7 @@ function initVideo(video: HTMLVideoElement) {
     // Keep native controls attribute off — Plyr owns chrome.
     video.controls = false;
     if (autoplay) {
-      whenCanPlay(video).then(() => safePlay(player));
+      safePlay(player);
     }
   });
 }
