@@ -1019,6 +1019,17 @@ figure.zoomable.is-zoomed {
   font-size: var(--size-meta);
   color: var(--muted-strong);
 }
+.work-prior-block {
+  margin: 0 0 var(--space-4);
+}
+.work-prior-block-title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--size-meta);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted-strong);
+}
 .work-prior .ms {
   margin: 0;
 }
@@ -1045,6 +1056,12 @@ figure.zoomable.is-zoomed {
 .work-body { margin-top: var(--space-2); }
 .work-legacy { font-size: var(--size-meta); color: var(--muted-strong); }
 .work-legacy a { color: var(--fg-soft); }
+.work-links + .work-legacy {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
+  max-width: var(--max-text);
+}
 
 /* ============================================================
    Home intro

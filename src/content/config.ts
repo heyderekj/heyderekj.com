@@ -34,6 +34,10 @@ const work = defineCollection({
       /** Required when both liveLink and waybackUrl are set — live is not (only) this case study */
       liveLinkNote: z.string().optional(),
       waybackUrl: z.string().url().optional(),
+      /** Unaccepted / alternate direction prototype (e.g. Netlify proposal) */
+      proposalLink: z.string().url().optional(),
+      /** Pill label for proposalLink; defaults to "Proposed redesign" in the template */
+      proposalLinkLabel: z.string().optional(),
       /** CMS row archived */
       archived: z.boolean().default(false),
       partnership: z.string().optional(),
@@ -56,6 +60,12 @@ const work = defineCollection({
       priorGallery: z.array(z.string()).optional(),
       /** Label for prior version, e.g. "Jan 2026" */
       priorVersionLabel: z.string().optional(),
+      /** Time spent on the earlier version (shown in Earlier version section) */
+      priorEstimatedTimeSpent: z.string().optional(),
+      /** Archived narrative for the earlier version section */
+      priorBrief: z.string().optional(),
+      priorProblem: z.string().optional(),
+      priorSolution: z.string().optional(),
       /** Optional tour clip leading the case study (same pattern as project pages) */
       video: z.string().optional(),
       videoPoster: z.string().optional(),

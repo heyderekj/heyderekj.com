@@ -54,6 +54,15 @@ const briefHtml = mdStringToHtml(d.brief);
 const problemHtml = mdStringToHtml(d.problem);
 const solutionHtml = mdStringToHtml(d.solution);
 const specificWorkHtml = mdStringToHtml(d.specificWork);
+const priorBriefHtml = mdStringToHtml(d.priorBrief);
+const priorProblemHtml = mdStringToHtml(d.priorProblem);
+const priorSolutionHtml = mdStringToHtml(d.priorSolution);
+const hasPriorNarrative = Boolean(priorBriefHtml || priorProblemHtml || priorSolutionHtml);
+const hasPriorSection = priorStepperItems.length > 0 || hasPriorNarrative;
+const proposalLabel = d.proposalLinkLabel?.trim() || 'Proposed redesign';
+const hasProjectLinks = Boolean(
+  d.liveLink || d.waybackUrl || d.proposalLink || d.partnershipWorkLink,
+);
 
 const hasDeviceRow = Boolean(d.desktop || d.mobile);
 /** Hero + gallery, deduped — thumbs swap the main stage; only the stage zooms. */
@@ -306,19 +315,43 @@ const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[
       <Content />
     </div>
 
-    {priorStepperItems.length > 0 && (
+    {hasPriorSection && (
       <section class="work-section work-prior" aria-labelledby="work-prior">
         <hr class="work-prior-rule" />
         <h2 id="work-prior" class="work-section-title">Earlier version</h2>
-        {d.priorVersionLabel && (
-          <p class="work-prior-label">{d.priorVersionLabel}</p>
+        {(d.priorVersionLabel || d.priorEstimatedTimeSpent) && (
+          <p class="work-prior-label">
+            {d.priorVersionLabel}
+            {d.priorVersionLabel && d.priorEstimatedTimeSpent && ' · '}
+            {d.priorEstimatedTimeSpent}
+          </p>
         )}
-        <MediaStepper
-          items={priorStepperItems}
-          label={`${d.title} earlier version`}
-          aspect="16 / 10"
-          fit="contain"
-        />
+        {priorBriefHtml && (
+          <div class="work-prior-block">
+            <h3 class="work-prior-block-title">Brief</h3>
+            <div class="work-md post-content" set:html={priorBriefHtml} />
+          </div>
+        )}
+        {priorProblemHtml && (
+          <div class="work-prior-block">
+            <h3 class="work-prior-block-title">Problem</h3>
+            <div class="work-md post-content" set:html={priorProblemHtml} />
+          </div>
+        )}
+        {priorSolutionHtml && (
+          <div class="work-prior-block">
+            <h3 class="work-prior-block-title">Solution</h3>
+            <div class="work-md post-content" set:html={priorSolutionHtml} />
+          </div>
+        )}
+        {priorStepperItems.length > 0 && (
+          <MediaStepper
+            items={priorStepperItems}
+            label={`${d.title} earlier version`}
+            aspect="16 / 10"
+            fit="contain"
+          />
+        )}
       </section>
     )}
 
@@ -328,13 +361,21 @@ const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[
       </p>
     )}
 
-    {(d.liveLink || d.waybackUrl || d.partnershipWorkLink) && (
+    {hasProjectLinks && (
       <>
         <ul class="work-links" aria-label="Project links">
           {d.waybackUrl && (
             <li>
               <a class="work-link-pill" href={d.waybackUrl} rel="noopener noreferrer" target="_blank">
                 <span>Wayback Machine</span>
+                <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
+              </a>
+            </li>
+          )}
+          {d.proposalLink && (
+            <li>
+              <a class="work-link-pill" href={d.proposalLink} rel="noopener noreferrer" target="_blank">
+                <span>{proposalLabel}</span>
                 <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
               </a>
             </li>

@@ -17,6 +17,8 @@ If a case study has a `waybackUrl`, the **live site is no longer (or not only) t
 | `waybackUrl` | Archive / staging / Webflow URL that shows **this** case study’s design |
 | `liveLink` | Current public URL (optional; keep when useful) |
 | `liveLinkNote` | **Required** whenever both `liveLink` and `waybackUrl` are set |
+| `proposalLink` | Unaccepted / alternate direction prototype (optional) |
+| `proposalLinkLabel` | Pill label for `proposalLink` (default in UI: `Proposed redesign`) |
 
 Example (site replaced; live is not your design):
 
@@ -34,10 +36,20 @@ liveLinkNote: "The live site is the current redesign. Wayback Machine shows the 
 waybackUrl: "https://web.archive.org/web/.../https://www.example.com/"
 ```
 
+Example (proposal not accepted; live differs from case study):
+
+```yaml
+liveLink: "https://example.org"
+liveLinkNote: "The live site is a different design and was not designed by me. Wayback Machine shows the shipped work. Proposed redesign was not accepted."
+waybackUrl: "https://web.archive.org/web/.../https://example.webflow.io/"
+proposalLink: "https://example.netlify.app/"
+proposalLinkLabel: "Proposed redesign"
+```
+
 ## Wayback only
 
 If there is no useful live URL (defunct product, acquired, etc.), set `waybackUrl` alone and omit `liveLink` / `liveLinkNote`.
 
 ## UI
 
-Work detail pages render Wayback first, then Live, then `liveLinkNote` under the pills. Schema enforces the note when both URLs are set.
+Work detail pages render pills in this order: Wayback → Proposed redesign → Live → Partner case study, then `liveLinkNote` under the pills. Schema enforces the note when both live and Wayback URLs are set.
