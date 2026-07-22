@@ -22,6 +22,9 @@ const EXPAND_SEL = '#proof, .cio-proof';
 
 const SKIP_SEL = 'script, style, noscript, nav, .app-toc, .about-toc, .application-toc';
 
+/** Above-fold media — paint immediately; don’t fade while video buffers. */
+const MEDIA_SKIP_SEL = '.pvideo, .work-stage';
+
 let observer: IntersectionObserver | null = null;
 
 function reduceMotion() {
@@ -68,7 +71,7 @@ function collectTargets(main: HTMLElement): HTMLElement[] {
 
   const add = (el: HTMLElement, index: number) => {
     if (seen.has(el) || el.closest('[data-no-reveal]')) return;
-    if (el.matches(SKIP_SEL)) return;
+    if (el.matches(SKIP_SEL) || el.matches(MEDIA_SKIP_SEL)) return;
     // Don’t reveal a parent if a descendant is already a target (or vice versa).
     for (const t of seen) {
       if (t.contains(el) || el.contains(t)) return;
@@ -87,7 +90,7 @@ function collectTargets(main: HTMLElement): HTMLElement[] {
 
   for (const block of blockRoots(main)) {
     if (block.closest('[data-no-reveal]')) continue;
-    if (block.matches(STAGGER_SEL)) continue;
+    if (block.matches(STAGGER_SEL) || block.matches(MEDIA_SKIP_SEL)) continue;
 
     if (block.matches(EXPAND_SEL)) {
       for (const kid of block.children) {

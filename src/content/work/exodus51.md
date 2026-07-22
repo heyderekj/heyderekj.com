@@ -30,7 +30,7 @@ priorProblem: |
 priorSolution: |
   Went back to the content for a solid foundation. The "We free slaves" was my bold attempt to quickly communicate what the organization does. The site would have various sections communicating what the org does, why them, and then overall very clear "donate" buttons.
 liveLink: "https://exodus51.org"
-liveLinkNote: "The live site is a different design and was not designed by me. Wayback Machine shows the shipped Webflow work from this case study. Proposed redesign is an Astro direction that wasn’t accepted."
+liveLinkNote: "The live site is a different design and was not designed by me. Wayback Machine shows the shipped Webflow work from this case study. Proposed redesign is an Astro build that wasn’t accepted."
 waybackUrl: "https://web.archive.org/web/20260722143719/https://exodus-51.webflow.io/"
 proposalLink: "https://exodus51.netlify.app/"
 proposalLinkLabel: "Proposed redesign"

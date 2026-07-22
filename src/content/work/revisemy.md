@@ -17,7 +17,7 @@ gallery:
   - "/images/work/revisemy/gallery-05.webp"
   - "/images/work/revisemy/gallery-06.webp"
 video: "/images/work/revisemy/tour.mp4"
-videoPoster: "/images/work/revisemy/gallery-01.webp"
+videoPoster: "/images/work/revisemy/video-poster.webp"
 videoAspect: "1500 / 900"
 videoCaption: "Product tour — marks, the board, guest links, and the agent checkup loop."
 liveLink: "https://revisemy.com"

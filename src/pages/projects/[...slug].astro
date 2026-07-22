@@ -163,7 +163,7 @@ const preloadImages = [
               muted
               loop
               playsinline
-              preload="metadata"
+              preload="auto"
               poster={soloVideo.poster}
               aria-label={soloVideo.alt ?? soloVideo.caption ?? `${project.data.name} tour`}
             >
@@ -232,19 +232,6 @@ const preloadImages = [
       img.parentNode.insertBefore(fig, img);
       fig.appendChild(img);
       triggerFor(img);
-    });
-
-    // Muted video loops autoplay unless the visitor prefers reduced motion,
-    // in which case they get a poster + controls instead.
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.querySelectorAll('video[data-autoplay]').forEach((video) => {
-      if (reduceMotion) {
-        video.controls = true;
-      } else {
-        video.autoplay = true;
-        const p = video.play();
-        if (p && p.catch) p.catch(() => {});
-      }
     });
 
     // Figma (etc.) embeds: scroll the page through them until click-to-interact.

@@ -899,6 +899,26 @@ figure.zoomable.is-zoomed {
 .plyr--video .plyr__control:focus-visible,
 .plyr--video .plyr__control[aria-expanded='true'] {
   background: var(--accent);
+  color: #fff;
+}
+
+/* Keep glyphs white on orange chrome (hover / overlaid play). */
+.plyr--video .plyr__control svg {
+  fill: currentColor;
+}
+
+/*
+  WebKit won't paint <use href="#id"> when the sprite lives in display:none.
+  Override [hidden] with a zero-box clip so symbols stay referenceable.
+*/
+#sprite-plyr[hidden] {
+  display: block !important;
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
 }
 
 .plyr--full-ui input[type='range'] {

@@ -246,15 +246,6 @@ const tocItems = [
 
   <script is:inline>
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.querySelectorAll('video[data-autoplay]').forEach((video) => {
-      if (reduceMotion) {
-        video.controls = true;
-      } else {
-        video.autoplay = true;
-        const p = video.play();
-        if (p && p.catch) p.catch(() => {});
-      }
-    });
 
     const fold = document.querySelector('[data-letter-fold]');
     const more = document.querySelector('[data-letter-more]');

@@ -199,7 +199,7 @@ const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[
               muted
               loop
               playsinline
-              preload="metadata"
+              preload="auto"
               poster={d.videoPoster}
               aria-label={d.videoCaption ?? `${d.title} site tour`}
             >
@@ -431,22 +431,7 @@ const preloadImages = [d.videoPoster, stageImages[0]].filter(Boolean) as string[
       });
     }
 
-    function initWorkVideos() {
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]').forEach((video) => {
-        if (reduceMotion) {
-          video.controls = true;
-        } else {
-          video.autoplay = true;
-          const p = video.play();
-          if (p && typeof p.catch === 'function') p.catch(() => {});
-        }
-      });
-    }
-
     initWorkStages();
-    initWorkVideos();
     document.addEventListener('astro:page-load', initWorkStages);
-    document.addEventListener('astro:page-load', initWorkVideos);
   </script>
 </Base>
