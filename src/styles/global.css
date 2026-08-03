@@ -229,12 +229,6 @@ body {
   white-space: nowrap;
 }
 
-.site-brand__role {
-  font-size: var(--size-micro);
-  color: var(--muted-strong);
-  white-space: nowrap;
-}
-
 .site-nav {
   display: flex;
   align-items: stretch;
