@@ -6,8 +6,6 @@ import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
 import { projectStartTime } from '../lib/projectStart';
 import { schemaPersonId, schemaWebsiteId } from '../lib/schemaIds';
-import GitHubActivity from '../components/GitHubActivity.astro';
-import { fetchGitHubActivity } from '../lib/github';
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
 const defaultDesc =
@@ -54,13 +52,11 @@ const retiredProjects = allProjects.filter((p) => p.data.status === 'retired');
 const pausedCount = pausedProjects.length;
 const maintainedCount = maintainedProjects.length;
 const retiredCount = retiredProjects.length;
-
-const githubData = await fetchGitHubActivity();
 ---
 <Base jsonLd={homeJsonLd}>
   <section class="intro">
     <p>
-      I live in the Des Moines, IA area with my wife and our little zoo. When I'm not at my Mac I'm at church or learning the drums. Right now, I make websites with <a href="https://kemdesign.co" class="text-chip" rel="noopener noreferrer"><i class="ph-bold ph-pencil-simple" aria-hidden="true"></i>Kem Design</a> and apps on the side—primarily <a href="/projects/harvous/" class="text-chip"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a>
+      I live in the Des Moines, IA area with my wife and our little zoo. When I'm not at my Mac, I'm at church, learning the drums, or watching a sitcom. Now, I make websites with <a href="https://kemdesign.co" class="text-chip" rel="noopener noreferrer"><i class="ph-bold ph-pencil-simple" aria-hidden="true"></i>Kem Design</a> and apps on the side—primarily <a href="/projects/harvous/" class="text-chip"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a>
     </p>
     <div class="intro-links">
       <a href="/about" class="intro-pill">
@@ -134,8 +130,6 @@ const githubData = await fetchGitHubActivity();
       )}
     </ul>
   )}
-
-  <GitHubActivity data={githubData} />
 </Base>
 
 <style>
