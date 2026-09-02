@@ -1,0 +1,812 @@
+---
+/*
+  `/rythm/` — Web Designer application page.
+
+  Shares the `cio-` class namespace with `/customerio/` and `/greptile/` on
+  purpose: it's this site's application-page namespace, and `src/client/reveal.ts`
+  + `global.css` both key off those names (`.cio-proof`, `.cio-shots`,
+  `.cio-shot-video-clip`). Renaming would mean editing shared files for zero
+  visual gain. Only the base chip rules + the neutral `--brand` variant are
+  redefined here (no project-color chips are used on this page).
+*/
+import Base from '../layouts/Base.astro';
+import PageTitle from '../components/PageTitle.astro';
+import ApplicationToc from '../components/ApplicationToc.astro';
+import TestimonialCarousel from '../components/TestimonialCarousel.astro';
+import MediaStepper from '../components/MediaStepper.astro';
+import { testimonials } from '../data/about';
+import {
+  rythmMeta,
+  rythmIntro,
+  rythmLetter,
+  rythmHealthtechLead,
+  rythmHealthtechBlocks,
+  rythmCraftLead,
+  rythmCraftBlocks,
+} from '../data/rythm';
+
+const letter = rythmLetter;
+
+/* Healthtech + craft render identical block markup — one map, two sections. */
+const blockSections = [
+  {
+    id: 'healthtech',
+    heading: '/ healthtech',
+    headingHref: '/work/',
+    lead: rythmHealthtechLead,
+    blocks: rythmHealthtechBlocks,
+  },
+  {
+    id: 'craft',
+    heading: '/ web & product craft',
+    headingHref: '/work/',
+    lead: rythmCraftLead,
+    blocks: rythmCraftBlocks,
+  },
+];
+
+/* Strip preview: one image at rest, the full project gallery once expanded —
+   same galleries used on the /work/ pages themselves, in the same order. */
+const claimableStripItems = [
+  {
+    src: '/images/work/claimable/thumbnail.webp',
+    alt: 'Claimable homepage hero — "We make it easy to appeal denied health claims," with an approved-appeal notification and press logos',
+  },
+  {
+    src: '/images/work/claimable/gallery-01.webp',
+    alt: 'Claimable "Why Appeal?" proof section with denial-rate and success-rate stat cards',
+  },
+  {
+    src: '/images/work/claimable/gallery-02.webp',
+    alt: 'Claimable appeal preview showing an AI-drafted letter with clinical evidence highlighted inline',
+  },
+  {
+    src: '/images/work/claimable/gallery-03.webp',
+    alt: 'Claimable "Ready to get started?" call-to-action band and footer',
+  },
+  {
+    src: '/images/work/claimable/gallery-04.webp',
+    alt: 'Claimable "About us" page with the physician-led founding team',
+  },
+  {
+    src: '/images/work/claimable/gallery-05.webp',
+    alt: 'Claimable careers section — "Work with us"',
+  },
+  {
+    src: '/images/work/claimable/gallery-06.webp',
+    alt: 'Claimable alternate hero — "Appeal faster and win more," with a physician reviewing a tablet',
+  },
+];
+
+const careContinuityStripItems = [
+  {
+    src: '/images/work/care-continuity/thumbnail.png',
+    alt: 'Care Continuity homepage hero — "Close the loop on follow-up care across your health system," with a patient-and-provider photo and outcome stats',
+  },
+  {
+    src: '/images/work/care-continuity/gallery-02.png',
+    alt: 'Care Continuity solutions grid — ED Connect, Referral IQ, Readmission IQ, and CarePath IQ',
+  },
+  {
+    src: '/images/work/care-continuity/gallery-03.png',
+    alt: 'Referral IQ solution page applying the shared template with its own color and photography',
+  },
+  {
+    src: '/images/work/care-continuity/gallery-04.png',
+    alt: 'ED Connect problem-versus-solution comparison for missed referral opportunities',
+  },
+  {
+    src: '/images/work/care-continuity/gallery-05.png',
+    alt: 'How Readmission IQ works — a four-step process with a patient outreach illustration',
+  },
+  {
+    src: '/images/work/care-continuity/gallery-06.png',
+    alt: 'Care Continuity "3,000,000 patients navigated" stat and leadership team section',
+  },
+];
+
+const tocItems = [
+  { id: 'letter', label: 'Letter to Kelsie' },
+  { id: 'healthtech', label: 'Healthtech' },
+  { id: 'craft', label: 'Web & product craft' },
+  { id: 'recommendations', label: 'Recommendations' },
+  { id: 'connect', label: 'Connect' },
+];
+---
+
+<Base
+  title={rythmMeta.title}
+  description={rythmMeta.description}
+  ogImage={rythmMeta.ogImage}
+  noindex={true}
+>
+  <PageTitle path="/rythm" />
+
+  <ApplicationToc items={tocItems} />
+
+  <p class="cio-intro">
+    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" src={rythmIntro.photoSrc} alt={rythmIntro.photoAlt} width={18} height={18} decoding="async" /><span class="cio-chip__label">Derek</span></span>, a designer in Des Moines, IA. I've made brands and websites full-time since 2018, and lately that's meant owning healthtech marketing sites and design systems end to end. I'm applying for <strong>Web Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i><span class="cio-chip__label">Rythm</span></span>
+  </p>
+
+  <div class="cio-visual-strip">
+    <MediaStepper items={claimableStripItems} label="Claimable screenshots" aspect="16 / 10" autoplayZoomed />
+    <MediaStepper items={careContinuityStripItems} label="Care Continuity screenshots" aspect="16 / 10" autoplayZoomed />
+  </div>
+
+  <section id="letter" class="cio-letter" aria-label="Cover letter">
+    <div class="cio-letter__fold" data-letter-fold>
+      <div class="cio-letter__sheet" id="cio-letter-sheet">
+        <header class="cio-letter__address">
+          <p>
+            <span class="cio-letter__label">To:</span>
+            {letter.to}
+          </p>
+          <p>
+            <span class="cio-letter__label">From:</span>
+            {letter.from}
+          </p>
+        </header>
+
+        <hr class="cio-letter__rule" aria-hidden="true" />
+
+        <p class="cio-letter__salutation">{letter.salutation}</p>
+
+        {letter.paragraphs.map((paragraph) => (
+          <p class="cio-letter__paragraph">{paragraph}</p>
+        ))}
+
+        <p class="cio-letter__signoff">{letter.signoff}</p>
+      </div>
+
+      <button
+        type="button"
+        class="cio-letter__more"
+        data-letter-more
+        aria-expanded="false"
+        aria-controls="cio-letter-sheet"
+      >
+        Read the full letter
+      </button>
+    </div>
+  </section>
+
+  {blockSections.map((section) => (
+    <section id={section.id} class="cio-proof" aria-labelledby={`${section.id}-heading`}>
+      <h2 id={`${section.id}-heading`} class="section-title">
+        <a href={section.headingHref}>{section.heading}</a>
+      </h2>
+      <p class="cio-section-lead">{section.lead}</p>
+
+      {section.blocks.map((block) => (
+        <article
+          class:list={[
+            'cio-proof-block',
+            block.shots.some((s) => s.type === 'video') && 'cio-proof-block--media-first',
+          ]}
+        >
+          {(Array.isArray(block.html) ? block.html : [block.html]).map((p) => (
+            <p class="cio-body" set:html={p} />
+          ))}
+
+          {block.shots.length > 0 && (
+            <figure class="cio-shots">
+              {block.shots.map((shot) =>
+                shot.type === 'video' ? (
+                  <div class="zoomable zoom-cell zoom-cell--video">
+                    {/*
+                      Div trigger (not <button>): native video controls are invalid
+                      / broken inside a button once expanded.
+                    */}
+                    <div
+                      class="zoom-trigger cio-shot-video-shell"
+                      role="button"
+                      tabindex="0"
+                      aria-label="Zoom video"
+                      aria-expanded="false"
+                      style={[
+                        shot.width && shot.height
+                          ? `--cio-video-ar: ${shot.width} / ${shot.height}`
+                          : null,
+                        shot.width != null ? `--cio-video-w: ${shot.width}` : null,
+                      ]
+                        .filter(Boolean)
+                        .join('; ')}
+                    >
+                      {/*
+                        Clip wrapper: overflow+radius is more reliable on <video>
+                        than border-radius on the media element itself (WebKit).
+                        Radius is width-based (cqw) so corners stay circular.
+                      */}
+                      <span class="cio-shot-video-clip">
+                        <video
+                          class="cio-shot-video"
+                          data-plyr
+                          data-autoplay
+                          muted
+                          loop
+                          playsinline
+                          preload="metadata"
+                          poster={shot.poster}
+                          width={shot.width}
+                          height={shot.height}
+                          aria-label={shot.alt}
+                        >
+                          <source src={shot.src} type="video/mp4" />
+                        </video>
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div class:list={['zoomable', 'zoom-cell', shot.full && 'zoom-cell--full']}>
+                    <button
+                      type="button"
+                      class="zoom-trigger"
+                      aria-label="Zoom image"
+                      aria-expanded="false"
+                    >
+                      <img
+                        src={shot.src}
+                        alt={shot.alt}
+                        loading="lazy"
+                        decoding="async"
+                        class:list={[shot.full && 'cio-shot--wide']}
+                      />
+                    </button>
+                  </div>
+                ),
+              )}
+              {block.caption && <figcaption>{block.caption}</figcaption>}
+            </figure>
+          )}
+
+          {block.more && (
+            <a href={block.more.href} class="cio-more">
+              More on {block.more.label}
+              <span class="arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          )}
+        </article>
+      ))}
+    </section>
+  ))}
+
+  <div id="recommendations">
+    <TestimonialCarousel testimonials={testimonials} headingId="rythm-testimonials-heading" />
+  </div>
+
+  <nav id="connect" class="cio-footer intro-links" aria-label="More on this site">
+    <a href="mailto:derekj@hey.com" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      derekj@hey.com
+    </a>
+    <a href="/work/" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      Work
+    </a>
+    <a href="/projects/" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      Projects
+    </a>
+    <a href="/posts/" class="intro-pill">
+      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      Posts
+    </a>
+  </nav>
+
+  <script is:inline>
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const fold = document.querySelector('[data-letter-fold]');
+    const more = document.querySelector('[data-letter-more]');
+    if (fold && more) {
+      more.addEventListener('click', () => {
+        const open = fold.classList.toggle('is-open');
+        more.setAttribute('aria-expanded', open ? 'true' : 'false');
+        more.textContent = open ? 'Show less' : 'Read the full letter';
+        if (!open) {
+          fold.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
+      });
+    }
+  </script>
+</Base>
+
+<style is:global>
+  /* Chips must be global: block chips arrive via set:html and never get
+     Astro's scoped attribute. One definition covers intro + block chips. */
+  .cio-chip,
+  main.main a.cio-chip {
+    --cio-chip-pad-y: 0.32em;
+    display: inline-flex;
+    /* Baseline from the label text — not the avatar (replaced elems baseline
+       at their bottom edge and lift the whole chip vs surrounding copy). */
+    align-items: baseline;
+    gap: 0.28em;
+    padding: var(--cio-chip-pad-y) 0.65em var(--cio-chip-pad-y) 0.45em;
+    /* Pull the taller chip out of the line box so paragraph leading stays put */
+    margin-block: calc(var(--cio-chip-pad-y) * -1);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    font-size: 0.94em;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--fg);
+    white-space: nowrap;
+    text-decoration: none;
+    vertical-align: baseline;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* Beat `main.main a` hairline / color: inherit on linked chips */
+  main.main a.cio-chip {
+    border: 1px solid var(--border);
+    border-bottom-style: solid;
+    color: var(--chip-color, var(--fg));
+  }
+
+  main.main a.cio-chip:hover {
+    border-color: color-mix(in srgb, var(--chip-color, var(--fg)) 55%, var(--border));
+    background: color-mix(in srgb, var(--chip-color, var(--fg)) 12%, var(--bg-elevated));
+  }
+
+  .cio-chip[href] {
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .cio-chip__label {
+    display: inline;
+    line-height: 1.15;
+  }
+
+  .cio-chip i {
+    font-size: 0.85em;
+    margin: 0;
+    line-height: 1;
+    align-self: center;
+    transform: translateY(0.06em);
+  }
+
+  .cio-chip__avatar {
+    display: block;
+    width: 1em;
+    height: 1em;
+    margin: 0;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* Rythm chip stays neutral on purpose — this page is my site making a
+     case, not wearing their brand. */
+  .cio-chip--brand,
+  main.main a.cio-chip--brand {
+    padding-left: 0.5em;
+    color: var(--fg);
+    border-color: var(--border-strong);
+  }
+</style>
+
+<style>
+  .cio-intro {
+    margin: 0 0 var(--space-4);
+    max-width: 93%;
+    font-size: var(--size-lead);
+    line-height: 1.75;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+
+  .cio-intro strong {
+    color: var(--fg);
+    font-weight: 600;
+  }
+
+  .cio-visual-strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+    margin: 0 0 var(--space-5);
+  }
+
+  /* Each cell is a MediaStepper — sits flush in the grid at rest, and only
+     shows its dot/arrow chrome once zoomed (one image → "cycle through them"). */
+  .cio-visual-strip :global(.ms) {
+    margin-block: 0;
+  }
+
+  .cio-visual-strip :global(.ms:not(.is-zoomed) .ms-controls) {
+    display: none;
+  }
+
+  /* Same rail-breakout the shots grids use, applied to a foreign (MediaStepper)
+     figure sitting in this grid — mirrors `.work-devices > figure.zoomable.is-zoomed`
+     in global.css since that default only fires for non-grid contexts. */
+  .cio-visual-strip > :global(figure.zoomable.is-zoomed) {
+    grid-column: 1 / -1;
+    justify-self: start;
+    width: calc(100% + 2 * var(--z-bleed));
+    max-width: none;
+    margin-inline: calc(-1 * var(--z-bleed));
+  }
+
+  @media (max-width: 480px) {
+    .cio-visual-strip {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Neutral letter: site tokens only, no borrowed brand palette. */
+  .cio-letter {
+    --letter-frame: var(--border-strong);
+    --letter-rule: var(--border);
+    --letter-surface-top: var(--bg-elevated);
+    --letter-surface-bottom: var(--bg);
+    --letter-ink-soft: var(--fg-soft);
+    --letter-ink-muted: var(--muted);
+    --letter-fold-max: min(26rem, 48dvh);
+    margin-bottom: var(--space-5);
+    max-width: 100%;
+  }
+
+  .cio-letter__fold {
+    position: relative;
+  }
+
+  .cio-letter__sheet {
+    position: relative;
+    padding: var(--space-4) var(--space-4) var(--space-5);
+    border: 1px solid var(--letter-frame);
+    border-radius: var(--radius-sm);
+    background: linear-gradient(180deg, var(--letter-surface-top), var(--letter-surface-bottom));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, white 40%, transparent),
+      0 1px 3px color-mix(in srgb, var(--fg) 5%, transparent);
+  }
+
+  .cio-letter__fold:not(.is-open) .cio-letter__sheet {
+    max-height: var(--letter-fold-max);
+    overflow: hidden;
+    border-bottom: 0;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+
+  /* Keep the inner frame, but fade its rails with the fold so sides don’t stub out */
+  .cio-letter__fold:not(.is-open) .cio-letter__sheet::before {
+    bottom: 0;
+    border-bottom: 0;
+    border-radius: calc(var(--radius-sm) - 3px) calc(var(--radius-sm) - 3px) 0 0;
+    -webkit-mask-image: linear-gradient(180deg, #000 40%, transparent 92%);
+    mask-image: linear-gradient(180deg, #000 40%, transparent 92%);
+  }
+
+  /* Fade lives on the sheet (not the fold) so it covers flush to the clip edge */
+  .cio-letter__fold:not(.is-open) .cio-letter__sheet::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 8.5rem;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--letter-surface-bottom) 0%, transparent) 0%,
+      color-mix(in srgb, var(--letter-surface-bottom) 55%, transparent) 45%,
+      var(--letter-surface-bottom) 78%,
+      var(--letter-surface-bottom) 100%
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .cio-letter__more {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35em;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--letter-frame);
+    border-top: 0;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    background: var(--letter-surface-bottom);
+    color: var(--letter-ink-soft);
+    font-family: var(--font-sans);
+    font-size: var(--size-meta);
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+
+  .cio-letter__more:hover {
+    color: var(--fg);
+    background: color-mix(in srgb, var(--letter-surface-bottom) 70%, var(--bg-elevated));
+  }
+
+  .cio-letter__more:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 2px;
+  }
+
+  .cio-letter__fold.is-open .cio-letter__more {
+    margin-top: var(--space-2);
+    border-top: 1px solid var(--letter-frame);
+    border-radius: var(--radius-sm);
+  }
+
+  .cio-letter__sheet::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border: 1px solid var(--letter-frame);
+    border-radius: calc(var(--radius-sm) - 3px);
+    pointer-events: none;
+    opacity: 0.35;
+    z-index: 1;
+  }
+
+  .cio-letter__address {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: var(--size-meta);
+    line-height: 1.65;
+    color: var(--letter-ink-soft);
+  }
+
+  .cio-letter__address p {
+    margin: 0;
+  }
+
+  .cio-letter__address p + p {
+    margin-top: 0.15em;
+  }
+
+  .cio-letter__label {
+    display: inline-block;
+    min-width: 2.75rem;
+    font-family: var(--font-mono);
+    font-size: var(--size-micro);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--letter-ink-muted);
+  }
+
+  .cio-letter__rule {
+    margin: var(--space-3) 0;
+    border: 0;
+    border-top: 1px solid var(--letter-rule);
+  }
+
+  .cio-letter__salutation,
+  .cio-letter__paragraph {
+    margin: 0 0 var(--space-3);
+    font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--letter-ink-soft);
+    text-wrap: pretty;
+  }
+
+  .cio-letter__salutation {
+    margin-bottom: var(--space-2);
+  }
+
+  .cio-letter__signoff {
+    margin: var(--space-4) 0 0;
+    font-family: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--letter-ink-soft);
+  }
+
+  .cio-proof {
+    margin-bottom: var(--space-5);
+  }
+
+  .cio-section-lead,
+  .cio-body {
+    margin: 0 0 var(--space-3);
+    max-width: 93%;
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--fg);
+    text-wrap: pretty;
+  }
+
+  .cio-body:last-of-type {
+    margin-bottom: 0;
+  }
+
+  /* Each block reads as one unit: story, its own shots, a way in. */
+  .cio-proof-block {
+    margin: 0 0 var(--space-6);
+  }
+
+  .cio-proof-block:last-of-type {
+    margin-bottom: 0;
+  }
+
+  /* Tour video leads, then the written beat */
+  .cio-proof-block--media-first {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cio-proof-block--media-first .cio-shots {
+    order: -1;
+    margin: 0 0 var(--space-3);
+  }
+
+  .cio-shots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    align-items: start;
+    margin: var(--space-3) 0 0;
+  }
+
+  .cio-shots .zoom-cell {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .cio-shots .zoom-trigger {
+    display: block;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    cursor: zoom-in;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .cio-shots .zoom-cell.is-zoomed > .zoom-trigger {
+    cursor: zoom-out;
+  }
+
+  .cio-shots .zoom-cell.is-zoomed .cio-shot-video,
+  .cio-shots .zoom-cell.is-zoomed .cio-shot-video-clip,
+  .cio-shots .zoom-cell.is-zoomed .cio-shot-video-clip :global(.plyr) {
+    cursor: default;
+  }
+
+  .cio-shots img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    object-position: center;
+    padding: 14px;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+  }
+
+  /* Wide artifacts (sites, splash pages) lead the block across both columns —
+     a 16:10 screenshot in a square half-width cell is unreadably small. */
+  .cio-shots > .zoom-cell--full {
+    grid-column: 1 / -1;
+  }
+
+  .cio-shots img.cio-shot--wide {
+    aspect-ratio: 16 / 10;
+    padding: clamp(14px, 3vw, 28px);
+  }
+
+  .cio-shots .cio-shot-video-shell {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    padding: 18px 22px;
+    box-sizing: border-box;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+  }
+
+  .cio-shots .cio-shot-video-clip {
+    display: block;
+    /* Cap at native encode width so we don't soft-upscale past the source */
+    width: min(100%, calc(var(--cio-video-w, 9999) * 1px));
+    max-height: min(70dvh, 640px);
+    aspect-ratio: var(--cio-video-ar, auto);
+    container-type: inline-size;
+    overflow: hidden;
+    border-radius: calc(0.01 * 100cqw);
+  }
+
+  .cio-shots .cio-shot-video-clip :global(.plyr),
+  .cio-shots .cio-shot-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: none;
+    border: none;
+    border-radius: 0;
+  }
+
+  .cio-shots .cio-shot-video {
+    /* contain (not fill): avoid upscaling/stretch soft-blur past native pixels */
+    object-fit: contain;
+    object-position: center;
+  }
+
+  /* Tour video leads full-width; stills sit as the pair below */
+  .cio-shots > .zoom-cell:has(.cio-shot-video) {
+    grid-column: 1 / -1;
+  }
+
+  /* Expanded: span the row, then break out toward the rails like project figures */
+  .cio-shots > .zoom-cell.is-zoomed {
+    grid-column: 1 / -1;
+    width: auto;
+    max-width: none;
+    margin-inline: calc(-1 * var(--z-bleed));
+  }
+
+  .cio-shots > .zoom-cell.is-zoomed img {
+    aspect-ratio: auto;
+    height: 100%;
+    max-height: none;
+    padding: clamp(1.25rem, 3.5vw, 2rem);
+  }
+
+  .cio-shots > .zoom-cell.is-zoomed .cio-shot-video-shell {
+    padding: clamp(1.25rem, 3.5vw, 2rem);
+  }
+
+  .cio-shots > .zoom-cell.is-zoomed .cio-shot-video-clip {
+    max-height: calc(82dvh - 2.5rem);
+  }
+
+  .cio-shots > figcaption {
+    grid-column: 1 / -1;
+    margin: 0;
+    max-width: 360px;
+    font-size: var(--size-meta);
+    line-height: 1.45;
+    color: var(--muted-strong);
+    text-align: left;
+    text-wrap: pretty;
+  }
+
+  .cio-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--space-3);
+    font-size: var(--size-meta);
+    color: var(--muted-strong);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  /* `main` lives in Base.astro and never carries this component's scope class,
+     so the ancestor must be :global() or the selector silently never matches. */
+  :global(main.main) .cio-more { border-bottom: none; }
+  :global(main.main) .cio-more:hover { color: var(--fg); border-bottom: none; }
+
+  .cio-more .arrow {
+    display: inline-block;
+    transition: transform 0.2s var(--easing);
+  }
+
+  :global(main.main) .cio-more:hover .arrow { transform: translateX(3px); }
+
+  @media (max-width: 480px) {
+    .cio-shots { grid-template-columns: 1fr; }
+  }
+
+  .cio-footer {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-4);
+  }
+</style>

@@ -30,6 +30,9 @@ interface Props {
   label?: string;
   /** false (default) | true (5000ms) | ms per slide. */
   autoplay?: number | boolean;
+  /** Same as `autoplay`, but only while the frame is expanded (zoomed) — for
+   * steppers that should sit still at rest and only cycle once opened. */
+  autoplayZoomed?: number | boolean;
   /** CSS aspect-ratio for the frame. */
   aspect?: string;
   /** How images fill the frame. Prefer crops with built-in margin when using `cover`. */
@@ -44,6 +47,7 @@ const {
   items,
   label = 'Screenshots',
   autoplay = false,
+  autoplayZoomed = false,
   aspect = '4 / 3',
   fit = 'contain',
   zoomable = true,
@@ -51,6 +55,8 @@ const {
 } = Astro.props;
 
 const autoplayMs = autoplay === true ? 5000 : typeof autoplay === 'number' ? autoplay : null;
+const autoplayZoomedMs =
+  autoplayZoomed === true ? 5000 : typeof autoplayZoomed === 'number' ? autoplayZoomed : null;
 const count = items.length;
 /** Still URLs + video posters — warmed before the stepper enters view. */
 const prefetchImages = items.flatMap((item) =>
@@ -61,6 +67,7 @@ const prefetchImages = items.flatMap((item) =>
   class:list={['ms', 'zoomable', fit === 'cover' && 'ms--cover', mat === 'macos-dark' && 'ms--macos-dark']}
   data-stepper
   data-autoplay-ms={autoplayMs ?? undefined}
+  data-autoplay-zoomed-ms={autoplayZoomedMs ?? undefined}
   data-prefetch-images={JSON.stringify(prefetchImages)}
   data-prefetch-idle
   aria-roledescription="carousel"
@@ -196,6 +203,13 @@ const prefetchImages = items.flatMap((item) =>
   .ms.is-zoomed .ms-frame {
     aspect-ratio: 4 / 3;
     padding: clamp(1.25rem, 3.5vw, 2rem);
+  }
+
+  /* `.ms-slide .ms-trigger` below sets cursor: zoom-in unconditionally, which
+     ties in specificity with global.css's `.zoomable.is-zoomed .zoom-trigger`
+     rule — this scoped override is what actually has to win when expanded. */
+  .ms.is-zoomed .ms-slide :global(.ms-trigger) {
+    cursor: zoom-out;
   }
 
   .ms.is-zoomed .ms-slide img,
@@ -482,11 +496,13 @@ const prefetchImages = items.flatMap((item) =>
     let cycleStart = 0;
     let autoplayDead = false;
 
-    const autoplayMs = reduceMotion ? null : Number(root.dataset.autoplayMs) || null;
+    const restAutoplayMs = reduceMotion ? null : Number(root.dataset.autoplayMs) || null;
+    const zoomedAutoplayMs = reduceMotion ? null : Number(root.dataset.autoplayZoomedMs) || null;
 
-    // Zooming the frame (zoom.ts) fires `zoomchange`; kill autoplay for good so
-    // it never advances underneath an expanded frame.
+    // Zooming the frame (zoom.ts) fires `zoomchange`; which of the two
+    // autoplay speeds (if any) applies depends on whether we're expanded.
     const zoomed = () => root.classList.contains('is-zoomed');
+    const currentAutoplayMs = () => (zoomed() ? zoomedAutoplayMs : restAutoplayMs);
 
     function setSlideActive(slide: HTMLElement, active: boolean, dir: number) {
       slide.style.setProperty('--dir', `${dir * 12}px`);
@@ -560,12 +576,13 @@ const prefetchImages = items.flatMap((item) =>
     }
 
     function restartCycle() {
-      if (!autoplayMs || autoplayDead) return;
+      const ms = currentAutoplayMs();
+      if (!ms || autoplayDead) return;
       if (timer) window.clearTimeout(timer);
-      remaining = autoplayMs;
+      remaining = ms;
       cycleStart = Date.now();
-      startFill(autoplayMs);
-      timer = window.setTimeout(tick, autoplayMs);
+      startFill(ms);
+      timer = window.setTimeout(tick, ms);
     }
 
     function tick() {
@@ -573,7 +590,7 @@ const prefetchImages = items.flatMap((item) =>
     }
 
     function pauseCycle() {
-      if (!autoplayMs || autoplayDead || !timer) return;
+      if (!currentAutoplayMs() || autoplayDead || !timer) return;
       window.clearTimeout(timer);
       timer = null;
       remaining -= Date.now() - cycleStart;
@@ -582,19 +599,27 @@ const prefetchImages = items.flatMap((item) =>
     }
 
     function resumeCycle() {
-      if (!autoplayMs || autoplayDead || timer) return;
+      if (!currentAutoplayMs() || autoplayDead || timer) return;
       cycleStart = Date.now();
       const fill = activeFill();
       if (fill) fill.style.animationPlayState = '';
       timer = window.setTimeout(tick, Math.max(remaining, 250));
     }
 
-    function killAutoplay() {
-      autoplayDead = true;
+    /** Non-destructive stop — used when leaving the state (rest/zoomed) that
+     * was driving the cycle, so it can start again if that state returns. */
+    function stopCycle() {
       if (timer) window.clearTimeout(timer);
       timer = null;
       const fill = activeFill();
       if (fill) fill.removeAttribute('data-filling');
+    }
+
+    /** Permanent stop — any deliberate manual interaction (click/swipe/key)
+     * turns off autoplay for good, in either state. */
+    function killAutoplay() {
+      autoplayDead = true;
+      stopCycle();
     }
 
     /* ---------- events ---------- */
@@ -670,10 +695,15 @@ const prefetchImages = items.flatMap((item) =>
       }
     });
 
-    // Expanding the frame inline kills autoplay (matches "any interaction stops it").
-    root.addEventListener('zoomchange', () => { if (zoomed()) killAutoplay(); });
+    // Switching between rest/zoomed swaps which autoplay speed (if any)
+    // applies — stop whatever was running and start the other side's cycle.
+    root.addEventListener('zoomchange', () => {
+      if (autoplayDead) return;
+      stopCycle();
+      restartCycle();
+    });
 
-    if (autoplayMs) {
+    if (restAutoplayMs || zoomedAutoplayMs) {
       root.addEventListener('mouseenter', pauseCycle);
       root.addEventListener('mouseleave', resumeCycle);
       root.addEventListener('focusin', pauseCycle);
@@ -684,7 +714,7 @@ const prefetchImages = items.flatMap((item) =>
         if (document.hidden) pauseCycle();
         else resumeCycle();
       });
-      restartCycle();
+      if (restAutoplayMs) restartCycle();
     }
 
     // Videos in the initial slide state
