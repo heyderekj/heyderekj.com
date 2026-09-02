@@ -42,8 +42,8 @@ export type BragPreview = {
   /** Phosphor icon name without weight prefix, e.g. `read-cv-logo` */
   icon?: string;
   caption?: string;
-  /** About-page experience card, post list, or project stats */
-  variant?: 'image' | 'experience' | 'posts' | 'stats' | 'link';
+  /** About-page experience card, post list, project stats, or a video thumbnail */
+  variant?: 'image' | 'experience' | 'posts' | 'stats' | 'link' | 'video';
   range?: string;
   name?: string;
   description?: string;
@@ -52,6 +52,8 @@ export type BragPreview = {
   projectStats?: BragProjectStat[];
   /** Single row: total non-draft projects from earliest start year to now */
   aggregateProjects?: boolean;
+  /** `variant: 'video'` only — opens this ID in the site's YouTube modal instead of linking out */
+  youtubeId?: string;
 };
 
 export type BragSummaryLink = {
@@ -172,6 +174,20 @@ export const bragCredit = {
 };
 
 export const bragClippings: BragClipping[] = [
+  {
+    publication: 'Restock Podcast',
+    dateline: 'Aug 2026',
+    headline: 'Ep. 10 — No Regrets',
+    summary:
+      'Corey Moen and Matthew P Munger had me on Restock, their No-Code Supply Co. show, to talk my path from architecture to design, specialized agents, and dynamic websites.',
+    href: 'https://youtu.be/VYg5EpGZFWg',
+    preview: {
+      src: '/assets/about/restock-ep10-thumb.webp',
+      alt: 'Derek with Corey Moen and Matthew P Munger on the Restock podcast, Episode 10 — No Regrets',
+      variant: 'video',
+      youtubeId: 'VYg5EpGZFWg',
+    },
+  },
   {
     publication: 'The Mac Desk',
     dateline: 'May 2026',

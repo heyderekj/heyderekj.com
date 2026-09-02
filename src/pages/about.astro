@@ -284,16 +284,21 @@ const fmtPostDate = (iso: string) =>
                   }
 
                   const media = preview.src ? (
-                    <div class="brag-preview-media">
+                    <div class:list={['brag-preview-media', preview.variant === 'video' && 'brag-preview-media--video']}>
                       <img
                         class="brag-preview-img"
                         src={preview.src}
                         alt={preview.alt}
                         width={320}
-                        height={320}
+                        height={preview.variant === 'video' ? 180 : 320}
                         loading="lazy"
                         decoding="async"
                       />
+                      {preview.variant === 'video' && (
+                        <span class="brag-preview-play" aria-hidden="true">
+                          <i class="ph-fill ph-play" />
+                        </span>
+                      )}
                     </div>
                   ) : (
                     <div class="brag-preview-media brag-preview-media--icon" aria-hidden="true">
@@ -303,6 +308,21 @@ const fmtPostDate = (iso: string) =>
                   const caption = preview.caption ? (
                     <span class="brag-preview-caption">{preview.caption}</span>
                   ) : null;
+
+                  if (preview.variant === 'video' && preview.youtubeId) {
+                    return (
+                      <a
+                        class="brag-preview"
+                        href={href}
+                        data-video-modal-trigger
+                        data-youtube-id={preview.youtubeId}
+                        aria-haspopup="dialog"
+                      >
+                        {media}
+                        {caption}
+                      </a>
+                    );
+                  }
 
                   return href ? (
                     <a class="brag-preview" href={href}>
@@ -404,6 +424,22 @@ const fmtPostDate = (iso: string) =>
         </a>
       ))}
     </nav>
+
+    <dialog class="video-modal" data-video-modal aria-label="Video player">
+      <button type="button" class="video-modal__close" data-video-modal-close aria-label="Close video">
+        <i class="ph-bold ph-x" aria-hidden="true"></i>
+      </button>
+      <div class="video-modal__frame">
+        <iframe
+          data-video-modal-iframe
+          src=""
+          title="Video player"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </dialog>
   </article>
 
   <script>
@@ -481,6 +517,48 @@ function initBragEpigraphNote() {
 
     initBragEpigraphNote();
     document.addEventListener('astro:page-load', initBragEpigraphNote);
+
+    function initBragVideoModal() {
+      const dialog = document.querySelector('[data-video-modal]');
+      if (!(dialog instanceof HTMLDialogElement) || dialog.dataset.videoModalInit) return;
+      dialog.dataset.videoModalInit = '1';
+
+      const iframe = dialog.querySelector('[data-video-modal-iframe]');
+      const closeBtn = dialog.querySelector('[data-video-modal-close]');
+      if (!(iframe instanceof HTMLIFrameElement)) return;
+
+      const stop = () => {
+        iframe.src = '';
+      };
+      const close = () => {
+        dialog.close();
+        stop();
+      };
+
+      // Escape triggers the browser's native close path, bypassing `close()` above.
+      dialog.addEventListener('close', stop);
+
+      dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) close();
+      });
+
+      closeBtn?.addEventListener('click', close);
+
+      document.querySelectorAll('[data-video-modal-trigger]').forEach((trigger) => {
+        trigger.addEventListener('click', (e) => {
+          if (!(e instanceof MouseEvent)) return;
+          if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+          const id = trigger.getAttribute('data-youtube-id');
+          if (!id) return;
+          e.preventDefault();
+          iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&cc_load_policy=0`;
+          dialog.showModal();
+        });
+      });
+    }
+
+    initBragVideoModal();
+    document.addEventListener('astro:page-load', initBragVideoModal);
   </script>
 </Base>
 
@@ -1092,6 +1170,45 @@ function initBragEpigraphNote() {
     opacity: 0.9;
   }
 
+  /* Video thumbnails fill the frame edge-to-edge instead of sitting in the square mat */
+  .brag-preview-media--video {
+    aspect-ratio: 16 / 9;
+  }
+
+  .brag-preview-media--video .brag-preview-img {
+    object-fit: cover;
+    padding: 0;
+  }
+
+  .brag-preview-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    transition: transform 0.2s var(--easing), background-color 0.2s ease;
+  }
+
+  .brag-preview-play i {
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-left: 2px;
+  }
+
+  .brag-preview:hover .brag-preview-play {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+
   .brag-preview-img {
     display: block;
     width: 100%;
@@ -1191,6 +1308,67 @@ function initBragEpigraphNote() {
       transition: none;
       transform: none;
     }
+  }
+
+  .video-modal {
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: transparent;
+    width: min(92vw, 960px);
+    max-width: 960px;
+    overflow: visible;
+  }
+
+  .video-modal::backdrop {
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .video-modal__frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  }
+
+  .video-modal__frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .video-modal__close {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .video-modal__close:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .video-modal__close i {
+    font-size: 1.1rem;
   }
 </style>
 
