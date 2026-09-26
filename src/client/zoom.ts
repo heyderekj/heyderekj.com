@@ -183,6 +183,19 @@ function readInlineBleed(fig: HTMLElement): number {
   return Number.isFinite(ml) && ml < 0 ? -ml : 0;
 }
 
+/** Responsive images: ask for a larger variant while expanded, restore after. */
+function syncSizes(fig: HTMLElement, open: boolean) {
+  fig.querySelectorAll<HTMLImageElement>('img[srcset]').forEach((img) => {
+    if (open) {
+      if (img.dataset.sizesRest === undefined) img.dataset.sizesRest = img.sizes;
+      img.sizes = 'min(100vw, 960px)';
+    } else if (img.dataset.sizesRest !== undefined) {
+      img.sizes = img.dataset.sizesRest;
+      delete img.dataset.sizesRest;
+    }
+  });
+}
+
 function collapse(fig: HTMLElement, animate = true) {
   const mat = matOf(fig);
   const img = imgOf(mat);
@@ -194,6 +207,7 @@ function collapse(fig: HTMLElement, animate = true) {
   fig.classList.remove('is-zoomed');
   labelFig(fig, false);
   syncVideoChrome(fig, false);
+  syncSizes(fig, false);
 
   const last = fig.getBoundingClientRect();
   const lastMat = mat?.getBoundingClientRect() ?? null;
@@ -221,6 +235,7 @@ function expand(fig: HTMLElement) {
   fig.classList.add('is-zoomed');
   labelFig(fig, true);
   syncVideoChrome(fig, true);
+  syncSizes(fig, true);
 
   const last = fig.getBoundingClientRect();
   const lastMat = mat?.getBoundingClientRect() ?? null;

@@ -1,4 +1,5 @@
 ---
+import { imgAttrs, imgFixed, imgSrc } from '../lib/img';
 /*
   `/greptile/` — Brand Designer application page.
 
@@ -75,7 +76,7 @@ const tocItems = [
   <ApplicationToc items={tocItems} />
 
   <p class="cio-intro">
-    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" src={greptileIntro.photoSrc} alt={greptileIntro.photoAlt} width={18} height={18} decoding="async" /><span class="cio-chip__label">Derek</span></span>, a designer in Des Moines, IA. I've made brands and websites full-time since 2018, and for the past two years I've been designing, shipping, and launching my own developer tools. I'm applying for <strong>Brand Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-git-branch" aria-hidden="true"></i><span class="cio-chip__label">Greptile</span></span>
+    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" {...imgFixed(greptileIntro.photoSrc, 18)} alt={greptileIntro.photoAlt} width={18} height={18} decoding="async" /><span class="cio-chip__label">Derek</span></span>, a designer in Des Moines, IA. I've made brands and websites full-time since 2018, and for the past two years I've been designing, shipping, and launching my own developer tools. I'm applying for <strong>Brand Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-git-branch" aria-hidden="true"></i><span class="cio-chip__label">Greptile</span></span>
   </p>
 
   <section id="letter" class="cio-letter" aria-label="Cover letter">
@@ -174,7 +175,7 @@ const tocItems = [
                           loop
                           playsinline
                           preload="metadata"
-                          poster={shot.poster}
+                          poster={shot.poster ? imgSrc(shot.poster, 1280) : undefined}
                           width={shot.width}
                           height={shot.height}
                           aria-label={shot.alt}
@@ -193,7 +194,7 @@ const tocItems = [
                       aria-expanded="false"
                     >
                       <img
-                        src={shot.src}
+                        {...imgAttrs(shot.src, { sizes: '(max-width: 560px) 100vw, 530px', dims: false })}
                         alt={shot.alt}
                         loading="lazy"
                         decoding="async"

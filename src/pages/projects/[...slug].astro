@@ -5,6 +5,7 @@ import MediaStepper from '../../components/MediaStepper.astro';
 import { formatProjectStartLabel, formatProjectUpdatedLabel } from '../../lib/projectStart';
 import { displayProjectStatus } from '../../lib/projectStatus';
 import { schemaPersonId } from '../../lib/schemaIds';
+import { imgAttrs, imgSrc, imgVariant } from '../../lib/img';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects', ({ data }) => !data.draft);
@@ -67,12 +68,15 @@ const soloVideoAr =
       : undefined;
 
 /** First paint media — hero / poster / first still. */
+const RAIL_SIZES = '(max-width: 560px) 100vw, 530px';
+const posterOf = (p?: string) => (p ? imgSrc(p, 1280) : undefined);
+const firstStill = media.find((m) => m.type !== 'video')?.src;
 const preloadImages = [
-  showHero ? heroSrc : null,
-  soloVideo?.poster ?? null,
-  media.find((m) => m.type !== 'video')?.src ?? null,
-  media.find((m) => m.type === 'video')?.poster ?? null,
-].filter(Boolean) as string[];
+  showHero && heroSrc ? imgVariant(heroSrc, { sizes: RAIL_SIZES }) : undefined,
+  posterOf(soloVideo?.poster),
+  firstStill ? imgVariant(firstStill, { sizes: RAIL_SIZES }) : undefined,
+  posterOf(media.find((m) => m.type === 'video')?.poster),
+].filter(Boolean);
 ---
 <Base
   title={`${project.data.name} — Derek Castelli`}
@@ -121,7 +125,7 @@ const preloadImages = [
           aria-expanded="false"
         >
           <img
-            src={heroSrc}
+            {...imgAttrs(heroSrc!, { sizes: RAIL_SIZES, dims: false })}
             alt={project.data.name}
             loading="eager"
             fetchpriority="high"
@@ -163,8 +167,8 @@ const preloadImages = [
               muted
               loop
               playsinline
-              preload="auto"
-              poster={soloVideo.poster}
+              preload="metadata"
+              poster={posterOf(soloVideo.poster)}
               aria-label={soloVideo.alt ?? soloVideo.caption ?? `${project.data.name} tour`}
             >
               <source

@@ -2129,14 +2129,27 @@ html.orange-mode {
    Transitions (not keyframes) so enter stays on the compositor
    without fighting a separate transform on `.is-in`.
 
-   `reveal-wait` (set in <head> before paint) keeps main invisible
-   until targets are staged — avoids a flash of full media, then hide.
-   Stays on until JS clears it (not tied to reveal-ready) so the
-   opacity-0 reveal state can commit before the first paint.
+   Nothing is hidden before first paint: reveal.ts only stages
+   below-fold blocks, and never blocks containing media. Above-fold
+   text gets a short CSS-only fade (no JS dependency).
    ============================================================ */
 @media (prefers-reduced-motion: no-preference) {
-  html.reveal-wait main.main {
-    visibility: hidden;
+  @keyframes text-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.3rem, 0);
+    }
+  }
+
+  main.main
+    :is(h1, h2, h3, h4, p, blockquote, .meta, .page-title, .lead):not(
+      :has(img:not(.cio-chip__avatar, .cadence-chip__avatar), picture, video, iframe)
+    ) {
+    animation: text-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) 80ms backwards;
+  }
+
+  main.main :is(h1, .page-title) {
+    animation-delay: 0ms;
   }
 
   html.reveal-ready .reveal {

@@ -1,26 +1,54 @@
 /**
  * Warm case-study / project media before it enters the viewport.
- * - `[data-prefetch-images]` lists URLs (JSON array) to fetch early
- * - Lazy `<img>`s in main get promoted ~1 viewport ahead via IO
+ * - `[data-prefetch-images]` lists variants (JSON: string | {src, srcset, sizes});
+ *   the first few warm once the block is ~1 viewport away
+ * - `[data-prefetch-idle]` bundles warm their first couple of items on idle
  * - Thumb hover / focus warms the stage swap target
+ *
+ * Variants carry the same srcset/sizes as the real `<img>`, so the browser
+ * warms the exact file it will later pick — not the multi-MB original.
+ * Native `loading="lazy"` handles everything else.
  */
 
-const warmed = new Set<string>();
-
-function warmImage(src: string | null | undefined) {
-  if (!src || warmed.has(src) || src.startsWith('data:')) return;
-  warmed.add(src);
-  const img = new Image();
-  img.decoding = 'async';
-  img.src = src;
+interface Variant {
+  src: string;
+  srcset?: string;
+  sizes?: string;
 }
 
-function parsePrefetchList(raw: string | undefined): string[] {
+/** Idle: the next slide or two. Near the viewport: a few more. Thumb hover covers the rest. */
+const IDLE_WARM_COUNT = 2;
+const AHEAD_WARM_COUNT = 4;
+const warmed = new Set<string>();
+
+function warmImage(v: Variant | null | undefined) {
+  if (!v?.src || v.src.startsWith('data:')) return;
+  const key = v.srcset ?? v.src;
+  if (warmed.has(key)) return;
+  warmed.add(key);
+  const img = new Image();
+  img.decoding = 'async';
+  if (v.srcset) {
+    img.sizes = v.sizes ?? '100vw';
+    img.srcset = v.srcset;
+  }
+  img.src = v.src;
+}
+
+function parsePrefetchList(raw: string | undefined): Variant[] {
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter((v): v is string => typeof v === 'string' && v.length > 0);
+    return parsed
+      .map((v): Variant | null =>
+        typeof v === 'string'
+          ? { src: v }
+          : v && typeof v === 'object' && typeof (v as Variant).src === 'string'
+            ? (v as Variant)
+            : null,
+      )
+      .filter((v): v is Variant => v !== null && v.src.length > 0);
   } catch {
     return [];
   }
@@ -34,38 +62,29 @@ function idle(fn: () => void) {
   }
 }
 
-function warmContainer(el: Element) {
-  const listed = parsePrefetchList((el as HTMLElement).dataset.prefetchImages);
-  listed.forEach(warmImage);
-  el.querySelectorAll<HTMLImageElement>('img[src]').forEach((img) => warmImage(img.currentSrc || img.src));
-  el.querySelectorAll<HTMLElement>('[data-src]').forEach((node) => warmImage(node.dataset.src));
-  el.querySelectorAll<HTMLVideoElement>('video[poster]').forEach((v) => warmImage(v.poster));
-}
-
-/** Promote a lazy image so the browser starts the real fetch soon. */
-function promoteLazyImg(img: HTMLImageElement) {
-  if (img.loading === 'lazy') img.loading = 'eager';
-  warmImage(img.currentSrc || img.src);
+function warmContainer(el: Element, limit: number) {
+  parsePrefetchList((el as HTMLElement).dataset.prefetchImages).slice(0, limit).forEach(warmImage);
 }
 
 function bindThumbWarm(root: ParentNode = document) {
   root.querySelectorAll<HTMLElement>('[data-stage-thumb][data-src]').forEach((thumb) => {
     if (thumb.dataset.prefetchBound === '1') return;
     thumb.dataset.prefetchBound = '1';
-    const warm = () => warmImage(thumb.dataset.src);
+    const warm = () =>
+      warmImage({ src: thumb.dataset.src!, srcset: thumb.dataset.srcset, sizes: thumb.dataset.sizes });
     thumb.addEventListener('pointerenter', warm, { passive: true });
     thumb.addEventListener('focus', warm);
   });
 }
 
 function initMediaPrefetch() {
-  // Case-study / stepper bundles: warm listed URLs once the block is ~1vh away.
+  // Case-study / stepper bundles: warm listed variants once the block is ~1vh away.
   if (typeof IntersectionObserver !== 'undefined') {
     const ahead = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
-          warmContainer(entry.target);
+          warmContainer(entry.target, AHEAD_WARM_COUNT);
           ahead.unobserve(entry.target);
         }
       },
@@ -73,29 +92,13 @@ function initMediaPrefetch() {
     );
 
     document.querySelectorAll('[data-prefetch-images]').forEach((el) => ahead.observe(el));
-
-    // Body / device / remaining lazy imgs: start fetch a viewport before they show.
-    const lazyImgs = document.querySelectorAll<HTMLImageElement>(
-      'main.main img[loading="lazy"]',
-    );
-    if (lazyImgs.length > 0) {
-      const lazyAhead = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (!entry.isIntersecting || !(entry.target instanceof HTMLImageElement)) continue;
-            promoteLazyImg(entry.target);
-            lazyAhead.unobserve(entry.target);
-          }
-        },
-        { rootMargin: '120% 0px', threshold: 0 },
-      );
-      lazyImgs.forEach((img) => lazyAhead.observe(img));
-    }
   }
 
-  // Above-the-fold bundles: don’t wait for IO — warm on idle after first paint.
+  // Above-the-fold bundles: warm just the next slide or two on idle after first paint.
   idle(() => {
-    document.querySelectorAll('[data-prefetch-images][data-prefetch-idle]').forEach(warmContainer);
+    document
+      .querySelectorAll('[data-prefetch-images][data-prefetch-idle]')
+      .forEach((el) => warmContainer(el, IDLE_WARM_COUNT));
   });
 
   bindThumbWarm();

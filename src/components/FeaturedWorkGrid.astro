@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { imgAttrs } from '../lib/img';
 
 interface Props {
   work: CollectionEntry<'work'>[];
@@ -12,20 +13,23 @@ const { work, preserveOrder = false } = Astro.props;
 const sorted = preserveOrder
   ? work
   : [...work].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+/** Two columns in the 530px rail; one column (full width) under 540px. */
+const GRID_SIZES = '(max-width: 540px) 92vw, 260px';
 const fmtDateWithYear = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
 ---
 <ul class="project-grid">
-  {sorted.map((entry) => (
+  {sorted.map((entry, i) => (
     <li class="project-grid-item">
       <a href={`/work/${entry.slug}/`} class="project-grid-card">
         <div class="project-grid-visual">
           {entry.data.thumbnail ? (
             <img
-              src={entry.data.thumbnail}
+              {...imgAttrs(entry.data.thumbnail, { sizes: GRID_SIZES, w: 640 })}
               alt={entry.data.title}
               class={`project-grid-img${entry.data.thumbnailFit === 'contain' ? ' project-grid-img--framed' : ''}`}
-              loading="lazy"
+              loading={i < 2 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : undefined}
               decoding="async"
             />
           ) : (

@@ -2,6 +2,10 @@
  * Subtle fade/rise reveals when content enters the viewport.
  * Auto-targets main sections and staggers list/grid items — no per-page markup.
  * Respects prefers-reduced-motion. Re-runs on astro:page-load.
+ *
+ * Only below-the-fold blocks are staged: first paint is never hidden waiting
+ * on this bundle (above-fold text gets a CSS-only fade in global.css), and
+ * blocks containing media are skipped so images show as soon as they load.
  */
 
 const STAGGER_MAX = 14;
@@ -22,8 +26,13 @@ const EXPAND_SEL = '#proof, .cio-proof';
 
 const SKIP_SEL = 'script, style, noscript, nav, .app-toc, .about-toc, .application-toc';
 
-/** Above-fold media — paint immediately; don’t fade while video buffers. */
-const MEDIA_SKIP_SEL = '.pvideo, .work-stage';
+/** Media never fades — it paints as soon as it arrives. Also skips any block containing it. */
+const MEDIA_SKIP_SEL =
+  'img:not(.cio-chip__avatar, .cadence-chip__avatar), picture, video, iframe, figure, .pfig, .ms, .pvideo, .work-stage';
+
+function hasMedia(el: HTMLElement): boolean {
+  return el.matches(MEDIA_SKIP_SEL) || el.querySelector(MEDIA_SKIP_SEL) !== null;
+}
 
 let observer: IntersectionObserver | null = null;
 
@@ -71,7 +80,7 @@ function collectTargets(main: HTMLElement): HTMLElement[] {
 
   const add = (el: HTMLElement, index: number) => {
     if (seen.has(el) || el.closest('[data-no-reveal]')) return;
-    if (el.matches(SKIP_SEL) || el.matches(MEDIA_SKIP_SEL)) return;
+    if (el.matches(SKIP_SEL) || hasMedia(el)) return;
     // Don’t reveal a parent if a descendant is already a target (or vice versa).
     for (const t of seen) {
       if (t.contains(el) || el.contains(t)) return;
@@ -122,10 +131,6 @@ function collectTargets(main: HTMLElement): HTMLElement[] {
   return targets;
 }
 
-function clearRevealWait() {
-  document.documentElement.classList.remove('reveal-wait');
-}
-
 function reset(main: HTMLElement) {
   observer?.disconnect();
   observer = null;
@@ -165,27 +170,14 @@ function revealEl(el: HTMLElement) {
 
 function initReveal() {
   const main = document.querySelector<HTMLElement>('main.main');
-  if (!main) {
-    clearRevealWait();
-    return;
-  }
-
-  // Soft navigations: hide again before restaging so media doesn’t flash.
-  if (!reduceMotion()) {
-    document.documentElement.classList.add('reveal-wait');
-  }
+  if (!main) return;
 
   reset(main);
-  if (reduceMotion() || typeof IntersectionObserver === 'undefined') {
-    clearRevealWait();
-    return;
-  }
+  if (reduceMotion() || typeof IntersectionObserver === 'undefined') return;
 
-  const targets = collectTargets(main);
-  if (targets.length === 0) {
-    clearRevealWait();
-    return;
-  }
+  // Anything already on screen stays put — never hide what the reader can see.
+  const targets = collectTargets(main).filter((el) => !inInitialView(el));
+  if (targets.length === 0) return;
 
   // Disable transitions while applying the hidden state so we don’t
   // animate 1→0 (or skip the 0 paint entirely) before the load-in.
@@ -214,7 +206,7 @@ function initReveal() {
     { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
   );
 
-  // Stage opacity-0 while main is still `visibility: hidden` (reveal-wait).
+  // Stage below-fold targets at opacity 0 without animating 1→0.
   document.documentElement.classList.add('reveal-ready');
   void main.offsetWidth;
   targets.forEach((el) => {
@@ -222,19 +214,8 @@ function initReveal() {
     el.style.removeProperty('transition');
   });
 
-  // First paint: main visible, targets at opacity 0 — then rise in.
-  clearRevealWait();
-  void main.offsetWidth;
-
   afterPaint(() => {
-    const initial = targets.filter(inInitialView);
-    initial.forEach((el, i) => {
-      el.style.setProperty('--reveal-i', String(Math.min(i, STAGGER_MAX)));
-      revealEl(el);
-    });
-    for (const el of targets) {
-      if (!el.classList.contains('is-in')) observer?.observe(el);
-    }
+    for (const el of targets) observer?.observe(el);
   });
 }
 

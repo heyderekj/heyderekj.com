@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import type { ImgVariant } from '../lib/img';
 
 interface Props {
   title?: string;
@@ -17,8 +18,9 @@ interface Props {
   noindex?: boolean;
   /** When false, omits Fathom (e.g. 404s so non-existent URL hits do not pollute “top content”). */
   includeAnalytics?: boolean;
-  /** High-priority image URLs to `<link rel="preload">` (LCP / first media). */
-  preloadImages?: string[];
+  /** High-priority images to `<link rel="preload">` (LCP / first media).
+   *  Pass the same variant the `<img>` uses (src + srcset + sizes) so it isn't fetched twice. */
+  preloadImages?: (string | ImgVariant | undefined)[];
 }
 
 const {
@@ -36,7 +38,14 @@ const {
   preloadImages = [],
 } = Astro.props;
 
-const preloadImageHrefs = [...new Set(preloadImages.filter(Boolean))];
+const preloadVariants = [
+  ...new Map(
+    preloadImages
+      .filter((p): p is string | ImgVariant => Boolean(p))
+      .map((p) => (typeof p === 'string' ? { src: p } : p))
+      .map((v) => [v.src, v] as const),
+  ).values(),
+];
 
 const siteUrl = Astro.site?.toString() ?? 'https://heyderekj.com';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).toString();
@@ -114,25 +123,21 @@ const year = new Date().getFullYear();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
 
-    {preloadImageHrefs.map((href) => (
-      <link rel="preload" as="image" href={href} fetchpriority="high" />
+    {preloadVariants.map((v) => (
+      <link
+        rel="preload"
+        as="image"
+        href={v.src}
+        imagesrcset={v.srcset}
+        imagesizes={v.srcset ? v.sizes : undefined}
+        fetchpriority="high"
+      />
     ))}
 
     {includeAnalytics && (
       <script src="https://cdn.usefathom.com/script.js" data-site="RILZSZAQ" defer is:inline></script>
     )}
 
-    <!-- Hide main until reveal.ts stages targets — prevents media FOUC flash -->
-    <script is:inline>
-      try {
-        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          document.documentElement.classList.add('reveal-wait');
-          setTimeout(function () {
-            document.documentElement.classList.remove('reveal-wait');
-          }, 2500);
-        }
-      } catch (_) {}
-    </script>
   </head>
   <body>
     <div class="app-window">

@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { imgAttrs } from '../lib/img';
 import { formatProjectStartLabel, formatProjectUpdatedLabel, projectStartTime } from '../lib/projectStart';
 import { displayProjectStatus } from '../lib/projectStatus';
 
@@ -31,7 +32,7 @@ const sorted = preserveOrder
             <div class="project-grid-visual">
               {thumbSrc ? (
                 <img
-                  src={thumbSrc}
+                  {...imgAttrs(thumbSrc, { sizes: '(max-width: 540px) 92vw, 260px', w: 640 })}
                   alt={project.data.name}
                   class={`project-grid-img${isIconOnly ? ' project-grid-img--icon' : ''}${isFramed ? ' project-grid-img--framed' : ''}`}
                   loading="lazy"
@@ -68,7 +69,7 @@ const sorted = preserveOrder
             <div class="card-thumb">
               {thumbSrc ? (
                 <img
-                  src={thumbSrc}
+                  {...imgAttrs(thumbSrc, { sizes: '88px', widths: [96, 176, 264], w: 176 })}
                   alt={project.data.name}
                   class={`card-thumb-img${project.data.icon ? ' card-thumb-img--icon' : ''}`}
                   loading="lazy"

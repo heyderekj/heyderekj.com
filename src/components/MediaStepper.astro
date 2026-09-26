@@ -10,6 +10,8 @@
  * frame to rail width via zoom.ts. Autoplay pauses (kills) while zoomed, via
  * the `zoomchange` event.
  */
+import { imgAttrs, imgSrc, imgVariant } from '../lib/img';
+
 interface MediaItem {
   type?: 'image' | 'video';
   src: string;
@@ -54,13 +56,19 @@ const {
   mat,
 } = Astro.props;
 
+/** Frame fills the 530px rail; zoom.ts widens `sizes` while expanded. */
+const STEPPER_SIZES = '(max-width: 560px) 100vw, 530px';
 const autoplayMs = autoplay === true ? 5000 : typeof autoplay === 'number' ? autoplay : null;
 const autoplayZoomedMs =
   autoplayZoomed === true ? 5000 : typeof autoplayZoomed === 'number' ? autoplayZoomed : null;
 const count = items.length;
 /** Still URLs + video posters — warmed before the stepper enters view. */
 const prefetchImages = items.flatMap((item) =>
-  item.type === 'video' ? (item.poster ? [item.poster] : []) : [item.src],
+  item.type === 'video'
+    ? item.poster
+      ? [imgVariant(item.poster, { sizes: STEPPER_SIZES })]
+      : []
+    : [imgVariant(item.src, { sizes: STEPPER_SIZES })],
 );
 ---
 <figure
@@ -108,7 +116,7 @@ const prefetchImages = items.flatMap((item) =>
                   loop
                   playsinline
                   preload="metadata"
-                  poster={item.poster}
+                  poster={item.poster ? imgSrc(item.poster, 1280) : undefined}
                   aria-label={item.alt ?? item.caption}
                   style={mediaStyle}
                 >
@@ -125,7 +133,7 @@ const prefetchImages = items.flatMap((item) =>
               aria-expanded="false"
             >
               <img
-                src={item.src}
+                {...imgAttrs(item.src, { sizes: STEPPER_SIZES, dims: false })}
                 alt={item.alt ?? ''}
                 loading={i < 2 ? 'eager' : 'lazy'}
                 fetchpriority={i === 0 ? 'high' : undefined}
@@ -135,7 +143,7 @@ const prefetchImages = items.flatMap((item) =>
             </button>
           ) : (
             <img
-              src={item.src}
+              {...imgAttrs(item.src, { sizes: STEPPER_SIZES, dims: false })}
               alt={item.alt ?? ''}
               loading={i < 2 ? 'eager' : 'lazy'}
               fetchpriority={i === 0 ? 'high' : undefined}

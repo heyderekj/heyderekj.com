@@ -1,4 +1,5 @@
 ---
+import { imgAttrs, imgFixed, imgSrc } from '../lib/img';
 /*
   `/rythm/` — Web Designer application page.
 
@@ -125,7 +126,7 @@ const tocItems = [
   <ApplicationToc items={tocItems} />
 
   <p class="cio-intro">
-    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" src={rythmIntro.photoSrc} alt={rythmIntro.photoAlt} width={18} height={18} decoding="async" /><span class="cio-chip__label">Derek</span></span>, a designer in Des Moines, IA. I've made brands and websites full-time since 2018, and lately that's meant owning healthtech marketing sites and design systems end to end. I'm applying for <strong>Web Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i><span class="cio-chip__label">Rythm</span></span>
+    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" {...imgFixed(rythmIntro.photoSrc, 18)} alt={rythmIntro.photoAlt} width={18} height={18} decoding="async" /><span class="cio-chip__label">Derek</span></span>, a designer in Des Moines, IA. I've made brands and websites full-time since 2018, and lately that's meant owning healthtech marketing sites and design systems end to end. I'm applying for <strong>Web Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i><span class="cio-chip__label">Rythm</span></span>
   </p>
 
   <div class="cio-visual-strip">
@@ -226,7 +227,7 @@ const tocItems = [
                           loop
                           playsinline
                           preload="metadata"
-                          poster={shot.poster}
+                          poster={shot.poster ? imgSrc(shot.poster, 1280) : undefined}
                           width={shot.width}
                           height={shot.height}
                           aria-label={shot.alt}
@@ -245,7 +246,7 @@ const tocItems = [
                       aria-expanded="false"
                     >
                       <img
-                        src={shot.src}
+                        {...imgAttrs(shot.src, { sizes: '(max-width: 560px) 100vw, 530px', dims: false })}
                         alt={shot.alt}
                         loading="lazy"
                         decoding="async"
