@@ -1,7 +1,7 @@
 ---
 kind: book
 title: "The Glass Castle"
-image: "/images/library/book-the-glass-castle.jpg"
+image: "/images/library/book-the-glass-castle.png"
 by: "Jeannette Walls"
 reading: "read"
 favorite: true

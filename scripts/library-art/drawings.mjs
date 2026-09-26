@@ -3,7 +3,7 @@
  * Each is a line drawing on a faint grid with construction lines, a dimension
  * callout, and a mono figure label — the same language as the /library grid.
  *
- *   node scripts/library-art.mjs
+ *   node scripts/library-art/drawings.mjs
  *
  * Colors work on light and dark (transparent background, mid-gray grid, accent strokes).
  */

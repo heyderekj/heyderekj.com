@@ -1,7 +1,7 @@
 ---
 kind: podcast
 title: "Dive Club"
-image: "/images/library/podcast-dive-club.jpg"
+image: "/images/library/podcast-dive-club.png"
 by: "Michael Riddering"
 url: "https://www.dive.club"
 order: 3

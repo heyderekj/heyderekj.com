@@ -1,7 +1,7 @@
 ---
 kind: book
 title: "Steve Jobs"
-image: "/images/library/book-steve-jobs.jpg"
+image: "/images/library/book-steve-jobs.png"
 by: "Walter Isaacson"
 reading: "read"
 favorite: true
