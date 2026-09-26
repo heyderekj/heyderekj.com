@@ -1,0 +1,25 @@
+---
+/**
+ * Single zoomable figure with an optional caption.
+ *
+ *   <Figure src="/images/posts/slug/nav-v2.png" alt="…" caption="The nav after round two" />
+ */
+import { imgAttrs } from '../../lib/img';
+
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  sizes?: string;
+}
+
+const { src, alt, caption, sizes = '(max-width: 560px) 100vw, 530px' } = Astro.props;
+---
+<figure class="pfig zoomable" data-fig-init>
+  <button type="button" class="zoom-trigger" aria-label="Zoom image" aria-expanded="false">
+    <img {...imgAttrs(src, { sizes })} alt={alt} loading="lazy" decoding="async" />
+  </button>
+  {(caption || Astro.slots.has('default')) && (
+    <figcaption>{caption}<slot /></figcaption>
+  )}
+</figure>

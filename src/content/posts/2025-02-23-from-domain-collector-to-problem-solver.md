@@ -1,5 +1,6 @@
 ---
 title: "From Domain Collector to Problem Solver"
+tags: [making]
 date: 2025-02-23
 description: "A founder's journey from collecting domain names for every startup idea to discovering the power of dogfooding - building products that solve your own problems first. Learn why focusing on real problems you personally face leads to better products than chasing theoretical opportunities."
 draft: false

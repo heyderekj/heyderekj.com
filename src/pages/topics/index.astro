@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import { getPublishedPosts, tagCounts, topicHref } from '../../lib/posts';
+import { topicLabel, topics } from '../../data/topics';
+
+const posts = await getPublishedPosts();
+const counts = tagCounts(posts);
+---
+<Base title="Topics — Derek Castelli" description="Everything I write about, grouped by topic.">
+  <PageTitle path="/topics" />
+  <p style="color: var(--fg-soft);">
+    Everything I write about, by topic. Or browse <a href="/posts/">all posts</a> by date.
+  </p>
+
+  <ul class="topic-list">
+    {counts.map(({ tag, count }) => (
+      <li>
+        <a href={topicHref(tag)} class="topic-link">
+          <span class="topic-link__name">{topicLabel(tag)}</span>
+          <span class="topic-link__count">{count}</span>
+          {topics[tag]?.description && <span class="topic-link__desc">{topics[tag].description}</span>}
+        </a>
+      </li>
+    ))}
+  </ul>
+</Base>

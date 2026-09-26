@@ -1,5 +1,6 @@
 ---
 title: "Dogfood or die because of AI"
+tags: [ai, making]
 date: 2026-02-22
 draft: false
 ---

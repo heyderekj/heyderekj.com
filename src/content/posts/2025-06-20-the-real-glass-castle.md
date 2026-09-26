@@ -1,5 +1,6 @@
 ---
 title: "The Real Glass Castle"
+tags: [life]
 date: 2025-06-20
 draft: false
 ---

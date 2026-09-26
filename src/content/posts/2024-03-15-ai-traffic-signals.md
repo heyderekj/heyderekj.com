@@ -1,5 +1,6 @@
 ---
 title: "AI Traffic Signals"
+tags: [ai, tech]
 date: 2024-03-15
 description: "Traffic signals should use AI and cameras to optimize flow instead of relying on outdated sensors and timers."
 draft: false

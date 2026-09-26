@@ -1,5 +1,6 @@
 ---
 title: "Dyslexic Thinking"
+tags: [design, life]
 date: 2025-01-05
 description: "Dyslexic thinking gives me superpowers in design and creative problem-solving, even though reading isn't my thing. Built Harvous to solve Bible study note-taking for brains like mine."
 draft: false

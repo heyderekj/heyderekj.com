@@ -1,5 +1,6 @@
 ---
 title: "Launch Day"
+tags: [milestones]
 date: 2024-06-10
 description: "June 10th is my launch day."
 draft: false

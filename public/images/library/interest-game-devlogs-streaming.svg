@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="196" y="56" width="164" height="104" rx="8"/>
+    <path d="M266 92 L266 124 L292 108 Z"/>
+    <circle cx="214" cy="72" r="4"/><path d="M224 72 H244"/>
+    <path d="M64 196 Q60 160 92 156 H188 Q220 160 216 196 L208 236 Q200 256 182 240 L166 222 H114 L98 240 Q80 256 72 236 Z"/>
+    <path d="M100 184 V204 M90 194 H110"/>
+    <circle cx="172" cy="186" r="5"/><circle cx="186" cy="200" r="5"/>
+    <path d="M216 170 L240 160"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M196 170 V190 M360 170 V190"/></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. STREAM — LIVE</text>
+</svg>

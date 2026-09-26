@@ -1,5 +1,6 @@
 ---
 title: "My favorite rebrand of 2022"
+tags: [branding]
 date: 2022-12-26
 draft: false
 ---

@@ -1,5 +1,6 @@
 ---
 title: "I fear abandonment"
+tags: [life]
 date: 2021-07-06
 description: "My biggest fear is abandonment, the fear of being forgotten or left out."
 draft: false

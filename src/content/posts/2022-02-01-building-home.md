@@ -1,5 +1,6 @@
 ---
 title: "Building home"
+tags: [life]
 date: 2022-02-01
 draft: false
 ---

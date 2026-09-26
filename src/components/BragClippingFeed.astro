@@ -1,5 +1,6 @@
 ---
 import { bragSummaryHtml, type BragClipping, type BragPreview } from '../data/brag';
+import { imgAttrs } from '../lib/img';
 
 interface Props {
   clippings: BragClipping[];
@@ -64,7 +65,7 @@ const imagePreviewCount = (previews: BragPreview[]) => imagePreviews(previews).l
                   <div class="brag-preview-media">
                     <img
                       class="brag-preview-img"
-                      src={preview.src}
+                      {...imgAttrs(preview.src, { sizes: '(max-width: 540px) 45vw, 240px', w: 480, dims: false })}
                       alt={preview.alt}
                       width={320}
                       height={320}

@@ -1,5 +1,6 @@
 ---
 title: "Two strikes and the 80 percent rule"
+tags: [work]
 date: 2024-01-07
 description: "When I've felt it's time to move on from a job."
 draft: false

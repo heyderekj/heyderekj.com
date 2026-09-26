@@ -1,0 +1,17 @@
+---
+import { topicHref } from '../lib/posts';
+import { topicLabel } from '../data/topics';
+
+interface Props {
+  tags: string[];
+}
+
+const { tags } = Astro.props;
+---
+{tags.length > 0 && (
+  <ul class="tag-chips" aria-label="Topics">
+    {tags.map((tag) => (
+      <li><a class="tag-chip" href={topicHref(tag)}>{topicLabel(tag)}</a></li>
+    ))}
+  </ul>
+)}

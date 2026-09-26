@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="600" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="300" height="300" fill="url(#g)"/>
+  <rect width="300" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="112" y="60" width="44" height="86" rx="22"/>
+    <path d="M112 90 H156 M112 110 H156"/>
+    <path d="M98 118 Q98 170 134 170 Q170 170 170 118 M134 170 V222 M104 222 H164"/>
+    <path d="M200 206 L212 186 L232 180 L248 192 L250 212 L238 228 L216 230 L202 220 Z M212 186 L222 206 L232 180 M222 206 L250 212 M222 206 L216 230"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M40 232 H270"/></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. PC — REWORK</text>
+</svg>

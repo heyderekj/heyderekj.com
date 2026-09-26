@@ -1,0 +1,29 @@
+---
+/**
+ * Framed aside above or inside a post.
+ * - `audience` — "Assumed audience" (who this is for)
+ * - `note` — general aside
+ * - `update` — dated addendum after publication
+ * - `outdated` — this post has been superseded
+ */
+interface Props {
+  kind?: 'audience' | 'note' | 'update' | 'outdated';
+  title?: string;
+}
+
+const { kind = 'note', title } = Astro.props;
+
+const defaults = {
+  audience: { title: 'Assumed audience', icon: 'ph-users' },
+  note: { title: 'Note', icon: 'ph-note' },
+  update: { title: 'Update', icon: 'ph-arrow-clockwise' },
+  outdated: { title: 'Outdated', icon: 'ph-clock-counter-clockwise' },
+} as const;
+
+const { icon } = defaults[kind];
+const label = title ?? defaults[kind].title;
+---
+<aside class={`callout callout--${kind}`} role="note">
+  <p class="callout__label"><i class={`ph-bold ${icon}`} aria-hidden="true"></i>{label}</p>
+  <div class="callout__body"><slot /></div>
+</aside>

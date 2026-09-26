@@ -1,0 +1,15 @@
+---
+/**
+ * Margin note. On wide screens it floats into the right margin beside the
+ * line; on narrow screens a numbered toggle reveals it inline. Uses a
+ * checkbox toggle (Tufte-style), so it works without JavaScript.
+ *
+ *   Designers ship more when the loop is short.<Sidenote>Measured in hours, not sprints.</Sidenote>
+ */
+const id = `sn-${Math.random().toString(36).slice(2, 9)}`;
+---
+<span class="sn"><label for={id} class="sn-ref" aria-label="Show side note"></label><input
+    type="checkbox"
+    id={id}
+    class="sn-toggle"
+  /><small class="sn-note" role="note"><slot /></small></span>

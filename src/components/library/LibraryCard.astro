@@ -1,0 +1,98 @@
+---
+/**
+ * One cell in a blueprint grid. Layout varies by `kind`; every cell carries a
+ * mono catalog code (BK-003) and a kind icon in its top corners.
+ */
+import { imgAttrs } from '../../lib/img';
+import { hostOf, itemHref, itemIcon, KIND_META, type LibraryItem } from '../../lib/library';
+
+interface Props {
+  item: LibraryItem;
+  code: string;
+}
+
+const { item, code } = Astro.props;
+const d = item.data;
+const href = itemHref(item);
+const external = Boolean(href && !href.startsWith('/'));
+const host = hostOf(d.url);
+const year = d.date?.getUTCFullYear();
+
+const READING = { reading: 'Reading', read: 'Read', want: 'Want to read' } as const;
+const fmt = (date: Date) =>
+  date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+
+const Tag = href ? 'a' : 'div';
+const linkAttrs = href
+  ? { href, ...(external ? { target: '_blank', rel: 'noopener' } : {}) }
+  : {};
+---
+<li
+  class:list={[
+    'bp-cell',
+    `bp-cell--${d.kind}`,
+    d.favorite && 'is-favorite',
+    d.met && 'is-met',
+    d.remembered && 'is-remembered',
+    d.draft && 'is-draft',
+  ]}
+>
+  <Tag class="lib-card" {...linkAttrs}>
+    <span class="lib-card__code">
+      {code}{year && <> · {year}</>}{d.draft && <> · draft</>}
+    </span>
+    <i class={`ph-bold ${itemIcon(item)} lib-card__icon`} aria-hidden="true"></i>
+
+    {(d.kind === 'book' || d.kind === 'podcast' || d.kind === 'interest') && (
+      <div class={`lib-card__visual lib-card__visual--${d.kind}`}>
+        {d.image ? (
+          <img
+            {...imgAttrs(d.image, { sizes: '(max-width: 600px) 45vw, 280px', w: 560, dims: false })}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <span class="lib-card__blank" aria-hidden="true">
+            {d.kind === 'interest'
+              ? <i class={`ph-bold ${itemIcon(item)}`}></i>
+              : <span>{d.title}</span>}
+          </span>
+        )}
+      </div>
+    )}
+
+    {d.kind === 'post' && d.post ? (
+      <>
+        <blockquote class="lib-card__post">{d.post.text}</blockquote>
+        <p class="lib-card__meta">
+          <span class="lib-card__title">{d.post.handle}</span>
+          <span>{fmt(d.post.postedAt)} · ↗ x.com</span>
+        </p>
+        {d.note && <p class="lib-card__note">{d.note}</p>}
+      </>
+    ) : (
+      <div class="lib-card__body">
+        {d.kind === 'bookmark' && host && <span class="lib-card__host">{host}</span>}
+        <span class="lib-card__title">
+          {d.kind === 'person' && (
+            d.remembered
+              ? <i class="ph-bold ph-heart lib-card__state" aria-label="Remembered"></i>
+              : <i
+                  class={`ph-bold ${d.met ? 'ph-check-square-offset' : 'ph-square'} lib-card__state`}
+                  aria-label={d.met ? 'Met' : 'Not met yet'}
+                ></i>
+          )}
+          {d.title}
+          {d.favorite && <i class="ph-fill ph-star lib-card__fav" aria-label="Favorite"></i>}
+        </span>
+        {d.by && <span class="lib-card__by">{d.by}</span>}
+        {d.note && <p class="lib-card__note">{d.note}</p>}
+        {d.kind === 'book' && d.reading && (
+          <span class={`lib-card__chip lib-card__chip--${d.reading}`}>{READING[d.reading]}</span>
+        )}
+      </div>
+    )}
+    <span class="visually-hidden">{KIND_META[d.kind].one}</span>
+  </Tag>
+</li>

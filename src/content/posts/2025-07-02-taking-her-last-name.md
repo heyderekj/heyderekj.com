@@ -1,5 +1,6 @@
 ---
 title: "Taking her last name"
+tags: [family]
 date: 2025-07-02
 draft: false
 ---

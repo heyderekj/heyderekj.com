@@ -1,0 +1,122 @@
+---
+/**
+ * End of a post: revision history, reply + subscribe, related posts, and
+ * chronological neighbours.
+ */
+import PostList from './PostList.astro';
+import { postHref, postTitle, type Post } from '../lib/posts';
+import type { RevisionInfo } from '../lib/revisions';
+
+interface Props {
+  post: Post;
+  revisions: RevisionInfo;
+  related: Post[];
+  newer?: Post;
+  older?: Post;
+}
+
+const { post, revisions, related, newer, older } = Astro.props;
+
+const title = postTitle(post);
+const permalink = new URL(postHref(post), Astro.site ?? 'https://heyderekj.com').toString();
+const mailto = `mailto:derekj@hey.com?subject=${encodeURIComponent(`Re: ${title}`)}`;
+const xReply = `https://x.com/intent/post?text=${encodeURIComponent('@heyderekj ')}&url=${encodeURIComponent(permalink)}`;
+
+/** Essays always show history; notes and links only once they've been revised. */
+const showHistory = post.data.type === 'essay' || revisions.rev > 1;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+---
+<footer class="post-footer">
+  {showHistory && (
+    <section class="post-footer__section post-history" id="revisions" aria-labelledby="revisions-title">
+      <h2 id="revisions-title" class="post-footer__title">Revisions</h2>
+      <ol class="post-history__list" reversed>
+        {revisions.revisions.map((r) => (
+          <li class="post-history__item">
+            <span class="post-history__rev">rev {r.rev}</span>
+            <time class="post-history__date" datetime={r.date.toISOString()}>{fmt(r.date)}</time>
+            <span class="post-history__note">
+              {r.note}
+              {r.diffUrl && (
+                <>
+                  {' '}
+                  <a class="post-history__link" href={r.diffUrl} target="_blank" rel="noopener">diff</a>
+                </>
+              )}
+              {r.blobUrl && (
+                <>
+                  {' · '}
+                  <a class="post-history__link" href={r.blobUrl} target="_blank" rel="noopener">this version</a>
+                </>
+              )}
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      {revisions.minor.length > 0 && (
+        <details class="post-history__minor">
+          <summary>
+            {revisions.minor.length} minor {revisions.minor.length === 1 ? 'edit' : 'edits'}
+          </summary>
+          <ul>
+            {revisions.minor.map((m) => (
+              <li>
+                <time datetime={m.date.toISOString()}>{fmt(m.date)}</time>
+                <a href={m.diffUrl} target="_blank" rel="noopener">{m.subject}</a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+
+      <p class="post-history__meta">
+        {!revisions.complete
+          ? <>Revision history isn't available in this build. </>
+          : revisions.trackedSince
+            ? <>History tracked since {fmt(revisions.trackedSince)} (imported). </>
+            : null}
+        <a href={revisions.historyUrl} target="_blank" rel="noopener">Full history on GitHub</a>
+        {' · '}
+        <a href="/colophon/#revisions">How revisions work</a>
+      </p>
+    </section>
+  )}
+
+  <section class="post-footer__section post-reply" aria-label="Reply and subscribe">
+    <p>
+      Thoughts? Reply by <a href={mailto}>email</a> or on <a href={xReply} target="_blank" rel="noopener">X</a>.
+      New posts land in the <a href="/rss.xml">RSS feed</a>.
+    </p>
+  </section>
+
+  {related.length > 0 && (
+    <section class="post-footer__section" aria-labelledby="related-title">
+      <h2 id="related-title" class="post-footer__title">Related</h2>
+      <PostList entries={related} />
+    </section>
+  )}
+
+  {(newer || older) && (
+    <nav class="post-footer__section post-adjacent" aria-label="More posts">
+      {older ? (
+        <a class="post-adjacent__link post-adjacent__link--older" href={postHref(older)}>
+          <span class="post-adjacent__kicker">← Older</span>
+          <span class="post-adjacent__title">{postTitle(older)}</span>
+        </a>
+      ) : <span />}
+      {newer && (
+        <a class="post-adjacent__link post-adjacent__link--newer" href={postHref(newer)}>
+          <span class="post-adjacent__kicker">Newer →</span>
+          <span class="post-adjacent__title">{postTitle(newer)}</span>
+        </a>
+      )}
+    </nav>
+  )}
+
+  <p class="back-link">
+    <a href="/posts/"><span class="arrow">&larr;</span> all posts</a>
+  </p>
+</footer>

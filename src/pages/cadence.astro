@@ -1,4 +1,5 @@
 ---
+import { imgAttrs, imgFixed } from '../lib/img';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageTitle from '../components/PageTitle.astro';
@@ -35,7 +36,7 @@ const tocItems = [
   <ApplicationToc items={tocItems} />
 
   <p class="cadence-intro">
-    Hey, I'm <span class="cadence-chip"><img class="cadence-chip__avatar" src={cadenceIntro.photoSrc} alt={cadenceIntro.photoAlt} width={20} height={20} decoding="async" />Derek</span>, a full-time designer in Des Moines, Iowa since 2018. Primarily working with startups and non-profits, lately focused on <span class="cadence-chip cadence-chip--health"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i>healthcare</span>. I'm applying for <strong>Brand Designer</strong>, so here's my work and why I want in.
+    Hey, I'm <span class="cadence-chip"><img class="cadence-chip__avatar" {...imgFixed(cadenceIntro.photoSrc, 20)} alt={cadenceIntro.photoAlt} width={20} height={20} decoding="async" />Derek</span>, a full-time designer in Des Moines, Iowa since 2018. Primarily working with startups and non-profits, lately focused on <span class="cadence-chip cadence-chip--health"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i>healthcare</span>. I'm applying for <strong>Brand Designer</strong>, so here's my work and why I want in.
   </p>
 
   <section id="letter" class="cadence-letter" aria-label="Cover letter">

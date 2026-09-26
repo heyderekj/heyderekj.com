@@ -1,5 +1,6 @@
 ---
 title: "Leveling up my team"
+tags: [design, work]
 date: 2019-05-20
 draft: false
 ---

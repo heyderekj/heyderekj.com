@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 360" width="480" height="720">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="360" fill="url(#g)"/>
+  <rect width="240" height="360" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M84 206 L120 190 L156 206 L120 222 Z M84 206 V256 L120 272 V222 M156 206 V256 L120 272"/>
+    <path d="M120 196 Q118 160 126 128"/>
+    <path d="M122 160 Q100 148 96 128 Q116 132 122 156 M124 142 Q140 118 158 118 Q150 138 126 142"/>
+
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M60 80 V180 M60 180 l-5 -8 M60 180 l5 -8 M180 80 V180 M180 180 l-5 -8 M180 180 l5 -8"/></g>
+  <text x="12" y="346" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. BK — RESISTANCE</text>
+</svg>

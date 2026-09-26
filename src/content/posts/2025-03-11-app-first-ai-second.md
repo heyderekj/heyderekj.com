@@ -1,5 +1,6 @@
 ---
 title: "App First. AI Second."
+tags: [ai, making]
 date: 2025-03-11
 description: "Build apps with AI as a subtle enhancement, not the main attraction. Focus on core purpose first."
 draft: false

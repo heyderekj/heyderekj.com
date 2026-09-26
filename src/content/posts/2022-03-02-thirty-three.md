@@ -1,5 +1,6 @@
 ---
 title: "Thirty-three"
+tags: [milestones, faith]
 date: 2022-03-02
 draft: false
 ---

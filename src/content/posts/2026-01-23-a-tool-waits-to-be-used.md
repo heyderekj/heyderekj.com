@@ -1,5 +1,6 @@
 ---
 title: "A tool waits to be used"
+tags: [tech, making]
 date: 2026-01-23
 draft: false
 ---

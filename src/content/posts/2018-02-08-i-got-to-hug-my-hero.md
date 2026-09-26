@@ -1,5 +1,6 @@
 ---
 title: "I got to hug my hero"
+tags: [life]
 date: 2018-02-08
 draft: false
 ---

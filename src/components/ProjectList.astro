@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { imgAttrs } from '../lib/img';
 import { formatProjectStartLabel, formatProjectUpdatedLabel, projectStartTime } from '../lib/projectStart';
 import { displayProjectStatus } from '../lib/projectStatus';
 
@@ -52,7 +53,7 @@ const sorted = [...projects].sort((a, b) => {
             <div class="card-thumb">
               {thumbSrc ? (
                 <img
-                  src={thumbSrc}
+                  {...imgAttrs(thumbSrc, { sizes: '80px', widths: [96, 160, 240], w: 160 })}
                   alt={project.data.name}
                   class={`card-thumb-img${isIcon ? ' card-thumb-img--icon' : ''}`}
                   loading="lazy"

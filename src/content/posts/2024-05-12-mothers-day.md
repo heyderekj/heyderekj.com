@@ -1,5 +1,6 @@
 ---
 title: "Mother's Day"
+tags: [family]
 date: 2024-05-12
 description: "Less about gift giving. More about the idea of motherhood."
 draft: false

@@ -1,5 +1,6 @@
 ---
 title: "Button styling and expected function"
+tags: [design, making]
 date: 2022-01-08
 draft: false
 ---

@@ -1,5 +1,6 @@
 ---
 title: "Hearing Spring"
+tags: [life]
 date: 2025-03-14
 draft: false
 ---

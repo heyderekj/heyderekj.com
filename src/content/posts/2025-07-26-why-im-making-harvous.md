@@ -1,5 +1,6 @@
 ---
 title: "Why I'm making Harvous"
+tags: [making, faith]
 date: 2025-07-26
 draft: false
 ---

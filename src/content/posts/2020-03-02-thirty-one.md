@@ -1,5 +1,6 @@
 ---
 title: "Thirty-one"
+tags: [milestones]
 date: 2020-03-02
 draft: false
 ---

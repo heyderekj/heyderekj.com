@@ -1,5 +1,6 @@
 ---
 title: "To share is to live"
+tags: [life]
 date: 2025-04-22
 draft: false
 ---

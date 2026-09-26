@@ -1,5 +1,6 @@
 ---
 title: "Be a toolmaker"
+tags: [making, design]
 date: 2026-01-17
 draft: false
 ---

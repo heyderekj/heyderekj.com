@@ -1,5 +1,6 @@
 ---
 title: "Redirecting Ideas"
+tags: [making]
 date: 2024-02-06
 description: "It took me 16 years to recognize the need to redirect my ideas."
 draft: false

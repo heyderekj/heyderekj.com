@@ -1,4 +1,5 @@
 ---
+import { imgAttrs, imgFixed } from '../lib/img';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PageTitle from '../components/PageTitle.astro';
@@ -66,7 +67,8 @@ const fmtPostDate = (iso: string) =>
     <header class="brag-hero">
       <img
         class="brag-hero__photo"
-        src={bragHero.photoSrc}
+        {...imgFixed(bragHero.photoSrc, 112)}
+        fetchpriority="high"
         alt={bragHero.photoAlt}
         width={112}
         height={112}
@@ -287,7 +289,7 @@ const fmtPostDate = (iso: string) =>
                     <div class:list={['brag-preview-media', preview.variant === 'video' && 'brag-preview-media--video']}>
                       <img
                         class="brag-preview-img"
-                        src={preview.src}
+                        {...imgAttrs(preview.src, { sizes: '(max-width: 540px) 45vw, 240px', w: 480, dims: false })}
                         alt={preview.alt}
                         width={320}
                         height={preview.variant === 'video' ? 180 : 320}

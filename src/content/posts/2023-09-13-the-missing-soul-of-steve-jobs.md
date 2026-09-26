@@ -1,5 +1,6 @@
 ---
 title: "The missing soul of Steve Jobs"
+tags: [tech]
 date: 2023-09-13
 draft: false
 ---

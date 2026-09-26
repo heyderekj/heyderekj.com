@@ -1,5 +1,6 @@
 ---
 title: "Logos aren’t meant to sell products"
+tags: [branding, design]
 date: 2020-09-10
 description: "A logo needs to represent why you’re different."
 draft: false

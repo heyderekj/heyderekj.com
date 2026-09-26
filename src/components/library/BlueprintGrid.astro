@@ -1,0 +1,17 @@
+---
+/**
+ * Blueprint grid: rail-to-rail hairline cells with plus ticks on every
+ * intersection, continuing the frame's rules and ticks. Children are
+ * `LibraryCard` cells (`li.bp-cell`).
+ */
+interface Props {
+  label?: string;
+  /** regular = 3 cols; dense = 4 (people, tools); wide = 2 (saved posts). */
+  variant?: 'regular' | 'dense' | 'wide';
+}
+
+const { label, variant = 'regular' } = Astro.props;
+---
+<ul class={`bp-grid bp-grid--${variant}`} aria-label={label}>
+  <slot />
+</ul>

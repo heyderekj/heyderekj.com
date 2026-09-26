@@ -1,5 +1,6 @@
 ---
 title: "Part-time designer"
+tags: [work, design]
 date: 2022-04-08
 description: "I got to thinking about my competitive advantage of affordability by being a part-time designer."
 draft: false

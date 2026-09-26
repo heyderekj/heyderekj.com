@@ -1,5 +1,6 @@
 ---
 title: "My Silent Cofounders"
+tags: [family]
 date: 2025-04-23
 draft: false
 ---

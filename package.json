@@ -7,6 +7,7 @@
   "description": "Personal site for Derek Castelli",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node scripts/ensure-git-history.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -14,6 +15,10 @@
     "import:work": "node scripts/import-work.mjs",
     "new:content": "node scripts/new-content.mjs",
     "new:post": "node scripts/new-content.mjs --type post",
+    "new:essay": "node scripts/new-content.mjs --type post --kind essay",
+    "new:note": "node scripts/new-content.mjs --type post --kind note",
+    "new:link": "node scripts/new-content.mjs --type post --kind link",
+    "new:save": "node scripts/new-content.mjs --type library",
     "new:work": "node scripts/new-content.mjs --type work",
     "new:project": "node scripts/new-content.mjs --type project"
   },
@@ -22,6 +27,8 @@
     "astro": "^4.16.19"
   },
   "dependencies": {
+    "@astrojs/mdx": "^3.1.9",
+    "image-size": "^1.2.1",
     "marked": "^12.0.2",
     "plyr": "^3.8.4"
   }

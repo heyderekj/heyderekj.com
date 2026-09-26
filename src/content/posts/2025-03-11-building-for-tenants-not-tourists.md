@@ -1,5 +1,6 @@
 ---
 title: "Building for Tenants, Not Tourists"
+tags: [ai, making]
 date: 2025-03-11
 description: "Companies chase AI tourists with flashy features while neglecting loyal tenants who actually pay the bills."
 draft: false

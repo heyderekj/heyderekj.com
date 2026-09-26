@@ -1,15 +1,69 @@
 import { defineCollection, z } from 'astro:content';
 
+/**
+ * One typed stream of writing:
+ * - `essay` — long-form, titled; shows status + revision number
+ * - `note`  — short thought; title optional (falls back to its first words)
+ * - `link`  — Daring Fireball-style: title links out to `link`, ★ is the permalink
+ */
 const posts = defineCollection({
   type: 'content',
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    description: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    draft: z.boolean().default(false),
-    legacyUrl: z.string().url().optional(),
-  }),
+  schema: z
+    .object({
+      type: z.enum(['essay', 'note', 'link']).default('essay'),
+      title: z.string().optional(),
+      date: z.coerce.date(),
+      description: z.string().optional(),
+      /** Kebab-case topic slugs; labels live in `src/data/topics.ts`. */
+      tags: z.array(z.string().regex(/^[a-z0-9-]+$/, 'tags are kebab-case slugs')).default([]),
+      /** Hidden / unpublished (not the same as `status: working`). */
+      draft: z.boolean().default(false),
+      legacyUrl: z.string().url().optional(),
+      /** Link posts: the external URL the title points to. */
+      link: z.string().url().optional(),
+      /** Link posts: where you found it. */
+      via: z.object({ name: z.string(), url: z.string().url() }).optional(),
+      /** Published maturity: working draft → stable → outdated. */
+      status: z.enum(['working', 'stable', 'outdated']).default('stable'),
+      /** Slug of the post that replaces an `outdated` one. */
+      supersededBy: z.string().optional(),
+      /** Overrides the git-derived "updated" date. */
+      updated: z.coerce.date().optional(),
+      /**
+       * Human revision notes. Entries without `commit` count as revisions
+       * (e.g. edits from before the git import); with `commit` they only
+       * annotate that commit.
+       */
+      changelog: z
+        .array(
+          z.object({
+            date: z.coerce.date(),
+            note: z.string(),
+            commit: z.string().optional(),
+          }),
+        )
+        .optional(),
+      /** "Assumed audience" callout under the header. */
+      audience: z.string().optional(),
+      /** Table of contents; defaults to on for essays with 4+ sections. */
+      toc: z.boolean().optional(),
+    })
+    .superRefine((d, ctx) => {
+      if (d.type !== 'note' && !d.title?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['title'],
+          message: `title is required for ${d.type} posts`,
+        });
+      }
+      if (d.type === 'link' && !d.link) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['link'],
+          message: 'link posts need a `link` URL',
+        });
+      }
+    }),
 });
 
 /** Case studies / client work — from Webflow/CSV; lives under `/work/`. */
@@ -135,4 +189,55 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { posts, work, projects };
+/**
+ * Library — things saved and collected: books, podcasts, bookmarks, saved X
+ * posts, interests, people, tools. One file per item; a body (longer notes)
+ * gives the item its own page. Lives under `/library/`.
+ */
+const library = defineCollection({
+  type: 'content',
+  schema: z
+    .object({
+      kind: z.enum(['book', 'podcast', 'bookmark', 'post', 'interest', 'person', 'tool']),
+      title: z.string(),
+      url: z.string().url().optional(),
+      /** Author / host / site / handle. */
+      by: z.string().optional(),
+      /** One-liner shown on the card. */
+      note: z.string().optional(),
+      /** Cover, artwork, or photo (public path). */
+      image: z.string().optional(),
+      /** When saved / read / started. */
+      date: z.coerce.date().optional(),
+      favorite: z.boolean().default(false),
+      /** Sub-grouping: tool sections ("Design web"), interests ("Legos", "F1"). */
+      group: z.string().optional(),
+      order: z.number().default(0),
+      tags: z.array(z.string().regex(/^[a-z0-9-]+$/)).default([]),
+      draft: z.boolean().default(false),
+      /** Books. */
+      reading: z.enum(['reading', 'read', 'want']).optional(),
+      /** People. */
+      met: z.boolean().optional(),
+      remembered: z.boolean().optional(),
+      /** Saved X posts — rendered as a static card (no embed). */
+      post: z
+        .object({
+          text: z.string(),
+          handle: z.string(),
+          postedAt: z.coerce.date(),
+        })
+        .optional(),
+    })
+    .superRefine((d, ctx) => {
+      if (d.kind === 'post' && !d.post) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['post'],
+          message: 'saved posts need `post: { text, handle, postedAt }`',
+        });
+      }
+    }),
+});
+
+export const collections = { posts, work, projects, library };

@@ -1,0 +1,37 @@
+---
+/**
+ * Step through iterations of a design — v1 → v2 → v3 — in one frame.
+ * Thin wrapper around MediaStepper; videos are muted loops.
+ *
+ *   <Snapshots items={[
+ *     { src: '/images/posts/slug/v1.png', caption: 'v1 · Jan 2026' },
+ *     { src: '/images/posts/slug/v2.png', caption: 'v2 · Feb 2026' },
+ *   ]} />
+ */
+import MediaStepper from '../MediaStepper.astro';
+
+interface Snapshot {
+  src: string;
+  alt?: string;
+  caption?: string;
+  type?: 'image' | 'video';
+  poster?: string;
+}
+
+interface Props {
+  items: Snapshot[];
+  label?: string;
+  aspect?: string;
+  fit?: 'contain' | 'cover';
+}
+
+const { items, label = 'Snapshots', aspect = '16 / 10', fit = 'contain' } = Astro.props;
+---
+<div class="snapshots">
+  <MediaStepper
+    items={items.map((s) => ({ ...s, alt: s.alt ?? s.caption ?? '' }))}
+    label={label}
+    aspect={aspect}
+    fit={fit}
+  />
+</div>

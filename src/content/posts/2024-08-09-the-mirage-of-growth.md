@@ -1,5 +1,6 @@
 ---
 title: "The Mirage of Growth"
+tags: [work]
 date: 2024-08-09
 description: "Agency's false growth led to chaos. I scaled back for sanity."
 draft: false

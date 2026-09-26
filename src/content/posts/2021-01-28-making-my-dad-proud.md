@@ -1,5 +1,6 @@
 ---
 title: "Making my dad proud"
+tags: [family]
 date: 2021-01-28
 draft: false
 ---

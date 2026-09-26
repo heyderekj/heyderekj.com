@@ -1,0 +1,315 @@
+/* ============================================================
+   Library — blueprint grid
+   Cells run rail to rail (same 100cqw bleed as .section-title) so
+   their hairlines join the frame; plus ticks sit on the intersections.
+   ============================================================ */
+
+.library-page {
+  --bp-tick: color-mix(in srgb, var(--tick) 60%, transparent);
+  --bp-pad: var(--space-3);
+}
+
+/* Tick = a 9px horizontal + vertical bar, positioned via the two custom props. */
+.bp-grid {
+  --cols: 3;
+  position: relative;
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  margin: 0 0 var(--space-5);
+  margin-left: calc((100% - 100cqw) / 2 - var(--frame-pad-x));
+  width: calc(100cqw + 2 * var(--frame-pad-x));
+  max-width: none;
+  border-top: 1px solid var(--rule);
+}
+.bp-grid--dense { --cols: 4; }
+.bp-grid--wide { --cols: 2; }
+
+/* Rail ticks where the grid's top rule meets the frame (matches .section-title::after) */
+.bp-grid::before {
+  content: '';
+  position: absolute;
+  top: calc((var(--tick-size) - 1px) / -2 - 1px);
+  left: calc(-1 * (var(--tick-size) - 1px) / 2 - 1px);
+  right: calc(-1 * (var(--tick-size) - 1px) / 2 - 1px);
+  height: var(--tick-size);
+  pointer-events: none;
+  z-index: 2;
+  background:
+    linear-gradient(var(--tick), var(--tick)) left center / var(--tick-size) 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) calc((var(--tick-size) - 1px) / 2) center / 1px var(--tick-size) no-repeat,
+    linear-gradient(var(--tick), var(--tick)) right center / var(--tick-size) 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) calc(100% - (var(--tick-size) - 1px) / 2) center / 1px var(--tick-size) no-repeat;
+}
+
+.bp-cell {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+  /* Right + bottom hairlines, drawn inside the cell */
+  box-shadow: inset -1px -1px 0 var(--rule);
+}
+
+/* Interior intersection ticks: bottom-right corner of every cell, and top-right on the first row. */
+.bp-cell::after,
+.bp-cell::before {
+  content: '';
+  position: absolute;
+  width: var(--tick-size);
+  height: var(--tick-size);
+  pointer-events: none;
+  z-index: 1;
+  background:
+    linear-gradient(var(--bp-tick), var(--bp-tick)) center / var(--tick-size) 1px no-repeat,
+    linear-gradient(var(--bp-tick), var(--bp-tick)) center / 1px var(--tick-size) no-repeat;
+}
+.bp-cell::after {
+  right: calc(var(--tick-size) / -2 + 0.5px);
+  bottom: calc(var(--tick-size) / -2 + 0.5px);
+}
+.bp-cell::before {
+  display: none;
+  right: calc(var(--tick-size) / -2 + 0.5px);
+  top: calc(var(--tick-size) / -2 - 0.5px);
+}
+
+/* Column-aware edges: the last column meets the frame rail (no double line, no tick). */
+.bp-grid--regular > .bp-cell:nth-child(3n) { box-shadow: inset 0 -1px 0 var(--rule); }
+.bp-grid--regular > .bp-cell:nth-child(3n)::after { display: none; }
+.bp-grid--regular > .bp-cell:nth-child(-n + 2)::before { display: block; }
+.bp-grid--wide > .bp-cell:nth-child(2n) { box-shadow: inset 0 -1px 0 var(--rule); }
+.bp-grid--wide > .bp-cell:nth-child(2n)::after { display: none; }
+.bp-grid--wide > .bp-cell:nth-child(1)::before { display: block; }
+.bp-grid--dense > .bp-cell:nth-child(4n) { box-shadow: inset 0 -1px 0 var(--rule); }
+.bp-grid--dense > .bp-cell:nth-child(4n)::after { display: none; }
+.bp-grid--dense > .bp-cell:nth-child(-n + 3)::before { display: block; }
+
+@container frame (max-width: 640px) {
+  .bp-grid,
+  .bp-grid--dense { --cols: 2; }
+  .bp-grid--wide { --cols: 1; }
+  .bp-grid > .bp-cell:nth-child(n) { box-shadow: inset -1px -1px 0 var(--rule); }
+  .bp-grid > .bp-cell:nth-child(n)::after { display: block; }
+  .bp-grid > .bp-cell:nth-child(n)::before { display: none; }
+  .bp-grid > .bp-cell:nth-child(2n) { box-shadow: inset 0 -1px 0 var(--rule); }
+  .bp-grid > .bp-cell:nth-child(2n)::after { display: none; }
+  .bp-grid > .bp-cell:nth-child(1)::before { display: block; }
+  .bp-grid--wide > .bp-cell:nth-child(n) { box-shadow: inset 0 -1px 0 var(--rule); }
+  .bp-grid--wide > .bp-cell:nth-child(n)::after,
+  .bp-grid--wide > .bp-cell:nth-child(n)::before { display: none; }
+}
+
+/* ---- Card ---- */
+main.main .lib-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  height: 100%;
+  padding: calc(var(--bp-pad) + 14px) var(--bp-pad) var(--bp-pad);
+  color: inherit;
+  text-decoration: none;
+  border-bottom: none;
+  transition: background 0.15s ease;
+}
+main.main a.lib-card:hover { background: color-mix(in srgb, var(--fg) 3%, transparent); }
+main.main a.lib-card:focus-visible { outline: 2px solid var(--fg); outline-offset: -3px; }
+
+.lib-card__code {
+  position: absolute;
+  top: 10px;
+  left: var(--bp-pad);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.lib-card__icon {
+  position: absolute;
+  top: 9px;
+  right: var(--bp-pad);
+  font-size: 13px;
+  color: var(--muted);
+}
+a.lib-card:hover .lib-card__icon { color: var(--accent); }
+
+.lib-card__visual {
+  position: relative;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+}
+.lib-card__visual--book { aspect-ratio: 2 / 3; width: 72%; }
+.lib-card__visual--podcast { aspect-ratio: 1; }
+.lib-card__visual--interest { aspect-ratio: 4 / 3; }
+.lib-card__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  display: block;
+}
+/* No image yet: a dashed spec outline with the title (blueprint placeholder). */
+.lib-card__blank {
+  position: absolute;
+  inset: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  border: 1px dashed color-mix(in srgb, var(--accent) 45%, var(--rule));
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.35;
+  text-align: center;
+  color: var(--muted-strong);
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 12px 12px;
+  background-position: -1px -1px;
+}
+.lib-card__blank i { font-size: 32px; color: var(--accent); }
+
+.lib-card__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lib-card__host {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--accent);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lib-card__title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35em;
+  font-size: var(--size-body);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--fg);
+}
+.lib-card__fav { font-size: 0.7em; color: var(--accent); }
+.lib-card__state { flex-shrink: 0; font-size: 0.95em; color: var(--muted-strong); align-self: center; }
+.is-met .lib-card__state { color: var(--fg); }
+.is-remembered .lib-card__title { font-style: italic; }
+.lib-card__by { font-size: var(--size-meta); color: var(--muted-strong); }
+.lib-card__note {
+  margin: 4px 0 0;
+  max-width: none;
+  font-size: var(--size-meta);
+  line-height: 1.5;
+  color: var(--fg-soft);
+}
+.lib-card__chip {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 0.05em 0.55em;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  font-size: var(--size-micro);
+  font-weight: 600;
+  color: var(--fg-soft);
+}
+.lib-card__chip--reading { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
+
+/* Saved X post: quoted text as the hero */
+.lib-card__post {
+  margin: 4px 0 0;
+  padding: 0;
+  border: 0;
+  max-width: none;
+  font-size: var(--size-body);
+  line-height: 1.55;
+  color: var(--fg);
+}
+.lib-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: auto 0 0;
+  max-width: none;
+  font-size: var(--size-meta);
+  color: var(--muted-strong);
+}
+.lib-card__meta .lib-card__title { font-size: var(--size-meta); }
+
+/* Favorites: orange corner flag */
+.bp-cell.is-favorite .lib-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-top: 10px solid var(--accent);
+  border-right: 10px solid transparent;
+}
+.bp-cell.is-draft { opacity: 0.7; }
+
+/* ---- Section title with a trailing "See all" (keeps the full-width rule math intact) ---- */
+.library-section-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+main.main .library-section-title a.library-see-all {
+  font-size: var(--size-meta);
+  font-weight: 400;
+  color: var(--muted-strong);
+  white-space: nowrap;
+}
+main.main .library-section-title a.library-see-all:hover { color: var(--fg); }
+.library-intro { color: var(--fg-soft); }
+.library-group-label {
+  margin: var(--space-4) 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-strong);
+}
+
+/* ---- Item detail: spec sheet ---- */
+.spec-sheet {
+  margin: var(--space-4) 0 var(--space-5);
+  margin-left: calc((100% - 100cqw) / 2 - var(--frame-pad-x));
+  width: calc(100cqw + 2 * var(--frame-pad-x));
+  max-width: none;
+  border-top: 1px solid var(--rule);
+}
+.spec-sheet__row {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) 3fr;
+  border-bottom: 1px solid var(--rule);
+  font-size: var(--size-meta);
+}
+.spec-sheet__row > * { margin: 0; padding: 10px var(--space-3); }
+.spec-sheet__row dt {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  box-shadow: inset -1px 0 0 var(--rule);
+}
+.spec-sheet__row dd { color: var(--fg); }
+
+/* Beat `.prose ul` / `.prose dl` measure caps — grids run rail to rail. */
+.prose .bp-grid,
+.prose .spec-sheet { max-width: none; }
+
+.library-crumb {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted-strong);
+}
+main.main .library-crumb a { color: inherit; border-bottom: none; }
+main.main .library-crumb a:hover { color: var(--fg); }

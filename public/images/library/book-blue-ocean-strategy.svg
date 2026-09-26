@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 360" width="480" height="720">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="360" fill="url(#g)"/>
+  <rect width="240" height="360" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M136 210 V96 L184 196 Z M130 210 V104 L96 196 Z"/>
+    <path d="M92 214 H196 L180 236 H108 Z"/>
+    <path d="M20 256 q15 -8 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 M20 280 q15 -8 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0"/>
+    <path d="M28 160 l8 -16 l6 16 M46 176 l8 -16 l6 16 M26 196 l8 -16 l6 16" stroke-opacity="0.6"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M20 214 H80"/></g>
+  <text x="12" y="346" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. BK — OPEN WATER</text>
+</svg>

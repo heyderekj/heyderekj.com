@@ -1,5 +1,6 @@
 ---
 title: "Love with an asterisk"
+tags: [life]
 date: 2022-06-18
 draft: false
 ---

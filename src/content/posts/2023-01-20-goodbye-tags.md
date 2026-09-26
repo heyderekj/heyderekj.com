@@ -1,5 +1,6 @@
 ---
 title: "Goodbye Tags"
+tags: [design, making]
 date: 2023-01-20
 draft: false
 ---

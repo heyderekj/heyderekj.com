@@ -1,5 +1,6 @@
 ---
 title: "The 48 hour project"
+tags: [ai, making]
 date: 2026-03-22
 draft: false
 ---

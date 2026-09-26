@@ -1,0 +1,61 @@
+---
+/**
+ * Before / after. `pair` shows both side by side (each zooms on its own);
+ * `stepper` flips between them in one frame — better for pixel-level diffs.
+ *
+ *   <Compare
+ *     before={{ src: '/images/posts/slug/v1.png', alt: 'First pass' }}
+ *     after={{ src: '/images/posts/slug/v2.png', alt: 'Shipped', label: 'v2' }}
+ *     caption="Nav, v1 → v2"
+ *   />
+ */
+import MediaStepper from '../MediaStepper.astro';
+import { imgAttrs } from '../../lib/img';
+
+interface Shot {
+  src: string;
+  alt: string;
+  label?: string;
+}
+
+interface Props {
+  before: Shot;
+  after: Shot;
+  caption?: string;
+  mode?: 'pair' | 'stepper';
+  /** Stepper frame aspect, e.g. `16 / 10`. */
+  aspect?: string;
+}
+
+const { before, after, caption, mode = 'pair', aspect = '16 / 10' } = Astro.props;
+const shots = [
+  { ...before, label: before.label ?? 'Before' },
+  { ...after, label: after.label ?? 'After' },
+];
+---
+{mode === 'stepper' ? (
+  <div class="compare compare--stepper">
+    <MediaStepper
+      items={shots.map((s) => ({ src: s.src, alt: s.alt, caption: caption ? `${s.label} — ${caption}` : s.label }))}
+      label={caption ?? 'Before and after'}
+      aspect={aspect}
+    />
+  </div>
+) : (
+  <figure class="pfig pfig--pair compare" data-fig-init>
+    {shots.map((s) => (
+      <div class="pfig-cell zoomable">
+        <button type="button" class="zoom-trigger" aria-label={`Zoom ${s.label.toLowerCase()} image`} aria-expanded="false">
+          <img
+            {...imgAttrs(s.src, { sizes: '(max-width: 560px) 50vw, 265px' })}
+            alt={s.alt}
+            loading="lazy"
+            decoding="async"
+          />
+        </button>
+        <span class="compare__label">{s.label}</span>
+      </div>
+    ))}
+    {caption && <figcaption>{caption}</figcaption>}
+  </figure>
+)}

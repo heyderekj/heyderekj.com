@@ -1,5 +1,6 @@
 ---
 title: "My church I once designed for"
+tags: [faith, work]
 date: 2022-01-06
 draft: false
 ---

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 360" width="480" height="720">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="360" fill="url(#g)"/>
+  <rect width="240" height="360" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="120" cy="64" r="6"/><path d="M120 70 v13.200000000000001 M112.2 74.8 h15.600000000000001 M120 83.2 l-6 10.8 M120 83.2 l6 10.8"/>
+    <circle cx="98" cy="90" r="6"/><path d="M98 96 v13.200000000000001 M90.2 100.8 h15.600000000000001 M98 109.2 l-6 10.8 M98 109.2 l6 10.8"/>
+    <circle cx="142" cy="90" r="6"/><path d="M142 96 v13.200000000000001 M134.2 100.8 h15.600000000000001 M142 109.2 l-6 10.8 M142 109.2 l6 10.8"/>
+    <circle cx="76" cy="116" r="6"/><path d="M76 122 v13.200000000000001 M68.2 126.8 h15.600000000000001 M76 135.2 l-6 10.8 M76 135.2 l6 10.8"/>
+    <circle cx="164" cy="116" r="6"/><path d="M164 122 v13.200000000000001 M156.2 126.8 h15.600000000000001 M164 135.2 l-6 10.8 M164 135.2 l6 10.8"/>
+    <circle cx="120" cy="116" r="6"/><path d="M120 122 v13.200000000000001 M112.2 126.8 h15.600000000000001 M120 135.2 l-6 10.8 M120 135.2 l6 10.8"/>
+    <circle cx="120" cy="166" r="6"/><path d="M120 172 v13.200000000000001 M112.2 176.8 h15.600000000000001 M120 185.2 l-6 10.8 M120 185.2 l6 10.8"/>
+    <circle cx="120" cy="216" r="6"/><path d="M120 222 v13.200000000000001 M112.2 226.8 h15.600000000000001 M120 235.2 l-6 10.8 M120 235.2 l6 10.8"/>
+    <path d="M60 116 L120 52 L180 116" stroke-dasharray="2 6" stroke-opacity="0.6"/>
+    <path d="M120 296 Q92 278 92 262 Q92 250 104 250 Q114 250 120 260 Q126 250 136 250 Q148 250 148 262 Q148 278 120 296 Z"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M120 50 V290"/></g>
+  <text x="12" y="346" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. BK — THANK YOU</text>
+</svg>

@@ -1,0 +1,147 @@
+---
+/**
+ * One route for both `/library/<kind>/` (e.g. /library/books/) and
+ * `/library/<item-slug>/` (items with notes). Item files are prefixed with
+ * their kind (`book-…`, `tool-…`) so the two never collide.
+ */
+import '../../styles/library.css';
+import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import TagChips from '../../components/TagChips.astro';
+import LibraryFilters from '../../components/library/LibraryFilters.astro';
+import LibrarySection from '../../components/library/LibrarySection.astro';
+import { postComponents } from '../../components/post';
+import { imgAttrs } from '../../lib/img';
+import {
+  byKind,
+  getLibrary,
+  hasPage,
+  hostOf,
+  itemCodes,
+  KIND_META,
+  KINDS,
+  kindHref,
+  type LibraryItem,
+  type LibraryKind,
+} from '../../lib/library';
+
+export async function getStaticPaths() {
+  const items = await getLibrary();
+  const kindPaths = KINDS.filter((k) => byKind(items, k).length > 0).map((kind) => ({
+    params: { slug: KIND_META[kind].path },
+    props: { mode: 'kind' as const, kind },
+  }));
+  const itemPaths = items.filter(hasPage).map((item) => ({
+    params: { slug: item.slug },
+    props: { mode: 'item' as const, item },
+  }));
+  return [...kindPaths, ...itemPaths];
+}
+
+type Props =
+  | { mode: 'kind'; kind: LibraryKind }
+  | { mode: 'item'; item: LibraryItem };
+
+const props = Astro.props;
+const items = await getLibrary();
+const codes = itemCodes(items);
+const counts = Object.fromEntries(KINDS.map((k) => [k, byKind(items, k).length])) as Record<LibraryKind, number>;
+
+// Kind page: tools are sectioned by `group`; everything else is one grid.
+const kindGroups = (() => {
+  if (props.mode !== 'kind') return [];
+  const list = byKind(items, props.kind);
+  if (props.kind === 'tool') {
+    const groups = new Map<string, LibraryItem[]>();
+    for (const i of list) {
+      const g = i.data.group ?? 'Other';
+      groups.set(g, [...(groups.get(g) ?? []), i]);
+    }
+    return groups.size > 1 ? [...groups.entries()].map(([heading, items]) => ({ heading, items })) : [{ items: list }];
+  }
+  return [{ items: list }];
+})();
+
+const item = props.mode === 'item' ? props.item : undefined;
+const rendered = item ? await item.render() : undefined;
+const Content = rendered?.Content;
+const d = item?.data;
+const fmt = (date: Date) =>
+  date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const READING = { reading: 'Reading', read: 'Read', want: 'Want to read' } as const;
+const specRows: [string, string | undefined, string?][] = d
+  ? [
+      ['Catalog', codes.get(item!.id)],
+      ['Kind', KIND_META[d.kind].one],
+      ['Group', d.group],
+      [d.kind === 'podcast' ? 'Host' : d.kind === 'book' ? 'Author' : 'By', d.by],
+      ['Status', d.reading ? READING[d.reading] : undefined],
+      ['Saved', d.date ? fmt(d.date) : undefined],
+      ['Source', hostOf(d.url), d.url],
+    ]
+  : [];
+---
+{props.mode === 'kind' ? (
+  <Base
+    title={`${KIND_META[props.kind].many} — Library — Derek Castelli`}
+    description={KIND_META[props.kind].intro}
+  >
+    <article class="prose library-page">
+      <PageTitle path={`/library/${KIND_META[props.kind].path}`} />
+      <p class="library-intro">{KIND_META[props.kind].intro}</p>
+      <LibraryFilters active={props.kind} counts={counts} total={items.length} />
+      {kindGroups.map((g) => (
+        <LibrarySection
+          kind={props.kind}
+          items={g.items}
+          codes={codes}
+          heading={g.heading}
+        />
+      ))}
+    </article>
+  </Base>
+) : (
+  <Base title={`${d!.title} — Library — Derek Castelli`} description={d!.note ?? KIND_META[d!.kind].intro}>
+    <article class="prose library-page library-item">
+      <p class="library-crumb">
+        <a href="/library/">/library</a><a href={kindHref(d!.kind)}>/{KIND_META[d!.kind].path}</a>
+      </p>
+      <header class="post-header">
+        <h1 class="post-title">
+          {d!.url ? (
+            <a class="post-link-out" href={d!.url} rel="noopener">
+              {d!.title}<span class="post-link-out__arrow" aria-hidden="true">↗</span>
+            </a>
+          ) : d!.title}
+        </h1>
+        {d!.note && <p class="library-intro">{d!.note}</p>}
+        <TagChips tags={d!.tags} />
+      </header>
+
+      {d!.image && (
+        <figure class="pfig zoomable" data-fig-init>
+          <button type="button" class="zoom-trigger" aria-label="Zoom image" aria-expanded="false">
+            <img {...imgAttrs(d!.image, { sizes: '(max-width: 560px) 100vw, 530px' })} alt="" decoding="async" />
+          </button>
+        </figure>
+      )}
+
+      <dl class="spec-sheet">
+        {specRows.filter(([, v]) => v).map(([k, v, href]) => (
+          <div class="spec-sheet__row">
+            <dt>{k}</dt>
+            <dd>{href ? <a href={href} rel="noopener">{v}</a> : v}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <div class="post-content">
+        {Content && <Content components={postComponents} />}
+      </div>
+
+      <p class="back-link">
+        <a href={kindHref(d!.kind)}><span class="arrow">&larr;</span> all {KIND_META[d!.kind].many.toLowerCase()}</a>
+      </p>
+    </article>
+  </Base>
+)}

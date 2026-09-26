@@ -1,5 +1,6 @@
 ---
 title: "The AI Checkbox Fallacy"
+tags: [ai, design]
 date: 2025-03-01
 description: "Companies chase AI features to check boxes rather than solve problems. The best AI implementations enhance experiences without drawing attention."
 draft: false

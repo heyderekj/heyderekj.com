@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import PostList from '../../components/PostList.astro';
+import { getPublishedPosts, tagCounts, type Post } from '../../lib/posts';
+import { topicLabel, topics } from '../../data/topics';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const unknown = tagCounts(posts).filter(({ tag }) => !topics[tag]);
+  if (unknown.length) {
+    console.warn(`[topics] tags missing from src/data/topics.ts: ${unknown.map((u) => u.tag).join(', ')}`);
+  }
+  return tagCounts(posts).map(({ tag }) => ({
+    params: { tag },
+    props: { tag, entries: posts.filter((p) => p.data.tags.includes(tag)) },
+  }));
+}
+
+interface Props {
+  tag: string;
+  entries: Post[];
+}
+
+const { tag, entries } = Astro.props;
+const label = topicLabel(tag);
+const description = topics[tag]?.description;
+---
+<Base title={`${label} — Derek Castelli`} description={description ?? `Posts about ${label}.`}>
+  <PageTitle path={`/topics/${tag}`} />
+  <p style="color: var(--fg-soft);">
+    {description ?? `Posts about ${label}.`}{' '}
+    <a href="/topics/">All topics</a>
+  </p>
+
+  <PostList entries={entries} showYearHeaders={true} />
+</Base>

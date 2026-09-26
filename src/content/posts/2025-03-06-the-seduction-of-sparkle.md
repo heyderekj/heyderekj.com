@@ -1,5 +1,6 @@
 ---
 title: "The Seduction of Sparkle"
+tags: [ai, design]
 date: 2025-03-06
 description: "Companies chasing AI's sparkle often neglect product fundamentals, creating impressive features atop crumbling foundations. Fix the basics before adding AI magic."
 draft: false
