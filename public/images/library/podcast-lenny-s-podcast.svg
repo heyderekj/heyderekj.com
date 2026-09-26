@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="600" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="300" height="300" fill="url(#g)"/>
+  <rect width="300" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 88 Q182 128 170 168 Q190 150 188 126 Q214 170 190 206 H110 Q86 170 112 126 Q110 150 130 168 Q118 128 150 88 Z"/>
+    <path d="M150 150 Q164 168 158 190 H142 Q136 168 150 150 Z"/>
+    <path d="M96 212 L204 236 M204 212 L96 236"/>
+    <path d="M50 70 L118 150 M250 70 L182 150"/>
+    <rect x="40" y="52" width="20" height="26" rx="6" transform="rotate(-40 50 65)"/>
+    <rect x="240" y="52" width="20" height="26" rx="6" transform="rotate(40 250 65)"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M40 250 H260"/></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. PC — CAMPFIRE</text>
+</svg>

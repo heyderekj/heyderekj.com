@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 360" width="480" height="720">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="360" fill="url(#g)"/>
+  <rect width="240" height="360" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M42 140 L54 204 M42 140 L52 138 L62 196 M54 204 H104 V212 H56 Z M60 212 L54 256 M100 212 L106 256 M50 170 L58 168"/>
+    <path d="M198 140 L186 204 M198 140 L188 138 L178 196 M186 204 H136 V212 H184 Z M180 212 L186 256 M140 212 L134 256 M190 170 L182 168"/>
+    <path d="M46 88 Q46 66 76 66 Q106 66 106 88 Q106 110 76 110 L64 122 L66 109 Q46 104 46 88 Z"/>
+    <path d="M134 108 Q134 86 164 86 Q194 86 194 108 Q194 130 164 130 L176 142 L172 129 Q134 124 134 108 Z"/>
+    <path d="M64 86 H90 M152 106 H176"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M20 250 H220"/></g>
+  <text x="12" y="346" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. BK — DIALOGUE</text>
+</svg>

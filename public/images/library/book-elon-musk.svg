@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 360" width="480" height="720">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="240" height="360" fill="url(#g)"/>
+  <rect width="240" height="360" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M120 60 Q140 84 140 130 V210 H100 V130 Q100 84 120 60 Z"/>
+    <circle cx="120" cy="120" r="9"/>
+    <path d="M100 180 L82 214 H100 M140 180 L158 214 H140"/>
+    <path d="M106 214 Q110 236 120 250 Q130 236 134 214"/>
+    <path d="M70 290 Q80 262 106 270 Q116 250 134 262 Q160 254 172 290"/>
+    <path d="M186 80 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3 Z"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M40 300 H200"/></g>
+  <text x="12" y="346" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. BK — LAUNCH</text>
+</svg>

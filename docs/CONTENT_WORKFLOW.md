@@ -167,10 +167,7 @@ Kinds: `interest`, `book`, `podcast`, `bookmark`, `post` (saved X post), `person
 | `post: { text, handle, postedAt }` | Saved X posts, rendered as a static card (no embed, survives deletion) |
 | `order` | Manual ordering (lower first) |
 
-Artwork lives in `public/images/library/<file-name>.<ext>`. Everything is drawn in the grid's own line style:
-
-- **Books and podcasts:** the real cover (from Open Library or Apple Podcasts) is kept, unpublished, in `scripts/library-art/sources/<file-name>.jpg`. It's turned into an orange line sketch on a faint grid with `python3 scripts/library-art/sketch.py [file-name]`, which needs Pillow and numpy. To swap in a different edition, replace the source image and rerun the script.
-- **Interests:** original line drawings in `scripts/library-art/drawings.mjs`. Run `node scripts/library-art/drawings.mjs` after editing.
+Artwork lives in `public/images/library/<file-name>.svg`. Every item gets an original line drawing in the grid's style (orange strokes, faint grid, mono figure label), sketched to represent the book, podcast, or interest rather than reproduce its cover. The drawings are defined in `scripts/library-art/drawings.mjs`: interests are 400×300, books 240×360, podcasts 300×300. Add or edit one there, then run `node scripts/library-art/drawings.mjs`.
 
 Write anything in the body and the item gets its own page (`/library/<file-name>/`) with a spec-sheet header. MDX post components work there too. Items without a body link straight to `url`.
 

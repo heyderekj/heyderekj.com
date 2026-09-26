@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="600" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="300" height="300" fill="url(#g)"/>
+  <rect width="300" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M70 150 Q70 112 110 112 H190 Q230 112 230 150 Q230 188 196 188 Q176 188 166 170 Q150 158 134 170 Q124 188 104 188 Q70 188 70 150 Z"/>
+    <path d="M150 112 V170"/>
+    <path d="M230 150 H244 Q256 150 256 138 V60 Q256 50 266 50"/>
+    <path d="M70 150 Q40 150 40 120"/>
+    <circle cx="200" cy="78" r="8"/><circle cx="178" cy="54" r="5"/><circle cx="206" cy="38" r="4"/>
+    <path d="M30 236 q20 -10 40 0 t40 0 t40 0 t40 0 t40 0 t40 0"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. PC — DIVE</text>
+</svg>
