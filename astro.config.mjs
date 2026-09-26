@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
 import rehypeImgCdn from './src/lib/rehype-img-cdn.ts';
 
 export default defineConfig({
@@ -7,7 +8,7 @@ export default defineConfig({
     '/uses': '/tools',
     '/uses/': '/tools/',
   },
-  integrations: [],
+  integrations: [mdx()],
   build: {
     format: 'directory',
   },

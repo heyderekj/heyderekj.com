@@ -1,0 +1,30 @@
+---
+/**
+ * Collapsible deep-dive section — appendixes, raw data, process notes.
+ * Built on the `.pacc` accordion (client/accordion.ts animates it).
+ *
+ *   <Appendix title="Raw numbers">…markdown…</Appendix>
+ *   <Appendix label="Appendix B" title="Prompts I tried" open>…</Appendix>
+ */
+interface Props {
+  title: string;
+  /** Small kicker before the title. */
+  label?: string;
+  open?: boolean;
+  id?: string;
+}
+
+const { title, label = 'Appendix', open = false, id } = Astro.props;
+const anchor = id ?? `appendix-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`;
+---
+<div class="pacc appendix">
+  <details class="pacc-item" id={anchor} open={open}>
+    <summary>
+      <span class="appendix__title">
+        {label && <span class="appendix__label">{label}</span>}
+        {title}
+      </span>
+    </summary>
+    <slot />
+  </details>
+</div>

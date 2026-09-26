@@ -1,0 +1,106 @@
+---
+/**
+ * Show how AI was used: a prompt and its response, or a whole transcript.
+ *
+ * Simple form (slots, markdown inside):
+ *   <Prompt model="Claude Opus 5.5" date="2026-09-26" tool="Claude Code">
+ *     <div slot="prompt">Refactor the reveal script so media never fades.</div>
+ *     <div slot="response">Here's the change…</div>
+ *   </Prompt>
+ *
+ * Transcript form (markdown strings; turns after `visible` collapse):
+ *   <Prompt model="Claude Opus 5.5" turns={[
+ *     { role: 'user', text: 'First ask' },
+ *     { role: 'assistant', text: 'First answer' },
+ *     …
+ *   ]} visible={2} />
+ *
+ * The copy button copies the first prompt.
+ */
+import { mdStringToHtml } from '../../lib/mdString';
+
+interface Turn {
+  role: 'user' | 'assistant' | 'system';
+  text: string;
+}
+
+interface Props {
+  model?: string;
+  /** Where it ran, e.g. "Claude Code", "Figma Make". */
+  tool?: string;
+  date?: string;
+  label?: string;
+  turns?: Turn[];
+  /** Transcript form: turns shown before "Show full transcript". */
+  visible?: number;
+  caption?: string;
+}
+
+const { model, tool, date, label = 'Prompt', turns, visible = 2, caption } = Astro.props;
+
+const roleLabel = (role: Turn['role']) =>
+  role === 'user' ? 'Me' : role === 'system' ? 'System' : (model ?? 'AI');
+
+const shown = turns?.slice(0, visible) ?? [];
+const hidden = turns?.slice(visible) ?? [];
+const firstPromptIdx = turns?.findIndex((t) => t.role === 'user') ?? -1;
+const hasResponse = Astro.slots.has('response');
+
+const fmtDate = (s: string) => {
+  const d = new Date(s);
+  return Number.isNaN(d.valueOf())
+    ? s
+    : d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+};
+---
+<figure class="prompt" data-prompt>
+  <header class="prompt__head">
+    <span class="prompt__label"><i class="ph-bold ph-sparkle" aria-hidden="true"></i>{label}</span>
+    {(model || tool) && (
+      <span class="prompt__model">{[model, tool].filter(Boolean).join(' · ')}</span>
+    )}
+    {date && <time class="prompt__date" datetime={date}>{fmtDate(date)}</time>}
+    <button type="button" class="prompt__copy" data-prompt-copy aria-label="Copy prompt">
+      <i class="ph-bold ph-copy" aria-hidden="true"></i><span data-prompt-copy-label>Copy</span>
+    </button>
+  </header>
+
+  {turns ? (
+    <div class="prompt__turns">
+      {shown.map((t, i) => (
+        <div class={`prompt__turn prompt__turn--${t.role}`}>
+          <p class="prompt__role">{roleLabel(t.role)}</p>
+          <div class="prompt__text" data-prompt-source={i === firstPromptIdx ? '' : undefined} set:html={mdStringToHtml(t.text)} />
+        </div>
+      ))}
+      {hidden.length > 0 && (
+        <details class="prompt__more">
+          <summary>
+            Show full transcript · {hidden.length} more {hidden.length === 1 ? 'turn' : 'turns'}
+          </summary>
+          {hidden.map((t) => (
+            <div class={`prompt__turn prompt__turn--${t.role}`}>
+              <p class="prompt__role">{roleLabel(t.role)}</p>
+              <div class="prompt__text" set:html={mdStringToHtml(t.text)} />
+            </div>
+          ))}
+        </details>
+      )}
+    </div>
+  ) : (
+    <div class="prompt__turns">
+      <div class="prompt__turn prompt__turn--user">
+        <p class="prompt__role">Me</p>
+        <div class="prompt__text" data-prompt-source><slot name="prompt" /></div>
+      </div>
+      {hasResponse && (
+        <div class="prompt__turn prompt__turn--assistant">
+          <p class="prompt__role">{roleLabel('assistant')}</p>
+          <div class="prompt__text"><slot name="response" /></div>
+        </div>
+      )}
+    </div>
+  )}
+
+  {caption && <figcaption class="prompt__caption">{caption}</figcaption>}
+</figure>

@@ -1,0 +1,104 @@
+---
+title: "Component kitchen sink"
+date: 2026-09-26
+type: essay
+status: working
+draft: true
+tags: [design, ai]
+description: "Every deep-dive component in one place — a reference for writing MDX posts."
+audience: "Future me, writing a design write-up and wondering which component to reach for."
+changelog:
+  - date: 2026-09-26
+    note: "Added the transcript example"
+---
+
+This post exercises every component available in `.mdx` posts. It's a draft, so it never ships — it's here as a reference.<Sidenote>Sidenotes float into the right margin on wide screens and turn into a numbered toggle on phones. No JavaScript needed.</Sidenote>
+
+## Figures
+
+<Figure src="/assets/images/projects/harvous-3.webp" alt="Harvous notes view" caption="A single zoomable figure with a caption." />
+
+Plain markdown images get the same treatment automatically:
+
+![Harvous home](/assets/images/projects/harvous-5.webp)
+
+## Before and after
+
+<Compare
+  before={{ src: '/assets/images/projects/harvous-3.webp', alt: 'Earlier notes view' }}
+  after={{ src: '/assets/images/projects/harvous-5.webp', alt: 'Current home view' }}
+  caption="Side by side — each one zooms on its own."
+/>
+
+<Compare
+  mode="stepper"
+  before={{ src: '/assets/images/projects/harvous-3.webp', alt: 'Earlier notes view' }}
+  after={{ src: '/assets/images/projects/harvous-5.webp', alt: 'Current home view', label: 'v2' }}
+  caption="Same frame, flip between them"
+/>
+
+## Snapshots over time
+
+<Snapshots items={[
+  { src: '/assets/images/projects/harvous-3.webp', caption: 'v1 · Jan 2026' },
+  { src: '/assets/images/projects/harvous-5.webp', caption: 'v2 · Mar 2026' },
+]} />
+
+## Working with AI
+
+A single prompt and response, with markdown inside the slots:
+
+<Prompt model="Claude Opus 5.5" tool="Claude Code" date="2026-09-26">
+  <div slot="prompt">Images across the site load with a delay. Find out why and fix it without changing how the pages look.</div>
+  <div slot="response">
+Two causes stack: multi-megabyte PNGs served into 250px slots, and a reveal script that hides `<main>` until JavaScript runs. I'll serve sized variants through the image CDN and stop fading media.
+  </div>
+</Prompt>
+
+A longer transcript collapses after the first exchange:
+
+<Prompt
+  label="Transcript"
+  model="Claude Opus 5.5"
+  date="2026-09-26"
+  caption="Planning this site's writing system."
+  turns={[
+    { role: 'user', text: 'Find opportunities to make my site more personal.' },
+    { role: 'assistant', text: 'A few questions first — how should short posts and links fit alongside your essays?' },
+    { role: 'user', text: 'One stream, typed.' },
+    { role: 'assistant', text: 'Got it. Essays, notes, and links in one feed, with **status + revision** on essays.' },
+  ]}
+/>
+
+## Asides
+
+<Callout kind="note">
+  Callouts hold asides that shouldn't interrupt the argument.
+</Callout>
+
+<Callout kind="update" title="Update · Sep 2026">
+  Use `update` for dated addenda after publication.
+</Callout>
+
+Footnotes work too.[^1]
+
+## Appendix
+
+<Appendix title="Raw numbers">
+
+| Page | Before | After |
+| --- | --- | --- |
+| /work/ | ~38 MB | ~3 MB |
+| Case study | ~13 MB | ~1.5 MB |
+
+</Appendix>
+
+<Appendix label="Appendix B" title="Every prompt I tried">
+
+1. First attempt — too vague.
+2. Second attempt — better, but it touched the layout.
+3. Third attempt — shipped.
+
+</Appendix>
+
+[^1]: Standard GFM footnotes, styled to match.

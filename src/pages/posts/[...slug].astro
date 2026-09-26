@@ -131,6 +131,12 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
       <TagChips tags={d.tags} />
     </header>
 
+    {d.draft && (
+      <Callout kind="note" title="Draft preview">
+        <p>Only visible in local dev — <code>draft: true</code> keeps this out of the build.</p>
+      </Callout>
+    )}
+
     {d.status === 'outdated' && (
       <Callout kind="outdated">
         <p>

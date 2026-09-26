@@ -22,10 +22,10 @@ export const STATUS_LABELS: Record<Post['data']['status'], string> = {
 
 let cache: Promise<Post[]> | null = null;
 
-/** Published posts, newest first. */
+/** Published posts, newest first. In `astro dev`, drafts are included so they can be previewed. */
 export function getPublishedPosts(): Promise<Post[]> {
   const load = () =>
-    getCollection('posts', ({ data }) => !data.draft).then((posts) =>
+    getCollection('posts', ({ data }) => import.meta.env.DEV || !data.draft).then((posts) =>
       posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
     );
   // Memoize for the build (every page asks); always fresh in dev so edits show.

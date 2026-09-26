@@ -23,6 +23,7 @@
     "astro": "^4.16.19"
   },
   "dependencies": {
+    "@astrojs/mdx": "^3.1.9",
     "image-size": "^1.2.1",
     "marked": "^12.0.2",
     "plyr": "^3.8.4"
