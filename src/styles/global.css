@@ -2386,3 +2386,35 @@ html.orange-mode {
   }
 }
 
+
+/* ---- Topics index ---- */
+.topic-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-4) 0 0;
+  display: grid;
+  gap: 2px;
+}
+.topic-list li { margin: 0 calc(var(--space-2) * -1); }
+main.main a.topic-link {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--space-3);
+  row-gap: 2px;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: inherit;
+}
+main.main a.topic-link:hover { background: var(--bg-elevated); border-color: var(--border); }
+.topic-link__name { font-weight: 600; color: var(--fg); }
+.topic-link__count { font-size: var(--size-meta); color: var(--muted); font-variant-numeric: tabular-nums; }
+.topic-link__desc { grid-column: 1 / -1; font-size: var(--size-meta); color: var(--fg-soft); }
+
+/* ---- Colophon ---- */
+.colophon__lead { font-size: var(--size-lead); color: var(--fg-soft); }
+.colophon h2 { font-size: var(--size-lead); margin-top: var(--space-5); }
+.colophon li { margin-bottom: var(--space-2); }
+.colophon .status-chip { margin-right: 0.2em; }
+.colophon__build { font-size: var(--size-meta); color: var(--muted-strong); }

@@ -1,0 +1,88 @@
+---
+import fs from 'node:fs';
+import Base from '../layouts/Base.astro';
+import PageTitle from '../components/PageTitle.astro';
+import { getPublishedPosts, STATUS_LABELS, TYPE_LABELS, typeHref, type PostType } from '../lib/posts';
+
+const posts = await getPublishedPosts();
+const counts = { essay: 0, note: 0, link: 0 } as Record<PostType, number>;
+for (const p of posts) counts[p.data.type]++;
+
+const astroVersion = (() => {
+  try {
+    return JSON.parse(fs.readFileSync('node_modules/astro/package.json', 'utf8')).version as string;
+  } catch {
+    return '4';
+  }
+})();
+
+/** Netlify sets COMMIT_REF during builds. */
+const commit = process.env.COMMIT_REF;
+const REPO = 'https://github.com/heyderekj/heyderekj.com';
+---
+<Base title="Colophon — Derek Castelli" description="How this site is made, and how the writing on it works.">
+  <article class="prose colophon">
+    <PageTitle path="/colophon" />
+    <p class="colophon__lead">How this site is made, and how the writing on it works.</p>
+
+    <h2 id="writing">The writing</h2>
+    <p>
+      Posts come in three types, all in one stream and one feed:
+    </p>
+    <ul>
+      <li>
+        {counts.essay > 0 ? <a href={typeHref('essay')}><strong>{TYPE_LABELS.essay.many}</strong></a> : <strong>{TYPE_LABELS.essay.many}</strong>} ({counts.essay}) — long-form, with an
+        argument. These carry a status and a revision number.
+      </li>
+      <li>
+        {counts.note > 0 ? <a href={typeHref('note')}><strong>{TYPE_LABELS.note.many}</strong></a> : <strong>{TYPE_LABELS.note.many}</strong>} ({counts.note}) — short thoughts,
+        sometimes without a title.
+      </li>
+      <li>
+        {counts.link > 0 ? <a href={typeHref('link')}><strong>{TYPE_LABELS.link.many}</strong></a> : <strong>{TYPE_LABELS.link.many}</strong>} ({counts.link}) — something worth reading
+        elsewhere, with commentary. The title goes to the source; ★ is the permalink.
+      </li>
+    </ul>
+    <p>Posts are also grouped by <a href="/topics/">topic</a>.</p>
+
+    <h2 id="revisions">Status and revisions</h2>
+    <p>
+      I publish things before they're finished and keep working on them. Each essay shows where it stands:
+    </p>
+    <ul>
+      <li><span class="status-chip status-chip--working">{STATUS_LABELS.working}</span> — published, still being worked out.</li>
+      <li><span class="status-chip status-chip--stable">{STATUS_LABELS.stable}</span> — I stand behind it as written.</li>
+      <li><span class="status-chip status-chip--outdated">{STATUS_LABELS.outdated}</span> — kept for the record; I think differently now.</li>
+    </ul>
+    <p>
+      The <strong>rev</strong> number counts meaningful revisions. Rev 1 is what I first published. Every post lives in
+      git, so each revision links to its exact diff on GitHub. Typo fixes and housekeeping show up as “minor edits”
+      and don't bump the number. Older posts were imported in April 2026, so their tracked history starts there.
+    </p>
+
+    <h2 id="feeds">Feeds</h2>
+    <p>
+      One <a href="/rss.xml">RSS feed</a> for everything. Essays are marked with ★ in the title. Link posts open the
+      source directly in your reader, with a ★ back to my commentary. Notes arrive in full.
+    </p>
+
+    <h2 id="stack">How it's built</h2>
+    <ul>
+      <li><a href="https://astro.build" rel="noopener">Astro</a> {astroVersion}, fully static, with Markdown and MDX for posts.</li>
+      <li>Hosted on <a href="https://www.netlify.com" rel="noopener">Netlify</a>. Images are resized on the fly by Netlify's image CDN.</li>
+      <li>Set in <a href="https://fonts.google.com/specimen/Plus+Jakarta+Sans" rel="noopener">Plus Jakarta Sans</a>, with <a href="https://phosphoricons.com" rel="noopener">Phosphor</a> icons.</li>
+      <li>Hand-written CSS. No framework.</li>
+      <li>
+        Designed and built by me, pairing with <a href="https://claude.com/claude-code" rel="noopener">Claude Code</a>.
+        When AI shapes a post, I try to show the prompts and transcripts rather than hide them.
+      </li>
+      <li>Privacy-friendly analytics by <a href="https://usefathom.com" rel="noopener">Fathom</a>. No cookies.</li>
+    </ul>
+    <p class="colophon__build">
+      Source on <a href={REPO} rel="noopener">GitHub</a>.
+      {commit && (
+        <> This build: <a href={`${REPO}/commit/${commit}`} rel="noopener"><code>{commit.slice(0, 7)}</code></a>.</>
+      )}
+    </p>
+  </article>
+</Base>

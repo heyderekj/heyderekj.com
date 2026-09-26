@@ -42,19 +42,39 @@ function writeFileIfMissing(targetPath, content) {
   fs.writeFileSync(targetPath, content, 'utf8');
 }
 
-function scaffoldPost(slug, title) {
-  const safeTitle = title ?? slug.replace(/-/g, ' ');
-  const fileName = `${TODAY}-${slug}.md`;
-  const targetPath = path.join(process.cwd(), 'src/content/posts', fileName);
-  const content = `---
-title: "${safeTitle}"
-date: ${TODAY}
-draft: true
----
+const POST_KINDS = new Set(['essay', 'note', 'link']);
 
-Write your post here.
-`;
-  writeFileIfMissing(targetPath, content);
+function yamlString(value) {
+  return JSON.stringify(value);
+}
+
+/**
+ * Posts are one typed stream: essay (default), note, or link.
+ * `--mdx` scaffolds an .mdx file for posts that use components
+ * (Prompt, Appendix, Compare, Sidenote…); plain .md otherwise.
+ */
+function scaffoldPost(slug, title, { kind = 'essay', link, mdx = false } = {}) {
+  const ext = mdx ? 'mdx' : 'md';
+  const fileName = `${TODAY}-${slug}.${ext}`;
+  const targetPath = path.join(process.cwd(), 'src/content/posts', fileName);
+  const safeTitle = title ?? (kind === 'note' ? undefined : slug.replace(/-/g, ' '));
+
+  const lines = ['---', `type: ${kind}`];
+  if (safeTitle) lines.push(`title: ${yamlString(safeTitle)}`);
+  if (kind === 'link') lines.push(`link: ${link}`);
+  lines.push(`date: ${TODAY}`, 'tags: []');
+  if (kind === 'essay') lines.push('status: working');
+  lines.push('draft: true', '---', '');
+
+  const body = {
+    essay: mdx
+      ? 'Write your essay here. Components are available without imports — see docs/CONTENT_WORKFLOW.md.\n'
+      : 'Write your essay here.\n',
+    note: 'A short thought.\n',
+    link: '> A pull quote from the source.\n\nYour take.\n',
+  }[kind];
+
+  writeFileIfMissing(targetPath, lines.join('\n') + '\n' + body);
   return targetPath;
 }
 
@@ -95,15 +115,38 @@ Write your project details here.
 
 function printUsage() {
   console.log(
-    'Usage: npm run new:content -- --type <post|work|project> --slug <my-slug> [--title "Readable Title"]'
+    [
+      'Usage: npm run new:content -- --type <post|work|project> --slug <my-slug> [--title "Readable Title"]',
+      '  posts: [--kind essay|note|link] [--link https://…] [--mdx]',
+      '  shortcuts: npm run new:essay|new:note|new:link -- --slug … [--title …] [--link …]',
+    ].join('\n'),
   );
 }
 
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const type = typeof args.type === 'string' ? args.type : '';
-  const rawSlug = typeof args.slug === 'string' ? args.slug : '';
   const title = typeof args.title === 'string' ? args.title : undefined;
+  const kind = typeof args.kind === 'string' ? args.kind : 'essay';
+  const link = typeof args.link === 'string' ? args.link : undefined;
+  const mdx = args.mdx === true;
+  // Notes can skip --slug: they get a time-stamped one.
+  const stamp = new Date().toTimeString().slice(0, 5).replace(':', '');
+  const rawSlug =
+    typeof args.slug === 'string'
+      ? args.slug
+      : type === 'post' && kind === 'note'
+        ? (title ?? `note-${stamp}`)
+        : '';
+
+  if (type === 'post' && !POST_KINDS.has(kind)) {
+    printUsage();
+    throw new Error(`Invalid --kind "${kind}" (essay, note, or link)`);
+  }
+  if (type === 'post' && kind === 'link' && !link) {
+    printUsage();
+    throw new Error('Link posts need --link <url>');
+  }
 
   if (!VALID_TYPES.has(type)) {
     printUsage();
@@ -125,7 +168,7 @@ function main() {
   ensureDir(path.join(process.cwd(), 'src/content/projects'));
 
   let filePath = '';
-  if (type === 'post') filePath = scaffoldPost(slug, title);
+  if (type === 'post') filePath = scaffoldPost(slug, title, { kind, link, mdx });
   if (type === 'work') filePath = scaffoldWork(slug, title);
   if (type === 'project') filePath = scaffoldProject(slug, title);
 
