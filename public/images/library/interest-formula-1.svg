@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 176 L150 170 L186 150 L214 146 L232 132 L262 132 L276 146 L312 150 L326 128 L356 128 L352 176 Z"/>
+    <path d="M40 176 L40 184 L88 184"/>
+    <path d="M214 146 Q228 124 250 128"/>
+    <path d="M326 128 L330 110 L362 110 L360 128"/>
+    <circle cx="116" cy="182" r="26"/><circle cx="116" cy="182" r="9"/>
+    <circle cx="300" cy="182" r="28"/><circle cx="300" cy="182" r="10"/>
+    <path d="M142 184 L272 184"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M116 150V240M300 150V240"/>
+    <path d="M116 238H300M116 233V243M300 233V243" stroke-dasharray="none"/>
+    <text x="208" y="232" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="rgba(128,128,128,0.55)" stroke="none">3600</text></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. F1 — SIDE ELEVATION</text>
+</svg>

@@ -167,6 +167,8 @@ Kinds: `interest`, `book`, `podcast`, `bookmark`, `post` (saved X post), `person
 | `post: { text, handle, postedAt }` | Saved X posts, rendered as a static card (no embed, survives deletion) |
 | `order` | Manual ordering (lower first) |
 
+Covers and artwork live in `public/images/library/<file-name>.<ext>`. Book covers came from Open Library and podcast artwork from Apple Podcasts listings. Interest illustrations are generated line drawings: edit or add one in `scripts/library-art.mjs`, then run `node scripts/library-art.mjs`.
+
 Write anything in the body and the item gets its own page (`/library/<file-name>/`) with a spec-sheet header. MDX post components work there too. Items without a body link straight to `url`.
 
 `/people` and `/tools` redirect to `/library/people/` and `/library/tools/`.

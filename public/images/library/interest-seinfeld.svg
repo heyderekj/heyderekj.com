@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M60 40 H340 M60 40 V68 M120 40 V68 M180 40 V68 M240 40 V68 M300 40 V68" stroke-opacity="0.45"/>
+    <path d="M60 68 H340 M90 68 V96 M150 68 V96 M210 68 V96 M270 68 V96 M330 68 V96" stroke-opacity="0.45"/>
+    <path d="M60 96 H340 M60 96 V124 M120 96 V124 M180 96 V124 M240 96 V124 M300 96 V124" stroke-opacity="0.45"/>
+    <path d="M60 124 H340 M90 124 V152 M150 124 V152 M210 124 V152 M270 124 V152 M330 124 V152" stroke-opacity="0.45"/>
+    <path d="M60 152 H340 M60 152 V180 M120 152 V180 M180 152 V180 M240 152 V180 M300 152 V180" stroke-opacity="0.45"/>
+    <path d="M60 180 H340" stroke-opacity="0.45"/>
+    <path d="M200 120 V246 M172 246 H228"/>
+    <path d="M200 120 L186 104"/>
+    <rect x="172" y="84" width="18" height="26" rx="9" transform="rotate(-40 181 97)"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M200 60 V120"/></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. STAGE — OPEN MIC</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 236 H360"/>
+    <path d="M268 236 V150"/>
+    <circle cx="268" cy="104" r="54"/><path d="M268 150 L246 124 M268 164 L292 132"/>
+    <path d="M80 190 H212 M80 202 H212"/>
+    <path d="M86 170 H206 M86 180 H206 M86 170 V190 M206 170 V190"/>
+    <path d="M94 202 V236 M200 202 V236"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4">
+    <path d="M80 258H212M80 253V263M212 253V263" stroke-dasharray="none"/>
+    <text x="146" y="252" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="rgba(128,128,128,0.55)" stroke="none">BENCH 1</text></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. PARK — BENCH</text>
+</svg>

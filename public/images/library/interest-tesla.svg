@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M42 196 Q40 176 64 170 L116 160 Q160 120 214 116 Q266 114 300 142 L344 154 Q362 160 360 190 L358 196"/>
+    <path d="M42 196 H70 M146 196 H274 M350 196 H358"/>
+    <path d="M128 158 Q168 128 212 126 Q252 126 282 148 Z"/>
+    <path d="M206 127 V152"/>
+    <circle cx="108" cy="196" r="30"/><circle cx="108" cy="196" r="14"/>
+    <circle cx="312" cy="196" r="30"/><circle cx="312" cy="196" r="14"/>
+    <path d="M226 168 H244"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M40 110 Q200 70 362 110"/></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. EV — PROFILE</text>
+</svg>

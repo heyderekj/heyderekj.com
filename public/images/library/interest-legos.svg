@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M110 140 L230 80 L310 120 L190 180 Z"/>
+    <path d="M110 140 L110 200 L190 240 L190 180"/>
+    <path d="M190 240 L310 180 L310 120"/>
+    <path d="M147 140 V132 M173 140 V132"/><ellipse cx="160" cy="132" rx="13" ry="6.5"/><path d="M147 140 A13 6.5 0 0 0 173 140"/>
+    <path d="M177 125 V117 M203 125 V117"/><ellipse cx="190" cy="117" rx="13" ry="6.5"/><path d="M177 125 A13 6.5 0 0 0 203 125"/>
+    <path d="M207 110 V102 M233 110 V102"/><ellipse cx="220" cy="102" rx="13" ry="6.5"/><path d="M207 110 A13 6.5 0 0 0 233 110"/>
+    <path d="M237 95 V87 M263 95 V87"/><ellipse cx="250" cy="87" rx="13" ry="6.5"/><path d="M237 95 A13 6.5 0 0 0 263 95"/>
+    <path d="M177 155 V147 M203 155 V147"/><ellipse cx="190" cy="147" rx="13" ry="6.5"/><path d="M177 155 A13 6.5 0 0 0 203 155"/>
+    <path d="M207 140 V132 M233 140 V132"/><ellipse cx="220" cy="132" rx="13" ry="6.5"/><path d="M207 140 A13 6.5 0 0 0 233 140"/>
+    <path d="M237 125 V117 M263 125 V117"/><ellipse cx="250" cy="117" rx="13" ry="6.5"/><path d="M237 125 A13 6.5 0 0 0 263 125"/>
+    <path d="M267 110 V102 M293 110 V102"/><ellipse cx="280" cy="102" rx="13" ry="6.5"/><path d="M267 110 A13 6.5 0 0 0 293 110"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M110 140 L60 115 M190 240 L140 265"/></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. BRICK — 2×4 ISO</text>
+</svg>

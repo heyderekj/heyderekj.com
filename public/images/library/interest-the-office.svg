@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 232 H360"/>
+    <path d="M70 232 V176 L112 160 L230 160 L188 176 V232"/>
+    <path d="M70 176 H188 M188 176 L230 160 V216 L188 232"/>
+    <path d="M70 194 H188 M188 194 L230 178"/>
+    <path d="M262 150 H322 V222 Q322 232 312 232 H272 Q262 232 262 222 Z"/>
+    <path d="M322 166 Q348 168 346 188 Q344 206 322 204"/>
+    <path d="M280 136 Q272 124 282 112 M298 136 Q290 124 300 110"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4">
+    <path d="M70 252H188M70 247V257M188 247V257" stroke-dasharray="none"/>
+    <text x="129" y="246" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10" fill="rgba(128,128,128,0.55)" stroke="none">A4 · 500</text></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. DESK — PAPER CO.</text>
+</svg>

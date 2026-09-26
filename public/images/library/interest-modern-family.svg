@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600">
+  <defs>
+    <pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse">
+      <path d="M10 0H0V10" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="G" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M50 0H0V50" fill="none" stroke="rgba(128,128,128,0.16)" stroke-width="1.1"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <rect width="400" height="300" fill="url(#G)"/>
+  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 236 H360"/>
+    <path d="M120 236 V132 L200 76 L280 132 V236"/>
+    <path d="M104 144 L200 76 L296 144"/>
+    <rect x="182" y="184" width="36" height="52"/>
+    <rect x="140" y="148" width="28" height="24"/><rect x="232" y="148" width="28" height="24"/>
+    <circle cx="84" cy="196" r="6.6"/><path d="M84 202.6 V225 M73 211.4 H95 M84 225 L76.3 236 M84 225 L91.7 236"/>
+    <circle cx="104" cy="206" r="4.8"/><path d="M104 210.8 V228 M96 217.2 H112 M104 228 L98.4 236 M104 228 L109.6 236"/>
+    <circle cx="300" cy="192" r="6.6"/><path d="M300 198.6 V225 M289 207.4 H311 M300 225 L292.3 236 M300 225 L307.7 236"/>
+    <circle cx="322" cy="200" r="6"/><path d="M322 206 V226 M312 214 H332 M322 226 L315 236 M322 226 L329 236"/>
+    <circle cx="340" cy="212" r="4.2"/><path d="M340 216.2 V229 M333 221.8 H347 M340 229 L335.1 236 M340 229 L344.9 236"/>
+  </g>
+  <g fill="none" stroke="rgba(128,128,128,0.55)" stroke-width="1" stroke-dasharray="3 4"><path d="M200 76 V40"/></g>
+  <text x="16" y="286" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" letter-spacing="1" fill="rgba(128,128,128,0.55)">FIG. HOUSE — ELEVATION</text>
+</svg>
