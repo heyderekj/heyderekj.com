@@ -14,7 +14,12 @@ try {
   if (shallow) {
     console.log('[revisions] shallow clone detected; fetching full history…');
     git(['fetch', '--unshallow', '--quiet'], { timeout: 60_000 });
-    console.log('[revisions] history unshallowed');
+    const still = git(['rev-parse', '--is-shallow-repository']) === 'true';
+    console.log(
+      still
+        ? '[revisions] still shallow (no remote history?); revision lists will fall back'
+        : '[revisions] history unshallowed',
+    );
   } else {
     console.log('[revisions] full git history available');
   }
