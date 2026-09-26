@@ -1,5 +1,6 @@
 ---
 title: "Prioritization"
+tags: [making]
 date: 2021-10-21
 draft: false
 ---

@@ -1,5 +1,6 @@
 ---
 title: "Thirty-five"
+tags: [milestones, faith]
 date: 2024-03-02
 description: "It's been a year of prioritization, part 2 of focus being the prior year."
 draft: false

@@ -1,5 +1,6 @@
 ---
 title: "Thirty-four"
+tags: [milestones]
 date: 2023-03-02
 description: "This year felt similar to when I turned 32 but was very different."
 draft: false

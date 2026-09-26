@@ -1,5 +1,6 @@
 ---
 title: "Change of plans"
+tags: [family]
 date: 2025-08-03
 draft: false
 ---

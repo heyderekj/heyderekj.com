@@ -1,5 +1,6 @@
 ---
 title: "The elephant in the room"
+tags: [life]
 date: 2022-10-17
 draft: false
 ---

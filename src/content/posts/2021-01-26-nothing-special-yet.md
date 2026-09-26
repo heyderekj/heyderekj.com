@@ -1,5 +1,6 @@
 ---
 title: "Nothing special, yet"
+tags: [life]
 date: 2021-01-26
 draft: false
 ---

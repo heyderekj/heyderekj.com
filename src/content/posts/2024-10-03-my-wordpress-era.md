@@ -1,5 +1,6 @@
 ---
 title: "My WordPress Era"
+tags: [work, tech]
 date: 2024-10-03
 draft: false
 ---

@@ -1,5 +1,6 @@
 ---
 title: "Death by SOP"
+tags: [work]
 date: 2024-08-06
 description: "Agency SOPs stifle creativity. Reducing hours to preserve passion."
 draft: false

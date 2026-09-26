@@ -1,5 +1,6 @@
 ---
 title: "Seventy-three"
+tags: [life]
 date: 2023-04-07
 description: "A poem-style reflection of my life ever since I wanted to be an architect."
 draft: false

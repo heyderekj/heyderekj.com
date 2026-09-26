@@ -1,5 +1,6 @@
 ---
 title: "2nd Time Watching E.T."
+tags: [life]
 date: 2023-04-06
 description: "When I was a kid I was angry Elliot. Now, a mature, clearer picture."
 draft: false

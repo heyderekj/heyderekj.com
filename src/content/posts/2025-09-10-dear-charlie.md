@@ -1,5 +1,6 @@
 ---
 title: "Dear Charlie"
+tags: [life]
 date: 2025-09-10
 draft: false
 ---

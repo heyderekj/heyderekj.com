@@ -1,5 +1,6 @@
 ---
 title: "Creating a brand voice matters"
+tags: [branding]
 date: 2022-01-05
 draft: false
 ---

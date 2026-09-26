@@ -1,5 +1,6 @@
 ---
 title: "Webflow's $39 Designer Seat Problem"
+tags: [tech, work]
 date: 2025-01-24
 description: "Webflow now charges clients $39/month for Designer seats, even when using free guest slots for freelancers."
 draft: false

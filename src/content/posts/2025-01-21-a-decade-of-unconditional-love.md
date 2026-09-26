@@ -1,5 +1,6 @@
 ---
 title: "A decade of unconditional love"
+tags: [family]
 date: 2025-01-21
 description: "This one is for you Lilo girl, happy 10th birthday!"
 draft: false

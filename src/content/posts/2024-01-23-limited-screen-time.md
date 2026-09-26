@@ -1,5 +1,6 @@
 ---
 title: "Limited Screen Time (LST)"
+tags: [life, tech]
 date: 2024-01-23
 description: "Time blocking your day to be more present and productive."
 draft: false

@@ -1,5 +1,6 @@
 ---
 title: "My goofy Grandpa"
+tags: [family]
 date: 2024-01-04
 description: "Recently, my Grandpa went to Heaven. Him and I always were the clowns of our family. I miss him."
 draft: false

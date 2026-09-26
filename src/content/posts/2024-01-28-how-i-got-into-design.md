@@ -1,5 +1,6 @@
 ---
 title: "How I got into design"
+tags: [design]
 date: 2024-01-28
 description: "The first known memory of me liking the practice of design before I knew what design meant involved Micro Machines."
 draft: false

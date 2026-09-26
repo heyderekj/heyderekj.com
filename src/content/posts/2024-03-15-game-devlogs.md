@@ -1,5 +1,6 @@
 ---
 title: "Spectating game devlogs"
+tags: [making]
 date: 2024-03-15
 description: "As I design my own app, I've been inspired by game devlogs with their creative process and design decisions."
 draft: false

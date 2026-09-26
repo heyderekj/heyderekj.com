@@ -1,5 +1,6 @@
 ---
 title: "It takes two... designers"
+tags: [work, design]
 date: 2024-09-09
 description: "As a designer, I've discovered that working in a team is far more fulfilling than being a solo practitioner."
 draft: false

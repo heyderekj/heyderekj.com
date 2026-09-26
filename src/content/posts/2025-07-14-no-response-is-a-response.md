@@ -1,5 +1,6 @@
 ---
 title: "No response is a response"
+tags: [life]
 date: 2025-07-14
 draft: false
 ---

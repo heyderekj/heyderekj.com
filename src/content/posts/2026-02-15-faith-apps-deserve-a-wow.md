@@ -1,5 +1,6 @@
 ---
 title: "Faith apps deserve a wow"
+tags: [faith, design]
 date: 2026-02-15
 draft: false
 ---

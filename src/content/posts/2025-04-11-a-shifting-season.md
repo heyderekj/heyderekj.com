@@ -1,5 +1,6 @@
 ---
 title: "A Shifting Season"
+tags: [milestones, family]
 date: 2025-04-11
 description: "Balancing work, marriage, and a side project while quietly preparing for a new season of leadership."
 draft: false

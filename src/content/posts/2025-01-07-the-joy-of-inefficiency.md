@@ -1,5 +1,6 @@
 ---
 title: "The Joy of Inefficiency"
+tags: [life]
 date: 2025-01-07
 description: "Sometimes the \"inefficient\" parts of life - like enjoying a drive - are exactly what make it worth living."
 draft: false

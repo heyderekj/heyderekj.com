@@ -1,5 +1,6 @@
 ---
 title: "1 year of making Harvous"
+tags: [making, faith]
 date: 2025-03-24
 description: "It's been one year of making the Bible notes app, Harvous"
 draft: false

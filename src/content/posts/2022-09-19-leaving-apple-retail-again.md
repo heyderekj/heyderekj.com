@@ -1,5 +1,6 @@
 ---
 title: "Leaving Apple Retail, Again"
+tags: [work]
 date: 2022-09-19
 description: "The time has come again to leave Apple where I first started in 2012."
 draft: false

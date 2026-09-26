@@ -1,5 +1,6 @@
 ---
 title: "Twenty-six"
+tags: [milestones, life]
 date: 2015-12-31
 draft: false
 ---

@@ -1,5 +1,6 @@
 ---
 title: "A man who changed the world"
+tags: [tech]
 date: 2011-10-07
 draft: false
 ---
