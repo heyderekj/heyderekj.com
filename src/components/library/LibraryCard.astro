@@ -74,9 +74,6 @@ const linkAttrs = href
     ) : (
       <div class="lib-card__body">
         {d.kind === 'bookmark' && host && <span class="lib-card__host">{host}</span>}
-        {d.kind === 'interest' && d.group && d.group !== d.title && (
-          <span class="lib-card__host">{d.group}</span>
-        )}
         <span class="lib-card__title">
           {d.kind === 'person' && (
             d.remembered
