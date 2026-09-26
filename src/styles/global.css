@@ -456,7 +456,7 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   font-weight: 500;
 }
 
-/* Plain rows (e.g. /tools) — grid + glass on the li */
+/* Plain rows — grid + glass on the li */
 .entries li:not(:has(> a.entry-link)) {
   display: grid;
   grid-template-columns: 96px 1fr;

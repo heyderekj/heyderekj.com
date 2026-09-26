@@ -143,6 +143,34 @@ A claim worth qualifying.<Sidenote>Shows in the margin on wide screens, as a tap
 
 GFM footnotes (`[^1]`) and tables work in both `.md` and `.mdx`. Put post images under `public/images/posts/<slug>/`. On Netlify they're resized automatically (`src/lib/img.ts`).
 
+## Library
+
+`/library/` collects things I've saved and love, laid out as a blueprint grid (`src/styles/library.css`). Each item is one file in `src/content/library/<kind>-<slug>.md`. The kind prefix keeps item URLs from colliding with `/library/books/` and the other kind pages.
+
+```sh
+npm run new:save -- --kind book --slug shape-up --title "Shape Up" --by "Ryan Singer"
+npm run new:save -- --kind bookmark --slug garden --title "Maggie's garden" --url https://maggieappleton.com/garden
+npm run new:save -- --kind post --slug some-post --url https://x.com/…   # then fill in post.text / handle / postedAt
+```
+
+Kinds: `interest`, `book`, `podcast`, `bookmark`, `post` (saved X post), `person`, `tool`.
+
+| Field | Use |
+| --- | --- |
+| `title`, `url`, `by`, `note` | Card basics; `note` is the one-liner |
+| `image` | Cover, artwork, or photo under `public/` (resized via the image CDN) |
+| `date` | When saved, read, or started; also sets the catalog number (`BK-003`) |
+| `group` | Sub-sections: tool groups ("Design web"), interests ("Legos", "F1", "Tesla") |
+| `favorite` | Orange corner flag |
+| `reading` | Books: `reading`, `read`, or `want` |
+| `met`, `remembered` | People |
+| `post: { text, handle, postedAt }` | Saved X posts, rendered as a static card (no embed, survives deletion) |
+| `order` | Manual ordering (lower first) |
+
+Write anything in the body and the item gets its own page (`/library/<file-name>/`) with a spec-sheet header. MDX post components work there too. Items without a body link straight to `url`.
+
+`/people` and `/tools` redirect to `/library/people/` and `/library/tools/`.
+
 ## Import work from Webflow / CSV
 
 Bulk update existing `src/content/work/<slug>.md` files (and download images to `public/images/work/`) from an exported **Works** CSV:

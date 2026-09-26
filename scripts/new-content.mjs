@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const VALID_TYPES = new Set(['post', 'work', 'project']);
+const VALID_TYPES = new Set(['post', 'work', 'project', 'library']);
 const TODAY = new Date().toISOString().slice(0, 10);
 
 function parseArgs(argv) {
@@ -113,12 +113,30 @@ Write your project details here.
   return targetPath;
 }
 
+const LIBRARY_KINDS = new Set(['book', 'podcast', 'bookmark', 'post', 'interest', 'person', 'tool']);
+
+/** Library items live in src/content/library/<kind>-<slug>.md (the prefix keeps URLs unambiguous). */
+function scaffoldLibrary(slug, title, { kind, url, by }) {
+  const fileName = `${kind}-${slug}.md`;
+  const targetPath = path.join(process.cwd(), 'src/content/library', fileName);
+  const lines = ['---', `kind: ${kind}`, `title: ${yamlString(title ?? slug.replace(/-/g, ' '))}`];
+  if (url) lines.push(`url: ${url}`);
+  if (by) lines.push(`by: ${yamlString(by)}`);
+  lines.push(`date: ${TODAY}`, 'note: ""');
+  if (kind === 'book') lines.push('reading: reading');
+  if (kind === 'post') lines.push('post:', '  text: ""', '  handle: "@"', `  postedAt: ${TODAY}`);
+  lines.push('draft: true', '---', '');
+  writeFileIfMissing(targetPath, lines.join('\n') + '\n');
+  return targetPath;
+}
+
 function printUsage() {
   console.log(
     [
       'Usage: npm run new:content -- --type <post|work|project> --slug <my-slug> [--title "Readable Title"]',
       '  posts: [--kind essay|note|link] [--link https://…] [--mdx]',
       '  shortcuts: npm run new:essay|new:note|new:link -- --slug … [--title …] [--link …]',
+      '  library: npm run new:save -- --kind book|podcast|bookmark|post|interest|person|tool --slug … [--title …] [--url …] [--by …]',
     ].join('\n'),
   );
 }
@@ -139,6 +157,10 @@ function main() {
         ? (title ?? `note-${stamp}`)
         : '';
 
+  if (type === 'library' && !LIBRARY_KINDS.has(kind)) {
+    printUsage();
+    throw new Error(`Invalid library --kind "${kind}"`);
+  }
   if (type === 'post' && !POST_KINDS.has(kind)) {
     printUsage();
     throw new Error(`Invalid --kind "${kind}" (essay, note, or link)`);
@@ -166,11 +188,17 @@ function main() {
   ensureDir(path.join(process.cwd(), 'src/content/posts'));
   ensureDir(path.join(process.cwd(), 'src/content/work'));
   ensureDir(path.join(process.cwd(), 'src/content/projects'));
+  ensureDir(path.join(process.cwd(), 'src/content/library'));
 
   let filePath = '';
   if (type === 'post') filePath = scaffoldPost(slug, title, { kind, link, mdx });
   if (type === 'work') filePath = scaffoldWork(slug, title);
   if (type === 'project') filePath = scaffoldProject(slug, title);
+  if (type === 'library') {
+    const url = typeof args.url === 'string' ? args.url : undefined;
+    const by = typeof args.by === 'string' ? args.by : undefined;
+    filePath = scaffoldLibrary(slug, title, { kind, url, by });
+  }
 
   console.log(`Created draft: ${filePath}`);
   console.log('When ready to publish, set `draft: false` and deploy.');

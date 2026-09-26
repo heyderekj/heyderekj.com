@@ -189,4 +189,55 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { posts, work, projects };
+/**
+ * Library — things saved and collected: books, podcasts, bookmarks, saved X
+ * posts, interests, people, tools. One file per item; a body (longer notes)
+ * gives the item its own page. Lives under `/library/`.
+ */
+const library = defineCollection({
+  type: 'content',
+  schema: z
+    .object({
+      kind: z.enum(['book', 'podcast', 'bookmark', 'post', 'interest', 'person', 'tool']),
+      title: z.string(),
+      url: z.string().url().optional(),
+      /** Author / host / site / handle. */
+      by: z.string().optional(),
+      /** One-liner shown on the card. */
+      note: z.string().optional(),
+      /** Cover, artwork, or photo (public path). */
+      image: z.string().optional(),
+      /** When saved / read / started. */
+      date: z.coerce.date().optional(),
+      favorite: z.boolean().default(false),
+      /** Sub-grouping: tool sections ("Design web"), interests ("Legos", "F1"). */
+      group: z.string().optional(),
+      order: z.number().default(0),
+      tags: z.array(z.string().regex(/^[a-z0-9-]+$/)).default([]),
+      draft: z.boolean().default(false),
+      /** Books. */
+      reading: z.enum(['reading', 'read', 'want']).optional(),
+      /** People. */
+      met: z.boolean().optional(),
+      remembered: z.boolean().optional(),
+      /** Saved X posts — rendered as a static card (no embed). */
+      post: z
+        .object({
+          text: z.string(),
+          handle: z.string(),
+          postedAt: z.coerce.date(),
+        })
+        .optional(),
+    })
+    .superRefine((d, ctx) => {
+      if (d.kind === 'post' && !d.post) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['post'],
+          message: 'saved posts need `post: { text, handle, postedAt }`',
+        });
+      }
+    }),
+});
+
+export const collections = { posts, work, projects, library };

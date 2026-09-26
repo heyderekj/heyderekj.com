@@ -14,13 +14,13 @@
 
 [[redirects]]
   from = "/uses"
-  to = "/tools/"
+  to = "/library/tools/"
   status = 301
   force = true
 
 [[redirects]]
   from = "/uses/"
-  to = "/tools/"
+  to = "/library/tools/"
   status = 301
   force = true
 
@@ -39,6 +39,30 @@
 [[redirects]]
   from = "/brag/*"
   to = "/about/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools"
+  to = "/library/tools/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/tools/"
+  to = "/library/tools/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/people"
+  to = "/library/people/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/people/"
+  to = "/library/people/"
   status = 301
   force = true
 

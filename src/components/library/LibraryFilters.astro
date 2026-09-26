@@ -1,0 +1,21 @@
+---
+import { KINDS, KIND_META, kindHref, type LibraryKind } from '../../lib/library';
+
+interface Props {
+  active?: LibraryKind;
+  counts: Record<LibraryKind, number>;
+  total: number;
+}
+
+const { active, counts, total } = Astro.props;
+---
+<nav class="post-filters" aria-label="Filter the library">
+  <a href="/library/" class="post-filter" aria-current={!active ? 'page' : undefined}>
+    All <span class="post-filter__count">{total}</span>
+  </a>
+  {KINDS.filter((k) => counts[k] > 0).map((k) => (
+    <a href={kindHref(k)} class="post-filter" aria-current={active === k ? 'page' : undefined}>
+      {KIND_META[k].many} <span class="post-filter__count">{counts[k]}</span>
+    </a>
+  ))}
+</nav>

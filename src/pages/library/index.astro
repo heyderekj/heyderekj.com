@@ -1,0 +1,30 @@
+---
+import '../../styles/library.css';
+import Base from '../../layouts/Base.astro';
+import PageTitle from '../../components/PageTitle.astro';
+import LibraryFilters from '../../components/library/LibraryFilters.astro';
+import LibrarySection from '../../components/library/LibrarySection.astro';
+import { byKind, getLibrary, itemCodes, KINDS, type LibraryKind } from '../../lib/library';
+
+const items = await getLibrary();
+const codes = itemCodes(items);
+const counts = Object.fromEntries(KINDS.map((k) => [k, byKind(items, k).length])) as Record<LibraryKind, number>;
+---
+<Base
+  title="Library — Derek Castelli"
+  description="Things Derek has saved and collected: books, podcasts, bookmarks, posts, interests, people, and tools."
+>
+  <article class="prose library-page">
+    <PageTitle path="/library" />
+    <p class="library-intro">
+      Things I've saved and collected. Books, podcasts, bookmarks, posts worth keeping, the stuff I'm into, the people
+      I look up to, and the tools I use every day.
+    </p>
+
+    <LibraryFilters counts={counts} total={items.length} />
+
+    {KINDS.filter((k) => counts[k] > 0).map((kind) => (
+      <LibrarySection kind={kind} items={byKind(items, kind)} codes={codes} limit={kind === 'post' ? 4 : kind === 'person' || kind === 'tool' ? 8 : 6} />
+    ))}
+  </article>
+</Base>

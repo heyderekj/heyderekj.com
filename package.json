@@ -18,6 +18,7 @@
     "new:essay": "node scripts/new-content.mjs --type post --kind essay",
     "new:note": "node scripts/new-content.mjs --type post --kind note",
     "new:link": "node scripts/new-content.mjs --type post --kind link",
+    "new:save": "node scripts/new-content.mjs --type library",
     "new:work": "node scripts/new-content.mjs --type work",
     "new:project": "node scripts/new-content.mjs --type project"
   },

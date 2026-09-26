@@ -1,0 +1,40 @@
+---
+/**
+ * A titled blueprint grid for one kind (optionally one group within it).
+ */
+import BlueprintGrid from './BlueprintGrid.astro';
+import LibraryCard from './LibraryCard.astro';
+import { KIND_META, kindHref, type LibraryItem, type LibraryKind } from '../../lib/library';
+
+interface Props {
+  kind: LibraryKind;
+  items: LibraryItem[];
+  codes: Map<string, string>;
+  /** Show at most this many, with a "See all" link. */
+  limit?: number;
+  /** Override the section heading (e.g. a group name). */
+  heading?: string;
+  /** Render a small mono label instead of a rail-to-rail section title. */
+  subsection?: boolean;
+}
+
+const { kind, items, codes, limit, heading, subsection = false } = Astro.props;
+const meta = KIND_META[kind];
+const shown = limit ? items.slice(0, limit) : items;
+const variant = kind === 'person' || kind === 'tool' ? 'dense' : kind === 'post' ? 'wide' : 'regular';
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const title = heading ?? meta.many;
+---
+{subsection ? (
+  <p class="library-group-label" id={slugify(title)}>{title}</p>
+) : (
+  <h2 class="section-title library-section-title" id={meta.path}>
+    {limit ? <a href={kindHref(kind)}>/ {slugify(title)}</a> : <span>/ {slugify(title)}</span>}
+    {limit && items.length > shown.length && (
+      <a class="library-see-all" href={kindHref(kind)}>See all {items.length} →</a>
+    )}
+  </h2>
+)}
+<BlueprintGrid label={title} variant={variant}>
+  {shown.map((item) => <LibraryCard item={item} code={codes.get(item.id) ?? meta.code} />)}
+</BlueprintGrid>
