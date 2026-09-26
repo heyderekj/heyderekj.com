@@ -1,19 +1,35 @@
 import { getCollection } from 'astro:content';
+import { getPublishedPosts, postHref, tagCounts, topicHref, TYPE_LABELS } from '../lib/posts';
+import { getRevisions } from '../lib/revisions';
 
 export async function GET(context) {
   const site = context.site?.toString().replace(/\/$/, '') ?? 'https://heyderekj.com';
 
-  const staticPaths = ['/', '/posts/', '/work/', '/projects/', '/about/', '/brag/', '/tools/'];
+  const posts = await getPublishedPosts();
+  const types = [...new Set(posts.map((p) => p.data.type))].map((t) => `/posts/${TYPE_LABELS[t].path}/`);
+  const topicPaths = tagCounts(posts).map(({ tag }) => topicHref(tag));
 
-  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  const staticPaths = [
+    '/',
+    '/posts/',
+    ...types,
+    '/topics/',
+    ...topicPaths,
+    '/work/',
+    '/projects/',
+    '/about/',
+    '/tools/',
+    '/colophon/',
+  ];
+
   const work = await getCollection('work', ({ data }) => !data.draft);
   const projects = await getCollection('projects', ({ data }) => !data.draft);
 
   const urls = [
     ...staticPaths.map((p) => ({ loc: `${site}${p}`, lastmod: null })),
     ...posts.map((p) => ({
-      loc: `${site}/posts/${p.slug}/`,
-      lastmod: p.data.date.toISOString().slice(0, 10),
+      loc: `${site}${postHref(p)}`,
+      lastmod: (getRevisions(p).updated ?? p.data.date).toISOString().slice(0, 10),
     })),
     ...work.map((p) => ({
       loc: `${site}/work/${p.slug}/`,

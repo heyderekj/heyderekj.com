@@ -1,0 +1,39 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageTitle from '../../../components/PageTitle.astro';
+import PostList from '../../../components/PostList.astro';
+import PostFilters from '../../../components/PostFilters.astro';
+import { getPublishedPosts, TYPE_LABELS, type PostType } from '../../../lib/posts';
+
+const INTROS: Record<PostType, string> = {
+  essay: 'Long-form writing with an argument. Each one carries a status and revision number, and changes over time.',
+  note: 'Short thoughts, half-formed ideas, and things I’m noticing. Less polish, more often.',
+  link: 'Things worth reading elsewhere, with a bit of commentary. The title goes to the source; ★ is the permalink.',
+};
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return (Object.keys(TYPE_LABELS) as PostType[])
+    .filter((type) => posts.some((p) => p.data.type === type))
+    .map((type) => ({ params: { type: TYPE_LABELS[type].path }, props: { type } }));
+}
+
+interface Props {
+  type: PostType;
+}
+
+const { type } = Astro.props;
+const all = await getPublishedPosts();
+const entries = all.filter((p) => p.data.type === type);
+const counts = { essay: 0, note: 0, link: 0 } as Record<PostType, number>;
+for (const p of all) counts[p.data.type]++;
+const label = TYPE_LABELS[type];
+---
+<Base title={`${label.many} — Derek Castelli`} description={INTROS[type]}>
+  <PageTitle path={`/posts/${label.path}`} />
+  <p style="color: var(--fg-soft); max-width: var(--max-prose);">{INTROS[type]}</p>
+
+  <PostFilters active={type} counts={counts} total={all.length} />
+
+  <PostList entries={entries} showYearHeaders={true} />
+</Base>

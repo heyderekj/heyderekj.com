@@ -1,15 +1,69 @@
 import { defineCollection, z } from 'astro:content';
 
+/**
+ * One typed stream of writing:
+ * - `essay` — long-form, titled; shows status + revision number
+ * - `note`  — short thought; title optional (falls back to its first words)
+ * - `link`  — Daring Fireball-style: title links out to `link`, ★ is the permalink
+ */
 const posts = defineCollection({
   type: 'content',
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    description: z.string().optional(),
-    tags: z.array(z.string()).optional(),
-    draft: z.boolean().default(false),
-    legacyUrl: z.string().url().optional(),
-  }),
+  schema: z
+    .object({
+      type: z.enum(['essay', 'note', 'link']).default('essay'),
+      title: z.string().optional(),
+      date: z.coerce.date(),
+      description: z.string().optional(),
+      /** Kebab-case topic slugs; labels live in `src/data/topics.ts`. */
+      tags: z.array(z.string().regex(/^[a-z0-9-]+$/, 'tags are kebab-case slugs')).default([]),
+      /** Hidden / unpublished (not the same as `status: working`). */
+      draft: z.boolean().default(false),
+      legacyUrl: z.string().url().optional(),
+      /** Link posts: the external URL the title points to. */
+      link: z.string().url().optional(),
+      /** Link posts: where you found it. */
+      via: z.object({ name: z.string(), url: z.string().url() }).optional(),
+      /** Published maturity: working draft → stable → outdated. */
+      status: z.enum(['working', 'stable', 'outdated']).default('stable'),
+      /** Slug of the post that replaces an `outdated` one. */
+      supersededBy: z.string().optional(),
+      /** Overrides the git-derived "updated" date. */
+      updated: z.coerce.date().optional(),
+      /**
+       * Human revision notes. Entries without `commit` count as revisions
+       * (e.g. edits from before the git import); with `commit` they only
+       * annotate that commit.
+       */
+      changelog: z
+        .array(
+          z.object({
+            date: z.coerce.date(),
+            note: z.string(),
+            commit: z.string().optional(),
+          }),
+        )
+        .optional(),
+      /** "Assumed audience" callout under the header. */
+      audience: z.string().optional(),
+      /** Table of contents; defaults to on for essays with 4+ sections. */
+      toc: z.boolean().optional(),
+    })
+    .superRefine((d, ctx) => {
+      if (d.type !== 'note' && !d.title?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['title'],
+          message: `title is required for ${d.type} posts`,
+        });
+      }
+      if (d.type === 'link' && !d.link) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['link'],
+          message: 'link posts need a `link` URL',
+        });
+      }
+    }),
 });
 
 /** Case studies / client work — from Webflow/CSV; lives under `/work/`. */

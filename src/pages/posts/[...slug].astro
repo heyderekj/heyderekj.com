@@ -1,10 +1,26 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import ApplicationToc from '../../components/ApplicationToc.astro';
+import TagChips from '../../components/TagChips.astro';
+import PostFooter from '../../components/PostFooter.astro';
+import Callout from '../../components/post/Callout.astro';
+import { postComponents } from '../../components/post';
 import { schemaPersonId } from '../../lib/schemaIds';
+import {
+  adjacentPosts,
+  getPublishedPosts,
+  postHref,
+  postTitle,
+  relatedPosts,
+  STATUS_LABELS,
+  TYPE_LABELS,
+  typeHref,
+  type Post,
+} from '../../lib/posts';
+import { getRevisions } from '../../lib/revisions';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  const posts = await getPublishedPosts();
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
@@ -12,59 +28,128 @@ export async function getStaticPaths() {
 }
 
 interface Props {
-  post: CollectionEntry<'posts'>;
+  post: Post;
 }
 
 const { post } = Astro.props;
-const { Content } = await post.render();
+const { Content, headings } = await post.render();
+const d = post.data;
+const all = await getPublishedPosts();
+const revisions = getRevisions(post);
+const { newer, older } = adjacentPosts(post, all);
+const related = relatedPosts(post, all);
+const superseding = d.supersededBy ? all.find((p) => p.slug === d.supersededBy) : undefined;
+
+const title = postTitle(post);
+const hasTitle = Boolean(d.title?.trim());
+const sections = headings.filter((h) => h.depth === 2);
+const showToc = d.toc ?? (d.type === 'essay' && sections.length >= 4);
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
 const defaultDesc =
   'Agentic design engineer, still making websites full-time. Writing on faith and technology.';
-const postDescription = post.data.description ?? defaultDesc;
-const postPath = `/posts/${post.slug}/`;
-const postUrl = new URL(postPath, `${siteOrigin}/`).toString();
-const published = post.data.date.toISOString();
+const postDescription = d.description ?? defaultDesc;
+const postUrl = new URL(postHref(post), `${siteOrigin}/`).toString();
+const published = d.date.toISOString();
+const modified = revisions.updated?.toISOString();
 const postJsonLd = {
-  '@type': 'BlogPosting',
-  headline: post.data.title,
+  '@type': d.type === 'note' ? 'SocialMediaPosting' : 'BlogPosting',
+  headline: title,
   description: postDescription,
   datePublished: published,
+  ...(modified ? { dateModified: modified } : {}),
   url: postUrl,
   mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
   author: { '@type': 'Person', '@id': schemaPersonId(siteOrigin), name: 'Derek Castelli' },
   publisher: { '@type': 'Person', '@id': schemaPersonId(siteOrigin), name: 'Derek Castelli' },
-  ...(post.data.tags?.length
-    ? { keywords: post.data.tags.join(', ') }
-    : {}),
+  ...(d.type === 'link' && d.link ? { isBasedOn: d.link } : {}),
+  ...(d.tags.length ? { keywords: d.tags.join(', ') } : {}),
 };
 
-const fmtDate = (d: Date) =>
-  d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const fmtDate = (date: Date) =>
+  date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 ---
 <Base
-  title={`${post.data.title} — Derek Castelli`}
+  title={`${title} — Derek Castelli`}
   description={postDescription}
   ogType="article"
   articlePublishedTime={published}
+  articleModifiedTime={modified}
   jsonLd={postJsonLd}
   canonical={postUrl}
 >
-  <article class="prose">
+  <article class={`prose post post--${d.type}`}>
+    {showToc && (
+      <ApplicationToc items={sections.map((h) => ({ id: h.slug, label: h.text }))} />
+    )}
+
     <header class="post-header">
-      <h1>{post.data.title}</h1>
-      <div class="meta">
-        <time datetime={post.data.date.toISOString()}>{fmtDate(post.data.date)}</time>
-        {post.data.tags && post.data.tags.length > 0 && (
-          <span> · {post.data.tags.join(', ')}</span>
+      {d.type === 'link' && d.link ? (
+        <h1 class="post-title post-title--link">
+          <a href={d.link} class="post-link-out" rel="noopener">
+            {title}<span class="post-link-out__arrow" aria-hidden="true">↗</span>
+          </a>
+        </h1>
+      ) : d.type === 'note' && !hasTitle ? (
+        <h1 class="visually-hidden">{title}</h1>
+      ) : (
+        <h1 class="post-title">{title}</h1>
+      )}
+
+      <div class="meta post-meta">
+        {d.type !== 'essay' && (
+          <a class="post-kind" href={typeHref(d.type)}>{TYPE_LABELS[d.type].one}</a>
+        )}
+        <time datetime={published}>{fmtDate(d.date)}</time>
+        {d.type === 'essay' && (
+          <a
+            class={`status-chip status-chip--${d.status}`}
+            href="#revisions"
+            title="Status and revision — see the history at the end"
+          >
+            {STATUS_LABELS[d.status]} · rev {revisions.rev}
+          </a>
+        )}
+        {revisions.updated && (
+          <span class="post-updated">
+            Updated <time datetime={revisions.updated.toISOString()}>{fmtDate(revisions.updated)}</time>
+          </span>
+        )}
+        {d.type === 'link' && d.link && (
+          <span class="post-link-host">
+            {host(d.link)}
+            {d.via && (
+              <> · via <a href={d.via.url} rel="noopener">{d.via.name}</a></>
+            )}
+          </span>
+        )}
+        {d.type !== 'essay' && (
+          <a class="post-permalink" href={postHref(post)} title="Permanent link" aria-label="Permanent link">★</a>
         )}
       </div>
+      <TagChips tags={d.tags} />
     </header>
+
+    {d.status === 'outdated' && (
+      <Callout kind="outdated">
+        <p>
+          This no longer reflects how I think about this.
+          {superseding && (
+            <> Read <a href={postHref(superseding)}>{postTitle(superseding)}</a> instead.</>
+          )}
+        </p>
+      </Callout>
+    )}
+
+    {d.audience && (
+      <Callout kind="audience"><p>{d.audience}</p></Callout>
+    )}
+
     <div class="post-content">
-      <Content />
+      <Content components={postComponents} />
     </div>
-    <p class="back-link">
-      <a href="/posts/"><span class="arrow">&larr;</span> all posts</a>
-    </p>
+
+    <PostFooter post={post} revisions={revisions} related={related} newer={newer} older={older} />
   </article>
 </Base>

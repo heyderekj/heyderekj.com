@@ -1,6 +1,7 @@
 ---
 import type { ListableEntry } from '../lib/postPaths';
 import { entryHref } from '../lib/postPaths';
+import { postTitle } from '../lib/posts';
 
 interface Props {
   entries: ListableEntry[];
@@ -27,6 +28,13 @@ const years = groupedByYear
   ? Object.keys(groupedByYear).sort((a, b) => Number(b) - Number(a))
   : [];
 
+const titleOf = (entry: ListableEntry) =>
+  entry.collection === 'posts' ? postTitle(entry) : entry.data.title;
+
+/** Notes and links get a small marker; essays and work read as plain titles. */
+const kindOf = (entry: ListableEntry) =>
+  entry.collection === 'posts' && entry.data.type !== 'essay' ? entry.data.type : null;
+
 const isHighlightedWork = (post: ListableEntry) =>
   post.collection === 'work' && Boolean((post.data as { highlight?: boolean }).highlight);
 ---
@@ -39,8 +47,10 @@ const isHighlightedWork = (post: ListableEntry) =>
           <li>
             <a href={entryHref(post)} class="entry-link">
               <time datetime={post.data.date.toISOString()} class="entry-date">{fmtDate(post.data.date)}</time>
-              <span class="entry-title">
-                {post.data.title}
+              <span class="entry-title" data-kind={kindOf(post) ?? undefined}>
+                {titleOf(post)}
+                {kindOf(post) === 'link' && <span class="entry-kind" aria-label="(link)">↗</span>}
+                {kindOf(post) === 'note' && <span class="entry-kind">note</span>}
                 {isHighlightedWork(post) && (
                   <span class="entry-favorite" title="A personal favorite">
                     <i class="ph-fill ph-star" aria-hidden="true" />
@@ -59,8 +69,10 @@ const isHighlightedWork = (post: ListableEntry) =>
       <li>
         <a href={entryHref(post)} class="entry-link">
           <time datetime={post.data.date.toISOString()} class="entry-date">{fmtDateWithYear(post.data.date)}</time>
-          <span class="entry-title">
-            {post.data.title}
+          <span class="entry-title" data-kind={kindOf(post) ?? undefined}>
+            {titleOf(post)}
+            {kindOf(post) === 'link' && <span class="entry-kind" aria-label="(link)">↗</span>}
+            {kindOf(post) === 'note' && <span class="entry-kind">note</span>}
             {isHighlightedWork(post) && (
               <span class="entry-favorite" title="A personal favorite">
                 <i class="ph-fill ph-star" aria-hidden="true" />

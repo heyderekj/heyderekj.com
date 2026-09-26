@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { getPublishedPosts } from '../lib/posts';
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
@@ -30,9 +31,7 @@ const homeJsonLd = [
   },
 ];
 
-const recentPosts = (await getCollection('posts', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 5);
+const recentPosts = (await getPublishedPosts()).slice(0, 5);
 
 const highlightedWork = (await getCollection('work', ({ data }) => !data.draft && data.highlight)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()

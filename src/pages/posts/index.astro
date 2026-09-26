@@ -1,19 +1,23 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageTitle from '../../components/PageTitle.astro';
 import PostList from '../../components/PostList.astro';
+import PostFilters from '../../components/PostFilters.astro';
+import { getPublishedPosts, type PostType } from '../../lib/posts';
 
-const entries = (await getCollection('posts', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+const entries = await getPublishedPosts();
+const counts = { essay: 0, note: 0, link: 0 } as Record<PostType, number>;
+for (const p of entries) counts[p.data.type]++;
 ---
-<Base title="Posts — Derek Castelli" description="Writing on faith, technology, and agentic design by Derek Castelli.">
+<Base title="Posts — Derek Castelli" description="Essays, notes, and links on faith, technology, and agentic design by Derek Castelli.">
   <PageTitle path="/posts" />
   <p style="color: var(--fg-soft); max-width: var(--max-prose);">
-    Notes and essays on faith, tech, and agentic design. For client sites and shipped work, see{' '}
-    <a href="/work/">Work</a>.
+    Essays, short notes, and links on faith, tech, and agentic design. Some are still being worked on;
+    each essay shows its <a href="/colophon/#revisions">status and revision</a>. For client sites and shipped
+    work, see <a href="/work/">Work</a>.
   </p>
+
+  <PostFilters counts={counts} total={entries.length} />
 
   {entries.length > 0 ? (
     <PostList entries={entries} showYearHeaders={true} />
