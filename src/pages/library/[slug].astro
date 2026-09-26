@@ -47,11 +47,11 @@ const items = await getLibrary();
 const codes = itemCodes(items);
 const counts = Object.fromEntries(KINDS.map((k) => [k, byKind(items, k).length])) as Record<LibraryKind, number>;
 
-// Kind page: group tools/interests by `group`, people by met/remembered state.
+// Kind page: tools are sectioned by `group`; everything else is one grid.
 const kindGroups = (() => {
   if (props.mode !== 'kind') return [];
   const list = byKind(items, props.kind);
-  if (props.kind === 'tool' || props.kind === 'interest') {
+  if (props.kind === 'tool') {
     const groups = new Map<string, LibraryItem[]>();
     for (const i of list) {
       const g = i.data.group ?? 'Other';

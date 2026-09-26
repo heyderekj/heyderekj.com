@@ -2,6 +2,6 @@
 kind: interest
 title: "Tesla"
 group: "Tesla"
-note: "Placeholder — why the design keeps pulling me in."
-draft: true
+note: "A design fan, from afar."
+order: 2
 ---

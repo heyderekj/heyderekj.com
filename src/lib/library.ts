@@ -86,6 +86,9 @@ const GROUP_ICONS: Record<string, string> = {
   tesla: 'ph-lightning',
   f1: 'ph-flag-checkered',
   'formula 1': 'ph-flag-checkered',
+  drums: 'ph-music-notes',
+  streaming: 'ph-game-controller',
+  sitcoms: 'ph-television',
 };
 
 export function itemIcon(item: LibraryItem): string {

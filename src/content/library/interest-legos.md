@@ -2,7 +2,7 @@
 kind: interest
 title: "Legos"
 group: "Legos"
-note: "Placeholder — the sets I've built and the ones on the wishlist."
+note: "Where design started for me."
 favorite: true
-draft: true
+order: 1
 ---
