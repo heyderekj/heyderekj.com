@@ -59,14 +59,6 @@ export const KIND_META: Record<LibraryKind, KindMeta> = {
     icon: 'ph-x-logo',
     intro: 'Posts on X I keep coming back to.',
   },
-  person: {
-    one: 'Person',
-    many: 'People',
-    path: 'people',
-    code: 'PE',
-    icon: 'ph-user',
-    intro: 'People who have helped me, and ones I admire and would love to meet in real life, someday.',
-  },
   tool: {
     one: 'Tool',
     many: 'Tools',

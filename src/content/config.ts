@@ -198,7 +198,7 @@ const library = defineCollection({
   type: 'content',
   schema: z
     .object({
-      kind: z.enum(['book', 'podcast', 'bookmark', 'post', 'interest', 'person', 'tool']),
+      kind: z.enum(['book', 'podcast', 'bookmark', 'post', 'interest', 'tool']),
       title: z.string(),
       url: z.string().url().optional(),
       /** Author / host / site / handle. */
@@ -217,9 +217,6 @@ const library = defineCollection({
       draft: z.boolean().default(false),
       /** Books. */
       reading: z.enum(['reading', 'read', 'want']).optional(),
-      /** People. */
-      met: z.boolean().optional(),
-      remembered: z.boolean().optional(),
       /** Saved X posts — rendered as a static card (no embed). */
       post: z
         .object({

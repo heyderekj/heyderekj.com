@@ -12,7 +12,7 @@ Derek is a Christian designer-engineer with roots in Apple Retail, church creati
 - [Posts](https://heyderekj.com/posts/): full archive of writing
 - [Projects](https://heyderekj.com/projects/): apps and sites (e.g. Harvous, Dinky, Here’s My Church)
 - [About](https://heyderekj.com/about/): background, story, experience timeline, and social links
-- [Library](https://heyderekj.com/library/): books, podcasts, bookmarks, saved posts, interests, people Derek admires, and the tools he reaches for
+- [Library](https://heyderekj.com/library/): books, podcasts, bookmarks, saved posts, interests, and the tools he reaches for
 
 ## Feeds & machine-readable
 

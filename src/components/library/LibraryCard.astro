@@ -32,8 +32,6 @@ const linkAttrs = href
     'bp-cell',
     `bp-cell--${d.kind}`,
     d.favorite && 'is-favorite',
-    d.met && 'is-met',
-    d.remembered && 'is-remembered',
     d.draft && 'is-draft',
   ]}
 >
@@ -75,14 +73,6 @@ const linkAttrs = href
       <div class="lib-card__body">
         {d.kind === 'bookmark' && host && <span class="lib-card__host">{host}</span>}
         <span class="lib-card__title">
-          {d.kind === 'person' && (
-            d.remembered
-              ? <i class="ph-bold ph-heart lib-card__state" aria-label="Remembered"></i>
-              : <i
-                  class={`ph-bold ${d.met ? 'ph-check-square-offset' : 'ph-square'} lib-card__state`}
-                  aria-label={d.met ? 'Met' : 'Not met yet'}
-                ></i>
-          )}
           {d.title}
           {d.favorite && <i class="ph-fill ph-star lib-card__fav" aria-label="Favorite"></i>}
         </span>

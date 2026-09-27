@@ -56,13 +56,13 @@
 
 [[redirects]]
   from = "/people"
-  to = "/library/people/"
+  to = "/library/"
   status = 301
   force = true
 
 [[redirects]]
   from = "/people/"
-  to = "/library/people/"
+  to = "/library/"
   status = 301
   force = true
 
