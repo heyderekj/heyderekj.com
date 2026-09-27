@@ -9,8 +9,8 @@ export default defineConfig({
     '/uses/': '/library/tools/',
     '/tools': '/library/tools/',
     '/tools/': '/library/tools/',
-    '/people': '/library/people/',
-    '/people/': '/library/people/',
+    '/people': '/library/',
+    '/people/': '/library/',
   },
   integrations: [mdx()],
   build: {

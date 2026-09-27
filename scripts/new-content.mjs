@@ -113,7 +113,7 @@ Write your project details here.
   return targetPath;
 }
 
-const LIBRARY_KINDS = new Set(['book', 'podcast', 'bookmark', 'post', 'interest', 'person', 'tool']);
+const LIBRARY_KINDS = new Set(['book', 'podcast', 'bookmark', 'post', 'interest', 'tool']);
 
 /** Library items live in src/content/library/<kind>-<slug>.md (the prefix keeps URLs unambiguous). */
 function scaffoldLibrary(slug, title, { kind, url, by }) {
@@ -136,7 +136,7 @@ function printUsage() {
       'Usage: npm run new:content -- --type <post|work|project> --slug <my-slug> [--title "Readable Title"]',
       '  posts: [--kind essay|note|link] [--link https://…] [--mdx]',
       '  shortcuts: npm run new:essay|new:note|new:link -- --slug … [--title …] [--link …]',
-      '  library: npm run new:save -- --kind book|podcast|bookmark|post|interest|person|tool --slug … [--title …] [--url …] [--by …]',
+      '  library: npm run new:save -- --kind book|podcast|bookmark|post|interest|tool --slug … [--title …] [--url …] [--by …]',
     ].join('\n'),
   );
 }

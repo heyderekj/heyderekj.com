@@ -21,7 +21,7 @@ interface Props {
 const { kind, items, codes, limit, heading, subsection = false } = Astro.props;
 const meta = KIND_META[kind];
 const shown = limit ? items.slice(0, limit) : items;
-const variant = kind === 'person' || kind === 'tool' ? 'dense' : kind === 'post' ? 'wide' : 'regular';
+const variant = kind === 'tool' ? 'dense' : kind === 'post' ? 'wide' : 'regular';
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const title = heading ?? meta.many;
 ---

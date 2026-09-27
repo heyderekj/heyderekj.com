@@ -194,9 +194,6 @@ a.lib-card:hover .lib-card__icon { color: var(--accent); }
   color: var(--fg);
 }
 .lib-card__fav { font-size: 0.7em; color: var(--accent); }
-.lib-card__state { flex-shrink: 0; font-size: 0.95em; color: var(--muted-strong); align-self: center; }
-.is-met .lib-card__state { color: var(--fg); }
-.is-remembered .lib-card__title { font-style: italic; }
 .lib-card__by { font-size: var(--size-meta); color: var(--muted-strong); }
 .lib-card__note {
   margin: 4px 0 0;

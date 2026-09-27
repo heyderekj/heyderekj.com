@@ -153,7 +153,7 @@ npm run new:save -- --kind bookmark --slug garden --title "Maggie's garden" --ur
 npm run new:save -- --kind post --slug some-post --url https://x.com/…   # then fill in post.text / handle / postedAt
 ```
 
-Kinds: `interest`, `book`, `podcast`, `bookmark`, `post` (saved X post), `person`, `tool`.
+Kinds: `interest`, `book`, `podcast`, `bookmark`, `post` (saved X post), `tool`.
 
 | Field | Use |
 | --- | --- |
@@ -163,7 +163,6 @@ Kinds: `interest`, `book`, `podcast`, `bookmark`, `post` (saved X post), `person
 | `group` | Sub-sections: tool groups ("Design web"), interests ("Legos", "F1", "Tesla") |
 | `favorite` | Orange corner flag |
 | `reading` | Books: `reading`, `read`, or `want` |
-| `met`, `remembered` | People |
 | `post: { text, handle, postedAt }` | Saved X posts, rendered as a static card (no embed, survives deletion) |
 | `order` | Manual ordering (lower first) |
 
@@ -171,7 +170,7 @@ Artwork lives in `public/images/library/<file-name>.svg`. Every item gets an ori
 
 Write anything in the body and the item gets its own page (`/library/<file-name>/`) with a spec-sheet header. MDX post components work there too. Items without a body link straight to `url`.
 
-`/people` and `/tools` redirect to `/library/people/` and `/library/tools/`.
+`/people` redirects to `/library/`; `/tools` redirects to `/library/tools/`.
 
 ## Import work from Webflow / CSV
 
