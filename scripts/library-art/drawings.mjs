@@ -198,16 +198,21 @@ const library = {
   ),
 
   // A simple portrait: round glasses, beard, hand at the chin, turtleneck.
+  // An apple with a bite taken out — Newton's, or the company he built.
   'book-steve-jobs': frame(
-    'FIG. BK — BIOGRAPHY',
-    `    <path d="M78 150 Q72 88 120 80 Q168 88 162 150 Q160 196 120 214 Q80 196 78 150 Z"/>
-    <circle cx="100" cy="146" r="13"/><circle cx="140" cy="146" r="13"/><path d="M113 146 Q120 141 127 146 M87 144 L78 140 M153 144 L162 140"/>
-    <path d="M120 150 L116 172 L124 174 M108 188 Q120 194 132 188"/>
-    <path d="M84 168 Q90 204 120 214 Q150 204 156 168" stroke-dasharray="1 5"/>
-    <path d="M106 214 Q98 206 104 196 L118 200 Q124 212 116 222"/>
-    <path d="M62 290 Q66 240 100 228 L120 236 L140 228 Q174 240 178 290"/>
-    <path d="M100 228 Q120 244 140 228"/>`,
-    `<path d="M120 60 V80"/>`,
+    'FIG. BK — ONE MORE THING',
+    `    <path d="M108 124 L122 140 L148 124
+      Q170 118 202 158
+      Q192 178 163 203
+      Q200 225 221 196
+      Q224 210 224 222
+      C224 277 181 322 128 322
+      C75 322 32 277 32 222
+      C32 167 75 122 108 124 Z"/>
+    <path d="M124 128 Q128 100 148 92"/>
+    <path d="M148 92 Q164 78 184 88 Q170 104 148 92 Z"/>
+    <path d="M150 90 Q164 84 176 88" stroke-dasharray="none"/>`,
+    `<path d="M128 58 V80"/>`,
     BOOK,
   ),
 
