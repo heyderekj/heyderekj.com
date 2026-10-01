@@ -1,0 +1,47 @@
+---
+/**
+ * An inline chip in running text that opens a small card about that thing.
+ * The card is a <span> (it sits inside a <p>), so card content must be
+ * phrasing elements — spans, links, images. Uses the native Popover API (light dismiss + Esc for free); positioning
+ * under the chip lives in client/intro-chips.ts. Without popover support the
+ * card simply shows inline after the chip.
+ *
+ *   I'm at church, <IntroChip id="drums" icon="ph-drum" label="learning the drums">…card…</IntroChip>
+ */
+import { imgFixed } from '../lib/img';
+
+interface Props {
+  id: string;
+  label: string;
+  /** Phosphor icon class, e.g. `ph-paw-print`. */
+  icon?: string;
+  /** Small round image instead of an icon (e.g. a photo). */
+  avatar?: string;
+  /** Mono kicker at the top of the card. */
+  kicker?: string;
+  /** Punctuation right after the chip, kept on the same line. */
+  after?: string;
+}
+
+const { id, label, icon, avatar, kicker, after } = Astro.props;
+const popId = `intro-pop-${id}`;
+---
+<span class="intro-chip-wrap"><button
+  type="button"
+  class="text-chip intro-chip"
+  popovertarget={popId}
+  aria-expanded="false"
+  aria-controls={popId}
+  data-intro-chip
+>
+  {avatar ? (
+    <img class="cio-chip__avatar" {...imgFixed(avatar, 18)} alt="" width="18" height="18" decoding="async" />
+  ) : icon ? (
+    <i class={`ph-bold ${icon}`} aria-hidden="true"></i>
+  ) : null}
+  <span>{label}</span>
+  <i class="ph-bold ph-caret-down intro-chip__caret" aria-hidden="true"></i>
+</button><span id={popId} popover class="intro-pop" role="dialog" aria-label={label}>
+  {kicker && <span class="intro-pop__kicker">{kicker}</span>}
+  <slot />
+</span>{after}</span>

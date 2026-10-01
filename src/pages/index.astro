@@ -5,6 +5,9 @@ import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
 import ProjectRows from '../components/ProjectRows.astro';
+import IntroChip from '../components/IntroChip.astro';
+import { imgFixed } from '../lib/img';
+import { aboutHero } from '../data/about';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
 import { getProjectsByTier } from '../lib/projectTiers';
 import { schemaPersonId, schemaWebsiteId } from '../lib/schemaIds';
@@ -43,11 +46,48 @@ const homeHighlightedWork = highlightedWork
 
 const { focus, building, paused, archive } = await getProjectsByTier();
 const moreCount = paused.length + archive.length;
+
+// Intro chip cards
+const avatarCredit = aboutHero.avatarCredit;
+const library = await getCollection('library');
+const pick = (ids: string[]) => ids.map((id) => library.find((i) => i.slug === id)).filter((i) => i != null);
+const macTools = pick(['tool-claude-desktop-app', 'tool-figma', 'tool-raycast', 'tool-cleanshot', 'tool-helium', 'tool-scratch']);
+const sitcoms = pick(['interest-the-office', 'interest-parks-and-recreation', 'interest-seinfeld', 'interest-modern-family']);
 ---
 <Base jsonLd={homeJsonLd}>
   <section class="intro">
     <p>
-      I live in the Des Moines, IA area with my wife and our little zoo. When I'm not at my Mac, I'm at church, learning the drums, or watching a sitcom. Now, I make websites with <a href="https://kemdesign.co" class="text-chip" rel="noopener noreferrer"><i class="ph-bold ph-pencil-simple" aria-hidden="true"></i>Kem Design</a> and apps on the side—mainly <a href="/projects/harvous/" class="text-chip"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> and <a href="/projects/koati/" class="text-chip"><i class="ph-bold ph-tray" aria-hidden="true"></i>Koati</a>
+      Hey, I'm <IntroChip id="me" after="." avatar="/assets/about/derek-photo.jpeg" label="Derek" kicker="Hello">
+        <span class="intro-pop__head">
+          <img class="intro-pop__avatar" {...imgFixed('/assets/about/derek-avatar.png', 56)} alt="Illustrated avatar of Derek" width="56" height="56" decoding="async" />
+          <span>
+            <span class="intro-pop__title">Derek Castelli</span>
+            <span class="intro-pop__text">Designer and builder in Des Moines, Iowa.</span>
+          </span>
+        </span>
+        <span class="intro-pop__text">Self-taught, making websites since 2010 and apps on the side ever since.</span>
+        <a class="intro-pop__link" href="/about/">More about me <i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
+        <span class="intro-pop__meta">Illustration by <a href={avatarCredit.href} rel="noopener">{avatarCredit.artist}</a></span>
+      </IntroChip> I live in the Des Moines, IA area with my wife and <IntroChip id="zoo" after="." icon="ph-paw-print" label="our little zoo" kicker="The zoo">
+        <span class="intro-pop__text"><b>Lilo</b>, the runt of the litter, who's been by my side since 2015, and <b>Kiya</b>.</span>
+        <span class="intro-pop__text">Plus two cats, thanks to my wife.</span>
+        <a class="intro-pop__link" href="/posts/2025-01-21-a-decade-of-unconditional-love/">A decade with Lilo <i class="ph-bold ph-arrow-right" aria-hidden="true"></i></a>
+      </IntroChip> When I'm not at <IntroChip id="mac" after="," icon="ph-laptop" label="my Mac" kicker="On my Mac">
+        <span class="intro-pop__list">
+          {macTools.map((t) => (
+            <span class="intro-pop__item"><b>{t.data.title}</b><span>{t.data.note}</span></span>
+          ))}
+        </span>
+      </IntroChip> I'm at church, <IntroChip id="drums" after="," icon="ph-music-notes" label="learning the drums" kicker="Learning">
+        <span class="intro-pop__figure"><img src="/images/library/interest-drums.svg" alt="Line drawing of a drum kit" width="400" height="300" loading="lazy" /></span>
+        <span class="intro-pop__text">The drums. Slowly, one groove at a time.</span>
+      </IntroChip> or watching <IntroChip id="sitcom" after="." icon="ph-television" label="a sitcom" kicker="On rotation">
+        <span class="intro-pop__grid">
+          {sitcoms.map((s) => (
+            <span class="intro-pop__tile"><img src={s.data.image} alt="" width="400" height="300" loading="lazy" />{s.data.title}</span>
+          ))}
+        </span>
+      </IntroChip> Now, I make websites with <a href="https://kemdesign.co" class="text-chip" rel="noopener noreferrer"><i class="ph-bold ph-pencil-simple" aria-hidden="true"></i>Kem Design</a> and apps on the side—mainly <a href="/projects/harvous/" class="text-chip"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> and <a href="/projects/koati/" class="text-chip"><i class="ph-bold ph-tray" aria-hidden="true"></i>Koati</a>.
     </p>
     <div class="intro-links">
       <a href="/about" class="intro-pill">
@@ -87,6 +127,10 @@ const moreCount = paused.length + archive.length;
     </p>
   )}
 </Base>
+
+<script>
+  import '../client/intro-chips';
+</script>
 
 <style>
   .intro { padding-top: var(--space-4); }
