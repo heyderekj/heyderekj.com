@@ -1,0 +1,22 @@
+---
+import { partnerHref, type Partner } from '../lib/work';
+
+interface Props {
+  partners: Partner[];
+  /** Active partner slug, or undefined for "All". */
+  active?: string;
+  total: number;
+}
+
+const { partners, active, total } = Astro.props;
+---
+<nav class="post-filters work-filters" aria-label="Filter work by partner">
+  <a href="/work/" class="chip chip--filter" aria-current={!active ? 'page' : undefined}>
+    All <span class="chip__count">{total}</span>
+  </a>
+  {partners.map((p) => (
+    <a href={partnerHref(p.name)} class="chip chip--filter" aria-current={active === p.slug ? 'page' : undefined}>
+      {p.name} <span class="chip__count">{p.count}</span>
+    </a>
+  ))}
+</nav>

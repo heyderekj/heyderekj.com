@@ -1,0 +1,36 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageTitle from '../../../components/PageTitle.astro';
+import FeaturedWorkGrid from '../../../components/FeaturedWorkGrid.astro';
+import WorkFilters from '../../../components/WorkFilters.astro';
+import { getPublishedWork, partnersOf, partnerSlug, PARTNER_SITES, type Partner } from '../../../lib/work';
+
+export async function getStaticPaths() {
+  const work = await getPublishedWork();
+  return partnersOf(work).map((partner) => ({
+    params: { partner: partner.slug },
+    props: { partner },
+  }));
+}
+
+interface Props {
+  partner: Partner;
+}
+
+const { partner } = Astro.props;
+const all = await getPublishedWork();
+const entries = all.filter((w) => w.data.partnership && partnerSlug(w.data.partnership) === partner.slug);
+const site = PARTNER_SITES[partner.name];
+---
+<Base
+  title={`Work with ${partner.name} — Derek Castelli`}
+  description={`Sites Derek Castelli designed and built in partnership with ${partner.name}.`}
+>
+  <PageTitle path="/work" />
+  <p style="color: var(--fg-soft); max-width: var(--max-prose);">
+    Sites I've built in partnership with{' '}
+    {site ? <a href={site} rel="noopener noreferrer">{partner.name}</a> : partner.name}.
+  </p>
+  <WorkFilters partners={partnersOf(all)} active={partner.slug} total={all.length} />
+  <FeaturedWorkGrid work={entries} />
+</Base>

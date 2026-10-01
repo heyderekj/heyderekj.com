@@ -1,13 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageTitle from '../../components/PageTitle.astro';
 import FeaturedWorkGrid from '../../components/FeaturedWorkGrid.astro';
+import WorkFilters from '../../components/WorkFilters.astro';
+import { getPublishedWork, partnersOf } from '../../lib/work';
 import { testimonials } from '../../data/about';
 
-const entries = (await getCollection('work', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-);
+const entries = await getPublishedWork();
 ---
 <Base
   title="Work — Derek Castelli"
@@ -18,6 +17,8 @@ const entries = (await getCollection('work', ({ data }) => !data.draft)).sort(
     Selected posts from shipped sites and collaborations. Also see the full <a href="/posts/">posts archive</a> and{' '}
     <a href="/projects/">projects</a>.
   </p>
+
+  <WorkFilters partners={partnersOf(entries)} total={entries.length} />
 
   {entries.length > 0 ? (
     <FeaturedWorkGrid work={entries} />

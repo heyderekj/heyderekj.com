@@ -617,6 +617,7 @@ main.main .post-link-out:hover { color: var(--accent); }
 .entries .entry-title[data-kind='link'] .entry-kind { color: var(--accent); }
 
 .post-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: var(--space-4) 0 var(--space-2); }
+.work-filters { margin-bottom: var(--space-4); }
 .chip--topics { margin-left: auto; }
 
 /* ---- Callouts ---- */

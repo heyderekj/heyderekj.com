@@ -1,11 +1,13 @@
 import { getCollection } from 'astro:content';
 import { getPublishedPosts, postHref, tagCounts, topicHref, TYPE_LABELS } from '../lib/posts';
 import { getRevisions } from '../lib/revisions';
+import { getPublishedWork, partnerHref, partnersOf } from '../lib/work';
 
 export async function GET(context) {
   const site = context.site?.toString().replace(/\/$/, '') ?? 'https://heyderekj.com';
 
   const posts = await getPublishedPosts();
+  const work = await getPublishedWork();
   const types = [...new Set(posts.map((p) => p.data.type))].map((t) => `/posts/${TYPE_LABELS[t].path}/`);
   const topicPaths = tagCounts(posts).map(({ tag }) => topicHref(tag));
 
@@ -16,12 +18,12 @@ export async function GET(context) {
     '/topics/',
     ...topicPaths,
     '/work/',
+    ...partnersOf(work).map((p) => partnerHref(p.name)),
     '/projects/',
     '/about/',
     '/colophon/',
   ];
 
-  const work = await getCollection('work', ({ data }) => !data.draft);
   const projects = await getCollection('projects', ({ data }) => !data.draft && data.status !== 'retired');
 
   const urls = [
