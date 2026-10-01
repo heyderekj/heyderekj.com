@@ -7,7 +7,7 @@ year: 2026
 started: 2026-03-01
 role: Designer & builder
 stack: [React, Supabase]
-image: /assets/images/projects/hmc-1.png
+image: /assets/images/projects/hmc-v2-card.webp
 hero: /assets/images/projects/hmc-3.webp
 icon: /assets/images/projects/heres-my-church-icon-v2.webp
 tier: 2
@@ -38,14 +38,14 @@ The surprise wasn't building the map—it was that no comprehensive, well-design
 
 Church directories rot because updating them is a chore. Here's My Church makes corrections anonymous—no account, just fix the field—and keeps the crowd honest with a review queue: every proposed change gets human eyes before it lands. 1,640 corrections and 74 churches improved so far, from people who just wanted the map to be right.
 
+<figure class="pfig">
+  <img src="/assets/images/projects/hmc-7.webp" alt="Update church info panel for Parkside Baptist Church with editable name, website, address, attendance, and denomination fields" loading="lazy" decoding="async" />
+  <figcaption>Anyone can fix a field—no account. Every change waits for human review before it lands.</figcaption>
+</figure>
+
 ## Where it stands
 
-244,360 churches across all 50 states—about one church per 1,368 people. It's free, open source, and maintained: I steward the data and the map, and the crowd keeps it honest.
-
-<figure class="pfig">
-  <img src="/assets/images/projects/hmc-9.webp" alt="National Here's My Church map showing 244,363 churches across 50 states with Texas highlighted at 16,596 churches" loading="lazy" decoding="async" />
-  <figcaption>The whole country on one map — denser purple where the churches are, and a clear count of what still needs review.</figcaption>
-</figure>
+Over 244,000 churches across all 50 states—about one church per 1,368 people. It's free, open source, and maintained: I steward the data and the map, and the crowd keeps it honest.
 
 ## Tools & process
 

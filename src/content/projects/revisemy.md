@@ -9,7 +9,7 @@ updated: 2026-07-22
 category: App
 role: Designer & builder
 stack: [Laravel, Livewire, Flux, MCP]
-image: /assets/images/projects/revisemy-1.webp
+image: /assets/images/projects/revisemy-v2-card.webp
 hero: /assets/images/projects/revisemy-1.webp
 heroPosition: center center
 icon: /assets/images/projects/revisemy-icon-v2.webp
