@@ -9,6 +9,7 @@ role: Designer & builder
 stack: [React, Supabase]
 image: /assets/images/projects/hmc-1.png
 hero: /assets/images/projects/hmc-3.webp
+icon: /assets/images/projects/heres-my-church-icon-v2.webp
 tier: 2
 order: 2
 status: maintained

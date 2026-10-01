@@ -9,6 +9,7 @@ role: Designer & builder
 stack: [Swift]
 image: /assets/images/projects/dinky-1.png
 hero: /assets/images/projects/dinky-3.webp
+icon: /assets/images/projects/dinky-icon-v2.webp
 tier: 3
 order: 1
 status: paused

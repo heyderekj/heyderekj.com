@@ -5,7 +5,7 @@ import MediaStepper from '../../components/MediaStepper.astro';
 import { formatProjectStartLabel, formatProjectUpdatedLabel } from '../../lib/projectStart';
 import { displayProjectStatus } from '../../lib/projectStatus';
 import { schemaPersonId } from '../../lib/schemaIds';
-import { imgAttrs, imgSrc, imgVariant } from '../../lib/img';
+import { imgAttrs, imgFixed, imgSrc, imgVariant } from '../../lib/img';
 
 export async function getStaticPaths() {
   // Retired projects live in the /projects archive (redirects in netlify.toml).
@@ -92,7 +92,19 @@ const preloadImages = [
     <header class="post-header project-detail-header">
       {project.data.url ? (
         <div class="project-header-title-row">
-          <h1>{project.data.name}</h1>
+          <h1>
+            {project.data.icon && (
+              <img
+                class="project-app-icon"
+                {...imgFixed(project.data.icon, 36)}
+                alt=""
+                width="36"
+                height="36"
+                decoding="async"
+              />
+            )}
+            {project.data.name}
+          </h1>
           <a href={project.data.url} target="_blank" rel="noopener" class="cta project-header-cta">
             {project.data.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
             <span class="arrow">&rarr;</span>
@@ -219,10 +231,21 @@ const preloadImages = [
   }
 
   .project-header-title-row h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
     margin: 0;
     flex: 1 1 auto;
     min-width: 0;
     line-height: 1.15;
+  }
+
+  .project-app-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 22%;
+    box-shadow: 0 0 0 1px var(--border);
   }
 
   .project-header-cta {

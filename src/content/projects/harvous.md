@@ -10,6 +10,7 @@ role: Designer & builder
 stack: [React, Hono, Supabase, Clerk]
 image: /assets/images/projects/harvous-1.png
 hero: /assets/images/projects/harvous-3.webp
+icon: /assets/images/projects/harvous-icon-v2.webp
 tier: 1
 order: 1
 status: active

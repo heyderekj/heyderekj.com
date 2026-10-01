@@ -4,7 +4,7 @@
  * callers sort (see lib/projectTiers.ts).
  */
 import type { CollectionEntry } from 'astro:content';
-import { imgAttrs } from '../lib/img';
+import { imgAttrs, imgFixed } from '../lib/img';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
@@ -37,7 +37,20 @@ const { projects } = Astro.props;
           </div>
           <div class="project-grid-footer">
             <div class="project-grid-info">
-              <span class="project-grid-name">{project.data.name}</span>
+              <span class="project-grid-name">
+                {project.data.icon && (
+                  <img
+                    class="project-grid-icon"
+                    {...imgFixed(project.data.icon, 22)}
+                    alt=""
+                    width="22"
+                    height="22"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                {project.data.name}
+              </span>
               <span class="project-grid-tagline">{project.data.tagline}</span>
             </div>
             <span class="project-grid-arrow" aria-hidden="true">→</span>
@@ -134,7 +147,18 @@ const { projects } = Astro.props;
     min-width: 0;
   }
 
+  .project-grid-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 22%;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 1px var(--border);
+  }
+
   .project-grid-name {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
     font-size: inherit;
     font-weight: 600;
     color: var(--fg);

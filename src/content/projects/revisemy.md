@@ -12,7 +12,7 @@ stack: [Laravel, Livewire, Flux, MCP]
 image: /assets/images/projects/revisemy-1.webp
 hero: /assets/images/projects/revisemy-1.webp
 heroPosition: center center
-icon: /assets/images/projects/revisemy-app-icon.png
+icon: /assets/images/projects/revisemy-icon-v2.webp
 tier: 2
 order: 1
 status: active
