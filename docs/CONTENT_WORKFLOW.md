@@ -172,6 +172,32 @@ Write anything in the body and the item gets its own page (`/library/<file-name>
 
 `/people` redirects to `/library/`; `/tools` redirects to `/library/tools/`.
 
+## Project media
+
+Project cards and pages use these slots (see `src/content/projects/koati.md` for a full example):
+
+| Slot | Frontmatter / markup | Export |
+| --- | --- | --- |
+| Card art | `image` | 1:1, 1600×1600 (portrait shots work best) |
+| App icon | `icon` | 512×512, masked to the iOS squircle; shown beside the name |
+| Detail hero | `hero` (hidden if it equals a `media` item) | 1:1, 1600×1600 |
+| Tour stepper | `media[]` (2+ items; videos allowed) | 4:3 stills, 1600×1200 |
+| Body figures | `<figure class="pfig">` / `pfig--pair` | 1:1, 1200–1600 |
+| Solo tour video | one `media` video with `aspect` and `radius` | native aspect, ≥ 970px wide |
+
+Tools (dev machine only, need Pillow):
+
+```sh
+# Frame a raw capture: crop, round corners, drop shadow, export WebP at slot size
+python3 scripts/project-shots/frame.py raw.png public/assets/images/projects/<slug>-v2-<name>.webp \
+  --radius 70 --canvas 1600x1600 --shadow
+
+# Regenerate the 1200×630 Open Graph card for every non-retired project (or pass slugs)
+python3 scripts/project-shots/og.py
+```
+
+Use a new filename (`-v2-`, `-v3-`) when refreshing a shot: `/assets/*` is cached for a day. App icons come from each project's repo (icon assets in the app bundle or `public/`).
+
 ## Import work from Webflow / CSV
 
 Bulk update existing `src/content/work/<slug>.md` files (and download images to `public/images/work/`) from an exported **Works** CSV:
