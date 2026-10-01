@@ -3,10 +3,8 @@ name: Scio7
 tagline: Past portfolio entry — Podcast Network.
 started: 2009-06-01
 status: retired
-featured: false
 order: 0
 category: Podcast Network
-burnerLevel: Burnt (Tossed Out)
 ---
 
 ## About

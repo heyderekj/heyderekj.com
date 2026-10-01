@@ -3,10 +3,8 @@ name: Lazwear
 tagline: Past portfolio entry — Ecommerce Shop.
 started: 2021-05-23
 status: retired
-featured: false
 order: 0
 category: Ecommerce Shop
-burnerLevel: Back Burner
 ---
 
 ## About

@@ -3,10 +3,8 @@ name: Decent Soap
 tagline: Past portfolio entry — Eccomerce Shop.
 started: 2015-07-15
 status: retired
-featured: false
 order: 0
 category: Eccomerce Shop
-burnerLevel: Burnt (Tossed Out)
 ---
 
 ## About

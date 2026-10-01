@@ -156,8 +156,6 @@ const projects = defineCollection({
     stack: z.array(z.string()).optional(),
     /** From Webflow / legacy exports (e.g. App, Blog) */
     category: z.string().optional(),
-    /** From Webflow / legacy exports (e.g. Front Burner) */
-    burnerLevel: z.string().optional(),
     image: z.string().optional(),
     /** Detail-page hero; falls back to `image` (which cards keep using) */
     hero: z.string().optional(),
@@ -182,7 +180,12 @@ const projects = defineCollection({
         }),
       )
       .optional(),
-    featured: z.boolean().default(false),
+    /**
+     * Where it sits on /projects and the homepage:
+     * 1 = main focus, 2 = also building, 3 = everything else (default).
+     */
+    tier: z.number().int().min(1).max(3).default(3),
+    /** Order within a tier (lower first); ties fall back to newest `started`. */
     order: z.number().default(0),
     status: z.enum(['active', 'maintained', 'paused', 'retired']).default('active'),
     draft: z.boolean().default(false),

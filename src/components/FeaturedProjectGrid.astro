@@ -1,121 +1,52 @@
 ---
+/**
+ * Square-media project cards (homepage + /projects tiers). Order is preserved —
+ * callers sort (see lib/projectTiers.ts).
+ */
 import type { CollectionEntry } from 'astro:content';
 import { imgAttrs } from '../lib/img';
-import { formatProjectStartLabel, formatProjectUpdatedLabel, projectStartTime } from '../lib/projectStart';
-import { displayProjectStatus } from '../lib/projectStatus';
 
 interface Props {
   projects: CollectionEntry<'projects'>[];
-  /** When true, render entries in the order passed (e.g. curated pages). */
-  preserveOrder?: boolean;
-  /** `list` = homepage rows; `work` = Cadence-style media grid. */
-  variant?: 'list' | 'work';
 }
 
-const { projects, preserveOrder = false, variant = 'list' } = Astro.props;
-
-const sorted = preserveOrder
-  ? projects
-  : [...projects].sort((a, b) => projectStartTime(b) - projectStartTime(a));
+const { projects } = Astro.props;
 ---
-
-{variant === 'work' ? (
-  <ul class="project-grid">
-    {sorted.map((project) => {
-      const startStr = formatProjectStartLabel(project);
-      const thumbSrc = project.data.image ?? project.data.icon;
-      const isIconOnly = !project.data.image && Boolean(project.data.icon);
-      const isFramed = !isIconOnly && project.data.imageFit === 'contain';
-      return (
-        <li class="project-grid-item">
-          <a href={`/projects/${project.slug}/`} class="project-grid-card">
-            <div class="project-grid-visual">
-              {thumbSrc ? (
-                <img
-                  {...imgAttrs(thumbSrc, { sizes: '(max-width: 540px) 92vw, 260px', w: 640 })}
-                  alt={project.data.name}
-                  class={`project-grid-img${isIconOnly ? ' project-grid-img--icon' : ''}${isFramed ? ' project-grid-img--framed' : ''}`}
-                  loading="lazy"
-                  decoding="async"
-                />
-              ) : (
-                <div class="project-grid-placeholder" aria-hidden="true">
-                  {project.data.name[0]}
-                </div>
-              )}
-            </div>
-            <div class="project-grid-footer">
-              <div class="project-grid-info">
-                <span class="project-grid-name">{project.data.name}</span>
-                {startStr && <span class="project-grid-date">{startStr}</span>}
+<ul class="project-grid">
+  {projects.map((project) => {
+    const thumbSrc = project.data.image ?? project.data.icon;
+    const isIconOnly = !project.data.image && Boolean(project.data.icon);
+    const isFramed = !isIconOnly && project.data.imageFit === 'contain';
+    return (
+      <li class="project-grid-item">
+        <a href={`/projects/${project.slug}/`} class="project-grid-card">
+          <div class="project-grid-visual">
+            {thumbSrc ? (
+              <img
+                {...imgAttrs(thumbSrc, { sizes: '(max-width: 540px) 92vw, 260px', w: 640 })}
+                alt={project.data.name}
+                class={`project-grid-img${isIconOnly ? ' project-grid-img--icon' : ''}${isFramed ? ' project-grid-img--framed' : ''}`}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <div class="project-grid-placeholder" aria-hidden="true">
+                {project.data.name[0]}
               </div>
-              <span class="project-grid-arrow" aria-hidden="true">→</span>
+            )}
+          </div>
+          <div class="project-grid-footer">
+            <div class="project-grid-info">
+              <span class="project-grid-name">{project.data.name}</span>
+              <span class="project-grid-tagline">{project.data.tagline}</span>
             </div>
-          </a>
-        </li>
-      );
-    })}
-  </ul>
-) : (
-  <ul class="project-cards">
-    {sorted.map((project) => {
-      const startStr = formatProjectStartLabel(project);
-      const updatedStr = formatProjectUpdatedLabel(project);
-      const stackStr = project.data.stack?.length ? project.data.stack.join(', ') : '';
-      const thumbSrc = project.data.icon ?? project.data.image;
-      return (
-        <li class="project-card">
-          <a href={`/projects/${project.slug}/`} class="project-card-link">
-            <div class="card-thumb">
-              {thumbSrc ? (
-                <img
-                  {...imgAttrs(thumbSrc, { sizes: '88px', widths: [96, 176, 264], w: 176 })}
-                  alt={project.data.name}
-                  class={`card-thumb-img${project.data.icon ? ' card-thumb-img--icon' : ''}`}
-                  loading="lazy"
-                  decoding="async"
-                />
-              ) : (
-                <div class="card-thumb-placeholder" aria-hidden="true">
-                  {project.data.name[0]}
-                </div>
-              )}
-            </div>
-            <div class="card-body">
-              <span class="card-name">{project.data.name}</span>
-              <p class="card-tagline">{project.data.tagline}</p>
-              <p class="card-foot">
-                <span class="card-foot-lead">
-                  {project.data.status && (
-                    <span class={`card-status card-status--${project.data.status}`}>
-                      {displayProjectStatus(project.data.status)}
-                    </span>
-                  )}
-                  {startStr && (
-                    <span class="card-foot-date">
-                      {updatedStr ? `Started ${startStr}` : startStr}
-                    </span>
-                  )}
-                  {updatedStr && (
-                    <>
-                      {startStr && <span class="card-foot-gap">·</span>}
-                      <span class="card-foot-date">Updated {updatedStr}</span>
-                    </>
-                  )}
-                </span>
-                {stackStr && (startStr || updatedStr || project.data.status) && (
-                  <span class="card-foot-gap">·</span>
-                )}
-                {stackStr && <span class="card-foot-stack">{stackStr}</span>}
-              </p>
-            </div>
-            <span class="card-arrow" aria-hidden="true">→</span>
-          </a>
-        </li>
-      );
-    })}
-  </ul>
-)}
+            <span class="project-grid-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+      </li>
+    );
+  })}
+</ul>
 
 <style>
   /* Cadence / work-style media grid */
@@ -215,6 +146,12 @@ const sorted = preserveOrder
     color: var(--fg);
   }
 
+  .project-grid-tagline {
+    font-size: var(--size-meta);
+    color: var(--fg-soft);
+    line-height: 1.4;
+  }
+
   .project-grid-date {
     font-size: var(--size-meta);
     color: var(--muted-strong);
@@ -245,206 +182,5 @@ const sorted = preserveOrder
     .project-grid {
       grid-template-columns: 1fr;
     }
-  }
-
-  /* Homepage list rows */
-  .project-cards {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .project-card {
-    margin: 0;
-    padding: 0;
-  }
-
-  :global(main.main) .project-card-link {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    border-radius: var(--radius-md);
-    border: 1px solid transparent;
-    background: transparent;
-    text-decoration: none;
-    color: inherit;
-    box-sizing: border-box;
-    transition:
-      background 0.2s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
-  }
-
-  :global(main.main) .project-card-link:focus-visible {
-    outline: 2px solid var(--fg);
-    outline-offset: 2px;
-  }
-
-  :global(main.main) .project-card-link:hover {
-    background-color: var(--glass-active-bg);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    border-color: transparent;
-    box-shadow: var(--glass-inset), 0 1px 6px rgba(0, 0, 0, 0.06);
-  }
-
-  .card-thumb {
-    flex-shrink: 0;
-    align-self: stretch;
-    aspect-ratio: 1 / 1;
-    height: auto;
-    width: auto;
-    min-width: 64px;
-    min-height: 64px;
-    max-width: 88px;
-    max-height: 88px;
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    background: var(--bg-elevated);
-  }
-
-  .card-thumb-img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center center;
-    box-sizing: border-box;
-    padding: 10%;
-    display: block;
-    transition: transform 0.3s ease;
-  }
-
-  .card-thumb-img--icon {
-    padding: 12%;
-    background: var(--bg-elevated);
-  }
-
-  :global(main.main) .project-card-link:hover .card-thumb-img {
-    transform: scale(1.03);
-  }
-
-  .card-thumb-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--muted);
-    user-select: none;
-  }
-
-  .card-body {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .card-name {
-    font-size: var(--size-body);
-    font-weight: 600;
-    color: var(--fg);
-    transition: color 0.15s ease;
-    line-height: 1.25;
-  }
-
-  :global(main.main) .project-card-link:hover .card-name {
-    color: var(--fg);
-  }
-
-  .card-tagline {
-    margin: 0;
-    font-size: var(--size-meta);
-    color: var(--fg-soft);
-    line-height: 1.45;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .card-foot {
-    margin: 0;
-    font-size: var(--size-meta);
-    color: var(--muted-strong);
-    font-variant-numeric: tabular-nums;
-    line-height: 1.35;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    column-gap: 0.4rem;
-    row-gap: 0.2rem;
-  }
-
-  .card-foot-lead {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .card-foot-date {
-    font-variant-numeric: tabular-nums;
-  }
-
-  .card-foot-gap {
-    color: var(--muted);
-    user-select: none;
-  }
-
-  .card-foot-stack {
-    min-width: 0;
-  }
-
-  /* Neutral pill + a small colored status dot (orange survives only as the dot) */
-  .card-status {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: var(--radius-pill);
-    line-height: 1.2;
-    color: var(--muted-strong);
-    background: color-mix(in srgb, var(--fg) 4%, transparent);
-    border: 1px solid var(--border);
-  }
-
-  .card-status::before {
-    content: '';
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--muted);
-    flex-shrink: 0;
-  }
-
-  .card-status--active::before { background: var(--accent); }
-  .card-status--paused::before { background: #eab308; }
-  .card-status--maintained::before { background: #c4a574; }
-
-  .card-arrow {
-    flex-shrink: 0;
-    color: var(--muted);
-    font-size: 16px;
-    line-height: 1;
-    align-self: center;
-    transition: color 0.15s ease, transform 0.15s ease;
-  }
-
-  :global(main.main) .project-card-link:hover .card-arrow {
-    color: var(--fg);
-    transform: translateX(2px);
   }
 </style>

@@ -9,10 +9,9 @@ role: Designer & builder
 stack: [React, Supabase]
 image: /assets/images/projects/hmc-1.png
 hero: /assets/images/projects/hmc-3.webp
-featured: true
+tier: 2
 order: 2
 status: maintained
-burnerLevel: Simmering
 ---
 
 ## The 3am text
@@ -40,7 +39,7 @@ Church directories rot because updating them is a chore. Here's My Church makes 
 
 ## Where it stands
 
-244,360 churches across all 50 states—about one church per 1,368 people. It's free, open source, and simmering: I steward the data and the map, and the crowd keeps it honest.
+244,360 churches across all 50 states—about one church per 1,368 people. It's free, open source, and maintained: I steward the data and the map, and the crowd keeps it honest.
 
 <figure class="pfig">
   <img src="/assets/images/projects/hmc-9.webp" alt="National Here's My Church map showing 244,363 churches across 50 states with Texas highlighted at 16,596 churches" loading="lazy" decoding="async" />

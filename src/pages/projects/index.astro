@@ -1,69 +1,66 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PageTitle from '../../components/PageTitle.astro';
 import FeaturedProjectGrid from '../../components/FeaturedProjectGrid.astro';
-import ProjectList from '../../components/ProjectList.astro';
-import { projectStartTime } from '../../lib/projectStart';
+import ProjectRows from '../../components/ProjectRows.astro';
+import ProjectArchive from '../../components/ProjectArchive.astro';
+import { getProjectsByTier, TIER_LABELS } from '../../lib/projectTiers';
 
-const projects = await getCollection('projects', ({ data }) => !data.draft);
-const activeProjects = projects
-  .filter((p) => p.data.status === 'active')
-  .sort((a, b) => projectStartTime(b) - projectStartTime(a));
-const maintainedProjects = projects
-  .filter((p) => p.data.status === 'maintained')
-  .sort((a, b) => projectStartTime(b) - projectStartTime(a));
-const pausedProjects = projects
-  .filter((p) => p.data.status === 'paused')
-  .sort((a, b) => projectStartTime(b) - projectStartTime(a));
-const retiredProjects = projects
-  .filter((p) => p.data.status === 'retired')
-  .sort((a, b) => projectStartTime(b) - projectStartTime(a));
+const { focus, building, paused, archive } = await getProjectsByTier();
 ---
 <Base title="Projects — Derek Castelli" description="Apps and sites built by Derek Castelli.">
   <PageTitle path="/projects" />
   <p style="color: var(--fg-soft); max-width: var(--max-prose);">
-    Apps and experiments—design, code, and AI.
+    Apps and experiments—design, code, and AI. Most of my time goes to the first two.
   </p>
 
-  {activeProjects.length > 0 && (
+  {focus.length > 0 && (
     <>
-      <h2 class="projects-section-title" id="front-burner">Front Burner</h2>
-      <p class="projects-section-lede">Current focus—shipping and active builds.</p>
-      <FeaturedProjectGrid projects={activeProjects} preserveOrder variant="work" />
+      <h2 class="projects-section-title" id="focus">{TIER_LABELS.focus}</h2>
+      <p class="projects-section-lede">Where most of my time goes right now.</p>
+      <FeaturedProjectGrid projects={focus} />
     </>
   )}
 
-  {maintainedProjects.length > 0 && (
+  {building.length > 0 && (
     <>
-      <h2 class="projects-section-title" id="simmering">Simmering</h2>
-      <p class="projects-section-lede">
-        Live projects kept warm—maintained and open, but not the current focus.
-      </p>
-      <FeaturedProjectGrid projects={maintainedProjects} preserveOrder variant="work" />
+      <h2 class="projects-section-title" id="building">{TIER_LABELS.building}</h2>
+      <p class="projects-section-lede">Live, shipping, and still getting attention.</p>
+      <FeaturedProjectGrid projects={building} />
     </>
   )}
 
-  {pausedProjects.length > 0 && (
+  {paused.length > 0 && (
     <>
-      <h2 class="projects-section-title" id="back-burner">Back Burner</h2>
-      <p class="projects-section-lede">
-        {`${pausedProjects.length} ${pausedProjects.length === 1 ? 'project' : 'projects'} on the back burner—they may still continue.`}
-      </p>
-      <FeaturedProjectGrid projects={pausedProjects} preserveOrder variant="work" />
+      <h2 class="projects-section-title" id="more">{TIER_LABELS.more}</h2>
+      <p class="projects-section-lede">Shipped and paused—they may pick back up.</p>
+      <ProjectRows projects={paused} />
     </>
   )}
 
-  {retiredProjects.length > 0 && (
+  {archive.length > 0 && (
     <>
-      <h2 class="projects-section-title" id="retired">Retired</h2>
+      <h2 class="projects-section-title" id="archive">{TIER_LABELS.archive}</h2>
       <p class="projects-section-lede">
-        {retiredProjects.length} past {retiredProjects.length === 1 ? 'project' : 'projects'} from the archive.
+        {archive.length} earlier projects, blogs, and shops—going back to {archive[archive.length - 1].data.started?.getUTCFullYear()}.
       </p>
-      <ProjectList projects={retiredProjects} variant="row" startedOrder="desc" />
+      <ProjectArchive projects={archive} />
     </>
   )}
 </Base>
+
+<!-- Old section anchors (Front Burner era) still land somewhere sensible. -->
+<script is:inline>
+  (function () {
+    var map = { 'front-burner': 'focus', simmering: 'building', 'back-burner': 'more', retired: 'archive' };
+    var h = location.hash.slice(1);
+    if (map[h]) {
+      history.replaceState(null, '', '#' + map[h]);
+      var el = document.getElementById(map[h]);
+      if (el) el.scrollIntoView();
+    }
+  })();
+</script>
 
 <style>
   .projects-section-title {

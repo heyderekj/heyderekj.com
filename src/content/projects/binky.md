@@ -9,10 +9,9 @@ role: Designer & builder
 stack: [Swift]
 image: /assets/images/projects/binky-1.png
 hero: /assets/images/projects/binky-1.webp
-featured: true
-order: 4
+tier: 3
+order: 2
 status: paused
-burnerLevel: Back Burner
 ---
 
 ## About

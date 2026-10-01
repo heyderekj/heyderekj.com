@@ -9,10 +9,9 @@ role: Designer & builder
 stack: [Swift]
 image: /assets/images/projects/dinky-1.png
 hero: /assets/images/projects/dinky-3.webp
-featured: true
-order: 3
+tier: 3
+order: 1
 status: paused
-burnerLevel: Back Burner
 media:
   - type: video
     src: /assets/images/projects/dinky-demo.mp4
@@ -44,7 +43,7 @@ The goal was to feel friendly for someone who just wants smaller files—and dee
 
 ## Traction
 
-I shipped it, shared it, and let real use decide what it became. The [GitHub repo](https://github.com/heyderekj/dinky) grew past 400 stars; people wanted it via Homebrew, so it installs with `brew install --cask dinky`; PRs and user replies steered it from an image compressor into a full file-compression app. It's calmly on the back burner now—stable, useful, and done being urgent.
+I shipped it, shared it, and let real use decide what it became. The [GitHub repo](https://github.com/heyderekj/dinky) grew past 400 stars; people wanted it via Homebrew, so it installs with `brew install --cask dinky`; PRs and user replies steered it from an image compressor into a full file-compression app. It's paused now—stable, useful, and done being urgent.
 
 ## Tools & process
 

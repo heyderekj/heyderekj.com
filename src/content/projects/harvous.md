@@ -6,12 +6,11 @@ url: https://harvous.com
 year: 2024
 started: 2024-03-01
 category: App
-burnerLevel: Front Burner
 role: Designer & builder
 stack: [React, Hono, Supabase, Clerk]
 image: /assets/images/projects/harvous-1.png
 hero: /assets/images/projects/harvous-3.webp
-featured: true
+tier: 1
 order: 1
 status: active
 media:
@@ -66,7 +65,7 @@ Notes are private by default—but when you want to study with others, a note, a
 
 ## Where it stands
 
-Harvous is my front-burner product, open source under Testament Made LLC, and free at the core. The 2.0 UI is live at [app.harvous.com](https://app.harvous.com)—chrome stripped back until the notes are the interface, with appearance that feels like your study Bible, not a generic SaaS shell. Same principle as always: app first, AI second.
+Harvous is my main focus, open source under Testament Made LLC, and free at the core. The 2.0 UI is live at [app.harvous.com](https://app.harvous.com)—chrome stripped back until the notes are the interface, with appearance that feels like your study Bible, not a generic SaaS shell. Same principle as always: app first, AI second.
 
 <figure class="pfig">
   <img src="/assets/images/projects/harvous-9.webp" alt="Harvous Appearance settings with Light Paper and Dark Night theme previews, Auto mode, and accent color swatches" loading="lazy" decoding="async" />

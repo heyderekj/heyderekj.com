@@ -1,0 +1,98 @@
+---
+/**
+ * Archive of retired projects: one timeline, grouped by year, each with its
+ * one-line story inline (no separate thin detail pages).
+ */
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  projects: CollectionEntry<'projects'>[];
+}
+
+const { projects } = Astro.props;
+
+/** "## About\n\nSentence." → "Sentence." */
+const story = (p: CollectionEntry<'projects'>) =>
+  p.body
+    .replace(/^#+\s.*$/gm, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const year = (p: CollectionEntry<'projects'>) =>
+  p.data.started?.getUTCFullYear() ?? p.data.year ?? 0;
+
+const groups = new Map<number, CollectionEntry<'projects'>[]>();
+for (const p of projects) groups.set(year(p), [...(groups.get(year(p)) ?? []), p]);
+const years = [...groups.keys()].sort((a, b) => b - a);
+---
+<ol class="project-archive">
+  {years.map((y) => (
+    <li class="project-archive__year">
+      <span class="project-archive__label">{y || '—'}</span>
+      <ul>
+        {groups.get(y)!.map((p) => (
+          <li class="project-archive__item" id={p.slug}>
+            <span class="project-archive__name">
+              {p.data.name}
+              {p.data.category && <span class="project-archive__kind">{p.data.category}</span>}
+            </span>
+            {story(p) && <p class="project-archive__story">{story(p)}</p>}
+          </li>
+        ))}
+      </ul>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .project-archive {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0 0;
+  }
+  .project-archive__year {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--border);
+  }
+  .project-archive__label {
+    font-size: var(--size-meta);
+    color: var(--muted-strong);
+    font-variant-numeric: tabular-nums;
+    padding-top: 2px;
+  }
+  .project-archive__year ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .project-archive__item { margin: 0; scroll-margin-top: var(--space-5); }
+  .project-archive__name {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .project-archive__kind {
+    font-size: var(--size-micro);
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .project-archive__story {
+    margin: 2px 0 0;
+    font-size: var(--size-meta);
+    line-height: 1.55;
+    color: var(--fg-soft);
+    max-width: var(--max-text);
+  }
+</style>

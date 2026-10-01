@@ -22,7 +22,7 @@ export async function GET(context) {
   ];
 
   const work = await getCollection('work', ({ data }) => !data.draft);
-  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  const projects = await getCollection('projects', ({ data }) => !data.draft && data.status !== 'retired');
 
   const urls = [
     ...staticPaths.map((p) => ({ loc: `${site}${p}`, lastmod: null })),

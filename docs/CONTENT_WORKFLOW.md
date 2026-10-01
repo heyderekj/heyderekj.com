@@ -185,4 +185,4 @@ Use `--dry-run` to only log which files would be written and which downloads wou
 ## Notes
 
 - Drafts are excluded from public listings, detail pages, the feed, and `sitemap.xml` in builds.
-- For projects, `featured: true` controls homepage surfacing.
+- Projects are grouped by `tier` (1 = main focus, 2 = also building, 3 = everything else, default) and ordered by `order` within a tier. Tiers 1–2 appear on the homepage; `status` (active / maintained / paused / retired) only drives the status chip, and retired projects live in the /projects archive.

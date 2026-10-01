@@ -8,7 +8,11 @@ import { schemaPersonId } from '../../lib/schemaIds';
 import { imgAttrs, imgSrc, imgVariant } from '../../lib/img';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  // Retired projects live in the /projects archive (redirects in netlify.toml).
+  const projects = await getCollection(
+    'projects',
+    ({ data }) => !data.draft && data.status !== 'retired',
+  );
   return projects.map((project) => ({
     params: { slug: project.slug },
     props: { project },
@@ -191,7 +195,7 @@ const preloadImages = [
         <a href="/projects/"><span class="arrow">&larr;</span> all projects</a>
       </div>
       {status && (
-        <span class={`detail-status detail-status--${status}`}>
+        <span class={`card-status card-status--${status}`}>
           {displayProjectStatus(status)}
         </span>
       )}
@@ -261,36 +265,6 @@ const preloadImages = [
     flex: 0 1 auto;
   }
 
-  /* Burner chip — colored status dot, sits opposite “all projects” */
-  .detail-status {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: var(--radius-pill);
-    line-height: 1.2;
-    color: var(--muted-strong);
-    background: color-mix(in srgb, var(--fg) 4%, transparent);
-    border: 1px solid var(--border);
-  }
-
-  .detail-status::before {
-    content: '';
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--muted);
-    flex-shrink: 0;
-  }
-
-  .detail-status--active::before { background: var(--accent); }
-  .detail-status--paused::before { background: #eab308; }
-  .detail-status--maintained::before { background: #c4a574; }
 
   .project-meta-gap {
     color: var(--muted);

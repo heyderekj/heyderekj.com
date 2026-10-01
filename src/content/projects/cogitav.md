@@ -3,9 +3,7 @@ name: Cogitav
 tagline: Past portfolio entry from the archive.
 started: 2009-05-01
 status: retired
-featured: false
 order: 0
-burnerLevel: Burnt (Tossed Out)
 ---
 
 ## About

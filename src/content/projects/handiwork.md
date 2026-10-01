@@ -3,10 +3,8 @@ name: Handiwork
 tagline: Past portfolio entry — App.
 started: 2019-05-22
 status: retired
-featured: false
 order: 0
 category: App
-burnerLevel: Burnt (Tossed Out)
 ---
 
 ## About

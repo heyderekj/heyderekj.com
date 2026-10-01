@@ -4,8 +4,9 @@ import { getPublishedPosts } from '../lib/posts';
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
 import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
+import ProjectRows from '../components/ProjectRows.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
-import { projectStartTime } from '../lib/projectStart';
+import { getProjectsByTier } from '../lib/projectTiers';
 import { schemaPersonId, schemaWebsiteId } from '../lib/schemaIds';
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
@@ -40,22 +41,13 @@ const homeHighlightedWork = highlightedWork
   .filter(({ slug }) => ['throne', 'claimable', 'care-continuity'].includes(slug))
   .slice(0, 2);
 
-const allProjects = await getCollection('projects', ({ data }) => !data.draft);
-/** Front Burner only — active projects shown on the home page. */
-const homeGridProjects = allProjects
-  .filter((p) => p.data.status === 'active')
-  .sort((a, b) => projectStartTime(b) - projectStartTime(a));
-const pausedProjects = allProjects.filter((p) => p.data.status === 'paused');
-const maintainedProjects = allProjects.filter((p) => p.data.status === 'maintained');
-const retiredProjects = allProjects.filter((p) => p.data.status === 'retired');
-const pausedCount = pausedProjects.length;
-const maintainedCount = maintainedProjects.length;
-const retiredCount = retiredProjects.length;
+const { focus, building, paused, archive } = await getProjectsByTier();
+const moreCount = paused.length + archive.length;
 ---
 <Base jsonLd={homeJsonLd}>
   <section class="intro">
     <p>
-      I live in the Des Moines, IA area with my wife and our little zoo. When I'm not at my Mac, I'm at church, learning the drums, or watching a sitcom. Now, I make websites with <a href="https://kemdesign.co" class="text-chip" rel="noopener noreferrer"><i class="ph-bold ph-pencil-simple" aria-hidden="true"></i>Kem Design</a> and apps on the side—primarily <a href="/projects/harvous/" class="text-chip"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a>
+      I live in the Des Moines, IA area with my wife and our little zoo. When I'm not at my Mac, I'm at church, learning the drums, or watching a sitcom. Now, I make websites with <a href="https://kemdesign.co" class="text-chip" rel="noopener noreferrer"><i class="ph-bold ph-pencil-simple" aria-hidden="true"></i>Kem Design</a> and apps on the side—mainly <a href="/projects/harvous/" class="text-chip"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> and <a href="/projects/koati/" class="text-chip"><i class="ph-bold ph-tray" aria-hidden="true"></i>Koati</a>
     </p>
     <div class="intro-links">
       <a href="/about" class="intro-pill">
@@ -84,50 +76,15 @@ const retiredCount = retiredProjects.length;
   )}
 
   <h2 class="section-title"><a href="/projects/">/ projects</a></h2>
-  {homeGridProjects.length > 0 ? (
-    <FeaturedProjectGrid projects={homeGridProjects} variant="work" />
-  ) : (
-    <p style="color: var(--muted);">No active projects yet.</p>
-  )}
-  {(pausedCount > 0 || maintainedCount > 0 || retiredCount > 0) && (
-    <ul class="entries home-status-summaries">
-      {pausedCount > 0 && (
-        <li>
-          <a href="/projects/#back-burner" class="entry-link home-status-summary-link">
-            <span class="home-status-summary-pill-wrap">
-              <span class="card-status card-status--paused">Back Burner</span>
-            </span>
-            <span class="entry-title home-status-summary-title">
-              {pausedCount} back-burner {pausedCount === 1 ? 'project' : 'projects'}
-            </span>
-          </a>
-        </li>
-      )}
-      {maintainedCount > 0 && (
-        <li>
-          <a href="/projects/#simmering" class="entry-link home-status-summary-link">
-            <span class="home-status-summary-pill-wrap">
-              <span class="card-status card-status--maintained">Simmering</span>
-            </span>
-            <span class="entry-title home-status-summary-title">
-              {maintainedCount} simmering {maintainedCount === 1 ? 'project' : 'projects'}
-            </span>
-          </a>
-        </li>
-      )}
-      {retiredCount > 0 && (
-        <li>
-          <a href="/projects/#retired" class="entry-link home-status-summary-link">
-            <span class="home-status-summary-pill-wrap">
-              <span class="card-status card-status--retired">retired</span>
-            </span>
-            <span class="entry-title home-status-summary-title">
-              {retiredCount} retired {retiredCount === 1 ? 'project' : 'projects'}
-            </span>
-          </a>
-        </li>
-      )}
-    </ul>
+  {focus.length > 0 && <FeaturedProjectGrid projects={focus} />}
+  {building.length > 0 && <ProjectRows projects={building} />}
+  {moreCount > 0 && (
+    <p class="home-more-projects">
+      <a href="/projects/#more" class="intro-pill">
+        <i class="ph-bold ph-arrow-right" aria-hidden="true" />
+        {moreCount} more projects
+      </a>
+    </p>
   )}
 </Base>
 
@@ -137,58 +94,6 @@ const retiredCount = retiredProjects.length;
     max-width: var(--max-text);
   }
 
-  .home-status-summaries {
-    margin-top: var(--space-4);
-  }
+  .home-more-projects { margin: var(--space-3) 0 0; }
 
-  :global(main.main) .home-status-summary-link {
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  .home-status-summary-pill-wrap {
-    display: inline-flex;
-    align-items: center;
-  }
-
-  .home-status-summary-title {
-    font-weight: 500;
-    color: var(--muted-strong);
-    font-variant-numeric: tabular-nums;
-  }
-
-  :global(main.main) .home-status-summary-link:hover .home-status-summary-title {
-    color: var(--fg);
-  }
-
-  .card-status {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: var(--radius-pill);
-    line-height: 1.2;
-    color: var(--muted-strong);
-    background: color-mix(in srgb, var(--fg) 4%, transparent);
-    border: 1px solid var(--border);
-  }
-
-  .card-status::before {
-    content: '';
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--muted);
-    flex-shrink: 0;
-  }
-
-  .card-status--active::before { background: var(--accent); }
-  .card-status--paused::before { background: #eab308; }
-  .card-status--maintained::before { background: #c4a574; }
 </style>

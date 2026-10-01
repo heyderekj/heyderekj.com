@@ -7,15 +7,14 @@ year: 2026
 started: 2026-07-01
 updated: 2026-07-22
 category: App
-burnerLevel: Front Burner
 role: Designer & builder
 stack: [Laravel, Livewire, Flux, MCP]
 image: /assets/images/projects/revisemy-1.webp
 hero: /assets/images/projects/revisemy-1.webp
 heroPosition: center center
 icon: /assets/images/projects/revisemy-app-icon.png
-featured: true
-order: 2
+tier: 2
+order: 1
 status: active
 ---
 

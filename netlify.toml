@@ -66,6 +66,283 @@
   status = 301
   force = true
 
+# Retired projects now live in the /projects archive (one row each, with its story).
+[[redirects]]
+  from = "/projects/chrchlink/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/chrchlink"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/churchsync/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/churchsync"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/city-planning-blog/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/city-planning-blog"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/cogitav/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/cogitav"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/copact/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/copact"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/decent-soap/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/decent-soap"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/feedme-post/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/feedme-post"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/handiwork/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/handiwork"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/hike/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/hike"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/influlive/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/influlive"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/lazwear/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/lazwear"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/lifenotion/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/lifenotion"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/lilo-loved/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/lilo-loved"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/littleseaandme/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/littleseaandme"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/made-in-dsm/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/made-in-dsm"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/neighbormade/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/neighbormade"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/notionup/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/notionup"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/perch/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/perch"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/resimplify/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/resimplify"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/scio7/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/scio7"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/shift-pace-drive/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/shift-pace-drive"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/sparrow/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/sparrow"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/uniqueblog/*"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/uniqueblog"
+  to = "/projects/#archive"
+  status = 301
+  force = true
+
 [build.environment]
   NODE_VERSION = "20"
 

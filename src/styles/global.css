@@ -2418,3 +2418,33 @@ main.main a.topic-link:hover { background: var(--bg-elevated); border-color: var
 .colophon li { margin-bottom: var(--space-2); }
 .colophon .status-chip { margin-right: 0.2em; }
 .colophon__build { font-size: var(--size-meta); color: var(--muted-strong); }
+
+/* ---- Project status chip (where a project stands) ---- */
+.card-status {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--muted-strong);
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  border: 1px solid var(--border);
+}
+.card-status::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
+}
+.card-status--active::before { background: var(--accent); }
+.card-status--paused::before { background: #eab308; }
+.card-status--maintained::before { background: #c4a574; }
