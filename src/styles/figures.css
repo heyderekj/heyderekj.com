@@ -419,20 +419,26 @@
   color: var(--muted-strong);
 }
 
-/* ---- Sidenotes (Tufte-style checkbox toggle; no JS) ---- */
+/* ---- Sidenotes (Tufte-style checkbox toggle; no JS) ----
+   Wide frames: the note sits in the right margin beside its line, with a
+   hairline + mono counter in the blueprint style. Narrower frames: a numbered
+   toggle reveals it inline. The frame is a size container, so this follows the
+   space that's actually there (rail to column), not the viewport. */
 .post-content { counter-reset: sidenote; }
 .sn-ref {
   counter-increment: sidenote;
   display: inline-block;
-  margin-left: 1px;
-  font-size: 0.72em;
+  padding: 0 4px;
+  margin-left: -2px;
+  font-size: 0.7em;
   font-weight: 600;
   line-height: 0;
   vertical-align: super;
   color: var(--accent);
   cursor: pointer;
+  user-select: none;
 }
-.sn-ref::after { content: counter(sidenote); padding: 0 1px; }
+.sn-ref::after { content: counter(sidenote); }
 .sn-toggle { display: none; }
 .sn-note {
   display: none;
@@ -452,22 +458,46 @@
 }
 .sn-toggle:checked + .sn-note { display: block; }
 .sn-toggle:focus-visible ~ .sn-note,
-.sn-ref:focus-visible { outline: 2px solid var(--fg); }
+.sn-ref:focus-visible { outline: 2px solid var(--fg); outline-offset: 1px; }
+.sn-ref:hover { text-decoration: underline; }
 
-@media (min-width: 60rem) {
-  .sn-ref { cursor: default; }
+/* Margin mode: needs ≥ ~165px between the text column and the rail. */
+@container frame (min-width: 840px) {
+  .sn-ref { cursor: default; padding: 0 2px; }
+  .sn-ref:hover { text-decoration: none; }
   .sn-note,
   .sn-toggle:checked + .sn-note {
+    --sn-w: 138px;
+    --sn-gap: 26px;
     display: block;
     float: right;
     clear: right;
-    width: 160px;
-    margin: 0.25em -184px var(--space-2) 0;
-    padding: 0;
+    box-sizing: border-box;
+    width: var(--sn-w);
+    margin: 0.2em calc(-1 * (var(--sn-w) + var(--sn-gap))) var(--space-3) 0;
+    padding: 6px 0 0;
     border: 0;
+    border-top: 1px solid var(--rule);
+    border-radius: 0;
     background: none;
-    font-size: 12.5px;
+    font-size: 12px;
+    line-height: 1.5;
     color: var(--muted-strong);
+    text-wrap: pretty;
+  }
+  .sn-note::before {
+    content: counter(sidenote, decimal-leading-zero);
+    display: block;
+    margin-bottom: 2px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+  }
+  /* Wide blocks span the full column; don't let them run under a note. */
+  .post-content > :is(figure, .pfig, .compare, .snapshots, .prompt, .pacc, .appendix, .callout, table, pre) {
+    clear: right;
   }
 }
 
