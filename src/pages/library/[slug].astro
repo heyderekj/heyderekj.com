@@ -83,6 +83,7 @@ const specRows: [string, string | undefined, string?][] = d
 ---
 {props.mode === 'kind' ? (
   <Base
+    noindex
     title={`${KIND_META[props.kind].many} — Library — Derek Castelli`}
     description={KIND_META[props.kind].intro}
   >
@@ -101,7 +102,7 @@ const specRows: [string, string | undefined, string?][] = d
     </article>
   </Base>
 ) : (
-  <Base title={`${d!.title} — Library — Derek Castelli`} description={d!.note ?? KIND_META[d!.kind].intro}>
+  <Base noindex title={`${d!.title} — Library — Derek Castelli`} description={d!.note ?? KIND_META[d!.kind].intro}>
     <article class="prose library-page library-item">
       <p class="library-crumb">
         <a href="/library/">/library</a><a href={kindHref(d!.kind)}>/{KIND_META[d!.kind].path}</a>

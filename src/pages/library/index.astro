@@ -11,6 +11,7 @@ const codes = itemCodes(items);
 const counts = Object.fromEntries(KINDS.map((k) => [k, byKind(items, k).length])) as Record<LibraryKind, number>;
 ---
 <Base
+  noindex
   title="Library — Derek Castelli"
   description="Things Derek has saved and collected: books, podcasts, bookmarks, posts, interests, and tools."
 >

@@ -1,7 +1,6 @@
 import { getCollection } from 'astro:content';
 import { getPublishedPosts, postHref, tagCounts, topicHref, TYPE_LABELS } from '../lib/posts';
 import { getRevisions } from '../lib/revisions';
-import { byKind, getLibrary, hasPage, KIND_META, KINDS } from '../lib/library';
 
 export async function GET(context) {
   const site = context.site?.toString().replace(/\/$/, '') ?? 'https://heyderekj.com';
@@ -9,12 +8,6 @@ export async function GET(context) {
   const posts = await getPublishedPosts();
   const types = [...new Set(posts.map((p) => p.data.type))].map((t) => `/posts/${TYPE_LABELS[t].path}/`);
   const topicPaths = tagCounts(posts).map(({ tag }) => topicHref(tag));
-
-  const library = await getLibrary();
-  const libraryPaths = [
-    ...KINDS.filter((k) => byKind(library, k).length > 0).map((k) => `/library/${KIND_META[k].path}/`),
-    ...library.filter(hasPage).map((i) => `/library/${i.slug}/`),
-  ];
 
   const staticPaths = [
     '/',
@@ -25,8 +18,6 @@ export async function GET(context) {
     '/work/',
     '/projects/',
     '/about/',
-    '/library/',
-    ...libraryPaths,
     '/colophon/',
   ];
 
