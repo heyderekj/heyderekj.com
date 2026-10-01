@@ -361,7 +361,6 @@ main.main .back-link a,
 main.main .work-link-pill,
 main.main .intro-pill,
 main.main .text-chip,
-main.main .intro .now-line a,
 main.main .about-hero__credit-link,
 main.main .about-page .about-exp-pill--link,
 main.main .brag-page .about-exp-pill--link {
@@ -1438,155 +1437,6 @@ main.main .intro-pill:hover i {
   }
 }
 
-.intro .now-line {
-  display: inline-flex;
-  gap: var(--space-2);
-  align-items: baseline;
-  font-size: var(--size-meta);
-  color: var(--muted-strong);
-  margin-top: var(--space-4);
-}
-.intro .now-line a {
-  color: var(--fg-soft);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-.intro .now-line a:hover {
-  color: var(--fg);
-  text-decoration: none;
-}
-
-.intro .now-line .now-ticker {
-  position: relative;
-  display: block;
-  flex: 1;
-  min-width: 0;
-  max-width: min(100%, 40rem);
-  vertical-align: baseline;
-  overflow: hidden;
-  text-decoration: none;
-}
-
-.intro .now-line .now-ticker__verse {
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  letter-spacing: inherit;
-  color: var(--fg-soft);
-  text-decoration: none;
-  border-bottom: none;
-  vertical-align: baseline;
-  margin: 0;
-  padding: 0;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-main.main .intro .now-line .now-ticker__verse {
-  border-bottom: none;
-}
-
-.intro .now-line .now-ticker__verse:hover,
-.intro .now-line .now-ticker__verse:focus-visible {
-  color: var(--fg);
-  text-decoration: none;
-}
-
-.intro .now-line .now-ticker__static {
-  display: none;
-}
-
-.intro .now-line .now-marquee {
-  display: block;
-  overflow: hidden;
-  width: 100%;
-  mask-image: linear-gradient(
-    90deg,
-    transparent,
-    #000 12px,
-    #000 calc(100% - 12px),
-    transparent
-  );
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent,
-    #000 12px,
-    #000 calc(100% - 12px),
-    transparent
-  );
-}
-
-.intro .now-line .now-marquee__track {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  width: max-content;
-  min-width: max-content;
-  max-width: none;
-  white-space: nowrap;
-  animation: now-home-marquee 100s linear infinite;
-}
-
-.intro .now-line .now-ticker:hover .now-marquee__track,
-.intro .now-line .now-ticker:focus-within .now-marquee__track {
-  animation-play-state: paused;
-}
-
-.intro .now-line .now-marquee__chunk {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  flex: 0 0 auto;
-  flex-shrink: 0;
-  width: max-content;
-  min-width: max-content;
-  padding-right: 3rem;
-  color: var(--fg-soft);
-  white-space: nowrap;
-}
-
-.intro .now-line .now-marquee__sep {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin: 0 var(--space-3);
-  color: inherit;
-}
-
-.intro .now-line .now-marquee__sep i {
-  font-size: 11px;
-  line-height: 1;
-  color: inherit;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@keyframes now-home-marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .intro .now-line .now-marquee {
-    display: none;
-  }
-  .intro .now-line .now-ticker__static {
-    display: inline;
-    color: var(--fg-soft);
-  }
-  .intro .now-line .now-ticker {
-    overflow: visible;
-    mask-image: none;
-    -webkit-mask-image: none;
-  }
-}
-
 /* ============================================================
    CTA + back links — arrow slides on hover
    ============================================================ */
@@ -1733,13 +1583,6 @@ main.main .work-link-pill:hover .work-link-pill__icon { transform: translate(2px
     width: 140px;
   }
   .main { padding: var(--space-4) 0 var(--space-5); }
-
-  .intro .now-line {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-1);
-  }
 }
 
 @media (max-width: 560px) {
@@ -2263,85 +2106,6 @@ html.orange-mode {
   transform: translate(-50%, -50%);
 }
 
-/* ── WOPR Terminal ───────────────────────────────────────────────────────── */
-
-.wopr-section {
-  margin-top: var(--space-5);
-  --wopr-bg: #f4f4f4;
-  --wopr-border: color-mix(in srgb, var(--accent) 22%, var(--border-strong));
-}
-
-@media (prefers-color-scheme: dark) {
-  .wopr-section {
-    --wopr-bg: #0a0a0a;
-    --wopr-border: color-mix(in srgb, var(--accent) 18%, transparent);
-  }
-}
-
-.wopr-terminal {
-  min-width: 0;
-  background: var(--wopr-bg);
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: var(--size-meta);
-  line-height: 1.5;
-  border: 0;
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
-  overflow-x: auto;
-  margin-top: var(--space-3);
-}
-
-.wopr-lines > [data-wopr-line] {
-  min-height: 1.5em;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* Clip container: overflow hidden, grid right-aligned so newest weeks hug the right edge */
-.wopr-heatmap-clip {
-  overflow: hidden;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: var(--space-3);
-}
-
-.wopr-heatmap {
-  display: grid;
-  grid-template-rows: repeat(7, 9px);
-  grid-auto-flow: column;
-  grid-auto-columns: 9px;
-  gap: 3px;
-  flex-shrink: 0;
-}
-
-.wopr-cell {
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-  background: color-mix(
-    in srgb,
-    var(--accent) calc(var(--wopr-level, 0) * 22%),
-    var(--wopr-bg)
-  );
-  transition: background 0.04s ease;
-}
-
-.wopr-cell:hover {
-  outline: 1px solid rgba(251, 146, 60, 0.5);
-  outline-offset: 1px;
-}
-
-.wopr-log {
-  margin-top: var(--space-3);
-}
-
-.wopr-log-entry {
-  min-height: 1.5em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 /* ============================================================
    Scroll reveal — fade/rise + stagger (see client/reveal.ts)
@@ -2385,7 +2149,6 @@ html.orange-mode {
     transform: translate3d(0, 0, 0);
   }
 }
-
 
 /* ---- Topics index ---- */
 .topic-list {

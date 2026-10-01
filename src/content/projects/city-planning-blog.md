@@ -1,5 +1,5 @@
 ---
-name: City Planning Blog (Naming?)
+name: City Planning Blog
 tagline: Past portfolio entry — Blog.
 started: 2009-04-01
 status: retired

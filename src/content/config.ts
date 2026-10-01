@@ -175,6 +175,9 @@ const projects = defineCollection({
           src: z.string(),
           /** Video poster frame */
           poster: z.string().optional(),
+          /** Solo tour video: CSS aspect-ratio (e.g. `1240 / 770`) and window corner radius (0–1 of width). */
+          aspect: z.string().optional(),
+          radius: z.number().min(0).max(0.2).optional(),
           caption: z.string().optional(),
           alt: z.string().optional(),
         }),

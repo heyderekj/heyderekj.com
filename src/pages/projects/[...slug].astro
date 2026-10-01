@@ -1,4 +1,6 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import MediaStepper from '../../components/MediaStepper.astro';
@@ -61,15 +63,13 @@ const heroImgStyle = [
   .join('; ');
 /** Solo tour video — no stepper chrome when there's only one clip */
 const soloVideo = media.length === 1 && media[0]?.type === 'video' ? media[0] : null;
-/** Match Customer.io proof clips: browser chrome vs native app window */
-const soloVideoRadius =
-  project.slug === 'dinky' ? 0.028 : project.slug === 'harvous' ? 0.007 : 0.01;
-const soloVideoAr =
-  project.slug === 'dinky'
-    ? '440 / 492'
-    : project.slug === 'harvous'
-      ? '1240 / 770'
-      : undefined;
+/** Frame for the solo tour clip: set `aspect` / `radius` on the media item (defaults suit a browser window). */
+const soloVideoRadius = soloVideo?.radius ?? 0.01;
+const soloVideoAr = soloVideo?.aspect;
+
+/** Per-project Open Graph card (scripts/project-shots/og.py); falls back to the site default. */
+const ogPath = `/assets/images/projects/${project.slug}-og.png`;
+const ogImage = fs.existsSync(path.join(process.cwd(), 'public', ogPath)) ? ogPath : undefined;
 
 /** First paint media — hero / poster / first still. */
 const RAIL_SIZES = '(max-width: 560px) 100vw, 530px';
@@ -86,6 +86,7 @@ const preloadImages = [
   title={`${project.data.name} — Derek Castelli`}
   description={metaDesc}
   jsonLd={projectJsonLd}
+  ogImage={ogImage}
   preloadImages={preloadImages.slice(0, 2)}
 >
   <article class="prose">

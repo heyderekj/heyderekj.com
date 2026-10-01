@@ -1,10 +1,10 @@
 ---
 name: Decent Soap
-tagline: Past portfolio entry — Eccomerce Shop.
+tagline: Past portfolio entry — Ecommerce Shop.
 started: 2015-07-15
 status: retired
 order: 0
-category: Eccomerce Shop
+category: Ecommerce Shop
 ---
 
 ## About

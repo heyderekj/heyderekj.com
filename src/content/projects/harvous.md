@@ -18,6 +18,8 @@ media:
   - type: video
     src: /assets/images/projects/harvous-demo.mp4
     poster: /assets/images/projects/harvous-demo-poster.webp
+    aspect: 1240 / 770
+    radius: 0.007
     caption: "A quick tour of Harvous — capture a note, keep scripture in the flow, pick up where you left off."
 ---
 
