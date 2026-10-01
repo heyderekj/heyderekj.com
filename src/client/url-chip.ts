@@ -53,7 +53,17 @@ function initUrlChip(): void {
   chipText.id = 'url-chip-text';
   chip.appendChild(chipText);
   chip.setAttribute('aria-hidden', 'true');
+  // Links inside popovers (intro cards) live in the top layer, above any z-index;
+  // the chip joins the top layer for those so it isn't hidden behind the card.
+  const canPopover = 'showPopover' in chip;
+  if (canPopover) chip.setAttribute('popover', 'manual');
   document.body.appendChild(chip);
+
+  function raise(link: HTMLElement): void {
+    if (!canPopover) return;
+    if (chip.matches(':popover-open')) chip.hidePopover();
+    if (link.closest('[popover]')) chip.showPopover();
+  }
 
   let activeLink: HTMLAnchorElement | null = null;
   let hideTimer = 0;
@@ -82,6 +92,7 @@ function initUrlChip(): void {
 
   function hide(): void {
     chip.classList.remove('url-chip--visible');
+    if (canPopover && chip.matches(':popover-open')) chip.hidePopover();
     chip.setAttribute('aria-hidden', 'true');
     if (activeLink) {
       activeLink.removeAttribute('aria-describedby');
@@ -103,6 +114,7 @@ function initUrlChip(): void {
       activeLink.removeAttribute('aria-describedby');
     }
     activeLink = link;
+    raise(link);
     chipText.textContent = text;
     chip.classList.add('url-chip--visible');
     chip.removeAttribute('aria-hidden');

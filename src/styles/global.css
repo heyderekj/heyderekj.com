@@ -1248,7 +1248,10 @@ figure.zoomable.is-zoomed {
    URL chip (inline link destination preview)
    ============================================================ */
 .url-chip {
+  display: block;
   position: fixed;
+  inset: auto;
+  margin: 0;
   z-index: 10000;
   max-width: min(340px, calc(100vw - 16px));
   padding: 5px 10px;
