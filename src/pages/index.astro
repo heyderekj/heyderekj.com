@@ -78,10 +78,7 @@ const sitcoms = pick(['interest-the-office', 'interest-parks-and-recreation', 'i
             <span class="intro-pop__item"><b>{t.data.title}</b><span>{t.data.note}</span></span>
           ))}
         </span>
-      </IntroChip> I'm at church, <IntroChip id="drums" after="," icon="ph-music-notes" label="learning the drums" kicker="Learning">
-        <span class="intro-pop__figure"><img src="/images/library/interest-drums.svg" alt="Line drawing of a drum kit" width="400" height="300" loading="lazy" /></span>
-        <span class="intro-pop__text">The drums. Slowly, one groove at a time.</span>
-      </IntroChip> or watching <IntroChip id="sitcom" after="." icon="ph-television" label="a sitcom" kicker="On rotation">
+      </IntroChip> I'm at <a href="/projects/heres-my-church/" class="text-chip"><i class="ph-bold ph-church" aria-hidden="true"></i>my church</a>, learning the drums, or watching <IntroChip id="sitcom" after="." icon="ph-television" label="a sitcom" kicker="On rotation">
         <span class="intro-pop__grid">
           {sitcoms.map((s) => (
             <span class="intro-pop__tile"><img src={s.data.image} alt="" width="400" height="300" loading="lazy" />{s.data.title}</span>
