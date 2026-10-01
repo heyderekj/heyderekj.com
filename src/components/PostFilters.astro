@@ -12,17 +12,17 @@ const { active, counts, total } = Astro.props;
 const types = (Object.keys(TYPE_LABELS) as PostType[]).filter((t) => counts[t] > 0);
 ---
 <nav class="post-filters" aria-label="Filter posts by type">
-  <a href="/posts/" class="post-filter" aria-current={!active ? 'page' : undefined}>
-    All <span class="post-filter__count">{total}</span>
+  <a href="/posts/" class="chip chip--filter" aria-current={!active ? 'page' : undefined}>
+    All <span class="chip__count">{total}</span>
   </a>
   {types.map((t) => (
     <a
       href={`/posts/${TYPE_LABELS[t].path}/`}
-      class="post-filter"
+      class="chip chip--filter"
       aria-current={active === t ? 'page' : undefined}
     >
-      {TYPE_LABELS[t].many} <span class="post-filter__count">{counts[t]}</span>
+      {TYPE_LABELS[t].many} <span class="chip__count">{counts[t]}</span>
     </a>
   ))}
-  <a href="/topics/" class="post-filter post-filter--topics">Topics</a>
+  <a href="/topics/" class="chip chip--filter chip--topics">Topics</a>
 </nav>

@@ -208,7 +208,7 @@ const preloadImages = [
         <a href="/projects/"><span class="arrow">&larr;</span> all projects</a>
       </div>
       {status && (
-        <span class={`card-status card-status--${status}`}>
+        <span class="chip chip--status" data-status={status}>
           {displayProjectStatus(status)}
         </span>
       )}

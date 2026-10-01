@@ -356,14 +356,7 @@ main.main a:focus-visible {
    (0,2,1), which zeroes the bottom edge of the row card border. */
 main.main .footer-links a,
 main.main .section-title a,
-main.main .cta,
-main.main .back-link a,
-main.main .work-link-pill,
-main.main .intro-pill,
-main.main .text-chip,
-main.main .about-hero__credit-link,
-main.main .about-page .about-exp-pill--link,
-main.main .brag-page .about-exp-pill--link {
+main.main .about-hero__credit-link {
   border-bottom: none;
 }
 
@@ -593,42 +586,13 @@ img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
   column-gap: 0.6em;
   row-gap: 0.3em;
 }
-main.main .post-meta a { border-bottom: none; }
+main.main .post-meta a:not(.chip) { border-bottom: none; }
 .post-kind {
   font-size: var(--size-micro);
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
-}
-.status-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  padding: 0.12em 0.6em;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  font-size: var(--size-micro);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--fg-soft);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.status-chip::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--status-dot, var(--muted));
-}
-.status-chip--working { --status-dot: #d97706; }
-.status-chip--stable { --status-dot: #16a34a; }
-.status-chip--outdated { --status-dot: var(--muted); }
-main.main a.status-chip:hover {
-  border-color: color-mix(in srgb, var(--fg) 22%, var(--border));
-  color: var(--fg);
 }
 .post-permalink { color: var(--accent); }
 main.main .post-link-out { border-bottom: none; color: inherit; }
@@ -643,31 +607,6 @@ main.main .post-link-out:hover { color: var(--accent); }
 .post--note .post-header { margin-bottom: var(--space-3); }
 .post--note .post-title { font-size: 22px; }
 
-.tag-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  list-style: none;
-  padding: 0;
-  margin: var(--space-2) 0 0;
-}
-.tag-chips li { margin: 0; }
-main.main a.tag-chip {
-  display: inline-block;
-  padding: 0.1em 0.6em;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  font-size: var(--size-micro);
-  font-weight: 500;
-  color: var(--fg-soft);
-  text-decoration: none;
-}
-main.main a.tag-chip:hover {
-  border-color: color-mix(in srgb, var(--fg) 22%, var(--border));
-  background: var(--bg-elevated);
-  color: var(--fg);
-}
-
 .entries .entry-kind {
   margin-left: 0.45em;
   font-size: var(--size-micro);
@@ -677,31 +616,8 @@ main.main a.tag-chip:hover {
 }
 .entries .entry-title[data-kind='link'] .entry-kind { color: var(--accent); }
 
-.post-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: var(--space-4) 0 var(--space-2);
-}
-main.main a.post-filter {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.4em;
-  padding: 0.25em 0.75em;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  font-size: var(--size-meta);
-  color: var(--fg-soft);
-  text-decoration: none;
-}
-main.main a.post-filter:hover { background: var(--bg-elevated); color: var(--fg); }
-main.main a.post-filter[aria-current='page'] {
-  background: var(--fg);
-  border-color: var(--fg);
-  color: var(--bg);
-}
-.post-filter__count { font-size: var(--size-micro); opacity: 0.6; font-variant-numeric: tabular-nums; }
-.post-filter--topics { margin-left: auto; }
+.post-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: var(--space-4) 0 var(--space-2); }
+.chip--topics { margin-left: auto; }
 
 /* ---- Callouts ---- */
 .callout {
@@ -825,18 +741,7 @@ main.main a.post-adjacent__link:hover { background: var(--bg-elevated); }
   display: block;
 }
 .work-flags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-3); }
-.work-flag {
-  display: inline-block;
-  font-size: var(--size-micro);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 2px 8px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  color: var(--muted-strong);
-}
-.work-flag-archived { opacity: 0.85; }
+
 
 .work-links {
   list-style: none;
@@ -1308,81 +1213,6 @@ figure.zoomable.is-zoomed {
   text-wrap: pretty;
 }
 
-/* Inline name chips — elevated pills for people, studios, products in prose */
-.text-chip,
-main.main a.text-chip {
-  --chip-pad-y: 0.18em;
-  --chip-color: var(--fg);
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.28em;
-  padding: var(--chip-pad-y) 0.55em var(--chip-pad-y) 0.4em;
-  /* Keep a little air vs neighboring lines (full -pad made chips collide) */
-  margin-block: calc(var(--chip-pad-y) * -0.35);
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  font-size: 0.94em;
-  font-weight: 600;
-  line-height: 1.15;
-  color: var(--chip-color);
-  white-space: nowrap;
-  text-decoration: none;
-  vertical-align: baseline;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-/* Default linked chip = same neutral mat as the Derek chip on /customerio */
-main.main a.text-chip {
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  color: var(--fg);
-}
-
-main.main a.text-chip:hover {
-  border-color: color-mix(in srgb, var(--fg) 22%, var(--border));
-  background: color-mix(in srgb, var(--fg) 6%, var(--bg-elevated));
-  text-decoration: none;
-}
-
-.text-chip i {
-  font-size: 0.85em;
-  margin: 0;
-  line-height: 1;
-  align-self: center;
-  transform: translateY(0.05em);
-}
-
-.text-chip--harvous { --chip-color: #006eff; }
-.text-chip--dinky { --chip-color: #3b82f6; }
-.text-chip--hmc { --chip-color: #a855f7; }
-.text-chip--revisemy { --chip-color: #fb7185; }
-
-/* Colored project chips keep a soft brand tint */
-main.main a.text-chip--harvous,
-main.main a.text-chip--dinky,
-main.main a.text-chip--hmc,
-main.main a.text-chip--revisemy {
-  border-color: color-mix(in srgb, var(--chip-color) 28%, var(--border));
-  background: color-mix(in srgb, var(--chip-color) 10%, var(--bg-elevated));
-  color: var(--chip-color);
-}
-
-main.main a.text-chip--harvous:hover,
-main.main a.text-chip--dinky:hover,
-main.main a.text-chip--hmc:hover,
-main.main a.text-chip--revisemy:hover {
-  border-color: color-mix(in srgb, var(--chip-color) 50%, var(--border));
-  background: color-mix(in srgb, var(--chip-color) 16%, var(--bg-elevated));
-}
-
-@media (prefers-color-scheme: dark) {
-  .text-chip--harvous { --chip-color: #60a5fa; }
-  .text-chip--dinky { --chip-color: #93c5fd; }
-  .text-chip--hmc { --chip-color: #d8b4fe; }
-  .text-chip--revisemy { --chip-color: #fda4af; }
-}
-
 .intro-links {
   display: flex;
   flex-wrap: wrap;
@@ -1390,113 +1220,10 @@ main.main a.text-chip--revisemy:hover {
   margin-top: var(--space-4);
 }
 
-.intro-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--radius-pill);
-  font-size: var(--size-meta);
-  font-weight: 500;
-  line-height: 1.2;
-  border: 1px solid var(--border);
-  background: var(--glass-bg);
-  color: var(--fg-soft);
-  text-decoration: none;
-  transition:
-    color 0.15s ease,
-    border-color 0.15s ease,
-    background 0.15s ease;
-}
-/* Restore full pill box border after `main.main a` / exclusion zero the bottom edge */
-main.main .intro-pill {
-  border-bottom: 1px solid var(--border);
-}
-
-.intro-pill i {
-  font-size: 14px;
-  color: var(--muted-strong);
-  flex-shrink: 0;
-}
-
-main.main .intro-pill:hover {
-  color: #fff;
-  border-color: transparent;
-  /* Same orange as the frame rail crossmarks (`--tick` → `--accent`) */
-  background: var(--tick);
-  text-decoration: none;
-}
-
-main.main .intro-pill:hover i {
-  color: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  .intro-pill {
-    background: var(--bg-elevated);
-  }
-}
-
 /* ============================================================
    CTA + back links — arrow slides on hover
    ============================================================ */
-main.main .cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--fg);
-  font-size: var(--size-meta);
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--fg) 5%, transparent);
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-main.main .cta .arrow { display: inline-block; transition: transform 0.25s var(--easing); }
-main.main .cta:hover {
-  color: var(--fg);
-  text-decoration: none;
-  background: color-mix(in srgb, var(--fg) 9%, transparent);
-  border-color: var(--border-strong);
-}
-main.main .cta:hover .arrow { transform: translateX(3px); }
-
 .back-link { margin-top: var(--space-5); font-size: var(--size-meta); }
-main.main .back-link a,
-main.main .work-link-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted-strong);
-  padding: 6px 12px;
-  border-radius: var(--radius-pill);
-  border: 1px solid transparent;
-  background: var(--glass-bg);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  transition: color 0.15s ease, background 0.2s ease, border-color 0.2s ease;
-  text-decoration: none;
-  font-size: var(--size-meta);
-}
-main.main .back-link a .arrow,
-main.main .work-link-pill__icon {
-  display: inline-block;
-  line-height: 1;
-  flex-shrink: 0;
-  transition: transform 0.25s var(--easing);
-}
-main.main .work-link-pill__icon {
-  font-size: 1em;
-}
-main.main .back-link a:hover,
-main.main .work-link-pill:hover {
-  color: var(--fg);
-  background: var(--glass-active-bg);
-  border-color: transparent;
-  text-decoration: none;
-}
-main.main .back-link a:hover .arrow { transform: translateX(-3px); }
-main.main .work-link-pill:hover .work-link-pill__icon { transform: translate(2px, -2px); }
 
 /* Highlight pill */
 .highlight {
@@ -1950,57 +1677,6 @@ main.main .work-link-pill:hover .work-link-pill__icon { transform: translate(2px
 .brag-page .about-exp-item__desc:last-child {
   margin-bottom: 0;
 }
-.about-page .about-exp-pill,
-.brag-page .about-exp-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 2px;
-  padding: 6px 12px;
-  border-radius: var(--radius-pill);
-  font-size: var(--size-meta);
-  font-weight: 500;
-  line-height: 1.2;
-  border: 1px solid transparent;
-  background: var(--glass-bg);
-  color: var(--fg-soft);
-}
-.about-page .about-exp-pill i,
-.brag-page .about-exp-pill i {
-  font-size: 14px;
-  color: var(--muted-strong);
-  flex-shrink: 0;
-}
-.about-page .about-exp-pill--link,
-.brag-page .about-exp-pill--link {
-  text-decoration: none;
-  color: var(--fg-soft);
-  transition:
-    color 0.15s ease,
-    border-color 0.15s ease,
-    background 0.15s ease;
-}
-/* Restore full pill box border after `main.main a` / exclusion zero the bottom edge */
-main.main .about-page .about-exp-pill--link,
-main.main .brag-page .about-exp-pill--link {
-  border-bottom: 1px solid transparent;
-}
-main.main .about-page .about-exp-pill--link:hover,
-main.main .brag-page .about-exp-pill--link:hover {
-  color: #fff;
-  border-color: transparent;
-  background: var(--tick);
-  text-decoration: none;
-}
-.about-page .about-exp-pill--link:hover i,
-.brag-page .about-exp-pill--link:hover i {
-  color: #fff;
-}
-@media (prefers-color-scheme: dark) {
-  .about-page .about-exp-pill {
-    background: var(--bg-elevated);
-  }
-}
 
 /* ============================================================
    Work page — testimonials
@@ -2179,35 +1855,5 @@ main.main a.topic-link:hover { background: var(--bg-elevated); border-color: var
 .colophon__lead { font-size: var(--size-lead); color: var(--fg-soft); }
 .colophon h2 { font-size: var(--size-lead); margin-top: var(--space-5); }
 .colophon li { margin-bottom: var(--space-2); }
-.colophon .status-chip { margin-right: 0.2em; }
+.colophon .chip { margin-right: 0.2em; }
 .colophon__build { font-size: var(--size-meta); color: var(--muted-strong); }
-
-/* ---- Project status chip (where a project stands) ---- */
-.card-status {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  border-radius: var(--radius-pill);
-  line-height: 1.2;
-  white-space: nowrap;
-  color: var(--muted-strong);
-  background: color-mix(in srgb, var(--fg) 4%, transparent);
-  border: 1px solid var(--border);
-}
-.card-status::before {
-  content: '';
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--muted);
-  flex-shrink: 0;
-}
-.card-status--active::before { background: var(--accent); }
-.card-status--paused::before { background: #eab308; }
-.card-status--maintained::before { background: #c4a574; }

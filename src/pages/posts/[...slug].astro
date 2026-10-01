@@ -104,7 +104,8 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
         <time datetime={published}>{fmtDate(d.date)}</time>
         {d.type === 'essay' && (
           <a
-            class={`status-chip status-chip--${d.status}`}
+            class="chip chip--status"
+            data-status={d.status}
             href="#revisions"
             title="Status and revision — see the history at the end"
           >

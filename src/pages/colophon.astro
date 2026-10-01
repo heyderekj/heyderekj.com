@@ -50,9 +50,9 @@ const REPO = 'https://github.com/heyderekj/heyderekj.com';
       I publish things before they're finished and keep working on them. Each essay shows where it stands:
     </p>
     <ul>
-      <li><span class="status-chip status-chip--working">{STATUS_LABELS.working}</span> — published, still being worked out.</li>
-      <li><span class="status-chip status-chip--stable">{STATUS_LABELS.stable}</span> — I stand behind it as written.</li>
-      <li><span class="status-chip status-chip--outdated">{STATUS_LABELS.outdated}</span> — kept for the record; I think differently now.</li>
+      <li><span class="chip chip--status" data-status="working">{STATUS_LABELS.working}</span> — published, still being worked out.</li>
+      <li><span class="chip chip--status" data-status="stable">{STATUS_LABELS.stable}</span> — I stand behind it as written.</li>
+      <li><span class="chip chip--status" data-status="outdated">{STATUS_LABELS.outdated}</span> — kept for the record; I think differently now.</li>
     </ul>
     <p>
       The <strong>rev</strong> number counts meaningful revisions. Rev 1 is what I first published. Every post lives in

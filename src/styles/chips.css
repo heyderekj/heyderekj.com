@@ -1,0 +1,218 @@
+/* ============================================================
+   Chips — one system.
+
+   Roles (add to `.chip`):
+     chip--status   dot + label ([data-status] colors the dot)
+     chip--tag      topic / kind label (md)
+     chip--filter   selectable; [aria-current='page'] fills
+     chip--action   link-style button (md) — alias: .intro-pill, .about-exp-pill
+     chip--accent   accent text + border (the one thing that matters)
+     chip--name     inline in prose, sits on the text baseline —
+                    alias: .text-chip, .cio-chip
+
+   Rules of the system:
+   - Sentence case, 12px (sm) or 13px (md), weight 500. Mono is for codes only.
+   - Neutral by default: hairline border, transparent fill. Accent is earned.
+   - The full border is always drawn — links in `main` get a hairline underline
+     (`main.main a`), so linked chips re-assert their bottom edge below.
+   ============================================================ */
+
+:root {
+  --chip-line: var(--border-strong);
+  --chip-line-hover: color-mix(in srgb, var(--fg) 22%, var(--border));
+}
+
+/* ---- Base + sizes ---- */
+.chip,
+.intro-pill,
+.about-exp-pill,
+.cta,
+.work-link-pill,
+.back-link a {
+  --chip-h: 24px;
+  --chip-px: 10px;
+  --chip-fs: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  box-sizing: border-box;
+  height: var(--chip-h);
+  padding: 0 var(--chip-px);
+  font-family: inherit;
+  font-size: var(--chip-fs);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--fg-soft);
+  background: transparent;
+  border: 1px solid var(--chip-line);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.chip--tag,
+.chip--filter,
+.chip--action,
+.intro-pill,
+.about-exp-pill,
+.cta,
+.work-link-pill,
+.back-link a {
+  --chip-h: 28px;
+  --chip-px: 12px;
+  --chip-fs: 13px;
+}
+
+/* Linked chips: beat `main.main a` (hairline underline + color: inherit). */
+main.main a.chip,
+main.main a.intro-pill,
+main.main a.about-exp-pill,
+main.main a.cta,
+main.main a.work-link-pill,
+main.main .back-link a {
+  color: var(--fg-soft);
+  border-bottom: 1px solid var(--chip-line);
+}
+main.main a.chip:hover,
+main.main a.cta:hover,
+main.main a.work-link-pill:hover,
+main.main .back-link a:hover {
+  color: var(--fg);
+  background: var(--bg-elevated);
+  border-color: var(--chip-line-hover);
+}
+
+.chip i,
+.intro-pill i,
+.about-exp-pill i,
+.cta i,
+.work-link-pill i {
+  font-size: 1.1em;
+  line-height: 1;
+  color: var(--muted-strong);
+  flex-shrink: 0;
+}
+
+/* Arrows nudge on hover (CTA, back links, work links) */
+main.main .cta .arrow,
+main.main .back-link a .arrow,
+main.main .work-link-pill__icon {
+  display: inline-block;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: transform 0.25s var(--easing);
+}
+main.main .cta:hover .arrow,
+main.main .back-link a:hover .arrow { transform: translateX(3px); }
+main.main .back-link a:hover .arrow { transform: translateX(-3px); }
+main.main .work-link-pill:hover .work-link-pill__icon { transform: translate(2px, -2px); }
+
+/* Hero actions: hover fills with the frame's orange (same as the rail crossmarks). */
+main.main a.intro-pill:hover,
+main.main a.about-exp-pill--link:hover {
+  color: #fff;
+  border-color: transparent;
+  background: var(--tick);
+}
+main.main a.intro-pill:hover i,
+main.main a.about-exp-pill--link:hover i { color: #fff; }
+.about-exp-pill { margin-top: 2px; }
+
+/* ---- Accent ---- */
+.chip--accent {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 38%, var(--chip-line));
+}
+main.main a.chip--accent { color: var(--accent); border-bottom-color: color-mix(in srgb, var(--accent) 38%, var(--chip-line)); }
+main.main a.chip--accent:hover { color: var(--accent); background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 55%, var(--chip-line)); }
+.chip--accent i { color: inherit; }
+
+/* ---- Status: dot + label ---- */
+.chip--status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
+}
+.chip--status[data-status='active']::before,
+.chip--status[data-status='working']::before { background: var(--accent); }
+.chip--status[data-status='maintained']::before { background: #c4a574; }
+.chip--status[data-status='paused']::before { background: #eab308; }
+.chip--status[data-status='stable']::before,
+.chip--status[data-status='read']::before { background: #16a34a; }
+.chip--status[data-status='reading']::before { background: var(--accent); }
+.chip--status[data-status='want']::before { background: var(--muted); }
+.chip--status[data-status='archived']::before,
+.chip--status[data-status='outdated']::before { background: var(--muted); }
+
+/* ---- Tags and kinds ---- */
+.chip--kind[data-hot] { color: var(--accent); }
+
+/* ---- Filters ---- */
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; list-style: none; padding: 0; margin: 0; }
+.chip-row > li { margin: 0; }
+.chip--filter[aria-current='page'],
+main.main a.chip--filter[aria-current='page'] {
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+}
+.chip__count { opacity: 0.55; font-variant-numeric: tabular-nums; }
+
+/* ---- Inline name chips (people, studios, products in prose) ---- */
+.text-chip,
+.cio-chip {
+  --chip-pad-y: 0.2em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28em;
+  padding: var(--chip-pad-y) 0.6em var(--chip-pad-y) 0.45em;
+  /* Keep paragraph leading steady: pull the taller chip out of the line box */
+  margin-block: calc(var(--chip-pad-y) * -0.6);
+  font-size: 0.94em;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--fg);
+  background: var(--bg-elevated);
+  border: 1px solid var(--chip-line);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+main.main a.text-chip,
+main.main a.cio-chip {
+  color: var(--chip-color, var(--fg));
+  border-bottom: 1px solid var(--chip-line);
+}
+main.main a.text-chip:hover,
+main.main a.cio-chip:hover {
+  border-color: var(--chip-line-hover);
+  background: color-mix(in srgb, var(--chip-color, var(--fg)) 8%, var(--bg-elevated));
+}
+.text-chip i,
+.cio-chip i {
+  font-size: 0.85em;
+  line-height: 1;
+  align-self: center;
+  transform: translateY(0.05em);
+}
+.cio-chip__label { display: inline; line-height: 1.15; }
+.cio-chip__avatar {
+  display: block;
+  width: 1em;
+  height: 1em;
+  margin: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.chip-row--tags { margin-top: var(--space-2); }

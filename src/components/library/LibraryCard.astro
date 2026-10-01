@@ -79,7 +79,7 @@ const linkAttrs = href
         {d.by && <span class="lib-card__by">{d.by}</span>}
         {d.note && <p class="lib-card__note">{d.note}</p>}
         {d.kind === 'book' && d.reading && (
-          <span class={`lib-card__chip lib-card__chip--${d.reading}`}>{READING[d.reading]}</span>
+          <span class="chip chip--status lib-card__chip" data-status={d.reading}>{READING[d.reading]}</span>
         )}
       </div>
     )}

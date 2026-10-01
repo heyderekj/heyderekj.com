@@ -36,7 +36,7 @@ const { projects } = Astro.props;
             <span class="project-row__name">{project.data.name}</span>
             <span class="project-row__tagline">{project.data.tagline}</span>
           </span>
-          <span class={`card-status card-status--${project.data.status}`}>
+          <span class="chip chip--status" data-status={project.data.status}>
             {displayProjectStatus(project.data.status)}
           </span>
         </a>
@@ -102,6 +102,6 @@ const { projects } = Astro.props;
   }
   @media (max-width: 480px) {
     :global(main.main) .project-row { grid-template-columns: 44px minmax(0, 1fr); }
-    .project-row .card-status { display: none; }
+    .project-row .chip { display: none; }
   }
 </style>

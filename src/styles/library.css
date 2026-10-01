@@ -202,17 +202,7 @@ a.lib-card:hover .lib-card__icon { color: var(--accent); }
   line-height: 1.5;
   color: var(--fg-soft);
 }
-.lib-card__chip {
-  align-self: flex-start;
-  margin-top: 6px;
-  padding: 0.05em 0.55em;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  font-size: var(--size-micro);
-  font-weight: 600;
-  color: var(--fg-soft);
-}
-.lib-card__chip--reading { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, var(--border)); }
+.lib-card__chip { align-self: flex-start; margin-top: 6px; }
 
 /* Saved X post: quoted text as the hero */
 .lib-card__post {

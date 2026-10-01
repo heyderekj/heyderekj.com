@@ -9,9 +9,9 @@ interface Props {
 const { tags } = Astro.props;
 ---
 {tags.length > 0 && (
-  <ul class="tag-chips" aria-label="Topics">
+  <ul class="chip-row chip-row--tags" aria-label="Topics">
     {tags.map((tag) => (
-      <li><a class="tag-chip" href={topicHref(tag)}>{topicLabel(tag)}</a></li>
+      <li><a class="chip chip--tag" href={topicHref(tag)}>{topicLabel(tag)}</a></li>
     ))}
   </ul>
 )}
