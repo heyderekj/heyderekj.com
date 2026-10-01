@@ -229,12 +229,6 @@ button.intro-chip[aria-expanded='true'] {
   background: color-mix(in srgb, var(--fg) 8%, var(--bg-elevated));
 }
 button.intro-chip:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
-.intro-chip__caret {
-  font-size: 0.7em !important;
-  color: var(--muted);
-  transition: transform 0.2s var(--easing);
-}
-.intro-chip[aria-expanded='true'] .intro-chip__caret { transform: rotate(180deg); }
 
 .intro-pop {
   position: fixed;

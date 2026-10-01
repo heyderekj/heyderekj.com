@@ -91,7 +91,7 @@ const preloadImages = [
 >
   <article class="prose">
     <header class="post-header project-detail-header">
-      {project.data.url ? (
+      {project.data.url || project.data.icon ? (
         <div class="project-header-title-row">
           <h1>
             {project.data.icon && (
@@ -106,10 +106,14 @@ const preloadImages = [
             )}
             {project.data.name}
           </h1>
-          <a href={project.data.url} target="_blank" rel="noopener" class="cta project-header-cta">
-            {project.data.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
-            <span class="arrow">&rarr;</span>
-          </a>
+          {project.data.url ? (
+            <a href={project.data.url} target="_blank" rel="noopener" class="cta project-header-cta">
+              {project.data.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+              <span class="arrow">&rarr;</span>
+            </a>
+          ) : (
+            <span class="project-header-wip">Not public yet</span>
+          )}
         </div>
       ) : (
         <h1>{project.data.name}</h1>
@@ -251,6 +255,12 @@ const preloadImages = [
 
   .project-header-cta {
     flex-shrink: 0;
+  }
+
+  .project-header-wip {
+    flex-shrink: 0;
+    font-size: var(--size-meta);
+    color: var(--muted-strong);
   }
 
   .project-meta {

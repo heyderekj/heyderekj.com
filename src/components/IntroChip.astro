@@ -40,7 +40,6 @@ const popId = `intro-pop-${id}`;
     <i class={`ph-bold ${icon}`} aria-hidden="true"></i>
   ) : null}
   <span>{label}</span>
-  <i class="ph-bold ph-caret-down intro-chip__caret" aria-hidden="true"></i>
 </button><span id={popId} popover class="intro-pop" role="dialog" aria-label={label}>
   {kicker && <span class="intro-pop__kicker">{kicker}</span>}
   <slot />

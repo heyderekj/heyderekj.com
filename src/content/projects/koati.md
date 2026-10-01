@@ -2,7 +2,6 @@
 name: Koati
 tagline: Where a request turns into agreed work.
 summary: One inbox for every request from Slack, email, Figma comments, and meeting notes—sort what's worth doing, agree on it in writing, and let whoever asked follow along without an account.
-url: https://koati-site-redesign.harvous.workers.dev/
 category: App
 role: Designer & builder
 stack: [Laravel, Laravel Cloud]
@@ -51,7 +50,7 @@ Marketing teams fielding requests from sales, product, and leadership—and the 
 
 ## Where it stands
 
-Koati is my main focus alongside [Harvous](/projects/harvous/). It's live with a free plan (two shared boards and an unlimited personal one) and paid plans priced by shared boards only—everyone on the team and everyone who asks is free.
+Koati is my main focus alongside [Harvous](/projects/harvous/). It's still a work in progress and not public yet. The plan: a free tier (two shared boards and an unlimited personal one) and paid plans priced by shared boards only—everyone on the team and everyone who asks stays free.
 
 ## Tools & process
 
