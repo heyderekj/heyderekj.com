@@ -8,8 +8,8 @@ started: 2024-03-01
 category: App
 role: Designer & builder
 stack: [React, Hono, Supabase, Clerk]
-image: /assets/images/projects/harvous-1.png
-hero: /assets/images/projects/harvous-3.webp
+image: /assets/images/projects/harvous-v2-today.webp
+hero: /assets/images/projects/harvous-v2-notes.webp
 icon: /assets/images/projects/harvous-icon-v2.webp
 tier: 1
 order: 1
@@ -23,7 +23,7 @@ media:
 
 ## The itch
 
-I'm making Harvous because I need to remember the Bible, better. My study was scattered—notes in Apple Notes, highlights in YouVersion, sermon thoughts on whatever was nearby—and none of it ever came back to me when I needed it. So I'm building the place where Bible study gets remembered: keep your Bible app, add Harvous. Two years in, it's live at [app.harvous.com](https://app.harvous.com).
+I'm making Harvous because I need to remember the Bible, better. My study was scattered—notes in Apple Notes, highlights in YouVersion, sermon thoughts on whatever was nearby—and none of it ever came back to me when I needed it. So I'm building the place where Bible study gets remembered: keep your Bible app, add Harvous. Two and a half years in, it's live at [app.harvous.com](https://app.harvous.com).
 
 ## Finding the shape
 
@@ -44,9 +44,9 @@ Two years, one massive messy Figma file. V1 shipped small on purpose—no sharin
 The detail I sweat most: scripture should show up where you're thinking, not a tab away. Type `Romans 8:28` and the verse surfaces inline, with a translation picker (BSB, ESV, KJV, NKJV, NIV, NLT, NET) and verse-range controls right on the card. And every morning, Today's Passage waits at the top of My Home—a small nudge that keeps the app pointed at the actual habit.
 
 <figure class="pfig pfig--pair">
-  <img src="/assets/images/projects/harvous-5.webp" alt="Harvous My Home with a personalized greeting, Today's Passage, and pick-up-where-you-left-off cards beside an empty note canvas" loading="lazy" decoding="async" />
-  <img src="/assets/images/projects/harvous-6.webp" alt="Inline Exodus scripture card with translation and verse-range controls open over a study note, plus highlight color swatches" loading="lazy" decoding="async" />
-  <figcaption>My Home nudges the habit; inline scripture keeps study in the note—translation and range right on the card.</figcaption>
+  <img src="/assets/images/projects/harvous-v2-today.webp" alt="Harvous Today view with a personalized greeting, review exercises, and suggested threads to return to" loading="lazy" decoding="async" />
+  <img src="/assets/images/projects/harvous-v2-margin.webp" alt="Romans 8 open beside the notes written on it, with linked notes shown in the margin" loading="lazy" decoding="async" />
+  <figcaption>Today nudges the habit; the chapter keeps every note you've written on it right in the margin.</figcaption>
 </figure>
 
 ## Staying close
@@ -66,7 +66,7 @@ Notes are private by default—but when you want to study with others, a note, a
 
 ## Where it stands
 
-Harvous is my main focus, open source under Testament Made LLC, and free at the core. The 2.0 UI is live at [app.harvous.com](https://app.harvous.com)—chrome stripped back until the notes are the interface, with appearance that feels like your study Bible, not a generic SaaS shell. Same principle as always: app first, AI second.
+Harvous is my main focus, open source under Testament Made LLC, and free at the core. The current UI is live at [app.harvous.com](https://app.harvous.com)—chrome stripped back until the notes are the interface, with appearance that feels like your study Bible, not a generic SaaS shell. Same principle as always: app first, AI second.
 
 <figure class="pfig">
   <img src="/assets/images/projects/harvous-9.webp" alt="Harvous Appearance settings with Light Paper and Dark Night theme previews, Auto mode, and accent color swatches" loading="lazy" decoding="async" />

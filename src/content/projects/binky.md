@@ -7,8 +7,8 @@ year: 2026
 started: 2026-05-01
 role: Designer & builder
 stack: [Swift]
-image: /assets/images/projects/binky-1.png
-hero: /assets/images/projects/binky-1.webp
+image: /assets/images/projects/binky-v2-sorting.webp
+hero: /assets/images/projects/binky-v2-quick.webp
 icon: /assets/images/projects/binky-icon-v2.webp
 tier: 3
 order: 2
@@ -22,18 +22,17 @@ Binky is a native macOS app that watches your inbox (defaults to `~/Downloads`),
 Unknowns go to Review so nothing silently disappears, and Binky includes optional Finder tags plus a batch history with reveal and undo where macOS allows.
 
 <figure class="pfig">
-  <img src="/assets/images/projects/binky-1.webp" alt="Binky main window with Quick Sort for Downloads, Sort Now, and routines listed in the sidebar" loading="lazy" decoding="async" />
-  <figcaption>Quick Sort for the folder in front of you — routines keep watching in the background.</figcaption>
+  <img src="/assets/images/projects/binky-v2-sorting.webp" alt="Binky's Currently sorting sheet with a progress bar and the files being moved, with pause and stop controls" loading="lazy" decoding="async" />
+  <figcaption>A sorting run you can watch, pause, or stop—then undo where macOS allows.</figcaption>
 </figure>
 
 ## Routing & routines
 
 Routing decides where files go; routines decide when. Templates cover the common jobs—Downloads, Desktop, DMGs, archives, Finder tags—so you’re not starting from a blank rule every time.
 
-<figure class="pfig pfig--pair">
-  <img src="/assets/images/projects/binky-2.webp" alt="Binky New routing sheet with options for website, file kind, name, Finder tag, disk images, and archives" loading="lazy" decoding="async" />
-  <img src="/assets/images/projects/binky-3.webp" alt="Binky Routines settings with Sort my Downloads selected and the Templates menu open" loading="lazy" decoding="async" />
-  <figcaption>Pick a routing shape · start from a routine template when the job is familiar.</figcaption>
+<figure class="pfig">
+  <img src="/assets/images/projects/binky-v2-routines.webp" alt="Binky Routines settings with the Sort my Downloads routine, its name, and when it runs" loading="lazy" decoding="async" />
+  <figcaption>Routines for the folders you always sort · each one runs when you say it should.</figcaption>
 </figure>
 
 ## Tools & process

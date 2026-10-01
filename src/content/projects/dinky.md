@@ -1,14 +1,14 @@
 ---
 name: Dinky
-tagline: Smaller images, videos, and PDFs on macOS.
-summary: A tiny macOS app that shrinks images, videos, and PDFs. Drag files in, compressed copies land where you expect—free, open source, and honest about format tradeoffs.
+tagline: Smaller images, videos, audio, and PDFs on macOS.
+summary: A tiny macOS app that shrinks images, videos, audio, and PDFs. Drag files in, compressed copies land where you expect—free, open source, and honest about format tradeoffs.
 url: https://dinkyfiles.com
 year: 2026
 started: 2026-04-01
 role: Designer & builder
 stack: [Swift]
-image: /assets/images/projects/dinky-1.png
-hero: /assets/images/projects/dinky-3.webp
+image: /assets/images/projects/dinky-v2-adjust.webp
+hero: /assets/images/projects/dinky-v2-drop.webp
 icon: /assets/images/projects/dinky-icon-v2.webp
 tier: 3
 order: 1
@@ -19,9 +19,9 @@ media:
     poster: /assets/images/projects/dinky-demo-poster.webp
     caption: Drop files in — watch them shrink, then undo any file you want.
   - type: image
-    src: /assets/images/projects/dinky-4.webp
-    alt: Dinky Quality panel with Photo, Graphic, and Mixed image modes plus PDF, video, and audio quality choices
-    caption: Quality that says what you're trading — Photo vs Graphic, Balanced vs High, Max width when you need it.
+    src: /assets/images/projects/dinky-v2-presets.webp
+    alt: Dinky Presets list with a Websites preset selected, showing smart quality, format, max width, and file size options
+    caption: Presets for the workflow you repeat — pick one and every drop uses it.
 ---
 
 ## The itch
@@ -37,9 +37,9 @@ Compression tools love magic numbers. Dinky shows its work instead: format and q
 The goal was to feel friendly for someone who just wants smaller files—and deep enough for someone who lives in presets. A “Websites” preset can lock WebP, max width, and H.264 in one place; the sidebar can stay simple or show every media type. Same app, two tempos.
 
 <figure class="pfig pfig--pair">
-  <img src="/assets/images/projects/dinky-5.webp" alt="Dinky Presets settings editing a Websites preset with Smart quality, media types, and format options" loading="lazy" decoding="async" />
-  <img src="/assets/images/projects/dinky-6.webp" alt="Dinky Sidebar settings with toggles for showing Images, Audio, Videos, and PDFs in the sidebar" loading="lazy" decoding="async" />
-  <figcaption>Presets for the workflow you repeat · a sidebar you can keep simple or fully loaded.</figcaption>
+  <img src="/assets/images/projects/dinky-v2-queue.webp" alt="Dinky queue listing mixed images, PDFs, and video with original and compressed sizes" loading="lazy" decoding="async" />
+  <img src="/assets/images/projects/dinky-v2-compare.webp" alt="Dinky before and after slider comparing an original and compressed image" loading="lazy" decoding="async" />
+  <figcaption>A queue that shows every file's before and after · a slider to check the result before you keep it.</figcaption>
 </figure>
 
 ## Traction
