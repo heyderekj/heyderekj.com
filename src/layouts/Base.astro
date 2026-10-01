@@ -1,4 +1,7 @@
 ---
+import '@phosphor-icons/web/bold';
+import '@phosphor-icons/web/fill';
+import phosphorBold from '@phosphor-icons/web/bold/Phosphor-Bold.woff2?url';
 import '../styles/global.css';
 import '../styles/figures.css';
 import '../styles/chips.css';
@@ -116,9 +119,8 @@ const year = new Date().getFullYear();
       <script type="application/ld+json" set:html={ldJson} />
     )}
 
-    <!-- Phosphor Icons — bold default; fill on active nav -->
-    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
-    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+    <!-- Phosphor Icons (self-hosted, imported above) — bold default; fill on active nav -->
+    <link rel="preload" href={phosphorBold} as="font" type="font/woff2" crossorigin />
 
     <!-- Plus Jakarta Sans — humanist warmth -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
