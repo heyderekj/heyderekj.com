@@ -33,7 +33,7 @@ const { focus, building, paused, archive } = await getProjectsByTier();
   {paused.length > 0 && (
     <>
       <h2 class="projects-section-title" id="more">{TIER_LABELS.more}</h2>
-      <p class="projects-section-lede">Shipped and paused—they may pick back up.</p>
+      <p class="projects-section-lede">Shipped and paused.</p>
       <ProjectRows projects={paused} />
     </>
   )}
