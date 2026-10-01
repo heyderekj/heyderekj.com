@@ -12,7 +12,6 @@ import {
   postHref,
   postTitle,
   relatedPosts,
-  STATUS_LABELS,
   TYPE_LABELS,
   typeHref,
   type Post,
@@ -102,20 +101,14 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
           <a class="post-kind" href={typeHref(d.type)}>{TYPE_LABELS[d.type].one}</a>
         )}
         <time datetime={published}>{fmtDate(d.date)}</time>
-        {d.type === 'essay' && (
-          <a
-            class="chip chip--status"
-            data-status={d.status}
-            href="#revisions"
-            title="Status and revision — see the history at the end"
-          >
-            {STATUS_LABELS[d.status]} · rev {revisions.rev}
-          </a>
-        )}
-        {revisions.updated && (
-          <span class="post-updated">
+        {d.status === 'working' ? (
+          <a class="post-state" data-status="working" href="#revisions" title="See how it's changed">Still being written</a>
+        ) : d.status === 'outdated' ? (
+          <a class="post-state" data-status="outdated" href="#revisions" title="See how it's changed">May be out of date</a>
+        ) : revisions.updated && (
+          <a class="post-state" href="#revisions" title="See how it's changed">
             Updated <time datetime={revisions.updated.toISOString()}>{fmtDate(revisions.updated)}</time>
-          </span>
+          </a>
         )}
         {d.type === 'link' && d.link && (
           <span class="post-link-host">

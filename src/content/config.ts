@@ -2,7 +2,7 @@ import { defineCollection, z } from 'astro:content';
 
 /**
  * One typed stream of writing:
- * - `essay` — long-form, titled; shows status + revision number
+ * - `essay` — long-form, titled; shows its state under the date + revision history
  * - `note`  — short thought; title optional (falls back to its first words)
  * - `link`  — Daring Fireball-style: title links out to `link`, ★ is the permalink
  */

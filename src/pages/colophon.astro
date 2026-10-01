@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import Base from '../layouts/Base.astro';
 import PageTitle from '../components/PageTitle.astro';
-import { getPublishedPosts, STATUS_LABELS, TYPE_LABELS, typeHref, type PostType } from '../lib/posts';
+import { getPublishedPosts, TYPE_LABELS, typeHref, type PostType } from '../lib/posts';
 
 const posts = await getPublishedPosts();
 const counts = { essay: 0, note: 0, link: 0 } as Record<PostType, number>;
@@ -47,17 +47,17 @@ const REPO = 'https://github.com/heyderekj/heyderekj.com';
 
     <h2 id="revisions">Status and revisions</h2>
     <p>
-      I publish things before they're finished and keep working on them. Each essay shows where it stands:
+      I publish things before they're finished and keep working on them. Under a post's date you'll see:
     </p>
     <ul>
-      <li><span class="chip chip--status" data-status="working">{STATUS_LABELS.working}</span> — published, still being worked out.</li>
-      <li><span class="chip chip--status" data-status="stable">{STATUS_LABELS.stable}</span> — I stand behind it as written.</li>
-      <li><span class="chip chip--status" data-status="outdated">{STATUS_LABELS.outdated}</span> — kept for the record; I think differently now.</li>
+      <li><span class="post-state" data-status="working">Still being written</span> — published, still being worked out.</li>
+      <li><span class="post-state">Updated</span> with a date — I've revised it since publishing.</li>
+      <li><span class="post-state" data-status="outdated">May be out of date</span> — kept for the record; I think differently now.</li>
     </ul>
     <p>
-      The <strong>rev</strong> number counts meaningful revisions. Rev 1 is what I first published. Every post lives in
-      git, so each revision links to its exact diff on GitHub. Typo fixes and housekeeping show up as “minor edits”
-      and don't bump the number. Older posts were imported in April 2026, so their tracked history starts there.
+      Nothing at all means it's as I first published it. Each one links to the post's revision history at the end.
+      Every post lives in git, so each revision links to its exact diff on GitHub. Typo fixes and housekeeping show up
+      as “minor edits.” Older posts were imported in April 2026, so their tracked history starts there.
     </p>
 
     <h2 id="feeds">Feeds</h2>

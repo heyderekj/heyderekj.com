@@ -46,7 +46,7 @@ Posts are one typed stream (`src/content/posts/`, schema in `src/content/config.
 
 | `type` | What it is | Title | Shows |
 | --- | --- | --- | --- |
-| `essay` (default) | Long-form with an argument | required | status chip + rev number, revision history |
+| `essay` (default) | Long-form with an argument | required | state under the date, revision history |
 | `note` | A short thought | optional (falls back to its opening words) | "Note" label, ★ permalink |
 | `link` | Daring Fireball-style link + commentary | required, links out to `link` | host, `via`, ★ permalink |
 
@@ -70,7 +70,7 @@ via: { name: "Maggie Appleton", url: "https://maggieappleton.com" }
 
 ### Revisions (`Rev:` trailer)
 
-Every essay shows `Status · rev N` and a revision list at the end, read from git at build time (`src/lib/revisions.ts`).
+Under the date, posts say "Still being written" (`working`), "May be out of date" (`outdated`), or "Updated <date>" once revised; a stable, unrevised post shows nothing. Essays get a revision list at the end, read from git at build time (`src/lib/revisions.ts`).
 
 - rev 1 is publication (`date`).
 - A commit that touches the post counts as a revision when its message has a `Rev:` trailer, and the trailer text is the note shown on the site:

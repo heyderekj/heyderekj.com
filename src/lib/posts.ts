@@ -14,12 +14,6 @@ export const TYPE_LABELS: Record<PostType, { one: string; many: string; path: st
   link: { one: 'Link', many: 'Links', path: 'links' },
 };
 
-export const STATUS_LABELS: Record<Post['data']['status'], string> = {
-  working: 'Working draft',
-  stable: 'Stable',
-  outdated: 'Outdated',
-};
-
 let cache: Promise<Post[]> | null = null;
 
 /** Published posts, newest first. In `astro dev`, drafts are included so they can be previewed. */

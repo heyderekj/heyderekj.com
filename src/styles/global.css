@@ -1857,3 +1857,22 @@ main.main a.topic-link:hover { background: var(--bg-elevated); border-color: var
 .colophon li { margin-bottom: var(--space-2); }
 .colophon .chip { margin-right: 0.2em; }
 .colophon__build { font-size: var(--size-meta); color: var(--muted-strong); }
+
+/* Post state under the date: plain words, not a badge. Silent when there's nothing to say. */
+.post-state { color: var(--muted-strong); }
+main.main a.post-state:hover { color: var(--fg); }
+/* A plain "Updated" gets a middot after the date; states get a dot. */
+.post-meta .post-state:not([data-status])::before { content: '·'; margin-right: 0.1em; color: var(--muted); }
+.post-state[data-status]::before {
+  content: '';
+  display: inline-block;
+  vertical-align: 0.12em;
+  margin-right: 0.5em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.post-state[data-status='working']::before { background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.post-state[data-status='outdated']::before { background: #eab308; }
+.post-state[data-status='outdated'] { font-style: italic; }
