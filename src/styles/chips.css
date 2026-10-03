@@ -286,9 +286,6 @@ button.intro-chip:focus-visible { outline: 2px solid var(--fg); outline-offset: 
 .intro-pop__avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--bg-elevated); flex-shrink: 0; }
 .intro-pop__figure { display: block; margin: 2px 0 10px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--rule); background: var(--bg-elevated); }
 .intro-pop__figure img { display: block; width: 100%; height: auto; border-radius: 0; }
-.intro-pop__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 2px 0 6px; }
-.intro-pop__tile { display: flex; flex-direction: column; gap: 4px; font-size: 11.5px; color: var(--fg-soft); }
-.intro-pop__tile img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--rule); background: var(--bg-elevated); }
 .intro-pop__list { display: block; }
 .intro-pop__item { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; border-top: 1px solid var(--border); }
 .intro-pop__item:first-child { border-top: 0; padding-top: 0; }
