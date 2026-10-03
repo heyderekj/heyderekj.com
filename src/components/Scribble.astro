@@ -1,0 +1,132 @@
+---
+/**
+ * Scribble — a line in my hand with a pen arrow, pointing at something on the
+ * page. Same idea as the notes on koati.app and harvous.com.
+ *
+ * Without a `target` it sits in the flow like any inline element. With one
+ * (a CSS selector, looked up inside the nearest [data-scribble-bounds], else
+ * the page), client/scribbles.ts moves the whole note so the arrowhead lands
+ * on that element — at `at`, a fraction of its box — and keeps it there
+ * through resizes. If there isn't room to reach, the note hides: an arrow
+ * pointing at the wrong thing is worse than no note.
+ *
+ * Use "\n" in `text` for a line break.
+ */
+export type ScribbleArrow = 'down-left' | 'down-right' | 'up' | 'up-left' | 'up-right' | 'left' | 'right';
+
+interface Props {
+  text: string;
+  /** Which way the arrow points, and so which side of the words it sits on. */
+  arrow?: ScribbleArrow;
+  /** Tilt, in degrees. A note is never quite straight. */
+  tilt?: number;
+  target?: string;
+  at?: [number, number];
+  class?: string;
+  [key: `data-${string}`]: unknown;
+}
+
+const { text, arrow = 'down-left', tilt = -3, target, at = [0.5, 0.5], class: className, ...rest } = Astro.props;
+
+/* Hand-drawn: a wobbly shaft and a two-stroke head, with the head's point
+   (`tip`) kept for the script to measure. */
+const ARROWS: Record<ScribbleArrow, { box: [number, number]; d: string; tip: [number, number] }> = {
+  'down-left': { box: [64, 48], d: 'M58 5 C 44 7, 24 16, 13 38 M13 38 L 10 27 M13 38 L 23 34', tip: [13, 38] },
+  'down-right': { box: [64, 48], d: 'M6 5 C 20 7, 40 16, 51 38 M51 38 L 54 27 M51 38 L 41 34', tip: [51, 38] },
+  up: { box: [40, 48], d: 'M21 44 C 18 32, 23 18, 20 5 M20 5 L 13 13 M20 5 L 27 12', tip: [20, 5] },
+  'up-left': { box: [56, 48], d: 'M50 43 C 38 38, 20 28, 10 8 M10 8 L 9 19 M10 8 L 19 12', tip: [10, 8] },
+  'up-right': { box: [56, 48], d: 'M6 43 C 18 38, 36 28, 46 8 M46 8 L 47 19 M46 8 L 37 12', tip: [46, 8] },
+  left: { box: [72, 36], d: 'M68 20 C 50 8, 26 30, 6 17 M6 17 L 15 12 M6 17 L 13 25', tip: [6, 17] },
+  right: { box: [84, 40], d: 'M4 24 C 24 8, 54 34, 78 17 M78 17 L 68 14 M78 17 L 71 26', tip: [78, 17] },
+};
+const a = ARROWS[arrow];
+---
+
+<span
+  class:list={['scribble', `scribble--${arrow}`, className]}
+  style={`--tilt:${tilt}deg;--arrow-w:${a.box[0]}`}
+  aria-hidden="true"
+  data-scribble-target={target}
+  data-scribble-at={target ? at.join(',') : undefined}
+  {...rest}
+>
+  <svg class="scribble__arrow" viewBox={`0 0 ${a.box[0]} ${a.box[1]}`}>
+    <path d={a.d} pathLength="1" />
+    <circle cx={a.tip[0]} cy={a.tip[1]} r="0.5" class="scribble__tip" data-scribble-tip />
+  </svg>
+  <span class="scribble__text">{text}</span>
+</span>
+
+<style>
+  .scribble {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    font-family: var(--font-hand);
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 0.95;
+    white-space: pre;
+    color: var(--accent);
+    rotate: var(--tilt);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .scribble__arrow {
+    flex-shrink: 0;
+    /* 64-unit arrows draw at 3rem; the rest keep their proportions. */
+    width: calc(var(--arrow-w) / 64 * 3rem);
+    height: auto;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .scribble__tip { fill: none; stroke: none; }
+
+  /* The arrow sits on the side it points to. */
+  .scribble__arrow { order: 1; }
+  .scribble--down-left .scribble__arrow,
+  .scribble--up-left .scribble__arrow,
+  .scribble--left .scribble__arrow { order: -1; }
+  /* Words sit by the arrow's tail: low when it points up. */
+  .scribble--down-left,
+  .scribble--down-right { align-items: flex-start; }
+  .scribble--up-left,
+  .scribble--up-right { align-items: flex-end; }
+  .scribble--up { flex-direction: column; }
+  .scribble--up .scribble__arrow { order: -1; }
+
+  /* Targeted notes are placed by the script; until then (or without JS, or
+     when there's no room to reach) they stay out of sight. */
+  .scribble[data-scribble-target] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    visibility: hidden;
+  }
+  .scribble[data-scribble-placed] { visibility: visible; }
+  .scribble[data-scribble-missed] { visibility: hidden; }
+
+  /* The words arrive, then the pen draws the arrow. */
+  @media (prefers-reduced-motion: no-preference) {
+    .scribble[data-scribble-placed] .scribble__text {
+      animation: scribble-in 500ms var(--easing) 150ms both;
+    }
+    .scribble[data-scribble-placed] .scribble__arrow path {
+      stroke-dasharray: 1;
+      animation: scribble-draw 700ms cubic-bezier(0.65, 0, 0.35, 1) 450ms both;
+    }
+  }
+  @keyframes scribble-in {
+    from { opacity: 0; translate: 0 3px; }
+  }
+  @keyframes scribble-draw {
+    from { stroke-dashoffset: 1; }
+    to { stroke-dashoffset: 0; }
+  }
+</style>

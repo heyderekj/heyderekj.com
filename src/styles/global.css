@@ -1,3 +1,12 @@
+/* Caveat, for handwritten notes (components/Scribble.astro). Self-hosted, OFL. */
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/caveat-latin.woff2') format('woff2');
+}
+
 /* ============================================================
    Design tokens
    ============================================================ */
@@ -44,6 +53,7 @@
   --code-bg: rgba(0, 0, 0, 0.03);
 
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-hand: 'Caveat', 'Bradley Hand', 'Segoe Print', cursive;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
   --size-micro: 11px;

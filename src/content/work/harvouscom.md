@@ -22,6 +22,9 @@ video: "/images/work/harvouscom/tour.mp4"
 videoPoster: "/images/work/harvouscom/video-poster.webp"
 videoAspect: "1464 / 878"
 videoCaption: "Site tour — use cases, features, the founder letter, blog, and release notes."
+note:
+  text: "start here"
+  block: video
 priorGallery:
   - "/images/work/harvouscom/prior/thumbnail.webp"
   - "/images/work/harvouscom/prior/gallery-01.webp"

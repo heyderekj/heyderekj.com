@@ -6,6 +6,7 @@ import PostList from '../components/PostList.astro';
 import FeaturedProjectGrid from '../components/FeaturedProjectGrid.astro';
 import ProjectRows from '../components/ProjectRows.astro';
 import IntroChip from '../components/IntroChip.astro';
+import Scribble from '../components/Scribble.astro';
 import { imgFixed } from '../lib/img';
 import { aboutHero } from '../data/about';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
@@ -77,8 +78,11 @@ const macTools = pick(['tool-claude-desktop-app', 'tool-figma', 'tool-raycast', 
             <span class="intro-pop__item"><b>{t.data.title}</b><span>{t.data.note}</span></span>
           ))}
         </span>
-      </IntroChip> I'm at <a href="/projects/heres-my-church/" class="text-chip"><i class="ph-bold ph-church" aria-hidden="true"></i>my church</a> or learning the drums. I make websites with <a href="/work/with/kem-design/" class="text-chip"><i class="ph-bold ph-pencil-simple" aria-hidden="true"></i>Kem Design</a> and apps on the side—<a href="/projects/harvous/" class="text-chip"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> and <a href="/projects/koati/" class="text-chip"><i class="ph-bold ph-tray" aria-hidden="true"></i>Koati</a>.
+      </IntroChip> I'm at <a href="/projects/heres-my-church/" class="text-chip"><i class="ph-bold ph-church" aria-hidden="true"></i>my church</a> or learning the drums. I make websites with <a href="/work/with/kem-design/" class="text-chip"><i class="ph-bold ph-pencil-simple" aria-hidden="true"></i>Kem Design</a> and apps on the side—<a href="/projects/harvous/" class="text-chip"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> and <a href="/projects/koati/" class="text-chip" data-note="koati"><i class="ph-bold ph-tray" aria-hidden="true"></i>Koati</a>.
     </p>
+    {/* One margin note: in the gutter on wide screens, under the words on phones. */}
+    <Scribble class="intro-note intro-note--wide" text={'my side\nprojects'} arrow="left" tilt={3} target='[data-note="koati"]' at={[1.4, 0.5]} />
+    <Scribble class="intro-note intro-note--narrow" text="my side projects" arrow="up-right" tilt={-2} target='[data-note="koati"]' at={[0.45, 1.15]} />
     <div class="intro-links">
       <a href="/about" class="intro-pill">
         <i class="ph-bold ph-arrow-right" aria-hidden="true" />
@@ -120,12 +124,26 @@ const macTools = pick(['tool-claude-desktop-app', 'tool-figma', 'tool-raycast', 
 
 <script>
   import '../client/intro-chips';
+  import '../client/scribbles';
 </script>
 
 <style>
-  .intro { padding-top: var(--space-4); }
+  .intro {
+    position: relative;
+    padding-top: var(--space-4);
+  }
   .intro p {
     max-width: var(--max-text);
+  }
+
+  /* The wide note needs the gutter beside main; the narrow one gets room under the words. */
+  .intro :global(.intro-note--wide) { display: none; }
+  @media (min-width: 960px) {
+    .intro :global(.intro-note--wide) { display: inline-flex; }
+    .intro :global(.intro-note--narrow) { display: none; }
+  }
+  @media (max-width: 959.98px) {
+    .intro p { margin-bottom: 3.25rem; }
   }
 
   .home-more-projects { margin: var(--space-3) 0 0; }
