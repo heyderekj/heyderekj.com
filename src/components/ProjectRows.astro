@@ -1,7 +1,8 @@
 ---
 /**
- * Compact project rows: small thumb, name, tagline, status chip.
- * Used for "Also building" on the homepage and paused apps on /projects.
+ * Compact project rows: small thumb, name, tagline, status chip (none for `paused`:
+ * those are shipped apps, not necessarily stopped).
+ * Used for "Also building" on the homepage and the more-projects apps on /projects.
  */
 import type { CollectionEntry } from 'astro:content';
 import { imgAttrs } from '../lib/img';
@@ -36,9 +37,11 @@ const { projects } = Astro.props;
             <span class="project-row__name">{project.data.name}</span>
             <span class="project-row__tagline">{project.data.tagline}</span>
           </span>
-          <span class="chip chip--status" data-status={project.data.status}>
-            {displayProjectStatus(project.data.status)}
-          </span>
+          {project.data.status !== 'paused' && (
+            <span class="chip chip--status" data-status={project.data.status}>
+              {displayProjectStatus(project.data.status)}
+            </span>
+          )}
         </a>
       </li>
     );

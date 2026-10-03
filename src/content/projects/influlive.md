@@ -4,6 +4,7 @@ tagline: Past portfolio entry from the archive.
 started: 2008-08-01
 status: retired
 order: 0
+category: Blog
 ---
 
 ## About

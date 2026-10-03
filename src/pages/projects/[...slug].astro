@@ -211,7 +211,7 @@ const preloadImages = [
       <div class="back-link">
         <a href="/projects/"><span class="arrow">&larr;</span> all projects</a>
       </div>
-      {status && (
+      {status && status !== 'paused' && (
         <span class="chip chip--status" data-status={status}>
           {displayProjectStatus(status)}
         </span>
