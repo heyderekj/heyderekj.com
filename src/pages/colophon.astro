@@ -16,8 +16,8 @@ const astroVersion = (() => {
   }
 })();
 
-/** Netlify sets COMMIT_REF during builds. */
-const commit = process.env.COMMIT_REF;
+/** Netlify sets COMMIT_REF during builds; Cloudflare Pages sets CF_PAGES_COMMIT_SHA. */
+const commit = process.env.CF_PAGES_COMMIT_SHA ?? process.env.WORKERS_CI_COMMIT_SHA ?? process.env.COMMIT_REF;
 const REPO = 'https://github.com/heyderekj/heyderekj.com';
 ---
 <Base title="Colophon — Derek Castelli" description="How this site is made, and how the writing on it works.">

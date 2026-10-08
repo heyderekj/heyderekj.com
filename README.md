@@ -1,6 +1,6 @@
 # heyderekj.com
 
-Personal site for Derek Castelli. Built with [Astro](https://astro.build), hosted on Netlify.
+Personal site for Derek Castelli. Built with [Astro](https://astro.build), hosted on Cloudflare.
 
 ## Stack
 
@@ -45,6 +45,6 @@ Site ID is set in `src/layouts/Base.astro` (`data-site` on the Fathom script).
 
 ## Deploy
 
-Netlify is connected to the git repo and builds using [netlify.toml](netlify.toml). Domain and DNS live in the Netlify dashboard.
+Cloudflare is connected to the git repo (build: `npm run build`, output: `dist`, `NODE_VERSION=20`). Redirects live in [public/_redirects](public/_redirects) and headers in [public/_headers](public/_headers). Domain and DNS live in the Cloudflare dashboard. Set `IMAGE_CDN=cloudflare` in the build environment to serve resized images through Cloudflare Image Transformations (custom domain only).
 
-Optional manual deploy: `npx netlify-cli deploy --prod` when the project is linked locally.
+Optional manual deploy: `npx wrangler pages deploy dist` when logged in locally.
