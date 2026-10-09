@@ -1,4 +1,4 @@
-# Cloudflare redirects (ported from netlify.toml). Cloudflare ignores `force`; redirects always win over assets.
+# Cloudflare redirects Cloudflare ignores `force`; redirects always win over assets.
 /now /about/ 301
 /now/ /about/ 301
 /uses /library/tools/ 301

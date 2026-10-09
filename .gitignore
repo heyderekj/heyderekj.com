@@ -6,6 +6,5 @@ dist/
 .env.*
 !.env.example
 *.log
-.netlify/
 # CSV import scratch space (repo root only — not `src/data/`)
 /data/

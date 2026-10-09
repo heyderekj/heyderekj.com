@@ -16,8 +16,8 @@ const astroVersion = (() => {
   }
 })();
 
-/** Netlify sets COMMIT_REF during builds; Cloudflare Pages sets CF_PAGES_COMMIT_SHA. */
-const commit = process.env.CF_PAGES_COMMIT_SHA ?? process.env.WORKERS_CI_COMMIT_SHA ?? process.env.COMMIT_REF;
+/** Cloudflare Pages sets CF_PAGES_COMMIT_SHA during builds. */
+const commit = process.env.CF_PAGES_COMMIT_SHA ?? process.env.WORKERS_CI_COMMIT_SHA;
 const REPO = 'https://github.com/heyderekj/heyderekj.com';
 ---
 <Base title="Colophon — Derek Castelli" description="How this site is made, and how the writing on it works.">
@@ -69,7 +69,7 @@ const REPO = 'https://github.com/heyderekj/heyderekj.com';
     <h2 id="stack">How it's built</h2>
     <ul>
       <li><a href="https://astro.build" rel="noopener">Astro</a> {astroVersion}, fully static, with Markdown and MDX for posts.</li>
-      <li>Hosted on <a href="https://www.netlify.com" rel="noopener">Netlify</a>. Images are resized on the fly by Netlify's image CDN.</li>
+      <li>Hosted on <a href="https://pages.cloudflare.com" rel="noopener">Cloudflare Pages</a>. Images are resized on the fly by Cloudflare's image CDN.</li>
       <li>Set in <a href="https://fonts.google.com/specimen/Plus+Jakarta+Sans" rel="noopener">Plus Jakarta Sans</a>, with <a href="https://phosphoricons.com" rel="noopener">Phosphor</a> icons.</li>
       <li>Hand-written CSS. No framework.</li>
       <li>

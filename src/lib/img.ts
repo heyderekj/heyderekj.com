@@ -1,19 +1,18 @@
 /**
- * Responsive image URLs via an image CDN.
+ * Responsive image URLs via Cloudflare Image Transformations.
  *
- * Source files stay in `public/`; on Netlify builds (or `IMAGE_CDN=1`) local
- * paths are rewritten to `/.netlify/images?url=…&w=…`, and with
- * `IMAGE_CDN=cloudflare` to `/cdn-cgi/image/width=…,format=auto/…` (needs Image
- * Transformations enabled on the zone; not available on *.pages.dev). Either way
- * a srcset lets the browser fetch a variant sized for its slot (AVIF/WebP
- * negotiated from the Accept header). Locally the raw path is returned untouched.
+ * Source files stay in `public/`; with `IMAGE_CDN=cloudflare` (set on the Pages
+ * production build) local paths are rewritten to
+ * `/cdn-cgi/image/width=…,format=auto/…` with a srcset so the browser fetches a
+ * variant sized for its slot (AVIF/WebP negotiated from the Accept header).
+ * Needs Image Transformations enabled on the zone; not available on *.pages.dev.
+ * Locally the raw path is returned untouched.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import sizeOf from 'image-size';
 
-const CF = process.env.IMAGE_CDN === 'cloudflare';
-const CDN = CF || process.env.NETLIFY === 'true' || process.env.IMAGE_CDN === '1';
+const CDN = process.env.IMAGE_CDN === 'cloudflare';
 
 export const WIDTHS = [320, 480, 640, 960, 1280, 1760];
 
@@ -59,8 +58,7 @@ export function imgSrc(p: string, w: number): string {
   if (!CDN || !isTransformable(p)) return p;
   const max = imgDims(p)?.width;
   const width = max ? Math.min(w, max) : w;
-  if (CF) return `/cdn-cgi/image/width=${width},format=auto,quality=80${p}`;
-  return `/.netlify/images?url=${encodeURIComponent(p)}&w=${width}`;
+  return `/cdn-cgi/image/width=${width},format=auto,quality=80${p}`;
 }
 
 /** `srcset` across `widths`, capped at the original's width. */

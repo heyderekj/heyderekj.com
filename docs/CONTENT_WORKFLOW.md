@@ -91,7 +91,7 @@ Under the date, posts say "Still being written" (`working`), "May be out of date
       commit: 1a2b3c4   # annotates an existing commit instead of adding a rev
   ```
 
-Netlify builds unshallow the clone first (`scripts/ensure-git-history.mjs`). If history is ever unavailable, pages fall back to the frontmatter changelog and a "Full history on GitHub" link.
+Cloudflare builds unshallow the clone first (`scripts/ensure-git-history.mjs`). If history is ever unavailable, pages fall back to the frontmatter changelog and a "Full history on GitHub" link.
 
 ### Topics
 
@@ -141,7 +141,7 @@ A claim worth qualifying.<Sidenote>Shows in the margin on wide screens, as a tap
 
 `Compare` also takes `mode="stepper"`. `Callout` kinds are `note`, `update`, `audience`, and `outdated`.
 
-GFM footnotes (`[^1]`) and tables work in both `.md` and `.mdx`. Put post images under `public/images/posts/<slug>/`. On Netlify they're resized automatically (`src/lib/img.ts`).
+GFM footnotes (`[^1]`) and tables work in both `.md` and `.mdx`. Put post images under `public/images/posts/<slug>/`. On Cloudflare they're resized automatically (`src/lib/img.ts`).
 
 ## Library
 

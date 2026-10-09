@@ -3,7 +3,7 @@
  *
  * Handles both markdown `![]()` images (hast elements) and raw HTML `<img>`
  * inside `.md` bodies (e.g. project `.pfig` figures), which Astro keeps as
- * `raw` nodes. No-op locally — `imgAttrs` returns the plain path off-Netlify.
+ * `raw` nodes. No-op locally — `imgAttrs` returns the plain path without the image CDN.
  */
 import { imgAttrs } from './img';
 

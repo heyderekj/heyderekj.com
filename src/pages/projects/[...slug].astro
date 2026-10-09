@@ -10,7 +10,7 @@ import { schemaPersonId } from '../../lib/schemaIds';
 import { imgAttrs, imgFixed, imgSrc, imgVariant } from '../../lib/img';
 
 export async function getStaticPaths() {
-  // Retired projects live in the /projects archive (redirects in netlify.toml).
+  // Retired projects live in the /projects archive (redirects in public/_redirects).
   const projects = await getCollection(
     'projects',
     ({ data }) => !data.draft && data.status !== 'retired',
