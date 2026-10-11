@@ -1,0 +1,100 @@
+---
+title: "Packaging Koati"
+date: 2026-10-11
+type: essay
+status: working
+tags: [design, ai]
+description: "Three versions of Koati's website in three weeks, and the app moving from a sidebar to a desk. How it's wrapped is part of what it is."
+---
+
+
+Koati didn't change much underneath in the last three weeks. How it's wrapped changed a lot. The website went through three versions, and the app moved from a sidebar to a desk.
+
+## The website, three times
+
+<Snapshots
+  label="Koati's website, three versions"
+  aspect="1440 / 1100"
+  items={[
+    { src: '/images/posts/packaging-koati/site-v1.webp', alt: "Koati's first site: a centered headline, 'Where a request turns into agreed work', over a tour of the app", caption: 'v1 · Sep 18 — Where a request turns into agreed work' },
+    { src: '/images/posts/packaging-koati/site-v2.webp', alt: "The redesign: a left-aligned headline over five woven tiles, one for each step, with the Sort tile open on a message being sorted into a card", caption: 'v2 · Sep 25 — the woven tiles' },
+    { src: '/images/posts/packaging-koati/site-v3.webp', alt: "The current site: 'The inbox for work to be done' on a green woven block, with the app drawn underneath", caption: 'v3 · Oct 10 — The inbox for work to be done' },
+  ]}
+/>
+
+**v1** was a fair first pass: a centered headline, "Where a request turns into agreed work," and a tour of the app underneath. It said what Koati did. It didn't look like anything in particular.
+
+**v2** is where it got its look. Each step of the loop got its own woven tile: green to catch a request, blue to sort it, then pink, orange and yellow. The tiles open one at a time to show that step in the app: the inbox, then a message being sorted into a card. Same headline, but now the page had a texture you'd remember.
+
+That's the version Corey Moen brought up on Restock, in an episode about packaging: how the way something is presented is part of the product, not decoration on top of it.
+
+<Clip
+  id="u4DgD7C4F7A"
+  date="2026-10-07"
+  start="24:07"
+  end="27:38"
+  speaker="Corey Moen"
+  role="Brand Designer, Anthropic"
+  show="Restock"
+  episode="Ep. 13: Packaging Matters"
+  frame="hq1"
+  face={[340, -55.4, -86.425]}
+/>
+
+{/* TODO: your take on what Corey said, in a sentence or two. */}
+
+**v3** took that further. The headline became "The inbox for work to be done." The four tiles became the app icon, a K. And instead of a screenshot, the hero draws the app itself, live, on a green block of the same weave.
+
+{/* TODO: why the new line, in your words. */}
+
+Drawing the app on the homepage had a side effect: it put the app's layout in the shop window. And the layout underneath wasn't the one I'd been describing. The site said there's one inbox for work to be done. The app still opened on a sidebar of pages, with Today and Inbox listed separately, showing the same requests twice. The packaging had got ahead of the product, so the product had to catch up.
+
+## The app, from a sidebar to a desk
+
+The old layout was a sidebar: a dark rail with Today, Inbox, Chat, Work and Plan, then every board stacked under them. The new one is a desk. Inbox, Chat and Work sit across the top, the boards you're on are pills under them, and whatever you open is laid out as modules on the desk.
+
+<Compare
+  mode="stepper"
+  before={{ src: '/images/posts/packaging-koati/sidebar-today.webp', alt: "Koati's old layout: a dark sidebar of pages and boards beside the Today page", label: 'Sidebar' }}
+  after={{ src: '/images/posts/packaging-koati/desk-today.webp', alt: "Koati's new layout: Inbox, Chat and Work across the top, board pills under them, and the day as modules on a desk", label: 'Desk' }}
+  caption="Today, then the Inbox it became"
+/>
+
+### Today and the inbox were the same list
+
+The old Today had a section called To sort. The inbox had one called Needs sorting. They were the same requests drawn twice. So Today retired, and Inbox became everything waiting on your next step: what to sort, what came back from your assistant, what's yours by due date, then what's waiting on somebody else.
+
+<Compare
+  mode="stepper"
+  before={{ src: '/images/posts/packaging-koati/sidebar-inbox.webp', alt: 'The old inbox page in the sidebar layout', label: 'Sidebar' }}
+  after={{ src: '/images/posts/packaging-koati/desk-inbox.webp', alt: 'The new inbox on the desk', label: 'Desk' }}
+  caption="Inbox"
+/>
+
+### Three modes, not a long list of pages
+
+The sidebar asked you to pick a page first and a board second. The desk flips that. Inbox, Chat and Work are the only three places you go, and the board pills filter all three at once. Plan and Activity moved inside Work.
+
+<Compare
+  mode="stepper"
+  before={{ src: '/images/posts/packaging-koati/sidebar-chat.webp', alt: 'Chat in the sidebar layout', label: 'Sidebar' }}
+  after={{ src: '/images/posts/packaging-koati/desk-chat.webp', alt: 'Chat on the desk, laid out by board', label: 'Desk' }}
+  caption="Chat, now laid out by board or all together"
+/>
+
+### One next step
+
+One primary action per surface, and focus lands on the next decision. Nobody should have to arrange a layout, so the desk remembers your widths, each board's last view and your pins, with no setting for any of it. A card is laid out as its parts, side by side, instead of one long page.
+
+<Compare
+  mode="stepper"
+  before={{ src: '/images/posts/packaging-koati/sidebar-card.webp', alt: 'A card in the sidebar layout', label: 'Sidebar' }}
+  after={{ src: '/images/posts/packaging-koati/desk-card.webp', alt: 'The same card laid out as modules on the desk', label: 'Desk' }}
+  caption="A card: what was asked, the work, the discussion, who's on it"
+/>
+
+## Same thing, better wrapped
+
+{/* TODO: close in your words — what packaging taught you here. */}
+
+Koati is still coming soon. If you run a marketing team, or you're the agency one hires, I'd love to show you the desk.

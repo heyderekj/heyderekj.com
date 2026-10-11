@@ -678,28 +678,79 @@ main.main .post-link-out:hover { color: var(--accent); }
   color: var(--muted);
   margin: 0 0 var(--space-2);
 }
-.post-history__list { list-style: none; padding: 0; margin: 0; }
+.post-footer__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.post-footer__head .post-footer__title { margin: 0; }
+
+/* Revisions read like the Related list under them: date column, then the note. */
+.prose .post-history__list,
+.prose .post-history__minor ul,
+.prose .post-history__meta { list-style: none; padding: 0; margin: 0; max-width: none; }
 .post-history__item {
   display: grid;
-  grid-template-columns: 3.2rem 6.5rem 1fr;
-  gap: var(--space-2);
-  padding: 6px 0;
+  grid-template-columns: 96px 1fr auto;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-2) 0;
+  font-size: var(--size-body);
+}
+.post-history__item + .post-history__item { border-top: 1px dashed var(--border); }
+.post-history__date { color: var(--muted-strong); font-size: var(--size-meta); font-variant-numeric: tabular-nums; }
+.post-history__note { color: var(--fg); }
+main.main .post-history__link {
+  margin-left: 0.6em;
   font-size: var(--size-meta);
-  border-bottom: 1px solid var(--border);
+  color: var(--muted-strong);
+}
+.post-history__rev {
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: var(--size-micro);
+  font-weight: 600;
+  color: var(--muted-strong);
   font-variant-numeric: tabular-nums;
 }
-.post-history__rev { font-weight: 600; color: var(--fg); }
-.post-history__date { color: var(--muted-strong); }
-.post-history__note { color: var(--fg-soft); }
-main.main .post-history__link { color: var(--muted-strong); }
-.post-history__minor { margin-top: var(--space-2); font-size: var(--size-meta); color: var(--muted-strong); }
-.post-history__minor summary { cursor: pointer; }
-.post-history__minor ul { list-style: none; padding: 0; margin: var(--space-2) 0 0; }
-.post-history__minor li { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--space-2); padding: 2px 0; }
-main.main .post-history__minor a { color: var(--fg-soft); }
-.post-history__meta { margin-top: var(--space-2); font-size: var(--size-meta); color: var(--muted); }
-main.main .post-history__meta a { color: var(--muted-strong); }
-.post-reply p { font-size: var(--size-body); color: var(--fg-soft); }
+.post-history__item:first-child .post-history__rev { color: var(--fg); border-color: var(--border-strong); }
+
+.post-history__meta {
+  display: flex;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: var(--size-meta);
+}
+main.main .post-history__meta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  border-bottom: 0;
+  color: var(--muted-strong);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+main.main .post-history__meta a:hover { color: var(--fg); }
+.post-history__meta .icon { font-size: 0.9em; }
+
+.post-history__minor { margin-top: var(--space-1); font-size: var(--size-meta); color: var(--muted-strong); }
+.post-history__minor summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  cursor: pointer;
+  list-style: none;
+}
+.post-history__minor summary::-webkit-details-marker { display: none; }
+.post-history__minor summary .icon { transition: transform 0.18s ease; }
+.post-history__minor[open] summary .icon { transform: rotate(90deg); }
+.prose .post-history__minor ul { margin-top: var(--space-2); }
+.post-history__minor li { display: grid; grid-template-columns: 96px 1fr; gap: var(--space-3); padding: 3px 0; }
+main.main .post-history__minor a { justify-self: start; color: var(--fg-soft); }
+.post-history__note-small { margin: var(--space-2) 0 0; font-size: var(--size-meta); color: var(--muted); }
 .post-adjacent {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -722,8 +773,8 @@ main.main a.post-adjacent__link:hover { background: var(--bg-elevated); }
 @media (max-width: 540px) {
   .post-adjacent { grid-template-columns: 1fr; }
   .post-adjacent__link--newer { text-align: left; }
-  .post-history__item { grid-template-columns: 3rem 1fr; }
-  .post-history__note { grid-column: 1 / -1; }
+  .post-history__item { grid-template-columns: 1fr auto; row-gap: 2px; }
+  .post-history__date { grid-column: 1 / -1; }
 }
 
 /* Work case study */

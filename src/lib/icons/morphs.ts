@@ -1,9 +1,9 @@
 /**
  * Every icon's loop, as morphs — after Benji Taylor's morphing icons: the
  * icon's own strokes move to a new shape and back, rather than the icon
- * wiggling as a picture. Icons that are the same shape turned (arrows,
- * chevrons, plus ⇄ close, refresh) rotate instead, because morphing a turn
- * bends the lines.
+ * wiggling as a picture. Icons that are the same shape turned (plus ⇄
+ * close, refresh) rotate instead, because morphing a turn bends the lines.
+ * Chevrons only nudge the way they point: turned, they'd point somewhere else.
  *
  * A loop is a list of frames played from the drawing and back to it:
  * - `s`: new shapes by index. A path (same commands as the drawing's), a
@@ -73,11 +73,11 @@ export const MORPHS: Partial<Record<Name | 'x' | 'github', Frame[]>> = {
   'arrow-left': [{ s: { 0: 'M9.75 4L5.75 8L9.75 12', 1: { d: pt('M3.5 8H13', 5.75, 8), o: 0 } } }],
   'arrow-up': [{ s: { 0: 'M4 9.75L8 5.75L12 9.75', 1: { d: pt('M8 3.5V13', 8, 5.75), o: 0 } } }],
   'arrow-down': [{ s: { 0: 'M4 6.25L8 10.25L12 6.25', 1: { d: pt('M8 12.5V3', 8, 10.25), o: 0 } } }],
-  'arrow-up-right': [{ r: 45 }],
-  'chevron-right': [{ r: 90 }],
-  'chevron-left': [{ r: -90 }],
-  'chevron-down': [{ r: 180 }],
-  'chevron-up': [{ r: 180 }],
+  'arrow-up-right': [{ x: 1, y: -1, hold: 250 }],
+  'chevron-right': [{ x: 1.5, hold: 250 }],
+  'chevron-left': [{ x: -1.5, hold: 250 }],
+  'chevron-down': [{ y: 1.5, hold: 250 }],
+  'chevron-up': [{ y: -1.5, hold: 250 }],
   close: [{ r: 45, hold: 600 }],
   plus: [{ r: 45, hold: 600 }],
   // The tick lies flat, then flicks up.

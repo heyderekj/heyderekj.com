@@ -1,11 +1,17 @@
 ---
 /**
- * A moment from a YouTube video. Shows the poster with a play button and who's
- * speaking; the player (youtube-nocookie) only loads when it's clicked, and it
- * starts — and stops — on the moment. Without JS it's a link to that time.
+ * A moment from a YouTube video, as a small inline card: the speaker's face,
+ * name and role, the show and episode, and a "Play from …" pill. Playing opens a lightbox with the player (youtube-nocookie) that
+ * starts — and stops — on the moment; closing it stops the video. Without JS
+ * the pill is a link to that time on YouTube.
  *
- *   <Clip id="KZSzF0KEFRg" start="1:00:33" speaker="Maggie Appleton"
- *     source="Design Engineering with Maggie Appleton · The Pragmatic Engineer" />
+ * The face is cropped from one of the video's stills
+ * (i.ytimg.com/vi/<id>/<frame>.jpg) with `face` = [width %, left %, top %].
+ *
+ *   <Clip id="u4DgD7C4F7A" start="24:07" end="27:38" date="2026-10-07"
+ *     speaker="Corey Moen" role="Brand Designer, Anthropic"
+ *     show="Restock" episode="Ep. 13: Packaging Matters"
+ *     frame="hq1" face={[340, -55.4, -86.425]} />
  */
 import Icon from '../Icon.astro';
 
@@ -16,159 +22,252 @@ interface Props {
   start: string;
   end?: string;
   speaker: string;
-  /** Episode and show, e.g. "Ep. 13 · Restock". */
-  source: string;
+  role?: string;
+  show: string;
+  episode: string;
   /** When the video came out, YYYY-MM-DD. */
   date?: string;
-  /** Optional line under the source. */
+  /** Which still to crop the face from: hqdefault, hq1, hq2, hq3. */
+  frame?: string;
+  /** Crop of that still: [width %, left %, top %]. */
+  face?: [number, number, number];
+  /** A line under the card. */
   caption?: string;
 }
 
-const { id, start, end, speaker, source, date, caption } = Astro.props;
+const { id, start, end, speaker, role, show, episode, date, frame = 'hqdefault', face, caption } = Astro.props;
 const secs = (t: string) => t.split(':').map(Number).reduce((a, n) => a * 60 + n, 0);
 const s = secs(start);
 const e = end ? secs(end) : undefined;
 const watch = `https://www.youtube.com/watch?v=${id}&t=${s}s`;
-const embed = `https://www.youtube-nocookie.com/embed/${id}?start=${s}${e ? `&end=${e}` : ''}&autoplay=1&rel=0`;
-const range = end ? `${start}–${end}` : `from ${start}`;
+const embed = `https://www.youtube-nocookie.com/embed/${id}?start=${s}${e ? `&end=${e}` : ''}&autoplay=1&rel=0&modestbranding=1`;
 const when = date
   ? new Date(`${date}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
   : undefined;
-const initials = speaker.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+const title = `${speaker} on ${show}, ${episode}`;
+/* A fixed waveform: decoration, not data. */
+const wave = [24, 40, 64, 48, 80, 56, 32, 72, 96, 64, 40, 56, 88, 48, 32, 64, 80, 40, 24, 48, 72, 56, 32, 40];
+const [fw, fl, ft] = face ?? [100, 0, 0];
 ---
 
-<figure class="pclip">
-  <a class="pclip__poster" href={watch} target="_blank" rel="noopener" data-clip-embed={embed} aria-label={`Play ${speaker}, ${source}, from ${start}`}>
-    <span class="pclip__who">
-      <span class="pclip__avatar" aria-hidden="true">{initials}</span>
-      <span class="pclip__name">{speaker}</span>
-    </span>
-    <span class="pclip__source">{source}</span>
-    <span class="pclip__foot">
-      <span class="pclip__play"><Icon name="play" loop={false} /></span>
-      <span class="pclip__time">{range}{when && <span class="pclip__date"> · <time datetime={date}>{when}</time></span>}</span>
-      <span class="pclip__yt">YouTube <Icon name="arrow-up-right" loop={false} /></span>
-    </span>
-  </a>
+<figure class="pclip" data-no-zoom>
+    <div class="pclip__card">
+      <div class="pclip__head">
+        <span class="pclip__face" aria-hidden="true">
+          <img
+            src={`https://i.ytimg.com/vi/${id}/${frame}.jpg`}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            style={`width:${fw}%;left:${fl}%;top:${ft}%`}
+          />
+        </span>
+        <span class="pclip__id">
+          <span class="pclip__who">{speaker}</span>
+          {role && <span class="pclip__role">{role}</span>}
+        </span>
+      </div>
+      <p class="pclip__show">
+        <span class="pclip__kicker">{show}{when && <> · <time datetime={date}>{when}</time></>}</span>
+        {episode}
+      </p>
+      <a class="pclip__play" href={watch} target="_blank" rel="noopener" data-clip={embed} data-clip-title={title}>
+        <span class="pclip__btn" aria-hidden="true"><Icon name="play" loop={false} /></span>
+        <span class="pclip__label">Play from {start}</span>
+        <span class="pclip__wave" aria-hidden="true">{wave.map((h) => <i style={`height:${h}%`}></i>)}</span>
+        <span class="visually-hidden">: {title}</span>
+      </a>
+    </div>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 
+<dialog class="pclip-box" data-clip-box aria-label="Video">
+  <div class="pclip-box__frame" data-clip-frame></div>
+  <button type="button" class="pclip-box__close" data-clip-close autofocus aria-label="Close video"><Icon name="close" loop={false} /></button>
+</dialog>
+
 <script>
+  // The player is created when the lightbox opens and removed when it closes,
+  // so closing always stops the video. With several clips on a page, the
+  // first lightbox serves them all.
+  const box = document.querySelector<HTMLDialogElement>('[data-clip-box]');
+  const frame = box?.querySelector<HTMLElement>('[data-clip-frame]');
+
+  box?.addEventListener('close', () => frame?.replaceChildren());
+  box?.addEventListener('click', (e) => {
+    // The backdrop is the dialog itself; its contents are the frame and button.
+    if (e.target === box || (e.target as Element).closest('[data-clip-close]')) box.close();
+  });
+
   document.addEventListener('click', (e) => {
-    const a = (e.target as Element).closest<HTMLAnchorElement>('[data-clip-embed]');
-    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    const a = (e.target as Element).closest<HTMLAnchorElement>('[data-clip]');
+    if (!a || !box || !frame || e.metaKey || e.ctrlKey || e.shiftKey) return;
     e.preventDefault();
     const iframe = document.createElement('iframe');
-    iframe.src = a.dataset.clipEmbed!;
-    iframe.title = a.getAttribute('aria-label') ?? 'Video';
+    iframe.src = a.dataset.clip!;
+    iframe.title = a.dataset.clipTitle ?? 'Video';
     iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
     iframe.allowFullscreen = true;
-    iframe.className = 'pclip__frame';
-    a.replaceWith(iframe);
+    frame.replaceChildren(iframe);
+    box.showModal();
   });
 </script>
 
 <style>
   .pclip { margin: var(--space-4) 0; }
 
-  /* Our own poster: who, where, when — drawn in the site's type, no
-     third-party thumbnail. The player loads only on click. */
-  .pclip__poster,
-  :global(.pclip__frame) {
-    display: block;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border: 1px solid var(--border-strong);
+  .pclip__card {
+    max-width: 26rem;
+    padding: var(--space-3);
+    border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     corner-shape: squircle;
+    background: var(--bg-elevated);
   }
-  .pclip__poster {
+
+  .pclip__head { display: flex; align-items: center; gap: 12px; }
+  .pclip__face {
     position: relative;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    overflow: hidden;
+    border-radius: 30%;
+    corner-shape: squircle;
+    background: var(--border-strong);
+  }
+  .pclip__face img {
+    position: absolute;
+    max-width: none;
+    height: auto;
+    margin: 0;
+    border-radius: 0;
+    filter: grayscale(1) contrast(1.05);
+  }
+  .pclip__id { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+  .pclip__who { font-size: var(--size-body); font-weight: 600; color: var(--fg); }
+  .pclip__role { font-size: var(--size-meta); color: var(--muted-strong); }
+
+  .pclip .pclip__show {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
-    padding: clamp(1.25rem, 4cqw, 2rem);
-    background:
-      radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%),
-      var(--bg-elevated);
-    color: var(--fg);
-    text-decoration: none;
-    overflow: hidden;
-    transition: border-color 0.18s ease, transform 0.25s var(--easing);
-  }
-  main.main a.pclip__poster { border-bottom: 1px solid var(--border-strong); }
-  .pclip__poster:hover { border-color: color-mix(in srgb, var(--fg) 22%, transparent); }
-  .pclip__poster:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
-
-  .pclip__who { display: flex; align-items: center; gap: 0.6em; }
-  .pclip__avatar {
-    display: grid;
-    place-items: center;
-    width: 2.25em;
-    height: 2.25em;
-    border-radius: 30%;
-    corner-shape: squircle;
-    background: var(--fg);
-    color: var(--bg);
-    font-size: var(--size-meta);
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-  .pclip__name {
-    font-size: clamp(1.4rem, 1rem + 2.4cqw, 2.1rem);
-    font-weight: 600;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-  }
-  .pclip__source {
-    max-width: 28em;
+    gap: 2px;
+    margin: 14px 0 12px;
     font-size: var(--size-body);
-    line-height: 1.45;
-    color: var(--fg-soft);
-    text-wrap: pretty;
-  }
-
-  .pclip__foot {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-top: auto;
-  }
-  .pclip__play {
-    display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    border-radius: 30%;
-    corner-shape: squircle;
-    background: var(--fg);
-    color: var(--bg);
-    font-size: 20px;
-    transition: transform 0.25s var(--spring), background-color 0.18s ease;
-  }
-  .pclip__play .icon { transform: translateX(1px); }
-  .pclip__poster:hover .pclip__play { transform: scale(1.06); background: var(--accent); }
-  .pclip__time {
-    font-size: var(--size-meta);
     font-weight: 600;
-    font-variant-numeric: tabular-nums;
+    line-height: 1.35;
+    color: var(--fg);
   }
-  .pclip__date { font-weight: 400; color: var(--muted-strong); }
-  .pclip__yt {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25em;
-    margin-left: auto;
+  .pclip__kicker {
     font-size: var(--size-micro);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--muted-strong);
   }
 
-  :global(.pclip__frame) { background: #000; }
+  main.main a.pclip__play,
+  .pclip__play {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 14px 5px 5px;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--fg) 5%, transparent);
+    color: var(--fg);
+    text-decoration: none;
+    transition: background-color 0.18s ease;
+  }
+  .pclip__play:hover { background: color-mix(in srgb, var(--fg) 10%, transparent); }
+  .pclip__play:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+  .pclip__btn {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: 13px;
+    transition: background-color 0.18s ease;
+  }
+  .pclip__btn :global(.icon) { transform: translateX(1px); }
+  .pclip__play:hover .pclip__btn { background: var(--accent); }
+  .pclip__label { font-size: var(--size-meta); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pclip__wave {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
+    height: 20px;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .pclip__wave i {
+    flex-shrink: 0;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--muted);
+    opacity: 0.55;
+    transition: background-color 0.18s ease, opacity 0.18s ease;
+  }
+  .pclip__play:hover .pclip__wave i { background: var(--accent); opacity: 0.8; }
 
   .pclip figcaption {
+    max-width: 26rem;
     margin-top: var(--space-2);
     font-size: var(--size-meta);
     color: var(--muted-strong);
-    text-align: center;
   }
+
+  /* ---- Lightbox ---- */
+  .pclip-box {
+    width: min(960px, calc(100vw - 32px));
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+  .pclip-box::backdrop {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+  }
+  .pclip-box__frame {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+    background: #000;
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+  }
+  .pclip-box__frame :global(iframe) { display: block; width: 100%; height: 100%; border: 0; }
+  .pclip-box__close {
+    position: absolute;
+    top: -46px;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.18s ease;
+  }
+  .pclip-box__close:hover { background: rgba(255, 255, 255, 0.26); }
+  .pclip-box__close:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .pclip-box[open] { animation: pclip-in 0.22s cubic-bezier(0.2, 0, 0, 1); }
+    .pclip-box[open]::backdrop { animation: pclip-fade 0.22s ease; }
+  }
+  @keyframes pclip-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+  @keyframes pclip-fade { from { opacity: 0; } }
 </style>
