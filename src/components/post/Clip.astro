@@ -1,0 +1,174 @@
+---
+/**
+ * A moment from a YouTube video. Shows the poster with a play button and who's
+ * speaking; the player (youtube-nocookie) only loads when it's clicked, and it
+ * starts — and stops — on the moment. Without JS it's a link to that time.
+ *
+ *   <Clip id="KZSzF0KEFRg" start="1:00:33" speaker="Maggie Appleton"
+ *     source="Design Engineering with Maggie Appleton · The Pragmatic Engineer" />
+ */
+import Icon from '../Icon.astro';
+
+interface Props {
+  /** YouTube video id. */
+  id: string;
+  /** "m:ss" or "h:mm:ss". */
+  start: string;
+  end?: string;
+  speaker: string;
+  /** Episode and show, e.g. "Ep. 13 · Restock". */
+  source: string;
+  /** When the video came out, YYYY-MM-DD. */
+  date?: string;
+  /** Optional line under the source. */
+  caption?: string;
+}
+
+const { id, start, end, speaker, source, date, caption } = Astro.props;
+const secs = (t: string) => t.split(':').map(Number).reduce((a, n) => a * 60 + n, 0);
+const s = secs(start);
+const e = end ? secs(end) : undefined;
+const watch = `https://www.youtube.com/watch?v=${id}&t=${s}s`;
+const embed = `https://www.youtube-nocookie.com/embed/${id}?start=${s}${e ? `&end=${e}` : ''}&autoplay=1&rel=0`;
+const range = end ? `${start}–${end}` : `from ${start}`;
+const when = date
+  ? new Date(`${date}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+  : undefined;
+const initials = speaker.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+---
+
+<figure class="pclip">
+  <a class="pclip__poster" href={watch} target="_blank" rel="noopener" data-clip-embed={embed} aria-label={`Play ${speaker}, ${source}, from ${start}`}>
+    <span class="pclip__who">
+      <span class="pclip__avatar" aria-hidden="true">{initials}</span>
+      <span class="pclip__name">{speaker}</span>
+    </span>
+    <span class="pclip__source">{source}</span>
+    <span class="pclip__foot">
+      <span class="pclip__play"><Icon name="play" loop={false} /></span>
+      <span class="pclip__time">{range}{when && <span class="pclip__date"> · <time datetime={date}>{when}</time></span>}</span>
+      <span class="pclip__yt">YouTube <Icon name="arrow-up-right" loop={false} /></span>
+    </span>
+  </a>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const a = (e.target as Element).closest<HTMLAnchorElement>('[data-clip-embed]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    const iframe = document.createElement('iframe');
+    iframe.src = a.dataset.clipEmbed!;
+    iframe.title = a.getAttribute('aria-label') ?? 'Video';
+    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    iframe.className = 'pclip__frame';
+    a.replaceWith(iframe);
+  });
+</script>
+
+<style>
+  .pclip { margin: var(--space-4) 0; }
+
+  /* Our own poster: who, where, when — drawn in the site's type, no
+     third-party thumbnail. The player loads only on click. */
+  .pclip__poster,
+  :global(.pclip__frame) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    corner-shape: squircle;
+  }
+  .pclip__poster {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: clamp(1.25rem, 4cqw, 2rem);
+    background:
+      radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%),
+      var(--bg-elevated);
+    color: var(--fg);
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.18s ease, transform 0.25s var(--easing);
+  }
+  main.main a.pclip__poster { border-bottom: 1px solid var(--border-strong); }
+  .pclip__poster:hover { border-color: color-mix(in srgb, var(--fg) 22%, transparent); }
+  .pclip__poster:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+  .pclip__who { display: flex; align-items: center; gap: 0.6em; }
+  .pclip__avatar {
+    display: grid;
+    place-items: center;
+    width: 2.25em;
+    height: 2.25em;
+    border-radius: 30%;
+    corner-shape: squircle;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: var(--size-meta);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .pclip__name {
+    font-size: clamp(1.4rem, 1rem + 2.4cqw, 2.1rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+  }
+  .pclip__source {
+    max-width: 28em;
+    font-size: var(--size-body);
+    line-height: 1.45;
+    color: var(--fg-soft);
+    text-wrap: pretty;
+  }
+
+  .pclip__foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: auto;
+  }
+  .pclip__play {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 30%;
+    corner-shape: squircle;
+    background: var(--fg);
+    color: var(--bg);
+    font-size: 20px;
+    transition: transform 0.25s var(--spring), background-color 0.18s ease;
+  }
+  .pclip__play .icon { transform: translateX(1px); }
+  .pclip__poster:hover .pclip__play { transform: scale(1.06); background: var(--accent); }
+  .pclip__time {
+    font-size: var(--size-meta);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .pclip__date { font-weight: 400; color: var(--muted-strong); }
+  .pclip__yt {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    margin-left: auto;
+    font-size: var(--size-micro);
+    color: var(--muted-strong);
+  }
+
+  :global(.pclip__frame) { background: #000; }
+
+  .pclip figcaption {
+    margin-top: var(--space-2);
+    font-size: var(--size-meta);
+    color: var(--muted-strong);
+    text-align: center;
+  }
+</style>

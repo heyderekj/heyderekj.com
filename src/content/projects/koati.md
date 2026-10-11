@@ -1,31 +1,34 @@
 ---
 name: Koati
-tagline: Where a request turns into agreed work.
-summary: One inbox for every request from Slack, email, Figma comments, and meeting notes—sort what's worth doing, agree on it in writing, and let whoever asked follow along without an account.
+tagline: The inbox for work to be done.
+summary: Every request your team gets—from Slack, email, and calls—in one place, turned into work you agreed to do. Whoever asked can see where it stands from a link.
 category: App
 role: Designer & builder
 stack: [Laravel, Laravel Cloud]
-image: /assets/images/projects/koati-v2-card.webp
-icon: /assets/images/projects/koati-icon-v2.webp
+image: /assets/images/projects/koati-card.webp
+icon: /assets/images/projects/koati-icon-v3.webp
 tier: 1
 order: 2
 status: active
 media:
-  - src: /assets/images/projects/koati-v2-catch.webp
-    alt: Koati inbox with requests from Slack, email, a meeting, and a Figma comment waiting to be sorted
+  - src: /assets/images/projects/koati-desk-today.webp
+    alt: Koati's Today page showing a request to sort, work waiting for approval, and work waiting on someone else
+    caption: "Today — what needs sorting, what's yours, and what's waiting on someone else."
+  - src: /assets/images/projects/koati-desk-inbox.webp
+    alt: The Koati inbox with a request from a colleague waiting to be sorted
     caption: "Catch — every request, wherever it was asked, lands in one inbox."
-  - src: /assets/images/projects/koati-v2-sort.webp
-    alt: Sorting a Slack message into a card with a title, kind of work, and owner
-    caption: "Sort — you decide what's worth doing before it becomes work."
-  - src: /assets/images/projects/koati-v2-agree.webp
-    alt: The requester's view showing what was asked, what the team agreed to do, and where each request stands
-    caption: "Agree — write down what you'll do. Whoever asked sees it."
-  - src: /assets/images/projects/koati-v2-tools.webp
-    alt: Settings connecting Slack, email, meeting notes, an AI assistant, Figma, and Webflow
-    caption: "Your tools — the work stays in Figma and Webflow; Koati keeps the agreement."
-  - src: /assets/images/projects/koati-v2-ideas.webp
-    alt: A board with a suggested card noticing a recurring request is about due
-    caption: "Ideas — Koati spots the next ask before anyone makes it."
+  - src: /assets/images/projects/koati-desk-chat.webp
+    alt: Koati's Chat list of request threads from across boards
+    caption: "Chat — every thread in one list. A reply goes back the way it came."
+  - src: /assets/images/projects/koati-desk-board-kanban.webp
+    alt: "A project board laid out as modules on the desk: its overview, what it is waiting on, activity, and the kanban"
+    caption: "A board for each project — nothing is work until you say so."
+  - src: /assets/images/projects/koati-desk-card.webp
+    alt: A card with its owner, estimate, due date, progress steps, and discussion
+    caption: "Agree — write down what you'll do, beside what was asked."
+  - src: /assets/images/projects/koati-desk-guest.webp
+    alt: An agency's board as the client sees it, with work that needs their approval
+    caption: "Whoever asked follows along from their own link—and approves when it's ready."
 ---
 
 ## The itch
@@ -36,13 +39,13 @@ Koati is where those requests land with their original wording intact, next to w
 
 ## How it works
 
-1. **Catch.** Requests come in from Slack, email, meeting notes, Figma comments, or a link anyone can submit to. Nothing is work until you say so.
+1. **Catch.** Requests come in from Slack, email, meeting notes, Figma comments, comments on the live site, or a link anyone can submit to. Nothing is work until you say so.
 2. **Sort.** Decide what's worth doing—kind of work, who picks it up, where the files live—before it turns into a ticket.
-3. **Agree.** Write down what you'll do beside what was asked. A thumbs-up isn't a plan.
-4. **Follow along.** Whoever asked gets a link to the board: planned, in progress, ready for review, done. No account, no install.
+3. **Agree.** Write down what you'll do beside what was asked. Whoever asked gets their own link to see where it stands—no account, no install—and updates go back into the thread they asked in.
+4. **Your tools.** The work stays in the tools it's made in. A card links to the Figma file or the Webflow site, and your own assistant can draft the first pass—only a person can approve, finish, or share it.
 5. **Ideas.** Koati notices recurring asks—the sampling kit that comes up every 30 days—and suggests the card before anyone sends the message.
 
-The work itself stays in the tools it's made in. A card links to the Figma file or the Webflow site; an assistant like Claude or ChatGPT can draft the first pass, and a person approves it.
+Every thread lands in one Chat list too, and a reply from there goes back the way it came, so whoever asked never has to move.
 
 ## Who it's for
 
@@ -50,7 +53,7 @@ Marketing teams fielding requests from sales, product, and leadership—and the 
 
 ## Where it stands
 
-Koati is my main focus alongside [Harvous](/projects/harvous/). It's still a work in progress and not public yet. The plan: a free tier (two shared boards and an unlimited personal one) and paid plans priced by shared boards only—everyone on the team and everyone who asks stays free.
+Koati is my main focus alongside [Harvous](/projects/harvous/), and it's coming soon. The plan: Free is one board with every feature and no time limit; Plus is $25 a month (or $250 a year) for unlimited boards. Everyone on the team and everyone who asks stays free.
 
 ## Tools & process
 
@@ -61,10 +64,10 @@ Koati is my main focus alongside [Harvous](/projects/harvous/). It's still a wor
   </details>
   <details class="pacc-item">
     <summary>Integrations</summary>
-    <p>Slack, email, Figma, Webflow, Google Drive, Dropbox, Loom, Linear, Jira, GitHub, and Asana—with Teams, Google Chat, and a browser extension next.</p>
+    <p>Requests from Slack, email, Figma comments, comments on the live site, and meeting notes from Granola, Fireflies, and Superhuman Go. Links that know where they point: Figma, Webflow, Google Drive, Dropbox, and Loom. Linear, Jira, GitHub, and Asana come in by email or through an assistant—with Microsoft Teams, Google Docs comments, and Google Chat next.</p>
   </details>
   <details class="pacc-item">
     <summary>AI, with a human in the loop</summary>
-    <p>Claude, ChatGPT, or Grok can draft the work from a card's brief. The draft comes back for a person to approve.</p>
+    <p>Bring your own: Claude, ChatGPT, Grok, Muse, or Cursor connect over MCP and can draft the work from a card's brief. Koati runs no model of its own, the assistant is named on everything it writes, and only a person can approve, finish, or share the work.</p>
   </details>
 </div>

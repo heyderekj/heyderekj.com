@@ -5,6 +5,7 @@
  */
 import Appendix from './Appendix.astro';
 import Callout from './Callout.astro';
+import Clip from './Clip.astro';
 import Compare from './Compare.astro';
 import Figure from './Figure.astro';
 import Prompt from './Prompt.astro';
@@ -14,6 +15,7 @@ import Snapshots from './Snapshots.astro';
 export const postComponents = {
   Appendix,
   Callout,
+  Clip,
   Compare,
   Figure,
   Prompt,

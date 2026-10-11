@@ -112,7 +112,7 @@ const preloadImages = [
               <span class="arrow">&rarr;</span>
             </a>
           ) : (
-            <span class="project-header-wip">Not public yet</span>
+            <span class="project-header-wip">{project.data.status === 'active' ? 'Coming soon' : 'Not public yet'}</span>
           )}
         </div>
       ) : (

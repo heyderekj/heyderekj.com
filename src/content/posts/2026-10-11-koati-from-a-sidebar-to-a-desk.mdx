@@ -1,0 +1,118 @@
+---
+title: "Koati, from a sidebar to a desk"
+date: 2026-10-11
+type: essay
+status: working
+draft: true
+tags: [design, ai]
+description: "Koati got a new layout this week. What changed between the old sidebar and the new desk, why, and a few people who said it better than I could."
+---
+
+{/* DRAFT — written from Koati's commit history and docs/direction.md (2026-10-08). Read it in your own voice before publishing. Screens are the invented demo team, Thornbury Foods. */}
+
+Koati got a new layout this week. The old one was a sidebar: a dark rail down the left with Today, Inbox, Chat, Work and Plan, then every board stacked under them. The new one is a desk. Inbox, Chat and Work sit across the top, the boards you're on are pills under them, and whatever you open is laid out as modules on the desk.
+
+Same app, same demo team, same afternoon. Here's what moved, and why.
+
+## Before and after
+
+<Compare
+  mode="stepper"
+  before={{ src: '/images/posts/koati-sidebar-to-desk/sidebar-today.webp', alt: "Koati's old layout: a dark sidebar of pages and boards beside the Today page", label: 'Sidebar' }}
+  after={{ src: '/images/posts/koati-sidebar-to-desk/desk-today.webp', alt: "Koati's new layout: Inbox, Chat and Work across the top, board pills under them, and the day as modules on a desk", label: 'Desk' }}
+  caption="Today, then the Inbox it became"
+/>
+
+## Today and the inbox were the same list
+
+The old Today had a section called To sort. The inbox had one called Needs sorting. They were the same requests drawn twice. So Today retired, and Inbox became everything waiting on your next step: what to sort, what came back from your assistant, what's yours by due date, then what's waiting on somebody else.
+
+<Compare
+  mode="stepper"
+  before={{ src: '/images/posts/koati-sidebar-to-desk/sidebar-inbox.webp', alt: 'The old inbox page in the sidebar layout', label: 'Sidebar' }}
+  after={{ src: '/images/posts/koati-sidebar-to-desk/desk-inbox.webp', alt: 'The new inbox on the desk', label: 'Desk' }}
+  caption="Inbox"
+/>
+
+## Three modes, not a long list of pages
+
+The sidebar asked you to pick a page first and a board second. The desk flips that. Inbox, Chat and Work are the only three places you go, and the board pills filter all three at once. Plan and Activity moved inside Work. Pinned and busy boards get a pill; everything else is a keystroke away in the one bar at the bottom.
+
+<Compare
+  mode="stepper"
+  before={{ src: '/images/posts/koati-sidebar-to-desk/sidebar-chat.webp', alt: 'Chat in the sidebar layout', label: 'Sidebar' }}
+  after={{ src: '/images/posts/koati-sidebar-to-desk/desk-chat.webp', alt: 'Chat on the desk, laid out by board', label: 'Desk' }}
+  caption="Chat, now laid out by board or all together"
+/>
+
+## One next step, pulling
+
+The rule I kept coming back to: one primary action per surface, and focus lands on the next decision. Nobody should have to arrange a layout. The desk remembers your widths, each board's last view, your pins and the shortcuts you use, and there's no setting for any of it.
+
+A board and a card are laid out as their parts, side by side, instead of one long page.
+
+<Compare
+  mode="stepper"
+  before={{ src: '/images/posts/koati-sidebar-to-desk/sidebar-card.webp', alt: 'A card in the sidebar layout', label: 'Sidebar' }}
+  after={{ src: '/images/posts/koati-sidebar-to-desk/desk-card.webp', alt: 'The same card laid out as modules on the desk', label: 'Desk' }}
+  caption="A card: what was asked, the work, the discussion, who's on it"
+/>
+
+{/* TODO: a line or two on the new icon (four woven tiles making a K) and the line "The inbox for work to be done." */}
+
+## Packaging
+
+Corey from No-Code Supply Co. gave Koati's website a shoutout on Restock, while talking about packaging: how the way something is presented is part of the product.
+
+<Clip
+  id="u4DgD7C4F7A"
+  date="2026-10-07"
+  start="24:07"
+  end="27:38"
+  speaker="Corey Moen"
+  source="Ep. 13 · Packaging Matters · Restock, No-Code Supply Co."
+/>
+
+{/* TODO: your take, in a sentence or two. Check Corey's last name. */}
+
+## Not just me
+
+Before I'd shown anybody Koati, Maggie Appleton described a tool like it, and why it needs to exist. She wasn't talking about Koati. It was still nice to hear someone I look up to say it.
+
+<Clip
+  id="KZSzF0KEFRg"
+  date="2026-09-23"
+  start="1:00:33"
+  speaker="Maggie Appleton"
+  source="Design Engineering with Maggie Appleton · The Pragmatic Engineer"
+/>
+
+## A person makes the call
+
+In Koati, your assistant can read a card, draft the work and hand it back. It can't approve it, finish it or share it. Only a person can. Tobi Lütke put the reason better than I can.
+
+<Clip
+  id="G9P9D9hptq8"
+  date="2026-09-15"
+  start="14:12"
+  speaker="Tobi Lütke"
+  source="The Skills AI Makes More Valuable · The Knowledge Project"
+/>
+
+{/* TODO: one line connecting Tobi's point to "nothing becomes work until a person says so." */}
+
+## Bring your own assistant
+
+Koati runs no model of its own. Claude, ChatGPT, Grok, Muse or Cursor connect over MCP and do the legwork from the brief on a card. Aaron Francis talks about why that beats every app building its own assistant.
+
+<Clip
+  id="y1juZ6nSkc4"
+  date="2026-09-29"
+  start="51:22"
+  speaker="Aaron Francis"
+  source="151: Tokenmogged · Mostly Technical"
+/>
+
+{/* TODO: confirm the start time. Your link says 51:22 (t=3082s); your note said 57:3. */}
+
+Koati is still coming soon. If you run a marketing team, or you're the agency one hires, I'd love to show you the desk.
