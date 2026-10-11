@@ -1,4 +1,5 @@
 ---
+import Icon from '../components/Icon.astro';
 import { imgAttrs, imgFixed, imgSrc } from '../lib/img';
 /*
   `/rythm/` — Web Designer application page.
@@ -126,7 +127,7 @@ const tocItems = [
   <ApplicationToc items={tocItems} />
 
   <p class="cio-intro">
-    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" {...imgFixed(rythmIntro.photoSrc, 18)} alt={rythmIntro.photoAlt} width={18} height={18} decoding="async" /><span class="cio-chip__label">Derek</span></span>, a designer in Des Moines, IA. I've made brands and websites full-time since 2018, and lately that's meant owning healthtech marketing sites and design systems end to end. I'm applying for <strong>Web Designer</strong> at <span class="cio-chip cio-chip--brand"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i><span class="cio-chip__label">Rythm</span></span>
+    Hey, I'm <span class="cio-chip"><img class="cio-chip__avatar" {...imgFixed(rythmIntro.photoSrc, 18)} alt={rythmIntro.photoAlt} width={18} height={18} decoding="async" /><span class="cio-chip__label">Derek</span></span>, a designer in Des Moines, IA. I've made brands and websites full-time since 2018, and lately that's meant owning healthtech marketing sites and design systems end to end. I'm applying for <strong>Web Designer</strong> at <span class="cio-chip cio-chip--brand"><Icon name="heartbeat" /><span class="cio-chip__label">Rythm</span></span>
   </p>
 
   <div class="cio-visual-strip">
@@ -277,19 +278,19 @@ const tocItems = [
 
   <nav id="connect" class="cio-footer intro-links" aria-label="More on this site">
     <a href="mailto:derekj@hey.com" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       derekj@hey.com
     </a>
     <a href="/work/" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       Work
     </a>
     <a href="/projects/" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       Projects
     </a>
     <a href="/posts/" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       Posts
     </a>
   </nav>

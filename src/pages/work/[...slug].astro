@@ -1,8 +1,8 @@
 ---
+import Icon from '../../components/Icon.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import MediaStepper from '../../components/MediaStepper.astro';
-import Scribble from '../../components/Scribble.astro';
 import { schemaPersonId } from '../../lib/schemaIds';
 import { mdStringToHtml } from '../../lib/mdString';
 import { imgAttrs, imgSrc, imgVariant } from '../../lib/img';
@@ -68,16 +68,6 @@ const hasProjectLinks = Boolean(
 
 const hasDeviceRow = Boolean(d.desktop || d.mobile);
 /** Hero + gallery, deduped — thumbs swap the main stage; only the stage zooms. */
-/** Blocks a case study's margin note can point at (frontmatter `note.block`). */
-const NOTE_BLOCKS: Record<string, string> = {
-  video: '.work-casestudy .pvideo',
-  gallery: '.work-casestudy .work-stage',
-  devices: '.work-casestudy .work-devices',
-  brief: '[aria-labelledby="work-brief"]',
-  problem: '[aria-labelledby="work-problem"]',
-  solution: '[aria-labelledby="work-solution"]',
-  specific: '[aria-labelledby="work-specific"]',
-};
 
 const stageImages = [...new Set([d.thumbnail, ...(d.gallery ?? [])].filter(Boolean))] as string[];
 const hasStage = stageImages.length > 0;
@@ -137,22 +127,12 @@ const preloadImages = hasVideo
   preloadImages={preloadImages}
 >
   <article class="prose work-casestudy">
-    {d.note && NOTE_BLOCKS[d.note.block] && (
-      <Scribble
-        class="work-note"
-        text={d.note.text}
-        arrow="left"
-        tilt={d.note.tilt ?? 3}
-        target={NOTE_BLOCKS[d.note.block]}
-        at={[1, 0.12]}
-      />
-    )}
     <header class="post-header work-post-header">
       <div class="work-title-block">
         <h1>{d.title}</h1>
         {d.highlight && (
           <span class="work-favorite" title="A personal favorite">
-            <i class="ph-fill ph-star" aria-hidden="true" />
+            <Icon name="star-solid" />
           </span>
         )}
       </div>
@@ -404,7 +384,7 @@ const preloadImages = hasVideo
             <li>
               <a class="work-link-pill" href={d.waybackUrl} rel="noopener noreferrer" target="_blank">
                 <span>Wayback Machine</span>
-                <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
+                <Icon name="arrow-up-right" class="work-link-pill__icon" />
               </a>
             </li>
           )}
@@ -412,7 +392,7 @@ const preloadImages = hasVideo
             <li>
               <a class="work-link-pill" href={d.proposalLink} rel="noopener noreferrer" target="_blank">
                 <span>{proposalLabel}</span>
-                <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
+                <Icon name="arrow-up-right" class="work-link-pill__icon" />
               </a>
             </li>
           )}
@@ -420,7 +400,7 @@ const preloadImages = hasVideo
             <li>
               <a class="work-link-pill" href={d.liveLink} rel="noopener noreferrer" target="_blank">
                 <span>Live site</span>
-                <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
+                <Icon name="arrow-up-right" class="work-link-pill__icon" />
               </a>
             </li>
           )}
@@ -433,7 +413,7 @@ const preloadImages = hasVideo
                 target="_blank"
               >
                 <span>Partner case study</span>
-                <i class="ph-bold ph-arrow-up-right work-link-pill__icon" aria-hidden="true" />
+                <Icon name="arrow-up-right" class="work-link-pill__icon" />
               </a>
             </li>
           )}
@@ -477,16 +457,5 @@ const preloadImages = hasVideo
     initWorkStages();
     document.addEventListener('astro:page-load', initWorkStages);
   </script>
-
-  <script>
-    import '../../client/scribbles';
-  </script>
 </Base>
 
-<style>
-  /* The note lives in the gutter beside the case study; without one, no note. */
-  .work-casestudy :global(.work-note) { display: none; }
-  @media (min-width: 960px) {
-    .work-casestudy :global(.work-note) { display: inline-flex; }
-  }
-</style>

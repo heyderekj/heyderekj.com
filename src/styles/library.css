@@ -173,7 +173,7 @@ a.lib-card:hover .lib-card__icon { color: var(--accent); }
   background-size: 12px 12px;
   background-position: -1px -1px;
 }
-.lib-card__blank i { font-size: 32px; color: var(--accent); }
+.lib-card__blank .icon { font-size: 32px; color: var(--accent); }
 
 .lib-card__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .lib-card__host {

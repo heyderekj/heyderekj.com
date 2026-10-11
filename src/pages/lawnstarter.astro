@@ -1,4 +1,5 @@
 ---
+import Icon from '../components/Icon.astro';
 import Base from '../layouts/Base.astro';
 import PageTitle from '../components/PageTitle.astro';
 import BragClippingFeed from '../components/BragClippingFeed.astro';
@@ -46,15 +47,15 @@ const letter = lawnstarterLetter;
 
   <nav class="lawnstarter-footer intro-links" aria-label="More on this site">
     <a href="/work/" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       Work
     </a>
     <a href="/projects/" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       Projects
     </a>
     <a href="/posts/" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       Posts
     </a>
   </nav>

@@ -1,3 +1,4 @@
+import type { IconName } from './icons';
 /**
  * Library helpers — kinds, ordering, codes, and links for `/library/`.
  */
@@ -13,7 +14,7 @@ export interface KindMeta {
   path: string;
   /** Mono prefix for item codes (BK-003). */
   code: string;
-  icon: string;
+  icon: IconName;
   intro: string;
 }
 
@@ -24,7 +25,7 @@ export const KIND_META: Record<LibraryKind, KindMeta> = {
     many: 'Interests',
     path: 'interests',
     code: 'IN',
-    icon: 'ph-sparkle',
+    icon: 'spark',
     intro: 'Things I’m into outside of work.',
   },
   book: {
@@ -32,7 +33,7 @@ export const KIND_META: Record<LibraryKind, KindMeta> = {
     many: 'Books',
     path: 'books',
     code: 'BK',
-    icon: 'ph-book-open',
+    icon: 'book',
     intro: 'Books I’ve read, am reading, or want to.',
   },
   podcast: {
@@ -40,7 +41,7 @@ export const KIND_META: Record<LibraryKind, KindMeta> = {
     many: 'Podcasts',
     path: 'podcasts',
     code: 'PC',
-    icon: 'ph-microphone',
+    icon: 'microphone',
     intro: 'Shows in my ears.',
   },
   bookmark: {
@@ -48,7 +49,7 @@ export const KIND_META: Record<LibraryKind, KindMeta> = {
     many: 'Bookmarks',
     path: 'bookmarks',
     code: 'BM',
-    icon: 'ph-bookmark-simple',
+    icon: 'bookmark',
     intro: 'Pages worth keeping.',
   },
   post: {
@@ -56,7 +57,7 @@ export const KIND_META: Record<LibraryKind, KindMeta> = {
     many: 'Saved posts',
     path: 'posts',
     code: 'XP',
-    icon: 'ph-x-logo',
+    icon: 'x',
     intro: 'Posts on X I keep coming back to.',
   },
   tool: {
@@ -64,7 +65,7 @@ export const KIND_META: Record<LibraryKind, KindMeta> = {
     many: 'Tools',
     path: 'tools',
     code: 'TL',
-    icon: 'ph-wrench',
+    icon: 'wrench',
     intro: 'What I use to design, build, write, and ship.',
   },
 };
@@ -72,18 +73,18 @@ export const KIND_META: Record<LibraryKind, KindMeta> = {
 export const KINDS = Object.keys(KIND_META) as LibraryKind[];
 
 /** Interest icons by group, falling back to the kind icon. */
-const GROUP_ICONS: Record<string, string> = {
-  legos: 'ph-cube',
-  lego: 'ph-cube',
-  tesla: 'ph-lightning',
-  f1: 'ph-flag-checkered',
-  'formula 1': 'ph-flag-checkered',
-  drums: 'ph-music-notes',
-  streaming: 'ph-game-controller',
-  sitcoms: 'ph-television',
+const GROUP_ICONS: Record<string, IconName> = {
+  legos: 'lego',
+  lego: 'lego',
+  tesla: 'bolt',
+  f1: 'flag',
+  'formula 1': 'flag',
+  drums: 'drum',
+  streaming: 'controller',
+  sitcoms: 'tv',
 };
 
-export function itemIcon(item: LibraryItem): string {
+export function itemIcon(item: LibraryItem): IconName {
   const g = item.data.group?.toLowerCase();
   return (g && GROUP_ICONS[g]) || KIND_META[item.data.kind].icon;
 }

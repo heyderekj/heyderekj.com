@@ -1,4 +1,5 @@
 ---
+import Icon from '../components/Icon.astro';
 import { imgAttrs, imgFixed } from '../lib/img';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
@@ -77,7 +78,7 @@ const fmtPostDate = (iso: string) =>
       <div class="brag-hero__copy">
         <h2 class="brag-hero__headline">{bragHero.headline}</h2>
         <p class="brag-hero__role">
-          <i class="ph-bold ph-map-pin" aria-hidden="true"></i>
+          <Icon name="iowa" />
           {bragHero.location}
         </p>
         <p class="brag-hero__bio">{bragHero.bio}</p>
@@ -207,13 +208,13 @@ const fmtPostDate = (iso: string) =>
                                     class="brag-stat-cycle"
                                     aria-label="Next project stat"
                                   >
-                                    <i class="ph-bold ph-arrows-clockwise" aria-hidden="true" />
+                                    <Icon name="refresh" />
                                   </button>
                                 )}
                               </div>
                               {preview.linkLabel && preview.href && (
                                 <a class="about-exp-pill about-exp-pill--link brag-stats-more" href={preview.href}>
-                                  <i class="ph-bold ph-arrow-right" aria-hidden="true" />
+                                  <Icon name="arrow-right" />
                                   {preview.linkLabel}
                                 </a>
                               )}
@@ -234,7 +235,7 @@ const fmtPostDate = (iso: string) =>
                             preview.linkLabel &&
                             preview.href && (
                               <a class="about-exp-pill about-exp-pill--link brag-stats-more" href={preview.href}>
-                                <i class="ph-bold ph-arrow-right" aria-hidden="true" />
+                                <Icon name="arrow-right" />
                                 {preview.linkLabel}
                               </a>
                             )}
@@ -252,7 +253,7 @@ const fmtPostDate = (iso: string) =>
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <i class="ph-bold ph-arrow-right" aria-hidden="true" />
+                          <Icon name="arrow-right" />
                           {preview.linkLabel}
                         </a>
                       </div>
@@ -274,7 +275,7 @@ const fmtPostDate = (iso: string) =>
                               )}
                               {preview.linkLabel && (
                                 <span class="about-exp-pill">
-                                  <i class="ph-bold ph-arrow-right" aria-hidden="true" />
+                                  <Icon name="arrow-right" />
                                   {preview.linkLabel}
                                 </span>
                               )}
@@ -298,13 +299,13 @@ const fmtPostDate = (iso: string) =>
                       />
                       {preview.variant === 'video' && (
                         <span class="brag-preview-play" aria-hidden="true">
-                          <i class="ph-fill ph-play" />
+                          <Icon name="play" />
                         </span>
                       )}
                     </div>
                   ) : (
                     <div class="brag-preview-media brag-preview-media--icon" aria-hidden="true">
-                      <i class={`ph-bold ph-${preview.icon}`} />
+                      <Icon name={preview.icon} />
                     </div>
                   );
                   const caption = preview.caption ? (
@@ -397,9 +398,9 @@ const fmtPostDate = (iso: string) =>
                       rel="noopener noreferrer"
                     >
                       {item.link.icon === 'newspaper' ? (
-                        <i class="ph-bold ph-newspaper" aria-hidden="true" />
+                        <Icon name="newspaper" />
                       ) : (
-                        <i class="ph-bold ph-arrow-right" aria-hidden="true" />
+                        <Icon name="arrow-right" />
                       )}
                       {item.link.label}
                     </a>
@@ -421,7 +422,7 @@ const fmtPostDate = (iso: string) =>
             ? {}
             : { target: '_blank', rel: 'noopener noreferrer' })}
         >
-          <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+          <Icon name="arrow-right" />
           {link.label}
         </a>
       ))}
@@ -429,7 +430,7 @@ const fmtPostDate = (iso: string) =>
 
     <dialog class="video-modal" data-video-modal aria-label="Video player">
       <button type="button" class="video-modal__close" data-video-modal-close aria-label="Close video">
-        <i class="ph-bold ph-x" aria-hidden="true"></i>
+        <Icon name="close" />
       </button>
       <div class="video-modal__frame">
         <iframe
@@ -814,7 +815,7 @@ function initBragEpigraphNote() {
     color: var(--muted-strong);
   }
 
-  .brag-hero__role i {
+  .brag-hero__role :global(.icon) {
     font-size: 1.15em;
     color: var(--muted);
     line-height: 1;
@@ -1071,7 +1072,7 @@ function initBragEpigraphNote() {
       background 0.15s ease;
   }
 
-  .brag-stat-cycle i {
+  .brag-stat-cycle :global(.icon) {
     font-size: 13px;
     transition: transform 0.25s ease;
   }
@@ -1083,8 +1084,8 @@ function initBragEpigraphNote() {
     background: var(--accent-soft);
   }
 
-  .brag-stat-cycle:hover i,
-  .brag-stats-panel--aggregate:hover .brag-stat-cycle i {
+  .brag-stat-cycle:hover :global(.icon),
+  .brag-stats-panel--aggregate:hover .brag-stat-cycle :global(.icon) {
     transform: rotate(60deg);
   }
 
@@ -1165,7 +1166,7 @@ function initBragEpigraphNote() {
     justify-content: center;
   }
 
-  .brag-preview-media--icon i {
+  .brag-preview-media--icon :global(.icon) {
     font-size: 2.5rem;
     color: var(--fg);
     opacity: 0.9;
@@ -1200,7 +1201,7 @@ function initBragEpigraphNote() {
     transition: transform 0.2s var(--easing), background-color 0.2s ease;
   }
 
-  .brag-preview-play i {
+  .brag-preview-play :global(.icon) {
     font-size: 1.1rem;
     color: var(--accent);
     margin-left: 2px;
@@ -1305,7 +1306,7 @@ function initBragEpigraphNote() {
       transition: none;
     }
 
-    .brag-stat-cycle i {
+    .brag-stat-cycle :global(.icon) {
       transition: none;
       transform: none;
     }
@@ -1368,7 +1369,7 @@ function initBragEpigraphNote() {
     background: rgba(0, 0, 0, 0.7);
   }
 
-  .video-modal__close i {
+  .video-modal__close :global(.icon) {
     font-size: 1.1rem;
   }
 </style>

@@ -1,4 +1,5 @@
 ---
+import Icon from '../components/Icon.astro';
 import { imgAttrs, imgFixed } from '../lib/img';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
@@ -36,7 +37,7 @@ const tocItems = [
   <ApplicationToc items={tocItems} />
 
   <p class="cadence-intro">
-    Hey, I'm <span class="cadence-chip"><img class="cadence-chip__avatar" {...imgFixed(cadenceIntro.photoSrc, 20)} alt={cadenceIntro.photoAlt} width={20} height={20} decoding="async" />Derek</span>, a full-time designer in Des Moines, Iowa since 2018. Primarily working with startups and non-profits, lately focused on <span class="cadence-chip cadence-chip--health"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i>healthcare</span>. I'm applying for <strong>Brand Designer</strong>, so here's my work and why I want in.
+    Hey, I'm <span class="cadence-chip"><img class="cadence-chip__avatar" {...imgFixed(cadenceIntro.photoSrc, 20)} alt={cadenceIntro.photoAlt} width={20} height={20} decoding="async" />Derek</span>, a full-time designer in Des Moines, Iowa since 2018. Primarily working with startups and non-profits, lately focused on <span class="cadence-chip cadence-chip--health"><Icon name="heartbeat" />healthcare</span>. I'm applying for <strong>Brand Designer</strong>, so here's my work and why I want in.
   </p>
 
   <section id="letter" class="cadence-letter" aria-label="Cover letter">
@@ -71,7 +72,7 @@ const tocItems = [
       <p class="cadence-why__paragraph" set:html={p} />
     ))}
     <p class="cadence-why__paragraph">
-      I also ship my own products. <a href="/projects/harvous/" class="cadence-chip cadence-chip--harvous"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> is a Bible notes app I designed and built with Claude. <a href="/projects/dinky/" class="cadence-chip cadence-chip--dinky"><i class="ph-bold ph-file-arrow-down" aria-hidden="true"></i>Dinky</a> is a macOS compression app. <a href="/projects/heres-my-church/" class="cadence-chip cadence-chip--church"><i class="ph-bold ph-church" aria-hidden="true"></i>Here's My Church</a> maps every Christian church in the US—designed in Figma, built in 48 hours with AI. I'm not waiting for an engineering team. I design it, then I ship it.
+      I also ship my own products. <a href="/projects/harvous/" class="cadence-chip cadence-chip--harvous"><Icon name="book-open" />Harvous</a> is a Bible notes app I designed and built with Claude. <a href="/projects/dinky/" class="cadence-chip cadence-chip--dinky"><Icon name="file-down" />Dinky</a> is a macOS compression app. <a href="/projects/heres-my-church/" class="cadence-chip cadence-chip--church"><Icon name="church" />Here's My Church</a> maps every Christian church in the US—designed in Figma, built in 48 hours with AI. I'm not waiting for an engineering team. I design it, then I ship it.
     </p>
     <p class="cadence-why__paragraph">
       That same energy is what I'd bring to Cadence.
@@ -84,19 +85,19 @@ const tocItems = [
 
   <nav id="connect" class="cadence-footer intro-links" aria-label="More on this site">
     <a href="mailto:derekj@hey.com" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       derekj@hey.com
     </a>
     <a href="/work/" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       Work
     </a>
     <a href="/projects/" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       Projects
     </a>
     <a href="/posts/" class="intro-pill">
-      <i class="ph-bold ph-arrow-right" aria-hidden="true"></i>
+      <Icon name="arrow-right" />
       Posts
     </a>
   </nav>
@@ -134,7 +135,7 @@ const tocItems = [
     background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
   }
 
-  [id="why-cadence"] .cadence-chip--cc i { font-size: 0.85em; }
+  [id="why-cadence"] .cadence-chip--cc .icon { font-size: 0.85em; }
 
   [id="why-cadence"] .cadence-chip--claimable {
     --chip-color: #9f62bf;
@@ -143,7 +144,7 @@ const tocItems = [
     background: color-mix(in srgb, var(--chip-color) 6%, var(--bg-elevated));
   }
 
-  [id="why-cadence"] .cadence-chip--claimable i { font-size: 0.85em; }
+  [id="why-cadence"] .cadence-chip--claimable .icon { font-size: 0.85em; }
 </style>
 
 <style>
@@ -190,7 +191,7 @@ const tocItems = [
     background: color-mix(in srgb, var(--cadence-blue) 6%, var(--bg-elevated));
   }
 
-  .cadence-chip--health i {
+  .cadence-chip--health :global(.icon) {
     font-size: 0.85em;
   }
 
@@ -209,9 +210,9 @@ const tocItems = [
     padding: 2px 10px 2px 8px;
   }
 
-  .cadence-chip--harvous i,
-  .cadence-chip--dinky i,
-  .cadence-chip--church i { font-size: 0.85em; }
+  .cadence-chip--harvous :global(.icon),
+  .cadence-chip--dinky :global(.icon),
+  .cadence-chip--church :global(.icon) { font-size: 0.85em; }
 
 
   .cadence-letter {

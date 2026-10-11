@@ -1,3 +1,4 @@
+import { iconSvg } from '../lib/icons';
 /** Content for `/cadence/` — curated for Cadence Brand Designer application. */
 
 export const cadenceMeta = {
@@ -27,8 +28,8 @@ export const cadenceLetter = {
 };
 
 export const cadenceWhyParagraphs: string[] = [
-  `The founder of Sweetgreen once talked about how the constraints of their first physical space pushed the team to rethink everything for the better. Justin Berg was there for it—grew the design team, led the rebrand ahead of IPO, designed the store of the future. His philosophy of “deadlines are our friends” and “impact over perfection” is how I already operate. Shipping <a href="/work/care-continuity/" class="cadence-chip cadence-chip--cc"><i class="ph-bold ph-heartbeat" aria-hidden="true"></i>Care Continuity</a> in four weeks wasn’t rushed. It was focused.`,
+  `The founder of Sweetgreen once talked about how the constraints of their first physical space pushed the team to rethink everything for the better. Justin Berg was there for it—grew the design team, led the rebrand ahead of IPO, designed the store of the future. His philosophy of “deadlines are our friends” and “impact over perfection” is how I already operate. Shipping <a href="/work/care-continuity/" class="cadence-chip cadence-chip--cc">${iconSvg('heartbeat')}Care Continuity</a> in four weeks wasn’t rushed. It was focused.`,
   `Before agency work I spent years in Apple Retail—and that still shapes how I show up. Empathy wasn’t a buzzword; it was how you helped someone understand something complicated. I learned to read rooms, act before being asked, and own the outcome.`,
-  `At <a href="/work/claimable/" class="cadence-chip cadence-chip--claimable"><i class="ph-bold ph-shield-check" aria-hidden="true"></i>Claimable</a> I didn’t just build a site—I built a system. Mast components, CMS collections, reusable templates. Then I trained their marketing team on it—and they demoed it to engineering themselves. Assembled a new medication page in minutes. Everyone was impressed. That’s what “Drivers, not passengers” looks like to me. You own solutions end to end and never assume the work is done.`,
+  `At <a href="/work/claimable/" class="cadence-chip cadence-chip--claimable">${iconSvg('shield-check')}Claimable</a> I didn’t just build a site—I built a system. Mast components, CMS collections, reusable templates. Then I trained their marketing team on it—and they demoed it to engineering themselves. Assembled a new medication page in minutes. Everyone was impressed. That’s what “Drivers, not passengers” looks like to me. You own solutions end to end and never assume the work is done.`,
   `Cadence’s mission isn’t vague. “By the end of the decade” is a real timeline attached to real lives. I can see my work helping people—not just clients, not just stakeholders—actual patients managing chronic disease. That’s the kind of thing worth driving toward.`,
 ];

@@ -1,0 +1,19 @@
+---
+/** One of Derek's icons, inline. Sizes with the text (1em) unless `size` is set. */
+import { iconSvg, type IconName } from '../lib/icons';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  stroke?: number;
+  title?: string;
+  /** Morph loop: `hover` (default) while its link/button/parent is hovered or
+   *  focused, `always` while on screen, `false` never. */
+  loop?: 'always' | 'hover' | false;
+  class?: string;
+}
+
+const { name, size, stroke, title, loop, class: className } = Astro.props;
+---
+
+<Fragment set:html={iconSvg(name, { size, stroke, title, loop, class: className })} />

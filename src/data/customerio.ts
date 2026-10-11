@@ -1,3 +1,4 @@
+import { iconSvg } from '../lib/icons';
 /** Content for `/customerio/` — curated for Customer.io Senior Product Designer application. */
 
 export const customerioMeta = {
@@ -82,7 +83,7 @@ export const customerioProofBlocks: {
 }[] = [
   {
     html: [
-      `<a href="/projects/harvous/" class="cio-chip cio-chip--harvous"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> is two years of product work—multiple iterations, a massive messy Figma file, then a complete redesign driven by real feedback that included a refactor and a database migration.`,
+      `<a href="/projects/harvous/" class="cio-chip cio-chip--harvous">${iconSvg('book-open')}Harvous</a> is two years of product work—multiple iterations, a massive messy Figma file, then a complete redesign driven by real feedback that included a refactor and a database migration.`,
       `The first version went head-on at my problem of notes not getting organized, but it made organizing the primary act and making a note secondary. The redesign flipped that: capture first, structure after (or honestly no organizing needed as everything is now auto/“smart”). So the thing people actually came to do wasn’t buried under the system meant to help them.`,
       `This app matters a lot to me as I made it to help me first. I needed a notes app to better remember my study. But with over 200 users I have a responsibility which is why I also created a custom internal customer support ticketing system.`,
     ],
@@ -112,7 +113,7 @@ export const customerioProofBlocks: {
   },
   {
     html: [
-      `<a href="/projects/dinky/" class="cio-chip cio-chip--dinky"><i class="ph-bold ph-file-arrow-down" aria-hidden="true"></i>Dinky</a> started as a local image-compression Mac app because the tool I normally used kept crashing. Then people wanted it too. I cared about clear tradeoffs—honest format choices, preview, batch controls—so people knew what they were getting, not magic.`,
+      `<a href="/projects/dinky/" class="cio-chip cio-chip--dinky">${iconSvg('file-down')}Dinky</a> started as a local image-compression Mac app because the tool I normally used kept crashing. Then people wanted it too. I cared about clear tradeoffs—honest format choices, preview, batch controls—so people knew what they were getting, not magic.`,
       `The goal was to make it user-friendly for both casual and pro users and it felt like many either were one or the other. So, I tuned it, took PRs, replied to users on <a href="https://github.com/heyderekj/dinky">GitHub</a>, and it grew past 400 stars—from an image compressor into a full file compression app.`,
     ],
     href: '/projects/dinky/',
@@ -141,7 +142,7 @@ export const customerioProofBlocks: {
   },
   {
     html: [
-      `<a href="/projects/heres-my-church/" class="cio-chip cio-chip--hmc"><i class="ph-bold ph-map-trifold" aria-hidden="true"></i>Here's My Church</a> began while I was playing with Figma Make and wanted to prototype a map with a dataset. First it was world conflicts. Then I thought about how church directories are outdated and poorly maintained—which is disappointing for the church community.`,
+      `<a href="/projects/heres-my-church/" class="cio-chip cio-chip--hmc">${iconSvg('map')}Here's My Church</a> began while I was playing with Figma Make and wanted to prototype a map with a dataset. First it was world conflicts. Then I thought about how church directories are outdated and poorly maintained—which is disappointing for the church community.`,
       `Through multiple datasets and any data I could pull together, a church directory was born. To keep improving it with as little friction as possible, updates are anonymous and reviewed—no account required. Oh, and I was proud of how I used existing data to improve estimated attendance numbers.`,
     ],
     href: '/projects/heres-my-church/',
@@ -160,7 +161,7 @@ export const customerioProofBlocks: {
   },
   {
     html: [
-      `My latest side project is <a href="/projects/revisemy/" class="cio-chip cio-chip--revisemy"><i class="ph-bold ph-selection-plus" aria-hidden="true"></i>ReviseMy</a>. I’d had the idea since 2024 for a self-serve feedback loop tool—it sat as an unused domain until a weekend challenge building on Laravel Cloud for the first time.`,
+      `My latest side project is <a href="/projects/revisemy/" class="cio-chip cio-chip--revisemy">${iconSvg('selection-plus')}ReviseMy</a>. I’d had the idea since 2024 for a self-serve feedback loop tool—it sat as an unused domain until a weekend challenge building on Laravel Cloud for the first time.`,
       `It was reborn as an MCP that captures visuals and lets people leave honest marks through a shareable link, all from inside an AI agent chat session—so the agent gets a real point of view, not guesses. I wanted to take what I learned from Here's My Church with no account required to make this AI-forward-thinking feedback tool thinking through the owner vs user and guest.`,
     ],
     href: '/projects/revisemy/',

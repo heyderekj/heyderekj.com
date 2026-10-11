@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 interface Props {
   skills: string[];
   /** Visually hidden heading for screen readers */
@@ -12,7 +13,7 @@ const { skills, label = 'Skills' } = Astro.props;
   <ul class="brag-skills__list" role="list">
     {skills.map((skill) => (
       <li class="brag-skills__item">
-        <i class="ph-bold ph-check" aria-hidden="true"></i>
+        <Icon name="check" />
         <span>{skill}</span>
       </li>
     ))}
@@ -44,7 +45,7 @@ const { skills, label = 'Skills' } = Astro.props;
     color: var(--fg-soft);
   }
 
-  .brag-skills__item i {
+  .brag-skills__item :global(.icon) {
     flex-shrink: 0;
     margin-top: 0.15em;
     font-size: 0.95em;

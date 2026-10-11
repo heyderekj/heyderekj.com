@@ -1,0 +1,158 @@
+---
+/**
+ * Dev-only workbench (never built — getStaticPaths returns nothing outside
+ * `astro dev`): /dev/icons is the icon review sheet.
+ */
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { GLYPHS, type Shape } from '../../lib/icons/glyphs';
+import { ICON_NAMES, type IconName } from '../../lib/icons';
+
+export function getStaticPaths() {
+  if (!import.meta.env.DEV) return [];
+  return [{ params: { tool: 'icons' } }];
+}
+
+const { tool } = Astro.params;
+
+/* Lint: points outside the 1–15 live area. Arcs and generated curves are
+   skipped; this is a rough check, not a parser. */
+function lint(name: IconName): string[] {
+  const shapes = (GLYPHS as Record<string, readonly Shape[]>)[name];
+  if (!shapes) return [];
+  const out: string[] = [];
+  for (const s of shapes) {
+    if (!('d' in s) || /[aA]/.test(s.d)) continue;
+    const nums = (s.d.match(/-?\d*\.?\d+/g) ?? []).map(Number);
+    if (nums.some((n) => n < 1 || n > 15)) out.push('outside 1–15');
+  }
+  return [...new Set(out)];
+}
+
+const groups: { title: string; names: IconName[] }[] = [
+  { title: 'Arrows & controls', names: ['arrow-right', 'arrow-left', 'arrow-up', 'arrow-down', 'arrow-up-right', 'chevron-right', 'chevron-left', 'chevron-down', 'chevron-up', 'close', 'check', 'plus', 'refresh', 'history', 'play', 'copy', 'eye', 'search', 'spark', 'star', 'star-solid', 'link'] },
+  { title: 'Sections', names: ['writing', 'work', 'projects', 'about', 'topics', 'now', 'palette', 'archive', 'building', 'clipboard', 'message', 'note', 'users'] },
+  { title: 'Contact', names: ['mail', 'rss', 'x', 'github'] },
+  { title: 'Personal', names: ['iowa', 'paw', 'church', 'drum', 'lego', 'bolt', 'flag', 'controller', 'tv', 'laptop', 'book-open', 'tray', 'pencil'] },
+  { title: 'Library & chips', names: ['book', 'bookmark', 'microphone', 'wrench', 'map-pin', 'newspaper', 'heartbeat', 'shield-check', 'file-down', 'map', 'selection-plus', 'clapper', 'signature', 'folder', 'branch'] },
+];
+const listed = new Set(groups.flatMap((g) => g.names));
+const unlisted = ICON_NAMES.filter((n) => !listed.has(n));
+if (unlisted.length) groups.push({ title: 'Unsorted', names: unlisted });
+---
+
+<Base title="Icons — Derek Castelli" noindex includeAnalytics={false}>
+  {tool === 'icons' && (
+    <div class="sheet" data-sheet>
+      <h1>Icons</h1>
+      <p class="sheet__lede">Drawn on a 16 grid, squircles instead of circles, 1.4 stroke. {ICON_NAMES.length} icons, each with a morph loop.</p>
+
+      <div class="sheet__controls">
+        
+        <label><input type="checkbox" data-grid checked /> Grid</label>
+        <label><input type="checkbox" data-dark /> Dark</label>
+      </div>
+
+      <section class="sheet__context">
+        <p class="sheet__sentence">
+          I live in <span class="chip"><Icon name="iowa" />Des Moines</span> with my wife and <span class="chip"><Icon name="paw" />our little zoo</span>. Away from <span class="chip"><Icon name="laptop" />my Mac</span>, I'm at <span class="chip"><Icon name="church" />my church</span> or learning the <span class="chip"><Icon name="drum" />drums</span>. Apps on the side: <span class="chip"><Icon name="book-open" />Harvous</span> and <span class="chip"><Icon name="tray" />Koati</span>.
+        </p>
+        <div class="sheet__heads">
+          {(['work', 'writing', 'projects', 'about'] as IconName[]).map((n) => (
+            <div class="sheet__head"><Icon name={n} /><span>{n === 'writing' ? 'Writing' : n[0].toUpperCase() + n.slice(1)}</span></div>
+          ))}
+        </div>
+      </section>
+
+      {groups.map((g) => (
+        <section class="sheet__group">
+          <h2>{g.title}</h2>
+          <ul class="sheet__grid" role="list">
+            {g.names.map((n) => {
+              const warn = lint(n);
+              return (
+                <li class:list={['sheet__cell', warn.length && 'is-warn']}>
+                  <div class="sheet__big"><Icon name={n} loop="always" /></div>
+                  <div class="sheet__sizes">
+                    <Icon name={n} size={14} /><Icon name={n} size={16} /><Icon name={n} size={20} /><Icon name={n} size={24} />
+                  </div>
+                  <span class="sheet__name">{n}</span>
+                  {warn.length > 0 && <span class="sheet__warn">{warn.join(', ')}</span>}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+  )}
+</Base>
+
+<script is:inline>
+  const sheet = document.querySelector('[data-sheet]');
+  // ?only=paw,drum shows just those; ?big renders the drawings large for review.
+  const params = new URLSearchParams(location.search);
+  const only = params.get('only')?.split(',');
+  if (only) {
+    document.querySelectorAll('.sheet__cell').forEach((c) => {
+      c.hidden = !only.includes(c.querySelector('.sheet__name')?.textContent ?? '');
+    });
+    document.querySelectorAll('.sheet__group').forEach((g) => {
+      g.hidden = !g.querySelector('.sheet__cell:not([hidden])');
+    });
+  }
+  if (params.has('big')) sheet?.classList.add('is-big');
+  document.querySelector('[data-grid]')?.addEventListener('change', (e) => {
+    sheet?.classList.toggle('no-grid', !e.target.checked);
+  });
+  document.querySelector('[data-dark]')?.addEventListener('change', (e) => {
+    sheet?.classList.toggle('is-dark', e.target.checked);
+  });
+</script>
+
+<style>
+  .sheet { --ink: var(--fg); color: var(--ink); }
+  .sheet h1 { margin-top: 0; }
+  .sheet__lede { color: var(--fg-soft); }
+  .sheet__controls { display: flex; gap: 20px; align-items: center; font-size: 13px; margin: 16px 0 32px; }
+  .sheet__controls input[type='range'] { vertical-align: middle; }
+
+  .sheet__context { padding: 24px; border-radius: 20px; background: #f7f3ec; color: #1d1d1b; margin-bottom: 40px; }
+  .sheet__sentence { font-size: 19px; line-height: 1.9; margin: 0 0 24px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.35em; padding: 0 0.5em; height: 1.55em;
+    border-radius: 0.6em; background: rgba(0, 0, 0, 0.05); font-weight: 600; vertical-align: 0.05em;
+  }
+  .chip :global(.icon) { color: var(--accent); }
+  .sheet__heads { display: grid; gap: 12px; }
+  .sheet__head { display: flex; align-items: center; gap: 16px; font-size: 56px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+  .sheet__head :global(.icon) { color: var(--accent); --icon-stroke: 1.5; }
+
+  .sheet__group h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 32px 0 12px; }
+  .sheet__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+  .sheet__cell { display: grid; justify-items: center; gap: 8px; padding: 12px 8px 10px; border-radius: 14px; background: var(--bg-elevated); }
+  .sheet__cell.is-warn { box-shadow: inset 0 0 0 1.5px #dc2626; }
+  .sheet__big {
+    font-size: 80px; line-height: 0; color: var(--ink);
+    background-image:
+      linear-gradient(rgba(234, 88, 12, 0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(234, 88, 12, 0.18) 1px, transparent 1px);
+    background-size: 5px 5px;
+    outline: 1px solid rgba(234, 88, 12, 0.25);
+  }
+  .no-grid .sheet__big { background: none; outline: 0; }
+  .sheet__sizes { display: flex; align-items: center; gap: 8px; line-height: 0; }
+  .sheet__name { font-size: 11px; color: var(--fg-soft); }
+  .sheet__warn { font-size: 10px; color: #dc2626; }
+
+  .is-big .sheet__context { display: none; }
+  .is-big .sheet__grid { grid-template-columns: repeat(3, 1fr); }
+  .is-big .sheet__big { font-size: 144px; background-size: 9px 9px; }
+  .is-big .sheet__sizes { display: none; }
+  .sheet__cell[hidden], .sheet__group[hidden] { display: none; }
+
+  .is-dark { --ink: #f0f0ee; background: #111110; color: #f0f0ee; padding: 16px; border-radius: 20px; }
+  .is-dark .sheet__cell { background: #1c1c1a; }
+  .is-dark .sheet__context { background: #17130e; }
+  .is-dark .chip { background: rgba(255, 255, 255, 0.08); }
+</style>

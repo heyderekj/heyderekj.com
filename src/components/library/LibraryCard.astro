@@ -1,4 +1,5 @@
 ---
+import Icon from '../Icon.astro';
 /**
  * One cell in a blueprint grid. Layout varies by `kind`; every cell carries a
  * mono catalog code (BK-003) and a kind icon in its top corners.
@@ -39,7 +40,7 @@ const linkAttrs = href
     <span class="lib-card__code">
       {code}{year && <> · {year}</>}{d.draft && <> · draft</>}
     </span>
-    <i class={`ph-bold ${itemIcon(item)} lib-card__icon`} aria-hidden="true"></i>
+    <Icon name={itemIcon(item)} class="lib-card__icon" />
 
     {(d.kind === 'book' || d.kind === 'podcast' || d.kind === 'interest') && (
       <div class={`lib-card__visual lib-card__visual--${d.kind}`}>
@@ -53,7 +54,7 @@ const linkAttrs = href
         ) : (
           <span class="lib-card__blank" aria-hidden="true">
             {d.kind === 'interest'
-              ? <i class={`ph-bold ${itemIcon(item)}`}></i>
+              ? <Icon name={itemIcon(item)} />
               : <span>{d.title}</span>}
           </span>
         )}
@@ -74,7 +75,7 @@ const linkAttrs = href
         {d.kind === 'bookmark' && host && <span class="lib-card__host">{host}</span>}
         <span class="lib-card__title">
           {d.title}
-          {d.favorite && <i class="ph-fill ph-star lib-card__fav" aria-label="Favorite"></i>}
+          {d.favorite && <Icon name="star-solid" class="lib-card__fav" title="Favorite" />}
         </span>
         {d.by && <span class="lib-card__by">{d.by}</span>}
         {d.note && <p class="lib-card__note">{d.note}</p>}

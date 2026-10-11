@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import type { Testimonial } from '../data/about';
 
 interface Props {
@@ -35,7 +36,7 @@ const count = testimonials.length;
               data-testimonial-prev
               aria-label="Previous recommendation"
             >
-              <i class="ph-bold ph-caret-left" aria-hidden="true"></i>
+              <Icon name="chevron-left" />
             </button>
 
             <div
@@ -64,7 +65,7 @@ const count = testimonials.length;
               data-testimonial-next
               aria-label="Next recommendation"
             >
-              <i class="ph-bold ph-caret-right" aria-hidden="true"></i>
+              <Icon name="chevron-right" />
             </button>
           </div>
         )}

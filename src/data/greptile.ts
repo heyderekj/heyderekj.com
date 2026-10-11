@@ -1,3 +1,4 @@
+import { iconSvg } from '../lib/icons';
 /** Content for `/greptile/` — curated for the Greptile Brand Designer application. */
 
 export const greptileMeta = {
@@ -65,7 +66,7 @@ export type GreptileBlock = {
 export const greptileBrandBlocks: GreptileBlock[] = [
   {
     html: [
-      `<a href="/work/scenery/" class="cio-chip cio-chip--scenery"><i class="ph-bold ph-film-slate" aria-hidden="true"></i>Scenery</a> is the identity work I'd point at first. A launch was weeks away and the brand wasn't ready to carry it, so I refined the mark, built the type and color system around it, and designed and shipped the site it all lived on.`,
+      `<a href="/work/scenery/" class="cio-chip cio-chip--scenery">${iconSvg('clapper')}Scenery</a> is the identity work I'd point at first. A launch was weeks away and the brand wasn't ready to carry it, so I refined the mark, built the type and color system around it, and designed and shipped the site it all lived on.`,
       `The wordmark had to hold up small in a product nav and large on a homepage headline. Collaborator labels—Editor, Designer, Marketer—became a brand device, not just a UI detail: the product's whole pitch was multiplayer, so the brand said multiplayer everywhere it showed up. Adobe acquired the team later on.`,
     ],
     shots: [
@@ -89,7 +90,7 @@ export const greptileBrandBlocks: GreptileBlock[] = [
   },
   {
     html: [
-      `From 2018 to 2020 I led creative at <span class="cio-chip cio-chip--eternity"><i class="ph-bold ph-church" aria-hidden="true"></i>Eternity Church</span>, and it's the closest thing I have to owning a brand end to end. Walls, digital screens, print, merch, the website, and the weekend production that put all of it in front of thousands of people every week.`,
+      `From 2018 to 2020 I led creative at <span class="cio-chip cio-chip--eternity">${iconSvg('church')}Eternity Church</span>, and it's the closest thing I have to owning a brand end to end. Walls, digital screens, print, merch, the website, and the weekend production that put all of it in front of thousands of people every week.`,
       `Every series meant a full system on a deadline that never moved: the mark, the stage design, the screen graphics, the shirts, the printed pieces, the social cuts. My favorite was Love Month, where the physical space and the digital environment were designed as one thing—that's still the kind of work I chase. Doing it weekly is what taught me a brand isn't an artifact, it's everything someone walks through.`,
       `I came back in 2025 to <a href="/work/eternity-church-2/">redesign the site</a>—Squarespace to Webflow, solo, six weeks.`,
     ],
@@ -101,7 +102,7 @@ export const greptileBrandBlocks: GreptileBlock[] = [
   },
   {
     html: [
-      `My first client was <a href="https://www.chrisducker.com/" class="cio-chip cio-chip--ducker"><i class="ph-bold ph-signature" aria-hidden="true"></i>Chris Ducker</a>. I was in college, I charged him $100 for a logo, and it was 2010.`,
+      `My first client was <a href="https://www.chrisducker.com/" class="cio-chip cio-chip--ducker">${iconSvg('signature')}Chris Ducker</a>. I was in college, I charged him $100 for a logo, and it was 2010.`,
       `He's still using it. Slightly revised, core intact—sixteen years on. I've never made a better argument for getting the mark right than that one accidentally makes for me.`,
     ],
     shots: [],
@@ -115,7 +116,7 @@ export const greptileLaunchLead =
 export const greptileLaunchBlocks: GreptileBlock[] = [
   {
     html: [
-      `<a href="/projects/binky/" class="cio-chip cio-chip--binky"><i class="ph-bold ph-folders" aria-hidden="true"></i>Binky</a> is a Mac app that sorts your Downloads folder. The name, the voice, and the whole launch leaned into one joke—files were screaming, Binky helped—and the empty states, the notifications, and the announcement post all told it the same way.`,
+      `<a href="/projects/binky/" class="cio-chip cio-chip--binky">${iconSvg('folder')}Binky</a> is a Mac app that sorts your Downloads folder. The name, the voice, and the whole launch leaned into one joke—files were screaming, Binky helped—and the empty states, the notifications, and the announcement post all told it the same way.`,
       `The launch itself was the sorting animation: files lifting out of a pile and dropping into buckets, captioned and posted with no explanation. It's the single best-performing thing I've made.`,
     ],
     shots: [
@@ -144,7 +145,7 @@ export const greptileLaunchBlocks: GreptileBlock[] = [
   },
   {
     html: [
-      `<a href="/projects/dinky/" class="cio-chip cio-chip--dinky"><i class="ph-bold ph-file-arrow-down" aria-hidden="true"></i>Dinky</a> started as an image compressor and grew into a full file compression app. Binky and Dinky are deliberately a set—same naming logic, same tone, same icon language—so shipping the second one made the first one land harder.`,
+      `<a href="/projects/dinky/" class="cio-chip cio-chip--dinky">${iconSvg('file-down')}Dinky</a> started as an image compressor and grew into a full file compression app. Binky and Dinky are deliberately a set—same naming logic, same tone, same icon language—so shipping the second one made the first one land harder.`,
       `Dinky 2.0 got its own moment: a tour cut showing files dropping in and shrinking, posted the way I'd want to see it if someone else made it. Both apps passed 200 stars on <a href="https://github.com/heyderekj/dinky">GitHub</a> within weeks of launching; Dinky is past 400 now.`,
     ],
     shots: [
@@ -178,7 +179,7 @@ export const greptileLaunchBlocks: GreptileBlock[] = [
   },
   {
     html: [
-      `<a href="/work/harvouscom/" class="cio-chip cio-chip--harvous"><i class="ph-bold ph-book-open-text" aria-hidden="true"></i>Harvous</a> launched on a splash page before it was a product anyone could use. One headline, a short letter, my actual signature, the logos of churches already using it, and a signup count that updated as people came in.`,
+      `<a href="/work/harvouscom/" class="cio-chip cio-chip--harvous">${iconSvg('book-open')}Harvous</a> launched on a splash page before it was a product anyone could use. One headline, a short letter, my actual signature, the logos of churches already using it, and a signup count that updated as people came in.`,
       `That page was the whole campaign. I posted it, posted the button animation from it, and posted the app itself—three separate moments off one launch, each one built to work as a single image or a short loop in a feed.`,
     ],
     shots: [
@@ -218,7 +219,7 @@ export const greptileLaunchBlocks: GreptileBlock[] = [
   },
   {
     html: [
-      `<a href="/projects/heres-my-church/" class="cio-chip cio-chip--hmc"><i class="ph-bold ph-map-trifold" aria-hidden="true"></i>Here's My Church</a> is a free, crowdsourced directory of churches in America. The launch line did the work: I accidentally made a free crowdsourced database of churches in America. True, a little absurd, and it explains the whole thing in one sentence.`,
+      `<a href="/projects/heres-my-church/" class="cio-chip cio-chip--hmc">${iconSvg('map')}Here's My Church</a> is a free, crowdsourced directory of churches in America. The launch line did the work: I accidentally made a free crowdsourced database of churches in America. True, a little absurd, and it explains the whole thing in one sentence.`,
       `The map is the brand. A national view that reads as one image at any size is what made it shareable—the announcement post is essentially that screenshot plus the sentence.`,
     ],
     shots: [

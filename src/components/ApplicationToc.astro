@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 interface TocItem {
   id: string;
   label: string;
@@ -38,7 +39,7 @@ const panelId = 'application-toc-mobile-panel';
       <span class="app-toc__trigger-kicker">On this page</span>
       <span class="app-toc__trigger-current" data-app-toc-current>{items[0]?.label}</span>
     </span>
-    <i class="ph-bold ph-caret-up app-toc__trigger-icon" aria-hidden="true"></i>
+    <Icon name="chevron-up" class="app-toc__trigger-icon" />
   </button>
   <div id={panelId} class="app-toc__panel" hidden>
     <ul class="app-toc__list app-toc__list--mobile" role="list">

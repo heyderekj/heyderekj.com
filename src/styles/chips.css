@@ -84,11 +84,11 @@ main.main .back-link a:hover {
   border-color: var(--chip-line-hover);
 }
 
-.chip i,
-.intro-pill i,
-.about-exp-pill i,
-.cta i,
-.work-link-pill i {
+.chip .icon,
+.intro-pill .icon,
+.about-exp-pill .icon,
+.cta .icon,
+.work-link-pill .icon {
   font-size: 1.1em;
   line-height: 1;
   color: var(--muted-strong);
@@ -116,8 +116,8 @@ main.main a.about-exp-pill--link:hover {
   border-color: transparent;
   background: var(--tick);
 }
-main.main a.intro-pill:hover i,
-main.main a.about-exp-pill--link:hover i { color: #fff; }
+main.main a.intro-pill:hover .icon,
+main.main a.about-exp-pill--link:hover .icon { color: #fff; }
 .about-exp-pill { margin-top: 2px; }
 
 /* ---- Accent ---- */
@@ -127,7 +127,7 @@ main.main a.about-exp-pill--link:hover i { color: #fff; }
 }
 main.main a.chip--accent { color: var(--accent); border-bottom-color: color-mix(in srgb, var(--accent) 38%, var(--chip-line)); }
 main.main a.chip--accent:hover { color: var(--accent); background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 55%, var(--chip-line)); }
-.chip--accent i { color: inherit; }
+.chip--accent .icon { color: inherit; }
 
 /* ---- Status: dot + label ---- */
 .chip--status::before {
@@ -196,8 +196,8 @@ main.main a.cio-chip:hover {
   border-color: var(--chip-line-hover);
   background: color-mix(in srgb, var(--chip-color, var(--fg)) 8%, var(--bg-elevated));
 }
-.text-chip i,
-.cio-chip i {
+.text-chip .icon,
+.cio-chip .icon {
   font-size: 0.85em;
   line-height: 1;
   align-self: center;

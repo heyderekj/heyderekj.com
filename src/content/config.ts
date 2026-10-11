@@ -126,7 +126,7 @@ const work = defineCollection({
       videoCaption: z.string().optional(),
       /** CSS aspect-ratio value, e.g. `1538 / 928` */
       videoAspect: z.string().optional(),
-      /** One handwritten margin note (components/Scribble.astro), in the
+      /** A margin note (no longer rendered; kept so existing frontmatter validates), in the
        *  gutter beside a whole block of the case study, on wide screens. */
       note: z
         .object({

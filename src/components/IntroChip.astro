@@ -1,4 +1,6 @@
 ---
+import type { IconName } from '../lib/icons';
+import Icon from './Icon.astro';
 /**
  * An inline chip in running text that opens a small card about that thing.
  * The card is a <span> (it sits inside a <p>), so card content must be
@@ -6,15 +8,15 @@
  * under the chip lives in client/intro-chips.ts. Without popover support the
  * card simply shows inline after the chip.
  *
- *   I'm at church, <IntroChip id="drums" icon="ph-drum" label="learning the drums">…card…</IntroChip>
+ *   I'm at church, <IntroChip id="drums" icon="drum" label="learning the drums">…card…</IntroChip>
  */
 import { imgFixed } from '../lib/img';
 
 interface Props {
   id: string;
   label: string;
-  /** Phosphor icon class, e.g. `ph-paw-print`. */
-  icon?: string;
+  /** One of Derek's icons, e.g. `paw`. */
+  icon?: IconName;
   /** Small round image instead of an icon (e.g. a photo). */
   avatar?: string;
   /** Mono kicker at the top of the card. */
@@ -37,7 +39,7 @@ const popId = `intro-pop-${id}`;
   {avatar ? (
     <img class="cio-chip__avatar" {...imgFixed(avatar, 18)} alt="" width="18" height="18" decoding="async" />
   ) : icon ? (
-    <i class={`ph-bold ${icon}`} aria-hidden="true"></i>
+    <Icon name={icon} />
   ) : null}
   <span>{label}</span>
 </button><span id={popId} popover class="intro-pop" role="dialog" aria-label={label}>

@@ -1,4 +1,5 @@
 ---
+import Icon from '../Icon.astro';
 /**
  * Framed aside above or inside a post.
  * - `audience` — "Assumed audience" (who this is for)
@@ -14,16 +15,16 @@ interface Props {
 const { kind = 'note', title } = Astro.props;
 
 const defaults = {
-  audience: { title: 'Assumed audience', icon: 'ph-users' },
-  note: { title: 'Note', icon: 'ph-note' },
-  update: { title: 'Update', icon: 'ph-arrow-clockwise' },
-  outdated: { title: 'Outdated', icon: 'ph-clock-counter-clockwise' },
+  audience: { title: 'Assumed audience', icon: 'users' },
+  note: { title: 'Note', icon: 'note' },
+  update: { title: 'Update', icon: 'refresh' },
+  outdated: { title: 'Outdated', icon: 'history' },
 } as const;
 
 const { icon } = defaults[kind];
 const label = title ?? defaults[kind].title;
 ---
 <aside class={`callout callout--${kind}`} role="note">
-  <p class="callout__label"><i class={`ph-bold ${icon}`} aria-hidden="true"></i>{label}</p>
+  <p class="callout__label"><Icon name={icon} />{label}</p>
   <div class="callout__body"><slot /></div>
 </aside>

@@ -1,11 +1,10 @@
 ---
-import '@phosphor-icons/web/bold';
-import '@phosphor-icons/web/fill';
-import phosphorBold from '@phosphor-icons/web/bold/Phosphor-Bold.woff2?url';
 import '../styles/global.css';
 import '../styles/figures.css';
 import '../styles/chips.css';
 import type { ImgVariant } from '../lib/img';
+import Icon from '../components/Icon.astro';
+import type { IconName } from '../lib/icons';
 
 interface Props {
   title?: string;
@@ -60,11 +59,11 @@ const ldExtra = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 const ldGraph = ldExtra.length > 0 ? { '@context': 'https://schema.org', '@graph': ldExtra } : null;
 const ldJson = ldGraph ? JSON.stringify(ldGraph).replace(/</g, '\\u003c') : '';
 
-const mainNav = [
-  { href: '/posts/',    label: 'Posts' },
-  { href: '/work/',     label: 'Work' },
-  { href: '/projects/', label: 'Projects' },
-  { href: '/about/',    label: 'About' },
+const mainNav: { href: string; label: string; icon: IconName }[] = [
+  { href: '/posts/',    label: 'Posts',    icon: 'writing' },
+  { href: '/work/',     label: 'Work',     icon: 'work' },
+  { href: '/projects/', label: 'Projects', icon: 'projects' },
+  { href: '/about/',    label: 'About',    icon: 'about' },
 ];
 
 const current = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -119,9 +118,6 @@ const year = new Date().getFullYear();
       <script type="application/ld+json" set:html={ldJson} />
     )}
 
-    <!-- Phosphor Icons (self-hosted, imported above) — bold default; fill on active nav -->
-    <link rel="preload" href={phosphorBold} as="font" type="font/woff2" crossorigin />
-
     <!-- Plus Jakarta Sans — humanist warmth -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -154,12 +150,13 @@ const year = new Date().getFullYear();
             </span>
           </a>
           <nav class="site-nav" aria-label="Primary">
-            {mainNav.map(({ href, label }) => (
+            {mainNav.map(({ href, label, icon }) => (
               <a
                 href={href}
                 class={isActive(href) ? 'active' : ''}
                 aria-current={isActive(href) ? 'page' : undefined}
               >
+                <Icon name={icon} />
                 {label}
               </a>
             ))}
@@ -191,5 +188,6 @@ const year = new Date().getFullYear();
   <script src="../client/copy.ts"></script>
   <script src="../client/media-prefetch.ts"></script>
   <script src="../client/reveal.ts"></script>
+  <script src="../client/icon-morph.ts"></script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import type { ListableEntry } from '../lib/postPaths';
 import { entryHref } from '../lib/postPaths';
 import { postTitle } from '../lib/posts';
@@ -53,7 +54,7 @@ const isHighlightedWork = (post: ListableEntry) =>
                 {kindOf(post) === 'note' && <span class="entry-kind">note</span>}
                 {isHighlightedWork(post) && (
                   <span class="entry-favorite" title="A personal favorite">
-                    <i class="ph-fill ph-star" aria-hidden="true" />
+                    <Icon name="star-solid" />
                   </span>
                 )}
               </span>
@@ -75,7 +76,7 @@ const isHighlightedWork = (post: ListableEntry) =>
             {kindOf(post) === 'note' && <span class="entry-kind">note</span>}
             {isHighlightedWork(post) && (
               <span class="entry-favorite" title="A personal favorite">
-                <i class="ph-fill ph-star" aria-hidden="true" />
+                <Icon name="star-solid" />
               </span>
             )}
           </span>

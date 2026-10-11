@@ -1,3 +1,4 @@
+import type { IconName } from '../lib/icons';
 /** Content for `/brag/`. Edit here; layout lives in `src/pages/brag/index.astro`. */
 
 import type { Testimonial } from './about';
@@ -39,8 +40,8 @@ export type BragPreview = {
   src?: string;
   alt: string;
   href?: string;
-  /** Phosphor icon name without weight prefix, e.g. `read-cv-logo` */
-  icon?: string;
+  /** One of Derek's icons (src/lib/icons), e.g. `newspaper` */
+  icon?: IconName;
   caption?: string;
   /** About-page experience card, post list, project stats, or a video thumbnail */
   variant?: 'image' | 'experience' | 'posts' | 'stats' | 'link' | 'video';
