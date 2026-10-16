@@ -8,24 +8,31 @@ import Site from '../layouts/Site.astro';
 import Icon from '../components/Icon.astro';
 import Said from '../components/site/Said.astro';
 import Signature from '../components/Signature.astro';
-import { availability, EXTRAS, PRICES, SAMPLES, SERVICES, TIMELINE } from '../data/hire';
+import { availability, EXAMPLES, EXTRAS, PRICES, SERVICES, TIMELINE } from '../data/hire';
 import { getPublishedWork } from '../lib/work';
-import { frameAttrs, pageOf, shot, shotsOf, workDate } from '../lib/deck';
+import { appPicture, comingSoon, frameAttrs, getApps, pageOf, shotsOf } from '../lib/deck';
 import { imgSrc } from '../lib/img';
 import { workTestimonials } from '../data/about';
 import '../styles/hire.css';
 
 const work = await getPublishedWork();
 
-// Some sites to show: any picked in the data file, else the highlighted ones, newest first
-const pinned = Object.values(SAMPLES).flat();
-const samples = (pinned.length ? work.filter((w) => pinned.includes(w.slug)) : work.filter((w) => w.data.highlight && shotsOf(w).length))
-  .sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf()).slice(0, 6);
-const sampleRows = await Promise.all(samples.map(async (w) => ({
-  href: `/work/${w.slug}/`, title: w.data.title, year: workDate(w).getUTCFullYear(),
-  sub: [w.data.partnership ? `With ${w.data.partnership}` : 'Solo', w.data.workType].filter(Boolean).join(' · '),
-  thumb: await pageOf(shotsOf(w)[0], 480), img: shot(shotsOf(w)[0], 640),
-  shots: await Promise.all(shotsOf(w).slice(0, 4).map((s) => pageOf(s, 480))),
+// Each service's examples, as a stack: a write-up's first shot, or one of my apps (its icon or picture)
+const apps = await getApps();
+type Layer = { src: string; title: string; frame?: { class?: string; style?: string }; icon?: boolean };
+const stacks = Object.fromEntries(await Promise.all(SERVICES.map(async (s) => {
+  const layers = (await Promise.all(EXAMPLES[s.id].map(async (ex): Promise<Layer | null> => {
+    if ('work' in ex) {
+      const w = work.find((x) => x.slug === ex.work); const first = w && shotsOf(w)[0];
+      if (!w || !first) return null;
+      const page = await pageOf(first, 480);
+      return 'src' in page ? { src: page.src, title: w.data.title, frame: frameAttrs(page) } : null;
+    }
+    const a = apps.find((x) => x.slug === ex.app); if (!a) return null;
+    const icon = ex.show === 'icon' || comingSoon(a), src = icon ? a.data.icon : appPicture(a);
+    return src ? { src: imgSrc(src, icon ? 240 : 640), title: a.data.name, icon } : null;
+  }))).filter((l): l is Layer => Boolean(l)).slice(0, 4);
+  return [s.id, layers] as const;
 })));
 
 const photo = imgSrc('/assets/about/derek-photo.jpeg', 240);
@@ -55,25 +62,29 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
 
     <h2 class="h">What I do</h2>
     <div class="hire-caps">
-      {SERVICES.map((s) => (
+      {SERVICES.filter((s) => stacks[s.id].length).map((s) => (
         <button type="button" class="hire-cap sq" data-pick={s.id}>
-          <span class="hire-cap__icon sq" aria-hidden="true"><Icon name={s.icon as never} /></span>
-          <b>{s.name}</b>
+          <span class="row__shots hire-cap__stack" aria-hidden="true">{stacks[s.id].map((l, i) => (
+            <span class:list={['row__shot sq', l.icon && 'is-icon']} style={`--i:${i}`}><img src={l.src} alt="" class={l.frame?.class} style={l.frame?.style} loading="lazy" decoding="async" /></span>
+          ))}</span>
+          <span class="hire-cap__text">
+            <b><Icon name={s.icon as never} loop={false} /> {s.name}</b>
+            <span>{s.line}</span>
+            <small>{stacks[s.id].map((l) => l.title).filter((t, i, all) => all.indexOf(t) === i).join(' · ')}</small>
+          </span>
+        </button>
+      ))}
+    </div>
+    <div class="hire-consult">
+      {SERVICES.filter((s) => !stacks[s.id].length).map((s) => (
+        <button type="button" class="hire-mini sq" data-pick={s.id}>
+          <span class="hire-mini__icon sq" aria-hidden="true"><Icon name={s.icon as never} /></span>
+          <b>{s.name}<small>Consulting</small></b>
           <span>{s.line}</span>
         </button>
       ))}
     </div>
-
     <div class="hire-proof">
-      <div class="hire-shots">
-        {sampleRows.slice(0, 4).map((r) => (
-          <a class="hire-shot sq" href={r.href}>
-            <span class="row__shots" aria-hidden="true">{r.shots.map((p, i) => 'src' in p && <span class="row__shot sq" style={`--i:${i}`}><img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" /></span>)}</span>
-            <b>{r.title}</b><small>{r.sub}</small>
-          </a>
-        ))}
-      </div>
-      <a class="hire-more" href="/work/">See all {work.length} sites <Icon name="arrow-right" /></a>
       <Said testimonials={workTestimonials.slice(0, 2)} />
     </div>
 

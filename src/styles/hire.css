@@ -25,28 +25,31 @@
   .hire-status { grid-column: 1 / -1; justify-self: start; }
 }
 
-/* What I do: a compact list (each starts the estimate with it picked), then some work and what people say */
-.hire-caps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 18px; }
-@media (max-width: 560px) { .hire-caps { grid-template-columns: 1fr; } }
-.hire-cap { --r: 12px; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 0 12px; align-items: start; margin: 0 -10px; padding: 10px; text-align: left; font: inherit; color: var(--ink); transition: background-color var(--t-ui) var(--ease); }
-.hire-cap:hover { background: color-mix(in oklch, var(--ink) 5%, transparent); }
-.hire-cap__icon { --r: 9px; grid-row: 1 / span 2; display: grid; place-items: center; width: 30px; height: 30px; font-size: 15px; color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
-.hire-cap b { font-size: 15px; font-weight: 600; }
-.hire-cap span:last-child { font-size: 13.5px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
-.hire-proof { display: grid; gap: 14px; margin-top: 26px; }
-.hire-shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-@media (max-width: 640px) { .hire-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.hire-shot { --r: 14px; display: grid; gap: 2px; text-decoration: none; color: var(--ink); }
-.hire-shot { position: relative; z-index: 0; }
-.hire-shot .row__shots { position: relative; display: block; aspect-ratio: 16 / 10; margin-bottom: 10px; }
-.hire-shot:is(:hover, :focus-visible) { z-index: 30; }
-/* Hover: the shots fan up and out like the work page's stack, and the others step back */
-.hire-shot:is(:hover, :focus-visible) .row__shot { transform: translateY(-22px) rotate(calc((var(--k) + var(--shift, 0)) * 14deg)) scale(1.1); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
-.hire-shots .hire-shot { transition: opacity 260ms var(--ease), filter 260ms var(--ease); }
-.hire-shots:has(.hire-shot:hover) .hire-shot:not(:hover) { opacity: 0.35; filter: grayscale(0.5); }
-.hire-shot b { font-size: 14px; font-weight: 600; }
-.hire-shot small { font-size: 12.5px; color: var(--muted); }
-.hire-proof .hire-more { justify-self: start; margin: 0 0 6px; }
+/* What I do: each service beside a stack of examples that fans out on hover (like the work page's);
+   picking one starts the estimate with it */
+.hire-caps { display: grid; gap: 4px; }
+.hire-cap { --r: 16px; position: relative; z-index: 0; display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 22px; align-items: center; margin: 0 -12px; padding: 14px 12px; text-align: left; font: inherit; color: var(--ink); transition: background-color var(--t-ui) var(--ease), opacity 260ms var(--ease), filter 260ms var(--ease); }
+.hire-cap:is(:hover, :focus-visible) { z-index: 30; background: color-mix(in oklch, var(--ink) 4%, transparent); }
+.hire-caps:has(.hire-cap:hover) .hire-cap:not(:hover) { opacity: 0.45; filter: grayscale(0.4); }
+.hire-cap__stack { position: relative; display: block; aspect-ratio: 16 / 10; }
+.hire-cap:is(:hover, :focus-visible) .row__shot { transform: translateY(-14px) rotate(calc((var(--k) + var(--shift, 0)) * 13deg)) scale(1.08); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.hire-cap .row__shot.is-icon { display: grid; place-items: center; background: color-mix(in oklch, var(--ink) 4%, var(--card)); }
+.hire-cap .row__shot.is-icon img { position: static; width: 46%; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: 22%; box-shadow: 0 6px 14px -8px rgb(0 0 0 / 0.4); }
+.hire-cap__text { display: grid; gap: 4px; min-width: 0; }
+.hire-cap__text b { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 650; }
+.hire-cap__text b .icon { font-size: 15px; color: var(--muted); }
+.hire-cap__text > span { font-size: 14.5px; line-height: 1.5; color: var(--ink-soft); text-wrap: pretty; }
+.hire-cap__text small { font-size: 12.5px; color: var(--muted); }
+@media (max-width: 560px) { .hire-cap { grid-template-columns: 120px minmax(0, 1fr); gap: 16px; } }
+.hire-consult { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+@media (max-width: 560px) { .hire-consult { grid-template-columns: 1fr; } }
+.hire-mini { --r: 14px; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 2px 12px; align-items: start; padding: 12px 14px; text-align: left; font: inherit; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.hire-mini:hover { translate: 0 -1px; box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow); }
+.hire-mini__icon { --r: 9px; grid-row: 1 / span 2; display: grid; place-items: center; width: 30px; height: 30px; font-size: 15px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.hire-mini b { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 15px; font-weight: 650; }
+.hire-mini b small { font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.hire-mini > span:last-child { font-size: 13px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
+.hire-proof { margin-top: 28px; }
 
 /* The estimate, as a small app: wider than the column */
 .hire-app { --est: min(72rem, calc(100vw - 32px)); width: var(--est); margin: 64px 0 0 calc((var(--read) - var(--est)) / 2); scroll-margin-top: 20px; }
