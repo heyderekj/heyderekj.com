@@ -117,7 +117,6 @@ export const EXTRAS: { id: string; service: ServiceId; name: string; desc: strin
   { id: 'site.seo', service: 'site', name: 'Search and analytics', desc: 'Titles, redirects, a sitemap and analytics, set up.', price: 300 },
   { id: 'logo.kit', service: 'logo', name: 'Social and icon kit', desc: 'Avatars, a favicon and app icons from the new logo.', price: 200 },
   { id: 'logo.motion', service: 'logo', name: 'A little motion', desc: 'An animated version for video and the web.', price: 400 },
-  { id: 'rebrand.templates', service: 'rebrand', name: 'Templates', desc: 'Slides, social posts and documents in the new look.', price: 600 },
   { id: 'feedback.followup', service: 'feedback', name: 'A second look', desc: 'Another review after you’ve made changes, about an hour.', price: 125 },
   { id: 'ai.handoff', service: 'ai', name: 'Docs and a walkthrough', desc: 'So your team can run it and change it without me.', price: 300 },
 ];
