@@ -1,23 +1,36 @@
 ---
+/**
+ * Not found, as a chat with me: I say what I couldn't find, offer the closest pages, and answer
+ * quick replies or anything typed (it searches the site; /help lists commands). "Leave a note"
+ * really sends one. Runs in client/lost-chat.ts; without JavaScript, plain links.
+ */
 import Site from '../layouts/Site.astro';
 import PageHead from '../components/site/PageHead.astro';
-import PostIndex from '../components/site/PostIndex.astro';
-import { getPublishedPosts } from '../lib/posts';
+import { imgSrc } from '../lib/img';
 
 const siteUrl = (Astro.site?.toString() ?? 'https://heyderekj.com').replace(/\/$/, '');
 const canonical = `${siteUrl}/404/`;
-const title = 'Page not found — Derek Castelli';
-const description = 'This URL does not exist on heyderekj.com.';
-const latest = (await getPublishedPosts()).slice(0, 3);
+const photo = imgSrc('/assets/about/derek-photo.jpeg', 120);
 ---
-<Site title={title} description={description} canonical={canonical} noindex includeAnalytics={false} bar={{ kind: 'page', title: 'Not found' }}>
+<Site title="Page not found — Derek Castelli" description="This URL does not exist on heyderekj.com." canonical={canonical} noindex includeAnalytics={false} bar={{ kind: 'page', title: 'Not found' }}>
   <main class="home">
-    <PageHead meta="404" title="Not found">
-      <Fragment slot="lede">This page isn’t here: maybe a broken link, a typo, or an old bookmark. Head <a href="/">home</a>, or press / to search for something that is.</Fragment>
-    </PageHead>
-    <h2 class="h h--quiet">The latest writing</h2>
-    <PostIndex posts={latest} show={Infinity} />
+    <PageHead meta="404 · Not found" title="Let’s find it" />
+    <section class="lost sq" aria-label="Chat with Derek about the missing page" data-photo={photo}>
+      <header class="lost__top">
+        <img class="sq" src={photo} alt="" width="36" height="36" />
+        <span><b>Derek</b><small><i></i> Usually replies right away</small></span>
+      </header>
+      <div class="lost__thread" id="lostThread" role="log" aria-live="polite">
+        <noscript>
+          <p class="lost__msg"><span class="lost__bubble">I couldn’t find that page. Try <a href="/">home</a>, <a href="/work/">work</a>, <a href="/projects/">projects</a> or <a href="/about/">about</a>.</span></p>
+        </noscript>
+      </div>
+      <div class="lost__chips" id="lostChips" aria-label="Quick replies"></div>
+      <form class="lost__input" id="lostForm" autocomplete="off">
+        <input id="lostText" name="q" type="text" placeholder="Type to search, or /help" aria-label="Message" maxlength="2000" />
+        <button type="submit" aria-label="Send"><svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg></button>
+      </form>
+    </section>
   </main>
-  <script src="../client/peek.ts"></script>
-  <script src="../client/chips.ts"></script>
+  <script src="../client/lost-chat.ts"></script>
 </Site>

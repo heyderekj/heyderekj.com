@@ -988,3 +988,52 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .dial__pill:hover { color: var(--ink); background: color-mix(in oklch, var(--ink) 9%, transparent); }
 .dial__pill.is-current { color: var(--paper); background: var(--ink); }
 .dial__pill.is-current span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
+
+/* 404: a chat with me (pages/404.astro, client/lost-chat.ts) */
+.lost { --r: 24px; --me: var(--tint); --you: #ea580c; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; height: min(640px, calc(100svh - 260px)); min-height: 440px; margin-top: 8px; overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.lost__top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--hair); background: color-mix(in oklch, var(--card) 80%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.lost__top img { --r: 10px; width: 36px; height: 36px; object-fit: cover; }
+.lost__top span { display: grid; line-height: 1.25; }
+.lost__top b { font-size: 14.5px; font-weight: 600; }
+.lost__top small { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+.lost__top small i { width: 7px; height: 7px; border-radius: 50%; background: #34c759; }
+.lost__thread { overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 4px; padding: 18px 14px 10px; scroll-behavior: smooth; }
+.lost__day { align-self: center; margin: 0 0 10px; font-size: 11.5px; font-weight: 500; color: var(--muted); }
+.lost__msg { margin: 0; display: flex; align-items: flex-end; gap: 8px; max-width: 86%; animation: lost-in 280ms var(--ease) both; }
+.lost__msg.is-me { align-self: flex-start; }
+.lost__msg.is-you { align-self: flex-end; flex-direction: row-reverse; }
+.lost__msg.is-me:has(+ .lost__msg.is-me) .lost__face { visibility: hidden; } /* my photo only on the last of a run */
+.lost__face { --r: 8px; flex: none; width: 26px; height: 26px; object-fit: cover; }
+.lost__bubble { display: block; padding: 8px 13px; border-radius: 19px; font-size: 15px; line-height: 1.4; text-wrap: pretty; overflow-wrap: anywhere; }
+.is-me .lost__bubble { background: var(--me); color: var(--ink); border-bottom-left-radius: 6px; }
+.is-you .lost__bubble { background: var(--you); color: #fff; border-bottom-right-radius: 6px; }
+.lost__bubble code { font: 13px/1.4 ui-monospace, SFMono-Regular, monospace; padding: 1px 5px; border-radius: 6px; background: color-mix(in oklch, var(--ink) 8%, transparent); }
+.lost__bubble a { color: inherit; text-underline-offset: 3px; }
+.lost__status { align-self: flex-end; margin: 2px 4px 6px; font-size: 11px; color: var(--muted); }
+/* Link cards in a reply */
+.lost__links { display: grid; gap: 6px; margin-left: 34px; max-width: min(380px, 80%); animation: lost-in 280ms var(--ease) both; }
+.lost__link { --r: 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 9px 12px; text-decoration: none; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.lost__link:hover { box-shadow: 0 0 0 1px var(--hair), var(--shadow); translate: 0 -1px; }
+.lost__link b { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lost__link small { grid-column: 1; font-size: 12px; color: var(--muted); }
+.lost__link .icon { grid-row: 1 / span 2; grid-column: 2; color: var(--muted); }
+/* Typing dots */
+.lost__typing .lost__bubble { display: inline-flex; gap: 4px; padding: 12px 14px; }
+.lost__typing .lost__bubble i { width: 7px; height: 7px; border-radius: 50%; background: color-mix(in oklch, var(--ink) 35%, transparent); animation: lost-dot 1s ease-in-out infinite; }
+.lost__typing .lost__bubble i:nth-child(2) { animation-delay: 0.15s; }
+.lost__typing .lost__bubble i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes lost-dot { 0%, 60%, 100% { translate: 0 0; opacity: 0.5; } 30% { translate: 0 -3px; opacity: 1; } }
+@keyframes lost-in { from { opacity: 0; translate: 0 6px; scale: 0.98; } }
+/* Quick replies and the message field */
+.lost__chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 8px 14px 2px; }
+.lost__chips:empty { display: none; }
+.lost__chips button { flex: none; padding: 6px 12px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: var(--you); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--you) 45%, transparent); background: color-mix(in oklch, var(--you) 6%, var(--card)); transition: background var(--t-ui) var(--ease); }
+.lost__chips button:hover { background: color-mix(in oklch, var(--you) 14%, var(--card)); }
+.lost__input { display: flex; align-items: center; gap: 8px; margin: 8px 12px 12px; padding: 4px 4px 4px 14px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--hair); background: var(--paper); }
+.lost__input input { flex: 1; min-width: 0; height: 34px; border: 0; outline: 0; background: none; font: 15px var(--font); color: var(--ink); }
+.lost__input button { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #fff; background: var(--you); font-size: 14px; transition: opacity var(--t-ui) var(--ease), scale var(--t-ui) var(--ease); }
+.lost__input:has(input:placeholder-shown) button { opacity: 0.35; scale: 0.9; }
+.lost__input:focus-within { box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--you) 60%, transparent); }
+.lost.is-noting .lost__input { box-shadow: inset 0 0 0 1.5px var(--you); }
+@media (prefers-reduced-motion: reduce) { .lost__msg, .lost__links { animation: none; } .lost__typing .lost__bubble i { animation: none; } }
+body.site .lost__input input:focus-visible { outline: none; } /* the field shows focus with its ring */
