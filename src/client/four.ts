@@ -28,7 +28,7 @@ if (game && grid404 && head) {
   const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
 
   // ---- Who you're playing: one of the animals, each with their own way of playing and talking
-  type Lines = { stop: string[]; start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[] };
+  type Lines = { stop: string[]; start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[]; idle?: string[] };
   type Foe = { name: string; kind: 'cat' | 'dog'; tone: string; toneInk?: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
   const WARGAMES = 'The only winning move is not to play.';
   // Oldest first: Lilo, Leroy, Kiya, Irma
@@ -36,6 +36,7 @@ if (game && grid404 && head) {
     { // Attentive and smart, but kind: always blocks you, and sometimes won't take the win
       name: 'Lilo', kind: 'dog', tone: 'oklch(0.55 0.17 300)', delay: [600, 1000], depth: (l) => Math.min(6, l + 1), slip: (l) => Math.max(0, 0.15 - 0.05 * (l - 1)), spares: 0.4,
       lines: {
+        idle: ['Hmmm. What you doing?'], // when you've been thinking a while
         stop: ['Good game! Come back anytime.', 'That was so fun. Thank you!'],
         start: ['Hi, I’m Lilo! Want to play? You go first.'],
         level: (l) => [`Level ${l}. We can keep going, if you want.`, `Level ${l}! You’re doing so well.`],
@@ -50,6 +51,7 @@ if (game && grid404 && head) {
     { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
       name: 'Leroy', kind: 'cat', tone: 'oklch(0.56 0.19 18)', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
       lines: {
+        idle: ['I’m already thinking my next move.'], // when you've been thinking a while
         stop: ['Leaving? I’ll be right here.', 'Smart. Quit while you’re ahead.'],
         start: ['Shall we play? Take your time. I will.'],
         level: (l) => [`Level ${l}. I have all day.`, `Level ${l}. Slow and steady.`, `Level ${l}. I’m not going anywhere.`],
@@ -63,6 +65,7 @@ if (game && grid404 && head) {
     { // Competitive and smart, but a bully and easily distracted: quick, mouthy, and wanders off
       name: 'Kiya', kind: 'dog', tone: 'oklch(0.62 0.11 195)', delay: [250, 520], depth: (l) => Math.min(6, l + 1), slip: () => 0.18,
       lines: {
+        idle: ['Hi, I’m Kiya!'], // when you've been thinking a while
         stop: ['Scared? Thought so.', 'Running away? Classic.'],
         start: ['You’re going down. Go first.'],
         level: (l) => [`Level ${l}. Now I’m annoyed.`, `Level ${l}. Lucky. Won’t happen again.`],
@@ -77,6 +80,7 @@ if (game && grid404 && head) {
     { // Dumb, but plays hard: barely looks ahead, moves fast and loud, grabs any win
       name: 'Irma', kind: 'cat', tone: 'oklch(0.84 0.09 55)', toneInk: '#3d3a35', delay: [200, 420], depth: () => 1, slip: (l) => Math.max(0.15, 0.4 - 0.05 * (l - 1)),
       lines: {
+        idle: ['I could use a nap…'], // when you've been thinking a while
         stop: ['NOOO! Okay. Bye!', 'Already? Again soon?!'],
         start: ['IRMA! LET’S PLAY! You go first!'],
         level: (l) => [`Level ${l}! More! More!`, `Level ${l}! I’m trying SO hard!`],
@@ -197,6 +201,9 @@ if (game && grid404 && head) {
 
   // ---- A game: rounds until I win one. Score: 100 × level + 10 for each hole left, per win
   let b: Who[] = Array(COLS * ROWS).fill(0), level = 1, score = 0, turn: 'you' | 'me' | 'off' = 'off', aim = 3, playing = false;
+  // When it's your turn and you've been thinking a while, they say something (once a turn)
+  const IDLE = 9000;
+  let idleAt = 0;
   let moves: Move[] = [], best = 0, runId = 0; // runId: a new run cancels the last one's pending lines
   try { best = Number(localStorage.getItem('hdj:four:best') || 0); } catch {}
   const tally = () => { levelEl.textContent = String(level); scoreEl.textContent = score.toLocaleString(); bestEl.textContent = Math.max(best, score).toLocaleString(); };
@@ -214,7 +221,7 @@ if (game && grid404 && head) {
     return r;
   }
   function round(line?: string) {
-    b = Array(COLS * ROWS).fill(0); moves = []; turn = 'you';
+    b = Array(COLS * ROWS).fill(0); moves = []; turn = 'you'; idleAt = Date.now() + IDLE;
     cells.forEach((el) => el.classList.remove('drop', 'win'));
     paint(); tally(); talk(line ?? pick(LINES.start));
   }
@@ -297,7 +304,7 @@ if (game && grid404 && head) {
     if (mood === 'spare' && foe.lines.spare) talk(pick(foe.lines.spare));
     else if (mood === 'slip' && foe.lines.slip) talk(pick(foe.lines.slip));
     else if (threat === mine) talk(pick(LINES.block)); else if (Math.random() < 0.6) talk(pick(LINES.mine));
-    turn = 'you'; paint();
+    turn = 'you'; idleAt = Date.now() + IDLE; paint();
   }
   const flash = (run: number[] | null) => run?.forEach((i) => cells[i].classList.add('win'));
   // After a win you choose: on to the next level, or stop here and keep what you've got
@@ -429,6 +436,10 @@ if (game && grid404 && head) {
   pauseEl.querySelector('[data-four-leave]')!.addEventListener('click', () => { quit(); document.querySelector<HTMLElement>('[data-four-play]')?.focus(); });
   // Sent here to play (the "joshua" egg, or the search result): start once the page has settled
   if (location.hash === '#play') { history.replaceState(null, '', location.pathname + location.search); setTimeout(start, calm ? 100 : 700); }
+  setInterval(() => {
+    if (!idleAt || Date.now() < idleAt || turn !== 'you' || !playing || paused || document.hidden || !foe.lines.idle) return;
+    idleAt = 0; talk(pick(foe.lines.idle));
+  }, 1000);
   // While I think, a few WOPR lights blink in the empty holes
   setInterval(() => {
     if (!game.classList.contains('is-thinking')) return;
