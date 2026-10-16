@@ -34,9 +34,9 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
 ---
 <Site title="Page not found — Derek Castelli" description="This URL does not exist on heyderekj.com." canonical={canonical} noindex includeAnalytics={false} bar={{ kind: 'page', title: 'Not found' }}>
   <main class="home">
-    <header class="lost-head">
+    <header class="lost-head" style={`--cols:${rows[0].length}`}>
       <h1 class="visually-hidden">Page not found</h1>
-      <div class="lost-404" aria-hidden="true" style={`--cols:${rows[0].length}`}>
+      <div class="lost-404" aria-hidden="true">
         {dots.map((x) => <i class={x.on ? 'on' : undefined} style={`--d:${x.d}`}></i>)}
       </div>
       <section class="four" aria-label="Connect Four" hidden>
