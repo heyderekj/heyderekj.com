@@ -130,6 +130,8 @@ export const MORPHS: Partial<Record<Name | 'x' | 'github', Frame[]>> = {
   note: [
     { s: { 1: pt(base('note', 1), 5.75, 5.5), 2: pt(base('note', 2), 5.75, 8), 3: pt(base('note', 3), 5.75, 10.5) }, hold: 100 },
   ],
+  // The total adds itself up again.
+  estimate: [{ s: { 5: { d: pt(base('estimate', 5), 5.75, 10.75), o: 0 }, 2: [10, 5.25, 0.35], 4: [10, 7.75, 0.35] }, hold: 120 }],
   users: [{ s: { 2: tr(base('users', 2), 1.25, 0), 3: tr(base('users', 3), 1.25, 0), 0: [6, 5, 2.25] } }],
 
   /* ---- Contact ---- */

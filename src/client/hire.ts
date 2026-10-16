@@ -134,6 +134,7 @@ if (form) {
     P('total-wrap').hidden = !e.total;
     P('pay').innerHTML = e.payments.map((p) => `<li>${esc(p.when)} <em>${p.pct}% (${money(p.amount)})</em> ${esc(p.after)}</li>`).join('');
     P('terms').textContent = e.terms;
+    fade();
     P('pay-wrap').hidden = !e.payments.length && !e.monthly;
     $('[data-p="sum"]', sum).textContent = money(e.total) + (e.monthly ? ` + ${money(e.monthly)}/mo` : '');
     showSum();
@@ -153,6 +154,15 @@ if (form) {
     $('[data-review]', form!).innerHTML = rows.map(([k, v, go]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd>${go ? `<button type="button" data-go="${go}">Edit</button>` : '<span></span>'}</div>`).join('');
   }
   form.addEventListener('click', (e) => { const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]')?.dataset.go; if (go) show(go, -1); });
+  // A long estimate scrolls inside the sheet: fades where there's more, and See all goes to the bottom
+  const body = P('body'), more = P('more') as HTMLButtonElement;
+  function fade() {
+    const below = body.scrollHeight - body.scrollTop - body.clientHeight > 8;
+    body.toggleAttribute('data-top', body.scrollTop > 4); body.toggleAttribute('data-more', below); more.hidden = !below;
+  }
+  body.addEventListener('scroll', fade, { passive: true });
+  new ResizeObserver(fade).observe(body);
+  more.addEventListener('click', () => body.scrollTo({ top: body.scrollHeight, behavior: calm() ? 'auto' : 'smooth' }));
   // A line on the proposal opens the screen where it's decided
   prop.addEventListener('click', (e) => {
     const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]')?.dataset.go;

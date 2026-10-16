@@ -104,9 +104,9 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
     <section class="hire-app" id="estimate" aria-label="Get an estimate">
       <div class="est sq">
         <header class="est__top">
-          <b class="est__title">Get an estimate</b>
+          <b class="est__title"><Icon name="estimate" /> Get an estimate</b>
           <ol class="est__steps" aria-hidden="true">{STEPS.map(([k, l]) => <li data-dot={k}><i></i>{l}</li>)}</ol>
-          <span class="est__count" aria-live="polite">Step 1</span>
+          <span class="est__count visually-hidden" aria-live="polite">Step 1</span>
           <span class="est__bar"><i></i></span>
         </header>
         <div class="est__body">
@@ -215,6 +215,7 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
           <aside class="est__side">
             <template id="hirePencil"><Icon name="pencil" loop={false} /></template>
             <article class="prop" id="proposal" aria-label="Your estimate">
+              <div class="prop__body" data-p="body">
               <header class="prop__head">
                 <div>
                   <b class="prop__title"><span data-p="org">Your project</span><i class="prop__mark" aria-hidden="true"><Icon name="arrow-right" loop={false} /></i>Derek J Design</b>
@@ -227,6 +228,8 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
               <section data-p="scope-wrap" hidden><h4><i class="prop__mark" aria-hidden="true"><Icon name="arrow-right" loop={false} /></i>Scope</h4><ul class="prop__lines" data-p="lines"></ul></section>
               <section data-p="total-wrap" hidden><h4><i class="prop__mark" aria-hidden="true"><Icon name="arrow-right" loop={false} /></i>Proposed Total</h4><ul class="prop__lines prop__lines--totals" data-p="totals"></ul></section>
               <section data-p="pay-wrap" hidden><h4><i class="prop__mark" aria-hidden="true"><Icon name="arrow-right" loop={false} /></i>Payment</h4><ul class="prop__pay" data-p="pay"></ul><p class="prop__terms" data-p="terms"></p></section>
+              </div>
+              <button type="button" class="prop__more" data-p="more" hidden>See all <Icon name="arrow-down" loop={false} /></button>
               <footer class="prop__foot">
                 <svg class="prop__gear" viewBox="0 0 271 283" aria-hidden="true"><path d={GEAR} /></svg>
                 <span><b>Derek J Design</b>Testament Made, LLC</span>

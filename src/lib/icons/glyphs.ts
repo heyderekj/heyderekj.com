@@ -176,6 +176,15 @@ export const GLYPHS = {
     { d: 'M5.75 8H10.25' },
     { d: 'M5.75 10.5H8.25' },
   ],
+  // An estimate: a sheet with two line items, each a label and its price, over the total.
+  estimate: [
+    { d: sq(3, 1.75, 10, 12.5, 2.5) },
+    { d: 'M5.75 5.25H7.75' },
+    dot(10, 5.25, 0.7),
+    { d: 'M5.75 7.75H7.75' },
+    dot(10, 7.75, 0.7),
+    { d: 'M5.75 10.75H10.25' },
+  ],
   users: [
     { c: [6, 5.5, 2.25] },
     { d: 'M2 13.25C2.4 10.9 4 9.75 6 9.75C8 9.75 9.6 10.9 10 13.25' },

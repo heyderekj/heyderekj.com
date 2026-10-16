@@ -91,7 +91,8 @@
 @media (max-width: 720px) { .hire-app { width: 100%; margin-left: 0; } }
 .est { --r: 26px; overflow: hidden; border-radius: 26px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
 .est__top { position: relative; display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--hair); }
-.est__title { font-size: 15px; font-weight: 600; white-space: nowrap; }
+.est__title { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; white-space: nowrap; }
+.est__title .icon { font-size: 17px; color: var(--you); }
 .est__steps { display: flex; gap: 4px; margin: 0 auto; padding: 0; list-style: none; }
 .est__steps li { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--muted); transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
 .est__steps li i { width: 7px; height: 7px; border-radius: 50%; background: var(--hair); transition: background var(--t-ui) var(--ease); }
@@ -102,7 +103,7 @@
 .est__count { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .est__bar { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; }
 .est__bar i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--you); transition: width 420ms var(--ease); }
-@media (max-width: 720px) { .est__steps { display: none; } .est__count { margin-left: auto; } }
+@media (max-width: 720px) { .est__steps { display: none; } }
 .est__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); }
 @media (max-width: 900px) { .est__body { grid-template-columns: 1fr; } }
 .est__panel { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 560px; border-right: 1px solid var(--hair); }
@@ -204,9 +205,19 @@
 
 /* The proposal */
 /* A sheet of paper: square corners, a little whiter than the page, and one more sheet peeking out under it */
-.prop { --sheet: #fff; position: relative; overflow: hidden; display: grid; align-content: start; min-height: 440px; gap: 22px; padding: 30px 28px 104px; border-radius: 0; font-size: 14.5px; color: var(--ink); background: var(--sheet);
+.prop { --sheet: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 440px; padding: 0 0 84px; border-radius: 0; font-size: 14.5px; color: var(--ink); background: var(--sheet);
   box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 7%, transparent), 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 0 -1px var(--sheet), 0 4px 0 0 color-mix(in oklch, var(--ink) 8%, transparent), 0 22px 40px -22px rgb(0 0 0 / 0.28); }
 @media (prefers-color-scheme: dark) { .prop { --sheet: var(--card); } }
+/* Long estimates scroll inside the sheet: it stops at the screen's height, fades where there's more, and a
+   See all pill takes you down. The footer stays put. */
+.prop__body { display: grid; align-content: start; gap: 22px; min-height: 0; padding: 30px 28px 20px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; --ft: 0px; --fb: 0px; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--ft), #000 calc(100% - var(--fb)), transparent); mask-image: linear-gradient(to bottom, transparent, #000 var(--ft), #000 calc(100% - var(--fb)), transparent); }
+.prop__body::-webkit-scrollbar { display: none; }
+.prop__body[data-top] { --ft: 28px; }
+.prop__body[data-more] { --fb: 72px; }
+@media (min-width: 901px) { .est__side .prop { max-height: calc(100vh - 36px); } }
+.prop__more { position: absolute; left: 50%; bottom: 92px; z-index: 2; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font: 600 12.5px var(--font); color: var(--ink); background: var(--sheet); box-shadow: 0 0 0 1px var(--hair), 0 6px 16px -8px rgb(0 0 0 / 0.25); translate: -50% 0; animation: hire-in 220ms var(--ease) both; transition: translate var(--t-ui) var(--ease); }
+.prop__more:hover { translate: -50% 2px; }
+.prop__more[hidden] { display: none; }
 .prop__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .prop__head div { display: grid; gap: 2px; }
 .prop__title { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
@@ -229,7 +240,7 @@
 .prop__lines small { grid-column: 1 / -1; font-size: 13px; line-height: 1.5; color: var(--muted); }
 /* Each line opens the screen it came from: a tint over the line, a pencil in the margin */
 .prop__lines li { position: relative; }
-.prop__edit { position: absolute; inset: -6px -10px -6px -30px; z-index: 1; display: flex; align-items: flex-start; padding: 8px 0 0 8px; border-radius: 10px; font-size: 13px; color: var(--muted); background: transparent; cursor: pointer; opacity: 0.001; transition: opacity var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.prop__edit { position: absolute; inset: -6px -10px -6px -26px; z-index: 1; display: flex; align-items: flex-start; padding: 8px 0 0 6px; border-radius: 10px; font-size: 13px; color: var(--muted); background: transparent; cursor: pointer; opacity: 0.001; transition: opacity var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
 .prop__edit:is(:hover, :focus-visible) { opacity: 1; background: color-mix(in oklch, var(--ink) 4%, transparent); }
 .prop__edit:focus-visible { outline: 2px solid var(--you); outline-offset: 0; }
 .prop__edit svg { pointer-events: none; }
@@ -267,6 +278,8 @@
   .prop, .prop * { visibility: visible; }
   .prop { position: absolute; left: 0; top: 0; width: 100%; min-height: 9.6in; box-shadow: none; border-radius: 0; padding: 0 0 120px; font-size: 13pt; background: #fff; color: #161513; }
   .prop__foot { padding: 0 0 0; }
+  .prop__body { overflow: visible; padding: 0; -webkit-mask-image: none; mask-image: none; }
+  .prop__more { display: none !important; }
   .bar, .peek, .toast { display: none !important; }
 }
 
