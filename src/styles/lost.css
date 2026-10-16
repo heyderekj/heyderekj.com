@@ -175,7 +175,7 @@ body.site .four__col:focus-visible { outline: none; }
 .four__who:hover, .four__who[aria-expanded="true"] { scale: 1.06; }
 .four__who i { position: absolute; right: -6px; bottom: -6px; display: grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; font-size: 10px; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair), 0 1px 2px rgb(0 0 0 / 0.12); transition: rotate var(--t-ui) var(--ease); }
 .four__who[aria-expanded="true"] i { rotate: 180deg; }
-.four__dial { top: calc(100% + 8px); left: 0; width: 264px; transform-origin: top left; }
+.four__dial { top: calc(100% + 8px); left: 0; right: 0; width: auto; padding: 10px; transform-origin: top left; }
 /* The pets' photos line up with the settings' labels below (dial__row's 10px) */
 .four__foes { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 0 0 2px; }
 .four__foes button { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 14px; font: 500 14.5px var(--font); color: var(--ink-soft); transition: background-color var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
@@ -334,3 +334,11 @@ html.four-locked, html.four-locked body { overflow: hidden; overscroll-behavior:
 html.four-locked .bar { opacity: 0; translate: -50% 24px; pointer-events: none; }
 html.four-locked .lost { opacity: 0.45; filter: grayscale(0.3); transition: opacity 300ms var(--ease), filter 300ms var(--ease); }
 html.four-locked .lost-head__line { opacity: 0.45; }
+
+/* The picker spans the game: Random across the top, then the four pets side by side, each a big photo with
+   their name and record under it, and the two settings side by side */
+.four__foes { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.four__foes button:not(.four__any) { flex-direction: column; gap: 8px; padding: 10px 6px 12px; text-align: center; }
+.four__foes button:not(.four__any) > span { justify-items: center; text-align: center; }
+.four__foes button:not(.four__any) i { width: min(76px, 100%); height: auto; aspect-ratio: 1; --r: 16px; }
+.four__sets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }

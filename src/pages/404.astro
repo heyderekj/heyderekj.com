@@ -62,8 +62,10 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
               <button type="button" class="four__any" data-foe-random aria-pressed="true"><i class="sq" aria-hidden="true"><Icon name="refresh" loop={false} /></i><span>Random<small>A different one each game</small></span></button>
             </div>
             <div class="dial__head dial__head--gap"><b>Settings</b></div>
-            <label class="dial__row dial__switch"><span>Sound</span><input type="checkbox" data-four-set="sound" /><i aria-hidden="true"></i></label>
-            <label class="dial__row dial__switch"><span>Less motion</span><input type="checkbox" data-four-set="calm" /><i aria-hidden="true"></i></label>
+            <div class="four__sets">
+              <label class="dial__row dial__switch"><span>Sound</span><input type="checkbox" data-four-set="sound" /><i aria-hidden="true"></i></label>
+              <label class="dial__row dial__switch"><span>Less motion</span><input type="checkbox" data-four-set="calm" /><i aria-hidden="true"></i></label>
+            </div>
           </div>
         </div>
         <div class="four__controls">

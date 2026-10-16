@@ -418,7 +418,9 @@ if (game && grid404 && head) {
 
   // ---- The dial: their face opens it
   const dial = $('.four__dial');
-  const openDial = () => { dial.hidden = false; dial.classList.remove('is-in'); void dial.offsetWidth; dial.classList.add('is-in'); whoEl.setAttribute('aria-expanded', 'true'); };
+  const openDial = () => { dial.hidden = false; dial.classList.remove('is-in'); void dial.offsetWidth; dial.classList.add('is-in'); whoEl.setAttribute('aria-expanded', 'true');
+    // The page is locked while you play, so bring the whole picker into view
+    requestAnimationFrame(() => dial.scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' })); };
   function closeDial() { if (dial.hidden) return; dial.hidden = true; whoEl.setAttribute('aria-expanded', 'false'); }
   whoEl.addEventListener('click', () => (dial.hidden ? openDial() : closeDial()));
   document.addEventListener('pointerdown', (e) => { if (!dial.hidden && !(e.target as HTMLElement).closest('.four__dial, .four__who')) closeDial(); });
