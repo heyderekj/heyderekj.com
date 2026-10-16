@@ -924,9 +924,15 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 /* Work: the filters with a settings button at the end, and its dial panel (client/work-dial.ts) */
 .work-tools { position: relative; display: flex; align-items: center; gap: 8px; }
 .work-tools .work-chips { flex: 1; min-width: 0; }
-.work-tools__btn { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 999px; color: var(--muted); font-size: 15px; transition: background var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
-.work-tools__btn:hover, .work-tools__btn[aria-expanded="true"] { color: var(--ink); background: color-mix(in oklch, var(--ink) 8%, transparent); }
-.work-dial { top: calc(100% + 8px); right: 0; width: 272px; }
+.work-tools__btn { --r: 12px; flex: none; display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 12px 0 12px; border-radius: 999px; font-size: 14px; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.work-tools__btn > svg:first-child { font-size: 15px; }
+.work-tools__btn b { font-weight: 600; }
+.work-tools__btn span { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.work-tools__chev { font-size: 13px; color: var(--muted); transition: rotate var(--t-ui) var(--ease); }
+.work-tools__btn:hover { box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow-lift); translate: 0 -1px; }
+.work-tools__btn[aria-expanded="true"] { box-shadow: 0 0 0 1.5px var(--ink), var(--shadow-lift); }
+.work-tools__btn[aria-expanded="true"] .work-tools__chev { rotate: 180deg; }
+.work-dial { top: calc(100% + 8px); left: 0; width: 280px; transform-origin: top left; }
 .dial__row.is-off { opacity: 0.45; pointer-events: none; }
 .work-list .list__year > .row { transition: background var(--t-ui) var(--ease); }
 /* Thumbnails off: back to plain rows */
@@ -976,3 +982,12 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 /* While one stack is fanned out, the others step back */
 .work-list.is-stack .row--thumb { transition: opacity 260ms var(--ease), filter 260ms var(--ease); }
 .work-list.is-stack:has(.row--thumb:hover) .row--thumb:not(:hover) { opacity: 0.35; filter: grayscale(0.5); }
+/* The studio filters live in the Work dial now: the toolbar is just its button */
+.work-tools { justify-content: flex-start; }
+.dial__head--gap { margin-top: 6px; padding-top: 10px; border-top: 1px solid var(--hair); }
+.dial__pills { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 4px 2px; }
+.dial__pill { display: inline-flex; align-items: baseline; gap: 4px; padding: 5px 10px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; background: color-mix(in oklch, var(--ink) 5%, transparent); transition: background var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
+.dial__pill span { font-size: 11px; color: color-mix(in srgb, var(--muted) 80%, transparent); font-variant-numeric: tabular-nums; }
+.dial__pill:hover { color: var(--ink); background: color-mix(in oklch, var(--ink) 9%, transparent); }
+.dial__pill.is-current { color: var(--paper); background: var(--ink); }
+.dial__pill.is-current span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
