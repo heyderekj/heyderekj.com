@@ -10,6 +10,7 @@ interface Props { work: Work[]; active?: string }
 const { work, active } = Astro.props;
 const all = await getPublishedWork();
 const partners = partnersOf(all);
+const solo = all.filter((w) => !w.data.partnership?.trim()).length;
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const rows = await Promise.all([...work].sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf()).map(async (w) => {
   const done = workDate(w), first = shotsOf(w)[0];
@@ -24,10 +25,12 @@ const years = [...new Set(rows.map((r) => r.year))];
 ---
 <nav class="work-chips" aria-label="Filter by studio">
   <a class:list={['wchip sq', !active && 'is-current']} href="/work/" aria-current={!active ? 'page' : undefined}>All <span>{all.length}</span></a>
+  <a class:list={['wchip sq', active === 'solo' && 'is-current']} href="/work/solo/" aria-current={active === 'solo' ? 'page' : undefined} data-tip="Under Derek J Design" aria-describedby="soloTip">Solo <span>{solo}</span></a>
   {partners.map((p) => (
     <a class:list={['wchip sq', active === p.slug && 'is-current']} href={partnerHref(p.name)} aria-current={active === p.slug ? 'page' : undefined}>{p.name} <span>{p.count}</span></a>
   ))}
 </nav>
+<span id="soloTip" hidden>Under Derek J Design</span>
 <div class="list">
   {years.map((y) => (
     <section class="list__year">

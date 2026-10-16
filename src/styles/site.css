@@ -915,3 +915,8 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .row--thumb .row__date { align-self: end; }
 .row--thumb .row__desc { grid-column: 2 / -1; align-self: start; }
 @media (max-width: 560px) { .row--thumb { grid-template-columns: 60px minmax(0, 1fr) auto; column-gap: 12px; } .row--thumb .row__thumb { width: 60px; } }
+/* A small tooltip on a chip (data-tip), like the Solo chip's 'Under Derek J Design' */
+@media (min-width: 700px) { .work-chips { overflow: visible; } } /* room for the tooltip; phones keep the sideways scroll */
+[data-tip] { position: relative; }
+[data-tip]::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); translate: -50% 4px; padding: 5px 10px; border-radius: 9px; white-space: nowrap; font-size: 12px; font-weight: 500; color: var(--paper); background: var(--ink); box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); z-index: 5; }
+[data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; translate: -50% 0; }
