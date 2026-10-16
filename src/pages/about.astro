@@ -2,7 +2,7 @@
 import Icon from '../components/Icon.astro';
 import { imgAttrs, imgFixed } from '../lib/img';
 import { getCollection } from 'astro:content';
-import Base from '../layouts/Base.astro';
+import Site from '../layouts/Site.astro';
 import PageTitle from '../components/PageTitle.astro';
 import ApplicationToc from '../components/ApplicationToc.astro';
 import BragSkillsList from '../components/BragSkillsList.astro';
@@ -58,10 +58,10 @@ const fmtPostDate = (iso: string) =>
     timeZone: 'UTC',
   });
 ---
-<Base title="About — Derek Castelli" description={bragMeta.description}>
+<Site legacy bar={{ kind: 'page', title: 'About' }} title="About — Derek Castelli" description={bragMeta.description}>
   <article class="prose brag-page about-page">
 
-    <PageTitle path="/about" />
+    <PageTitle title="About" path="/about" />
 
     <ApplicationToc items={tocItems} />
 
@@ -562,7 +562,7 @@ function initBragEpigraphNote() {
     initBragVideoModal();
     document.addEventListener('astro:page-load', initBragVideoModal);
   </script>
-</Base>
+</Site>
 
 <style>
   .about-anchor {

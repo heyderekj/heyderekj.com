@@ -1,12 +1,14 @@
 ---
 interface Props {
-  /** Path-style page title, e.g. "/posts" */
+  /** Path-style title from the old layout, e.g. "/posts"; shown only when there's no `title`. */
   path: string;
+  /** The page's name as a reader would say it, e.g. "About". */
+  title?: string;
 }
 
-const { path } = Astro.props;
+const { path, title } = Astro.props;
 ---
 <div class="page-title">
-  <h1>{path}</h1>
+  <h1 class="page-h">{title ?? path}</h1>
   <slot />
 </div>

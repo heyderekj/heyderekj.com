@@ -5,15 +5,19 @@
  * The topic chips above filter it (client/chips.ts).
  */
 import Icon from '../Icon.astro';
-import { getPublishedPosts, postHref, postTitle } from '../../lib/posts';
+import { getPublishedPosts, postHref, postTitle, type Post } from '../../lib/posts';
 import { peekFor, readingMinutes, type Subject } from '../../lib/pullquote';
 import { getDeck, host, shot, shotsOf } from '../../lib/deck';
 import { figuresIn } from '../../lib/figures';
 
-interface Props { show?: number }
+interface Props {
+  /** Which posts to list; every published post when unset (the home page). */
+  posts?: Post[];
+  /** How many years show before "All posts". */
+  show?: number;
+}
 const { show = 3 } = Astro.props;
-
-const posts = await getPublishedPosts();
+const posts = Astro.props.posts ?? await getPublishedPosts();
 const { apps, work } = await getDeck();
 // Things an essay might be about, with the picture we already have for each
 const subjects: Subject[] = [

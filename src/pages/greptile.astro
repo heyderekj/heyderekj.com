@@ -10,7 +10,7 @@ import { imgAttrs, imgFixed, imgSrc } from '../lib/img';
   Renaming would mean editing shared files for zero visual gain.
 */
 import { getCollection } from 'astro:content';
-import Base from '../layouts/Base.astro';
+import Site from '../layouts/Site.astro';
 import PageTitle from '../components/PageTitle.astro';
 import ApplicationToc from '../components/ApplicationToc.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
@@ -66,13 +66,15 @@ const tocItems = [
 ];
 ---
 
-<Base
+<Site
+    legacy
+    bar={{ kind: 'page', title: 'For Greptile' }}
   title={greptileMeta.title}
   description={greptileMeta.description}
   ogImage={greptileMeta.ogImage}
   noindex={true}
 >
-  <PageTitle path="/greptile" />
+  <PageTitle title="For Greptile" path="/greptile" />
 
   <ApplicationToc items={tocItems} />
 
@@ -293,7 +295,7 @@ const tocItems = [
       });
     }
   </script>
-</Base>
+</Site>
 
 <style is:global>
   /* Chips must be global: block chips arrive via set:html and never get
@@ -787,7 +789,7 @@ const tocItems = [
     transition: color 0.15s ease;
   }
 
-  /* `main` lives in Base.astro and never carries this component's scope class,
+  /* `main` lives in the layout and never carries this component's scope class,
      so the ancestor must be :global() or the selector silently never matches. */
   :global(main.main) .cio-more { border-bottom: none; }
   :global(main.main) .cio-more:hover { color: var(--fg); border-bottom: none; }

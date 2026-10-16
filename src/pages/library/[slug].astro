@@ -5,7 +5,7 @@
  * their kind (`book-…`, `tool-…`) so the two never collide.
  */
 import '../../styles/library.css';
-import Base from '../../layouts/Base.astro';
+import Site from '../../layouts/Site.astro';
 import PageTitle from '../../components/PageTitle.astro';
 import TagChips from '../../components/TagChips.astro';
 import LibraryFilters from '../../components/library/LibraryFilters.astro';
@@ -82,13 +82,15 @@ const specRows: [string, string | undefined, string?][] = d
   : [];
 ---
 {props.mode === 'kind' ? (
-  <Base
+  <Site
+    legacy
+    bar={{ kind: 'page', title: KIND_META[props.kind].many }}
     noindex
     title={`${KIND_META[props.kind].many} — Library — Derek Castelli`}
     description={KIND_META[props.kind].intro}
   >
     <article class="prose library-page">
-      <PageTitle path={`/library/${KIND_META[props.kind].path}`} />
+      <PageTitle title={KIND_META[props.kind].many} path={`/library/${KIND_META[props.kind].path}`} />
       <p class="library-intro">{KIND_META[props.kind].intro}</p>
       <LibraryFilters active={props.kind} counts={counts} total={items.length} />
       {kindGroups.map((g) => (
@@ -100,9 +102,9 @@ const specRows: [string, string | undefined, string?][] = d
         />
       ))}
     </article>
-  </Base>
+  </Site>
 ) : (
-  <Base noindex title={`${d!.title} — Library — Derek Castelli`} description={d!.note ?? KIND_META[d!.kind].intro}>
+  <Site legacy bar={{ kind: 'page', title: d!.title }} noindex title={`${d!.title} — Library — Derek Castelli`} description={d!.note ?? KIND_META[d!.kind].intro}>
     <article class="prose library-page library-item">
       <p class="library-crumb">
         <a href="/library/">/library</a><a href={kindHref(d!.kind)}>/{KIND_META[d!.kind].path}</a>
@@ -144,5 +146,5 @@ const specRows: [string, string | undefined, string?][] = d
         <a href={kindHref(d!.kind)}><span class="arrow">&larr;</span> all {KIND_META[d!.kind].many.toLowerCase()}</a>
       </p>
     </article>
-  </Base>
+  </Site>
 )}

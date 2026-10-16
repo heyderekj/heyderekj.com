@@ -1,6 +1,6 @@
 ---
 import fs from 'node:fs';
-import Base from '../layouts/Base.astro';
+import Site from '../layouts/Site.astro';
 import PageTitle from '../components/PageTitle.astro';
 import { getPublishedPosts, TYPE_LABELS, typeHref, type PostType } from '../lib/posts';
 
@@ -20,9 +20,9 @@ const astroVersion = (() => {
 const commit = process.env.CF_PAGES_COMMIT_SHA ?? process.env.WORKERS_CI_COMMIT_SHA;
 const REPO = 'https://github.com/heyderekj/heyderekj.com';
 ---
-<Base title="Colophon — Derek Castelli" description="How this site is made, and how the writing on it works.">
+<Site legacy bar={{ kind: 'page', title: 'Colophon' }} title="Colophon — Derek Castelli" description="How this site is made, and how the writing on it works.">
   <article class="prose colophon">
-    <PageTitle path="/colophon" />
+    <PageTitle title="Colophon" path="/colophon" />
     <p class="colophon__lead">How this site is made, and how the writing on it works.</p>
 
     <h2 id="writing">The writing</h2>
@@ -70,7 +70,7 @@ const REPO = 'https://github.com/heyderekj/heyderekj.com';
     <ul>
       <li><a href="https://astro.build" rel="noopener">Astro</a> {astroVersion}, fully static, with Markdown and MDX for posts.</li>
       <li>Hosted on <a href="https://pages.cloudflare.com" rel="noopener">Cloudflare Pages</a>. Images are resized on the fly by Cloudflare's image CDN.</li>
-      <li>Set in <a href="https://fonts.google.com/specimen/Plus+Jakarta+Sans" rel="noopener">Plus Jakarta Sans</a>, with <a href="https://phosphoricons.com" rel="noopener">Phosphor</a> icons.</li>
+      <li>Set in <a href="https://fonts.google.com/specimen/Figtree" rel="noopener">Figtree</a>, with a small set of squircle icons drawn for this site.</li>
       <li>Hand-written CSS. No framework.</li>
       <li>
         Designed and built by me, pairing with <a href="https://claude.com/claude-code" rel="noopener">Claude Code</a>.
@@ -85,4 +85,4 @@ const REPO = 'https://github.com/heyderekj/heyderekj.com';
       )}
     </p>
   </article>
-</Base>
+</Site>

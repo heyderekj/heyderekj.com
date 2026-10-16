@@ -1,9 +1,7 @@
 ---
-import Base from '../../../layouts/Base.astro';
-import PageTitle from '../../../components/PageTitle.astro';
-import PostList from '../../../components/PostList.astro';
-import PostFilters from '../../../components/PostFilters.astro';
-import { getPublishedPosts, TYPE_LABELS, type PostType } from '../../../lib/posts';
+import Site from '../../../layouts/Site.astro';
+import PostIndex from '../../../components/site/PostIndex.astro';
+import { getPublishedPosts, TYPE_LABELS, typeHref, type PostType } from '../../../lib/posts';
 
 const INTROS: Record<PostType, string> = {
   essay: 'Long-form writing with an argument. Each one carries a status and revision number, and changes over time.',
@@ -29,11 +27,17 @@ const counts = { essay: 0, note: 0, link: 0 } as Record<PostType, number>;
 for (const p of all) counts[p.data.type]++;
 const label = TYPE_LABELS[type];
 ---
-<Base title={`${label.many} — Derek Castelli`} description={INTROS[type]}>
-  <PageTitle path={`/posts/${label.path}`} />
-  <p style="color: var(--fg-soft); max-width: var(--max-prose);">{INTROS[type]}</p>
-
-  <PostFilters active={type} counts={counts} total={all.length} />
-
-  <PostList entries={entries} showYearHeaders={true} />
-</Base>
+<Site bar={{ kind: 'page', title: label.many }} title={`${label.many} — Derek Castelli`} description={INTROS[type]}>
+  <main class="home">
+    <h1 class="page-h">{label.many}</h1>
+    <p class="page-lede">{INTROS[type]}</p>
+    <div class="work-chips">
+      <a class="wchip sq" href="/#writing">Everything <span>{all.length}</span></a>
+      {(Object.keys(TYPE_LABELS) as PostType[]).filter((k) => counts[k]).map((k) => (
+        <a class:list={['wchip sq', k === type && 'is-current']} href={typeHref(k)} aria-current={k === type ? 'page' : undefined}>{TYPE_LABELS[k].many} <span>{counts[k]}</span></a>
+      ))}
+    </div>
+    <PostIndex posts={entries} show={Infinity} />
+  </main>
+  <script src="../../../client/peek.ts"></script>
+</Site>

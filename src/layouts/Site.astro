@@ -6,6 +6,7 @@
  */
 import '../styles/global.css';
 import '../styles/figures.css';
+import '../styles/chips.css';
 import '../styles/tokens.css';
 import '../styles/site.css';
 import Head from '../components/Head.astro';
@@ -13,8 +14,9 @@ import Bar from '../components/Bar.astro';
 import type { Props as HeadProps } from '../components/Head.astro';
 import type { BarContext } from '../lib/bar';
 
-type Props = HeadProps & { bar?: BarContext };
-const { bar, ...head } = Astro.props;
+/** `legacy` hosts pages built from the older components in the new reading column. */
+type Props = HeadProps & { bar?: BarContext; legacy?: boolean };
+const { bar, legacy = false, ...head } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -22,7 +24,7 @@ const { bar, ...head } = Astro.props;
     <Head {...head} />
   </head>
   <body class="site">
-    <slot />
+    {legacy ? <div class="legacy-col"><main class="main"><slot /></main></div> : <slot />}
     <Bar context={bar} />
     <div class="toast" id="toast" role="status"></div>
     <script src="../client/signature.ts"></script>
@@ -33,5 +35,8 @@ const { bar, ...head } = Astro.props;
     <script src="../client/copy.ts"></script>
     <script src="../client/media-prefetch.ts"></script>
     <script src="../client/icon-morph.ts"></script>
+    <script src="../client/url-chip.ts"></script>
+    <script src="../client/reveal.ts"></script>
+    <script src="../client/easter-egg.ts"></script>
   </body>
 </html>

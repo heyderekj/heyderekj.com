@@ -136,176 +136,6 @@ body {
 ::selection { background: var(--accent-soft); color: var(--fg); }
 
 /* ============================================================
-   App window — subtle Mac window chrome feel
-   ============================================================ */
-.app-window {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  /* No vertical padding so the frame rails run the full window height */
-  padding: 0 var(--space-4);
-}
-
-/* The grid frame: two hairline rails bounding everything, header/footer rules,
-   and plus-sign ticks at intersections. container-type makes 100cqw equal the
-   rail-to-rail width for exact full-bleed math anywhere inside. */
-.frame {
-  width: 100%;
-  max-width: var(--frame-max);
-  margin-inline: auto;
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  border-inline: 1px solid var(--rule);
-  container-type: inline-size;
-  container-name: frame;
-  padding-inline: var(--frame-pad-x);
-}
-
-/* ============================================================
-   Site header — brand left, text nav right, inside the frame
-   ============================================================ */
-.site-header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  /* Bleed through `--frame-pad-x` so the bottom rule meets the rails on mobile */
-  margin-inline: calc(-1 * var(--frame-pad-x));
-  padding-block: var(--space-3);
-  padding-inline: var(--header-pad-x);
-  border-bottom: 1px solid var(--rule);
-}
-
-/* Plus ticks straddling a horizontal rule where it meets the rails.
-   Content sits 1px inside the border — expand the tick layer 1px farther
-   past each rail so the crosses center on the hairlines. Keep `left`/`right`
-   keywords for the horizontal arms: `%` calcs resolve against
-   (area − image) and shove the right bar the wrong way. */
-.site-header::after,
-.site-footer::before {
-  content: '';
-  position: absolute;
-  left: calc(-1 * (var(--tick-size) - 1px) / 2 - 1px);
-  right: calc(-1 * (var(--tick-size) - 1px) / 2 - 1px);
-  height: var(--tick-size);
-  pointer-events: none;
-  background:
-    linear-gradient(var(--tick), var(--tick)) left center / var(--tick-size) 1px no-repeat,
-    linear-gradient(var(--tick), var(--tick)) calc((var(--tick-size) - 1px) / 2) center / 1px var(--tick-size) no-repeat,
-    linear-gradient(var(--tick), var(--tick)) right center / var(--tick-size) 1px no-repeat,
-    linear-gradient(var(--tick), var(--tick)) calc(100% - (var(--tick-size) - 1px) / 2) center / 1px var(--tick-size) no-repeat;
-}
-
-/* Half-tick + 0.5px so the cross centers on the 1px rule (not the padding edge). */
-.site-header::after { bottom: calc(var(--tick-size) / -2 - 0.5px); }
-.site-footer::before { top: calc(var(--tick-size) / -2 - 0.5px); }
-
-.site-brand {
-  position: relative;
-  display: inline-block;
-  text-decoration: none;
-  min-width: 0;
-}
-
-/* Signature sits as a faint light-gray watermark layered behind the name */
-.site-brand__sig {
-  position: absolute;
-  left: -6px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 150px;
-  height: auto;
-  opacity: 0.05;
-  z-index: 0;
-  pointer-events: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  .site-brand__sig { filter: invert(1); opacity: 0.08; }
-}
-
-.site-brand__text {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  line-height: 1.25;
-  min-width: 0;
-  padding-left: 26px;
-}
-
-.site-brand__name {
-  font-size: var(--size-meta);
-  font-weight: 600;
-  color: var(--fg);
-  white-space: nowrap;
-}
-
-.site-nav {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-3);
-  flex-shrink: 0;
-  align-self: stretch;
-}
-
-.site-nav a {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  font-size: var(--size-meta);
-  font-weight: 500;
-  color: var(--muted-strong);
-  text-decoration: none;
-  padding: 0 2px;
-  transition: color 0.15s ease;
-}
-
-.site-nav a { gap: 0.35em; }
-.site-nav a .icon { font-size: 1.05em; }
-.site-nav a.active .icon { color: var(--accent); }
-.site-nav a:hover { color: var(--fg); }
-.site-nav a.active { color: var(--fg); }
-
-/* Active marker: centered on the header’s bottom rule.
-   Links stretch to the header content row so `bottom` clears only `--space-3`. */
-.site-nav a.active::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(-1 * var(--space-3) - 2.5px);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--accent);
-}
-
-.site-nav a:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-
-/* ============================================================
-   Site footer — pinned to the frame bottom
-   ============================================================ */
-.site-footer {
-  position: relative;
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  margin-inline: calc(-1 * var(--frame-pad-x));
-  padding-block: var(--space-3);
-  padding-inline: var(--header-pad-x);
-  border-top: 1px solid var(--rule);
-}
-
-/* ============================================================
    Main content area
    ============================================================ */
 .main {
@@ -1270,26 +1100,6 @@ figure.zoomable.is-zoomed {
 }
 
 /* ============================================================
-   Home intro
-   ============================================================ */
-.intro { margin-bottom: var(--space-3); }
-.intro p {
-  font-size: var(--size-lead);
-  /* Tall enough for inline chips — tighter leading lets them collide across lines */
-  line-height: 1.75;
-  max-width: var(--max-text);
-  margin-bottom: var(--space-2);
-  text-wrap: pretty;
-}
-
-.intro-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-}
-
-/* ============================================================
    CTA + back links — arrow slides on hover
    ============================================================ */
 .back-link { margin-top: var(--space-5); font-size: var(--size-meta); }
@@ -1302,15 +1112,6 @@ figure.zoomable.is-zoomed {
   padding: 1px 5px;
   border-radius: var(--radius-sm);
 }
-
-/* ============================================================
-   Footer
-   ============================================================ */
-.site-footer { font-size: var(--size-micro); color: var(--muted); }
-.footer-links { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font-size: var(--size-meta); }
-.footer-links a { color: var(--muted-strong); text-decoration: none; transition: color 0.15s ease; }
-.footer-links a:hover { color: var(--fg); }
-.footer-version { color: var(--muted); }
 
 /* ============================================================
    URL chip (inline link destination preview)
@@ -1364,26 +1165,7 @@ figure.zoomable.is-zoomed {
 
 /* ============================================================
    Responsive
-   Below 660px: header wraps, rails stay, content gets breathing room.
    ============================================================ */
-@media (max-width: 660px) {
-  :root {
-    --frame-pad-x: 16px;
-    /* Same inset as main / page sections from the rails */
-    --header-pad-x: var(--frame-pad-x);
-  }
-  .app-window { padding: 0 var(--space-3); }
-  .site-header { flex-wrap: wrap; row-gap: var(--space-2); }
-  .site-nav { width: 100%; justify-content: flex-start; }
-  /* Drop the desktop signature gutter so the name lines up with nav + body */
-  .site-brand__text { padding-left: 0; }
-  .site-brand__sig {
-    left: 0;
-    width: 140px;
-  }
-  .main { padding: var(--space-4) 0 var(--space-5); }
-}
-
 @media (max-width: 560px) {
   .entries li:not(:has(> a.entry-link)) {
     grid-template-columns: 80px 1fr;

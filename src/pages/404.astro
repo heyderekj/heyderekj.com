@@ -1,5 +1,5 @@
 ---
-import Base from '../layouts/Base.astro';
+import Site from '../layouts/Site.astro';
 import PageTitle from '../components/PageTitle.astro';
 
 const siteUrl = (Astro.site?.toString() ?? 'https://heyderekj.com').replace(/\/$/, '');
@@ -7,15 +7,15 @@ const canonical = `${siteUrl}/404/`;
 const title = 'Page not found — Derek Castelli';
 const description = 'This URL does not exist on heyderekj.com.';
 ---
-<Base title={title} description={description} canonical={canonical} noindex includeAnalytics={false}>
+<Site legacy bar={{ kind: 'page', title: 'Not found' }} title={title} description={description} canonical={canonical} noindex includeAnalytics={false}>
   <article class="prose">
-    <PageTitle path="/404" />
+    <PageTitle title="Not found" path="/404" />
     <p style="color: var(--fg-soft);">
-      This page isn’t here—maybe a broken link, a typo, or an old bookmark. Head back home or
-      use the nav to find something that is.
+      This page isn’t here—maybe a broken link, a typo, or an old bookmark. Head back home, or press / to
+      search for something that is.
     </p>
     <p>
       <a href="/">Back to the homepage</a>
     </p>
   </article>
-</Base>
+</Site>

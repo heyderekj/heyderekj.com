@@ -59,10 +59,10 @@ body.site .icon { width: 1em; height: 1em; flex: none; }
 .essay__meta { font-size: 14px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; }
 .essay h1 { margin: 10px 0 14px; font-size: clamp(34px, 5vw, 46px); line-height: 1.05; font-weight: 700; letter-spacing: -0.035em; text-wrap: balance; }
 .essay .lede { margin: 0 0 40px; font-size: 20px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
-.prose p { margin: 0 0 1.1em; font-size: 18px; line-height: 1.68; color: var(--ink-soft); text-wrap: pretty; }
-.prose p strong { color: var(--ink); font-weight: 600; }
-.prose h2 { margin: 2.4em 0 0.6em; font-size: 26px; line-height: 1.2; font-weight: 700; letter-spacing: -0.025em; }
-.prose h3 { margin: 1.8em 0 0.4em; font-size: 19px; font-weight: 600; letter-spacing: -0.012em; }
+:where(.essay) .prose p { margin: 0 0 1.1em; font-size: 18px; line-height: 1.68; color: var(--ink-soft); text-wrap: pretty; }
+:where(.essay) .prose p strong { color: var(--ink); font-weight: 600; }
+:where(.essay) .prose h2 { margin: 2.4em 0 0.6em; font-size: 26px; line-height: 1.2; font-weight: 700; letter-spacing: -0.025em; }
+:where(.essay) .prose h3 { margin: 1.8em 0 0.4em; font-size: 19px; font-weight: 600; letter-spacing: -0.012em; }
 mark.hl { background: color-mix(in oklch, var(--hl) 55%, transparent); color: inherit; border-radius: 3px; padding: 0 1px; -webkit-box-decoration-break: clone; box-decoration-break: clone; cursor: pointer; }
 .back { position: fixed; z-index: 30; top: calc(16px + env(safe-area-inset-top, 0px)); right: calc(var(--gutter-r) + 4px); }
 .clipcard { --r: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; margin: 28px 0; padding: 14px 16px; text-decoration: none; background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
@@ -466,3 +466,23 @@ body.site .toast { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
 .quotes .qcard p { font-size: 16px; }
 .quotes .qcard p::before, .quotes .qcard p::after { content: none; }
 .quotes .qcard b { color: var(--ink); font-weight: 600; }
+
+/* ---------- Pages built from the older components, in the new reading column ---------- */
+.legacy-col { width: min(var(--read), 100%); margin: 0 auto; padding-block: 112px 64px; container: frame / inline-size; }
+.legacy-col > .main { max-width: none; padding: 0; display: block; }
+.legacy-col .prose, .legacy-col .prose p, .legacy-col .prose ul, .legacy-col .prose ol, .legacy-col .prose blockquote { max-width: none; }
+.legacy-col .page-title { display: block; margin: 0 0 12px; }
+.legacy-col .page-title .page-h { margin: 0; }
+.legacy-col .page-title + p { font-size: 19px; line-height: 1.55; color: var(--muted); margin-bottom: 28px; text-wrap: pretty; }
+:where(.legacy-col) :is(p, li) { font-size: 17px; line-height: 1.65; color: var(--ink-soft); }
+:where(.legacy-col) h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+:where(.legacy-col) h3 { font-size: 17px; font-weight: 600; }
+/* Section titles keep their label and lose the rail-to-rail rule and ticks */
+.legacy-col .section-title { margin-top: 56px; padding-top: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.legacy-col .section-title::before, .legacy-col .section-title::after { content: none; }
+/* Links: the same quiet underline as the essays */
+body.site .legacy-col main.main a { border-bottom: 0; text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: 4px; }
+body.site .legacy-col main.main a:hover { text-decoration-color: currentColor; }
+body.site .legacy-col main.main :is(a.entry-link, .entries a, a.chip, a.cta, a.work-link-pill, .intro-pill, a.about-exp-pill, a[class*="card"], .library-card a, nav a) { text-decoration: none; }
+/* The bar carries "On this page" now */
+body.site .app-toc { display: none !important; }
