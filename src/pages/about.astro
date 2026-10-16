@@ -45,10 +45,13 @@ const roles = aboutExperienceGroups.filter((g) => g.title !== 'Education').reduc
       <h2 id="highlights" data-bar-section="Highlights">Highlights</h2>
       <div class="list"><section class="list__year">
         {highlights.map(({ clip, video, href, peek }) => <Fragment>{video?.youtubeId ? (
-          <a class="clipcard sq" href={`https://www.youtube.com/watch?v=${video.youtubeId}`} target="_blank" rel="noopener" data-peek-img={video.src ? imgSrc(video.src, 640) : undefined}>
-            <span class="clipcard__play"><Icon name="play" /></span>
-            <span><b>{clip.publication}: {clip.headline}</b><small>{clip.summary}</small></span>
-            <time>{clip.dateline}</time>
+          <a class="vidcard" href={`https://www.youtube.com/watch?v=${video.youtubeId}`} target="_blank" rel="noopener">
+            <span class="vidcard__still sq">
+              {video.src && <img src={imgSrc(video.src, 1280)} alt={video.alt ?? ''} loading="lazy" decoding="async" />}
+              <span class="vidcard__play"><Icon name="play" loop={false} /> Watch on YouTube</span>
+            </span>
+            <span class="vidcard__cap"><b>{clip.publication} · {clip.headline}</b><time>{clip.dateline}</time></span>
+            <small>{clip.summary}</small>
           </a>
         ) : (
           <a class="row sq" href={href} data-peek-img={peek} {...(external(href) ? { target: '_blank', rel: 'noopener' } : {})}>
