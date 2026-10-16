@@ -111,6 +111,8 @@ export type Testimonial = {
   author: string;
   role: string;
   context: string;
+  /** The line to pull out big on the Work page; must appear word for word in `quote` */
+  pull?: string;
 };
 
 export const testimonials: Testimonial[] = [
@@ -119,18 +121,21 @@ export const testimonials: Testimonial[] = [
     author: 'Barrett Johnson',
     role: 'Former Head of Marketing at Scenery',
     context: "Barrett was Derek's client · Nov 2023",
+    pull: 'a crucial, fun partner to work with',
   },
   {
     quote: 'I highly recommend Derek for his exceptional skills in User Interface (UI) design and Webflow Development. Derek\'s creative approach to UI consistently delivers visually exceptional and user-friendly interfaces that drives results. His proficiency in Webflow empowers him to bring his designs to life with seamless functionality and responsiveness. Derek\'s attention to detail, collaborative nature, and commitment to staying current with design trends makes him a valuable asset to any project.',
     author: 'Danny Begnoche',
     role: 'Owner at One Branding',
     context: 'Danny worked with Derek on the same team · Aug 2023',
+    pull: 'visually exceptional and user-friendly interfaces',
   },
   {
     quote: 'Derek is an incredibly talented Designer and Webflow Developer with a unique drive to always seek out the best solution and learn new things along the way.',
     author: 'Corey Moen',
     role: 'Former Brand/Web Designer at Webflow',
     context: "Corey was Derek's mentor · Apr 2023",
+    pull: 'a unique drive to always seek out the best solution',
   },
 ];
 
