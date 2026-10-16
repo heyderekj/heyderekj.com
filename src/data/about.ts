@@ -237,6 +237,6 @@ export const aboutChapters: AboutChapter[] = [
   {
     when: '2022',
     title: 'Sites, and apps.',
-    text: 'I went full-time freelancing in Webflow, first with One Branding (GoGuardian, IGN), now as a Webflow Expert with Kem Design. On the side, Testament Made: apps with customers of their own, starting with Harvous.',
+    text: 'I went full-time freelancing in Webflow, first with One Branding (GoGuardian, IGN), now as the website design/dev with Kem Design. On the side, Testament Made: apps with customers of their own, starting with Harvous.',
   },
 ];
