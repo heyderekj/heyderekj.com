@@ -1,14 +1,14 @@
 /**
  * The Work list's dial panel (components/site/WorkIndex.astro): a settings button beside the studio
  * filters opens a few live controls, set like the deck's: stack (the default), list or grid, sort, design or dev work,
- * grouping by year, and thumbnails. Remembered in this browser.
+ * and grouping by year. Remembered in this browser.
  */
 const list = document.querySelector<HTMLElement>('.work-list');
 const dial = document.querySelector<HTMLElement>('.work-dial');
 const btn = document.querySelector<HTMLButtonElement>('[data-wdial-toggle]');
 if (list && dial && btn) {
-  type Set = { layout: 'stack' | 'list' | 'grid'; sort: 'new' | 'old' | 'az'; type: 'all' | 'design' | 'dev'; group: boolean; thumbs: boolean };
-  const DEFAULTS: Set = { layout: 'stack', sort: 'new', type: 'all', group: true, thumbs: true };
+  type Set = { layout: 'stack' | 'list' | 'grid'; sort: 'new' | 'old' | 'az'; type: 'all' | 'design' | 'dev'; group: boolean };
+  const DEFAULTS: Set = { layout: 'stack', sort: 'new', type: 'all', group: true };
   let set: Set = { ...DEFAULTS };
   try { set = { ...DEFAULTS, ...JSON.parse(localStorage.getItem('hdj:work') || '{}') }; } catch {}
   if ((set.layout as string) === 'shots') set.layout = 'stack'; // its earlier name
@@ -21,7 +21,6 @@ if (list && dial && btn) {
     list.classList.toggle('is-grid', set.layout === 'grid');
     list.classList.toggle('is-stack', set.layout === 'stack');
     list.classList.toggle('is-flat', !set.group);
-    list.classList.toggle('no-thumbs', !set.thumbs && set.layout === 'list');
     // Type: design covers Design and Design & Development; dev covers Development and both
     rows.forEach((r) => {
       const t = r.dataset.type ?? '';
@@ -40,7 +39,6 @@ if (list && dial && btn) {
       b.classList.toggle('is-on', on); b.setAttribute('aria-checked', String(on));
     });
     dial!.querySelectorAll<HTMLInputElement>('[data-switch]').forEach((i) => { i.checked = Boolean((set as Record<string, unknown>)[i.dataset.switch!]); });
-    dial!.querySelector<HTMLElement>('[data-only="list"]')!.classList.toggle('is-off', set.layout !== 'list');
   }
   dial.addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-set]'); if (!b) return;

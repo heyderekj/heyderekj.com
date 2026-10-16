@@ -936,10 +936,6 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .work-dial { top: calc(100% + 8px); left: 0; width: 280px; transform-origin: top left; }
 .dial__row.is-off { opacity: 0.45; pointer-events: none; }
 .work-list .list__year > .row { transition: background var(--t-ui) var(--ease); }
-/* Thumbnails off: back to plain rows */
-.work-list.no-thumbs .row--thumb { grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; }
-.work-list.no-thumbs .row__thumb { display: none; }
-.work-list.no-thumbs .row--thumb .row__desc { grid-column: 1 / -1; }
 /* Not grouped: one run of rows, no year headings */
 .work-list.is-flat { gap: 2px; }
 .work-list.is-flat .list__year { display: contents; }
