@@ -80,7 +80,12 @@ export function imgSrc(p: string, w: number): string {
 
 /** `srcset` across `widths`, capped at the original's width. */
 export function imgSrcset(p: string, widths: number[] = WIDTHS): string | undefined {
-  if (!CDN || !isTransformable(p)) return undefined;
+  if (!isTransformable(p)) return undefined;
+  // Without the CDN, the built WebP copies: so a Retina screen gets the 1600 where it needs it, not the 960
+  if (!CDN) {
+    const found = VARIANTS.map((w) => [w, variantOf(p, w)] as const).filter(([w, u]) => u.endsWith(`-${w}.webp`));
+    return found.length > 1 ? found.map(([w, u]) => `${u} ${w}w`).join(', ') : undefined;
+  }
   const max = imgDims(p)?.width;
   const usable = max ? widths.filter((w) => w < max) : widths;
   if (max && (usable.length === 0 || usable[usable.length - 1] < max)) {

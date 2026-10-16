@@ -3,6 +3,9 @@
  * Single zoomable figure with an optional caption.
  *
  *   <Figure src="/images/posts/slug/nav-v2.png" alt="…" caption="The nav after round two" />
+ *
+ * `fill` is for photos (a mockup, a scene): the picture fills its frame at its own shape, edge to edge,
+ * instead of sitting on the square mat that screenshots get.
  */
 import { imgAttrs } from '../../lib/img';
 
@@ -11,11 +14,12 @@ interface Props {
   alt: string;
   caption?: string;
   sizes?: string;
+  fill?: boolean;
 }
 
-const { src, alt, caption, sizes = '(max-width: 560px) 100vw, 530px' } = Astro.props;
+const { src, alt, caption, sizes = '(max-width: 560px) 100vw, 530px', fill = false } = Astro.props;
 ---
-<figure class="pfig zoomable" data-fig-init>
+<figure class:list={['pfig zoomable', fill && 'pfig--fill']} data-fig-init>
   <button type="button" class="zoom-trigger" aria-label="Zoom image" aria-expanded="false">
     <img {...imgAttrs(src, { sizes })} alt={alt} loading="lazy" decoding="async" />
   </button>
