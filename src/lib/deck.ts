@@ -30,8 +30,8 @@ export const host = (u?: string | null) => { try { return u ? new URL(u).host.re
 /**
  * A page in a preview: a screenshot, or an app icon on its mesh. An app screenshot exported inside a
  * device frame (transparent margin, shadow, dark bezel) carries `frame`: the screen's box as
- * fractions of the image, so the preview shows just the app, filling the window. (Website shots
- * keep their frame on purpose.)
+ * fractions of the image, so the preview shows just the screen, filling the window. (The deck's
+ * website shots keep their frame on purpose; the Kem fan's small windows crop it.)
  */
 export interface Frame { x: number; y: number; w: number; h: number; ratio: number }
 export type DeckPage = { src: string; frame?: Frame } | { mesh: string; icon: string };

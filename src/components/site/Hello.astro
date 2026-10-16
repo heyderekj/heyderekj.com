@@ -10,16 +10,18 @@
 import Icon from '../Icon.astro';
 import Browser from './Browser.astro';
 import Byline from './Byline.astro';
-import { getDeck, host, shot, shotsOf, TM_TILES } from '../../lib/deck';
+import { getDeck, host, pageOf, shotsOf, TM_TILES } from '../../lib/deck';
 import { TOPICS } from '../../lib/bar';
 
 const { kem, icons } = await getDeck();
+// The fan's windows are small, so its shots are cropped to the screen (no device frame)
+const kemPages = await Promise.all(kem.map((w) => pageOf(shotsOf(w)[0], 480)));
 const last = TOPICS.length - 1;
 ---
 <header class="hello-head" data-bar-label="Home">
   <Byline />
   <p class="hello">
-    I make websites with <button class="wchip sq" data-act="kem"><Icon name="work" /> Kem Design<span class="pop"><span class="fan">{kem.map((w) => <Browser pages={[{ src: shot(shotsOf(w)[0], 480) }]} url={host(w.data.liveLink)} />)}</span></span></button>
+    I make websites with <button class="wchip sq" data-act="kem"><Icon name="work" /> Kem Design<span class="pop"><span class="fan">{kem.map((w, i) => <Browser pages={[kemPages[i]]} url={host(w.data.liveLink)} />)}</span></span></button>
     and apps at <button class="wchip sq" data-act="apps"><span class="tm" aria-hidden="true">{TM_TILES.map(([, c]) => <i style={`--c:${c}`}></i>)}</span>Testament Made<span class="pop"><span class="spread">{TM_TILES.map(([slug, c], i) => (
       <span class="tmapp" style={`--i:${i};--col:${(i % 3) - 1};--row:${Math.floor(i / 3) - 0.5};--c:${c}`}><img src={icons[slug]?.icon ?? ''} alt={icons[slug]?.title ?? ''} /></span>
     ))}</span></span></button>,
