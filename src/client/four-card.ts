@@ -33,8 +33,9 @@ let petPhoto: HTMLCanvasElement | null = null, petName = '';
 // Under each animal's name on the card
 const TAGS: Record<string, string> = { Leroy: 'Slow and steady', Lilo: 'Too kind', Kiya: 'The bully', Irma: 'Plays hard' };
 
-// ---- Drawing the card. `upto` and `fall` animate the clip: how many moves are in, and how far the last has dropped
-function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fall = 1, flash = true) {
+// ---- Drawing the card. `upto` and `fall` animate the clip: how many moves are in, and how far the last has dropped.
+// `flash` rings the winning four; as a number (0–1) it's the clip's reveal, ringing them one by one as the rest dim
+function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fall = 1, flash: boolean | number = true) {
   const t = THEMES[design];
   ctx.save(); ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = t.bg; ctx.fillRect(0, 0, W, H);
@@ -57,17 +58,26 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
   ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 42); ctx.fill(); ctx.stroke();
   const at = (c: number, r: number) => [bx + pad + c * (hole + gap), by + pad + r * (hole + gap)] as const;
   for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) { const [x, y] = at(c, r); ctx.fillStyle = t.hole; ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, hole / 2, 0, 7); ctx.fill(); }
-  const shown = g.moves.slice(0, upto);
+  const shown = g.moves.slice(0, upto), reveal = typeof flash === 'number' && g.run.length ? flash : -1;
   shown.forEach((m, n) => {
+    ctx.globalAlpha = reveal >= 0 && !g.run.includes(m.r * COLS + m.c) ? 1 - 0.6 * Math.min(1, reveal * 2) : 1;
     const [x, y] = at(m.c, m.r), last = n === shown.length - 1 && fall < 1;
     const yy = last ? by + pad - hole + (y - (by + pad - hole)) * easeOutBounce(fall) : y;
     if (design === 'orange' && m.who === 1) { ctx.fillStyle = 'rgba(255,247,239,0.9)'; ctx.beginPath(); ctx.arc(x + hole / 2, yy + hole / 2, hole / 2 + 3, 0, 7); ctx.fill(); }
     ctx.drawImage(chip(m.who === 1 ? 'orange' : g.foe.toLowerCase()), x, yy, hole, hole);
   });
+  ctx.globalAlpha = 1;
   // The winning four, ringed: yours in orange when you stopped on a win, theirs in their colour
   if (flash && upto >= g.moves.length && g.run.length) {
     ctx.strokeStyle = g.by === 'you' ? (design === 'orange' ? t.ink : '#ea580c') : g.foeTone; ctx.lineWidth = 7;
-    g.run.forEach((i) => { const [x, y] = at(i % COLS, Math.floor(i / COLS)); ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, hole / 2 + 7, 0, 7); ctx.stroke(); });
+    g.run.forEach((i, k) => {
+      const [x, y] = at(i % COLS, Math.floor(i / COLS));
+      const p = reveal < 0 ? 1 : Math.max(0, Math.min(1, (reveal - k * 0.15) / 0.4)); // one after another
+      if (!p) return;
+      ctx.globalAlpha = Math.min(1, p * 2);
+      ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, (hole / 2 + 7) * (0.7 + 0.3 * easeOutBack(p)), 0, 7); ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
   }
 
   // The matchup under the board: you (or your pet) against them, each ringed in their colour
@@ -96,6 +106,7 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
   ctx.textAlign = 'right'; ctx.fillText(new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), W - 90, H - 70); ctx.textAlign = 'left';
   ctx.restore();
 }
+function easeOutBack(x: number) { const c = 1.70158; return 1 + (c + 1) * (x - 1) ** 3 + c * (x - 1) ** 2; }
 function easeOutBounce(x: number) { const n = 7.5625, d = 2.75; if (x < 1 / d) return n * x * x; if (x < 2 / d) return n * (x -= 1.5 / d) * x + 0.75; if (x < 2.5 / d) return n * (x -= 2.25 / d) * x + 0.9375; return n * (x -= 2.625 / d) * x + 0.984375; }
 
 // ---- Sharing: the system share sheet when it takes files (phones, Safari), otherwise a download
@@ -113,7 +124,14 @@ async function shareOut(blob: Blob) {
   catch (e) { return (e as Error).name === 'AbortError' ? 'closed' : (save(blob), 'saved'); }
 }
 const canClip = typeof MediaRecorder !== 'undefined' && 'captureStream' in HTMLCanvasElement.prototype;
-const PER = 260, HOLD = 1800; // the clip: a beat per chip, then a hold on the end
+// The clip: the last five seconds of the game (up to a dozen chips, the earlier ones already in), then the
+// winning four ringed one by one while everything else dims, and a hold on that
+const REPLAY = 5000, REVEAL = 1200, HOLD = 1500;
+const clipPlan = (g: Game) => {
+  const n = Math.min(g.moves.length, 12), per = Math.min(700, REPLAY / Math.max(1, n)), from = g.moves.length - n;
+  const replay = n * per, reveal = g.run.length ? REVEAL : 0;
+  return { from, per, replay, reveal, length: replay + reveal + HOLD };
+};
 
 if (root) {
   const preview = root.querySelector<HTMLCanvasElement>('.four-card__preview canvas')!;
@@ -158,7 +176,7 @@ if (root) {
   function record() {
     if (recording || !game) return recording;
     const g = game, type = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find((m) => MediaRecorder.isTypeSupported(m)) ?? '';
-    const total = g.moves.length * PER, length = total + HOLD;
+    const { from, per, replay, reveal, length } = clipPlan(g);
     root!.classList.add('is-recording'); video.hidden = true; status.textContent = 'Recording the replay…';
     recording = (async () => {
       const stream = preview.captureStream(30), rec = new MediaRecorder(stream, type ? { mimeType: type, videoBitsPerSecond: 5_000_000 } : undefined), parts: Blob[] = [];
@@ -173,8 +191,8 @@ if (root) {
           if (game !== g || !root!.classList.contains('is-recording')) { cut = true; return resolve(); }
           const t = now - t0;
           root!.style.setProperty('--rec', String(Math.min(1, t / length)));
-          if (t < total) draw(pctx, g, Math.floor(t / PER) + 1, (t % PER) / PER, false);
-          else if (t < length) draw(pctx, g);
+          if (t < replay) draw(pctx, g, from + Math.floor(t / per) + 1, (t % per) / per, false);
+          else if (t < length) draw(pctx, g, g.moves.length, 1, reveal ? Math.min(1, (t - replay) / reveal) : true);
           else return resolve();
           requestAnimationFrame(frame);
         };
@@ -266,7 +284,7 @@ if (root) {
   // Called by the game when you ask for a card
   openCardImpl = (g) => {
     game = g; root.hidden = false; status.textContent = ''; clip = null;
-    lengthLabel.textContent = ` · ${Math.round((g.moves.length * PER + HOLD) / 1000)}s`;
+    lengthLabel.textContent = ` · ${Math.round(clipPlan(g).length / 1000)}s`;
     setAs('image');
     chip('orange', render); chip(g.foe.toLowerCase(), render); portrait(g.foe, render);
     requestAnimationFrame(() => { render(); root.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); });
