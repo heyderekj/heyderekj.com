@@ -41,10 +41,20 @@ Everything is imported with `draft: true`. Review, expand, and flip to publish.
 
 ## Fathom Analytics
 
-Site ID is set in `src/layouts/Base.astro` (`data-site` on the Fathom script).
+Site ID is set in `src/components/Head.astro` (`data-site` on the Fathom script).
 
 ## Deploy
 
 Cloudflare is connected to the git repo (build: `npm run build`, output: `dist`, `NODE_VERSION=20`). Redirects live in [public/_redirects](public/_redirects) and headers in [public/_headers](public/_headers). Domain and DNS live in the Cloudflare dashboard. Set `IMAGE_CDN=cloudflare` in the build environment to serve resized images through Cloudflare Image Transformations (custom domain only).
 
 Optional manual deploy: `npx wrangler pages deploy dist` when logged in locally.
+
+### Notes from visitors
+
+Triple-clicking the signature watermark opens a "Leave me a note" card (`src/client/sig-egg.ts`). Notes post to a Pages Function, [functions/api/note.ts](functions/api/note.ts), which emails them to derekj@hey.com. Nothing is stored. One-time setup in the Cloudflare dashboard:
+
+1. **Email Routing** for heyderekj.com: turn it on, and add and verify **derekj@hey.com** as a destination address.
+2. In the Pages project, go to **Settings → Bindings → Add → Send email**. Name it `NOTES_MAIL` and set the destination address to `derekj@hey.com`.
+3. Redeploy.
+
+Until the binding exists, the function answers 503 and the card tells the visitor to email instead. Notes come from `notes@heyderekj.com`.
