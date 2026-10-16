@@ -67,7 +67,7 @@ export type ServiceId = 'site' | 'logo' | 'rebrand' | 'feedback' | 'ai';
 
 /** The five things I do, in the order they're offered */
 export const SERVICES: { id: ServiceId; name: string; icon: string; line: string; from: string; tags: string[] }[] = [
-  { id: 'site', name: 'Websites', icon: 'laptop', line: 'Designed and built in Webflow, with content your team can update. Two rounds of revisions in design, two in the build.', from: `from $${PRICES.site.perPage}/page`, tags: ['design', 'work'] },
+  { id: 'site', name: 'Websites', icon: 'laptop', line: 'Designed and built in Webflow or custom code, with content your team can update. Two rounds of revisions in design, two in the build.', from: `from $${PRICES.site.perPage}/page`, tags: ['design', 'work'] },
   { id: 'logo', name: 'Logos', icon: 'pencil', line: 'A mark or wordmark that fits who you are, with the files you need for everything.', from: `from $${PRICES.logo.refresh.toLocaleString()}`, tags: ['branding'] },
   { id: 'rebrand', name: 'Rebrands', icon: 'palette', line: 'Logo, type, color and a short guide, so everything starts to feel like the same place.', from: `from $${PRICES.rebrand.keepLogo.toLocaleString()}`, tags: ['branding'] },
   { id: 'feedback', name: 'Feedback', icon: 'eye', line: 'A careful look at your site, app or brand: what’s working, what isn’t, and what I’d do next.', from: `$${PRICES.feedback.notes}`, tags: ['design'] },
