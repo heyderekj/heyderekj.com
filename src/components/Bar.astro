@@ -50,7 +50,7 @@ const nav = [
   <div class="bar__row">
     <a class="bar__home" href="/" aria-label="Derek Castelli, home"><img class="sq" src={imgSrc('/assets/about/derek-photo.jpeg', 80)} alt="" width="28" height="28" /></a>
     <button class="bar__label" id="barLabel" aria-expanded="false" aria-controls="barMenu"><span id="barText">{label}</span><Icon name="chevron-up" /></button>
-    {context.kind === 'writeup' && (
+    {(context.kind === 'writeup' || context.kind === 'essay') && (context.newer || context.older) && (
       <span class="bar__steps">
         {context.newer ? <a class="bar__btn" href={context.newer.href} aria-label={`Newer: ${context.newer.title}`}><Icon name="chevron-left" /></a> : <span class="bar__btn is-off"><Icon name="chevron-left" /></span>}
         {context.older ? <a class="bar__btn" href={context.older.href} aria-label={`Older: ${context.older.title}`}><Icon name="chevron-right" /></a> : <span class="bar__btn is-off"><Icon name="chevron-right" /></span>}

@@ -5,7 +5,7 @@
 export type BarLink = { href: string; title: string };
 export type BarContext =
   | { kind: 'home' }
-  | { kind: 'essay'; title: string; figures?: { id: string; no: string; title: string }[] }
+  | { kind: 'essay'; title: string; figures?: { id: string; no: string; title: string }[]; newer?: BarLink; older?: BarLink }
   | { kind: 'writeup'; title: string; newer?: BarLink; older?: BarLink }
   | { kind: 'page'; title: string };
 

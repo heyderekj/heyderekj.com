@@ -1,0 +1,22 @@
+---
+/** The end of an essay: a few related posts as rows (with margin previews), and its topics. */
+import PostRow from './PostRow.astro';
+import { postRows } from '../../lib/postRows';
+import { topicHref, type Post } from '../../lib/posts';
+import { topicLabel } from '../../data/topics';
+
+interface Props { posts: Post[]; tags?: string[] }
+const { posts, tags = [] } = Astro.props;
+const rows = await postRows(posts.slice(0, 3));
+---
+{rows.length > 0 && (
+  <section class="keep" aria-labelledby="keep-h">
+    <h2 class="h h--quiet" id="keep-h">Keep reading</h2>
+    <div class="list"><section class="list__year">{rows.map((r) => <PostRow row={r} date={`${r.date}, ${r.year}`} />)}</section></div>
+    {tags.length > 0 && (
+      <p class="keep__topics">More on {tags.map((t, i) => <>{i > 0 && (i === tags.length - 1 ? ' and ' : ', ')}<a href={topicHref(t)}>{topicLabel(t) === topicLabel(t).toUpperCase() ? topicLabel(t) : topicLabel(t).toLowerCase()}</a></>)}.</p>
+    )}
+  </section>
+)}
+<div class="peek sq" id="peek" aria-hidden="true"></div>
+<script src="../../client/peek.ts"></script>

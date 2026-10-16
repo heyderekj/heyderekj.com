@@ -1,9 +1,8 @@
 ---
 import Site from '../../layouts/Site.astro';
 import Signature from '../../components/Signature.astro';
-import TagChips from '../../components/TagChips.astro';
+import KeepReading from '../../components/site/KeepReading.astro';
 import Icon from '../../components/Icon.astro';
-import PostFooter from '../../components/PostFooter.astro';
 import Callout from '../../components/post/Callout.astro';
 import { postComponents } from '../../components/post';
 import { schemaPersonId } from '../../lib/schemaIds';
@@ -20,6 +19,7 @@ import {
 import { getRevisions } from '../../lib/revisions';
 import { figuresIn } from '../../lib/figures';
 import { readingMinutes } from '../../lib/pullquote';
+import { paraNotesFor } from '../../lib/paraNotes';
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
@@ -46,6 +46,9 @@ const title = postTitle(post);
 const hasTitle = Boolean(d.title?.trim());
 const figures = figuresIn(post.body);
 const mins = readingMinutes(post);
+// Paragraphs changed by a counted revision, with their earlier wording, for the margin notes
+const revNotes = d.type === 'essay' ? paraNotesFor(`src/content/posts/${post.id}`, d.date, revisions.revisions.map((x) => x.sha).filter((s): s is string => Boolean(s))) : [];
+const barLink = (p?: Post) => (p ? { href: postHref(p), title: postTitle(p) } : undefined);
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
 const defaultDesc =
@@ -70,6 +73,7 @@ const postJsonLd = {
 
 const fmtDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const fmtShort = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 ---
 <Site
@@ -80,22 +84,20 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
   articleModifiedTime={modified}
   jsonLd={postJsonLd}
   canonical={postUrl}
-  bar={{ kind: 'essay', title, figures }}
+  bar={{ kind: 'essay', title, figures, newer: barLink(newer), older: barLink(older) }}
 >
   <article class={`essay post post--${d.type}`} data-bar-progress data-select>
     <div class="essay__meta">
       {d.type !== 'essay' && <a class="post-kind" href={typeHref(d.type)}>{TYPE_LABELS[d.type].one}</a>}
       <time datetime={published}>{fmtDate(d.date)}</time>
       {d.type === 'essay' && <span>· {mins} min read</span>}
-      {d.status === 'working' ? (
-        <a class="post-state" data-status="working" href="#revisions" title="See how it's changed">Still being written</a>
+      {revisions.rev > 1 ? (
+        <a href={revisions.historyUrl} target="_blank" rel="noopener" title="Every change, on GitHub">· revised {fmtShort(revisions.updated ?? d.date)} (rev {revisions.rev})</a>
+      ) : d.status === 'working' ? (
+        <a href="/colophon/#revisions" title="Published, and still being worked on">· in progress</a>
       ) : d.status === 'outdated' ? (
-        <a class="post-state" data-status="outdated" href="#revisions" title="See how it's changed">May be out of date</a>
-      ) : revisions.updated && (
-        <a class="post-state" href="#revisions" title="See how it's changed">
-          · Updated <time datetime={revisions.updated.toISOString()}>{fmtDate(revisions.updated)}</time>
-        </a>
-      )}
+        <a href="/colophon/#revisions" title="Kept for the record">· may be out of date</a>
+      ) : null}
       {d.type === 'link' && d.link && (
         <span class="post-link-host">
           · {host(d.link)}
@@ -146,9 +148,10 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
     </div>
 
     {d.type === 'essay' && <div class="essay__sign"><Signature /></div>}
-    <TagChips tags={d.tags} />
-    <PostFooter post={post} revisions={revisions} related={related} newer={newer} older={older} />
+    <KeepReading posts={related} tags={d.tags} />
   </article>
   <div class="selbar" id="selbar" hidden></div>
+  {revNotes.length > 0 && <script type="application/json" id="revNotes" set:html={JSON.stringify(revNotes).replace(/</g, '\\u003c')} />}
   <script src="../../client/select-menu.ts"></script>
+  <script src="../../client/rev-notes.ts"></script>
 </Site>
