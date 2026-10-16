@@ -142,6 +142,19 @@ export const testimonials: Testimonial[] = [
   },
 ];
 
+/** The Work page's testimonials: the ones above plus shout-outs that only live there, newest first. */
+export const workTestimonials: Testimonial[] = [
+  {
+    quote: "We're celebrating the launch of River Valley's new website! Go check it out! Shoutout to Josh Coyle and Derek Castelli for what happens to be my favorite website we've completed in just 6 months!",
+    author: 'Shelley Martin',
+    role: 'Apollos',
+    context: 'A shout-out in the Apollos Slack · Dec 2024',
+    pull: "my favorite website we've completed in just 6 months",
+    relation: 'Teammate',
+  },
+  ...testimonials,
+];
+
 export const aboutExperienceGroups: AboutExpGroup[] = [
   {
     title: 'Current',
