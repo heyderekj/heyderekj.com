@@ -271,12 +271,14 @@ if (game && grid404 && head) {
     }, 820);
   }
   function quit() {
+    if (paused) resume();
     playing = false; turn = 'off';
     document.documentElement.classList.remove('four-on');
     game!.hidden = true; grid404!.hidden = false;
     grid404!.querySelectorAll<HTMLElement>('i.on').forEach((d) => { d.style.animation = 'none'; void d.offsetWidth; d.style.animation = ''; });
   }
   async function youMove(c: number) {
+    if (paused) return;
     if (turn !== 'you' || open(b, c) < 0) return;
     turn = 'off'; place(c, 1);
     if (won(b, 1)) return roundWon();
@@ -398,6 +400,32 @@ if (game && grid404 && head) {
   cardBtn.addEventListener('click', () => { if (lastGame) openCard(lastGame); });
   document.querySelectorAll('[data-four-play]').forEach((btn) => btn.addEventListener('click', start));
   document.addEventListener('four:start', start);
+
+  // ---- Clicking away pauses, in case it was an accident: keep playing, or quit. (A click, not a touch,
+  // so scrolling on a phone doesn't pause it; the bar and its menu are left alone)
+  let paused = false;
+  const pauseEl = document.createElement('div');
+  pauseEl.className = 'four__pause'; pauseEl.hidden = true; pauseEl.setAttribute('role', 'dialog'); pauseEl.setAttribute('aria-label', 'Paused');
+  pauseEl.innerHTML = '<b>Paused</b><span>Clicked away? Your game’s right here.</span><span class="four__pause-acts"><button type="button" class="is-primary" data-four-resume>Keep playing</button><button type="button" data-four-over>Start over</button><button type="button" data-four-leave>Quit</button></span>';
+  board.append(pauseEl);
+  function pause() {
+    if (!playing || paused || game!.classList.contains('is-morph')) return;
+    paused = true; game!.classList.add('is-paused'); pauseEl.hidden = false; closeDial();
+    beep([523, 392], 0.08, 'triangle');
+    pauseEl.querySelector<HTMLElement>('[data-four-resume]')!.focus({ preventScroll: true });
+  }
+  function resume() {
+    if (!paused) return;
+    paused = false; game!.classList.remove('is-paused'); pauseEl.hidden = true;
+    cols[aim].focus({ preventScroll: true });
+  }
+  document.addEventListener('click', (e) => { if (playing && !paused && !(e.target as Element).closest?.('.four, #bar, .toast')) pause(); }, true);
+  pauseEl.querySelector('[data-four-resume]')!.addEventListener('click', resume);
+  // Start over: a fresh run against the same animal (or a new one, on Random), from the pause card or beside Quit
+  const restart = () => { if (turn === 'me') return; resume(); closeDial(); beep([392, 523], 0.06); rematch(); cols[aim].focus({ preventScroll: true }); };
+  pauseEl.querySelector('[data-four-over]')!.addEventListener('click', restart);
+  $('[data-four-restart]').addEventListener('click', restart);
+  pauseEl.querySelector('[data-four-leave]')!.addEventListener('click', () => { quit(); document.querySelector<HTMLElement>('[data-four-play]')?.focus(); });
   // Sent here to play (the "joshua" egg, or the search result): start once the page has settled
   if (location.hash === '#play') { history.replaceState(null, '', location.pathname + location.search); setTimeout(start, calm ? 100 : 700); }
   // While I think, a few WOPR lights blink in the empty holes
