@@ -27,9 +27,7 @@ const { pages, url = '', ticks = false, eager = false, deck = false, drawer = fa
     </button>
   )}</span></div>
   <div class="browser__view">
-    {pages.map((p, n) => 'video' in p
-      ? <video class={n ? '' : 'is-on'} data-page data-tour src={p.video} poster={p.poster} muted loop playsinline preload={eager && !n ? 'metadata' : 'none'} aria-label="Site tour"></video>
-      : 'mesh' in p
+    {pages.map((p, n) => 'mesh' in p
       ? p.collage?.length
         ? <div class={`mesh collage${n ? '' : ' is-on'}`} data-page data-mesh={p.mesh} data-count={p.collage.length} style={`opacity:${n ? 0 : 1}`}>{p.collage.map((src) => <img class="collage__card" src={src} alt="" loading={eager ? undefined : 'lazy'} decoding="async" />)}{p.icon && <img class="collage__icon" src={p.icon} alt="" />}</div>
         : <div class={`mesh${n ? '' : ' is-on'}`} data-page data-mesh={p.mesh} style={`opacity:${n ? 0 : 1}`}><img src={p.icon} alt="" /></div>

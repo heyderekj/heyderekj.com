@@ -5,9 +5,8 @@
  * while you're hovering or have just used it, and stops when the deck is off screen. Any tick jumps. Each project's
  * pages are on a rail you browse yourself. Swipe sideways on touch to change project.
  * Other scripts can move it with `deck:go` (detail: 'kem' | 'apps' | an index).
- * A website's site tour (a muted video) leads its pages and plays only while it's the one showing.
- * The settings button in each window's toolbar opens a small dial panel: autoplay, pace, which
- * projects to show, and whether tours play. It's remembered in this browser.
+ * The settings button in each window's toolbar opens a small dial panel: autoplay, pace and which
+ * projects to show. It's remembered in this browser.
  */
 import { calm } from './toast';
 
@@ -22,7 +21,7 @@ if (fig && track) {
 
   // Settings, from the dial panel
   type Show = 'all' | 'client' | 'app';
-  const DEFAULTS = { autoplay: true, pace: 7, show: 'all' as Show, tours: true };
+  const DEFAULTS = { autoplay: true, pace: 7, show: 'all' as Show };
   let set = { ...DEFAULTS };
   try { set = { ...DEFAULTS, ...JSON.parse(localStorage.getItem('hdj:deck') || '{}') }; } catch {}
   const save = () => { try { localStorage.setItem('hdj:deck', JSON.stringify(set)); } catch {} };
@@ -48,31 +47,15 @@ if (fig && track) {
   track.addEventListener('click', (e) => {
     const b = (e.target as HTMLElement).closest<HTMLElement>('[data-page-to]'); if (!b) return;
     const slide = b.closest('.wslide')!, n = Number(b.dataset.pageTo);
-    showPage(slide, n, true);
+    slide.querySelectorAll<HTMLElement>('[data-page]').forEach((el, i) => { el.classList.toggle('is-on', i === n); if (el.classList.contains('mesh')) el.style.opacity = i === n ? '1' : '0'; });
+    slide.querySelectorAll('[data-page-to]').forEach((x, i) => x.setAttribute('aria-current', String(i === n)));
     hold();
   });
-  function showPage(slide: Element, n: number, picked = false) {
-    slide.querySelectorAll<HTMLElement>('[data-page]').forEach((el, i) => { el.classList.toggle('is-on', i === n); if (el.classList.contains('mesh')) el.style.opacity = i === n ? '1' : '0'; if (el.dataset.tour != null) el.dataset.picked = String(picked && i === n); });
-    slide.querySelectorAll('[data-page-to]').forEach((x, i) => x.setAttribute('aria-current', String(i === n)));
-    tours();
-  }
-
-  // Site tours play only on the project showing, while the deck is on screen
-  const videos = [...track.querySelectorAll<HTMLVideoElement>('video[data-tour]')];
-  function tours() {
-    videos.forEach((v) => {
-      const go = inView && !calm() && v.classList.contains('is-on') && v.closest('.wslide') === slides[cur] && (set.tours || v.dataset.picked === 'true');
-      if (go) { if (v.preload === 'none') v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
-    });
-  }
-  // With tours off, a project opens on its first screenshot instead
-  function leadPages() { slides.forEach((s) => { const first = s.querySelector('[data-page]'); if (first?.matches('video[data-tour]')) showPage(s, set.tours ? 0 : 1); }); }
 
   function update() {
     tickBtns.forEach((b, i) => { b.classList.toggle('is-on', i === cur); b.setAttribute('aria-selected', String(i === cur)); });
     slides.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== cur)));
     restart();
-    tours();
     if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[cur].dataset.title}` }));
   }
 
@@ -87,7 +70,7 @@ if (fig && track) {
   fig.addEventListener('pointerenter', () => { hovering = true; sync(); });
   fig.addEventListener('pointerleave', () => { hovering = false; sync(); });
   new IntersectionObserver(([e]) => {
-    inView = e.isIntersecting; sync(); tours();
+    inView = e.isIntersecting; sync();
     if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[cur].dataset.title}` }));
   }, { threshold: 0.4 }).observe(fig);
   fig.addEventListener('keydown', (e) => {
@@ -117,11 +100,11 @@ if (fig && track) {
   const dial = fig.querySelector<HTMLElement>('.dial')!;
   let opener: HTMLButtonElement | null = null;
   const $d = <T extends HTMLElement>(s: string) => dial.querySelector<T>(s)!;
-  const auto = $d<HTMLInputElement>('[data-dial="autoplay"]'), pace = $d<HTMLInputElement>('[data-dial="pace"]'), tourBox = $d<HTMLInputElement>('[data-dial="tours"]');
+  const auto = $d<HTMLInputElement>('[data-dial="autoplay"]'), pace = $d<HTMLInputElement>('[data-dial="pace"]');
   const paceOut = $d<HTMLOutputElement>('[data-dial-out="pace"]');
   const segs = [...dial.querySelectorAll<HTMLButtonElement>('[data-show]')];
   function paint() {
-    auto.checked = set.autoplay; tourBox.checked = set.tours; pace.value = String(set.pace); paceOut.textContent = `${set.pace}s`;
+    auto.checked = set.autoplay; pace.value = String(set.pace); paceOut.textContent = `${set.pace}s`;
     dial.style.setProperty('--fill', `${((set.pace - 4) / 10) * 100}%`);
     pace.closest('.dial__slider')!.classList.toggle('is-off', !set.autoplay);
     segs.forEach((b) => { const on = b.dataset.show === set.show; b.classList.toggle('is-on', on); b.setAttribute('aria-checked', String(on)); });
@@ -135,9 +118,8 @@ if (fig && track) {
   auto.addEventListener('change', () => { set.autoplay = auto.checked; save(); restart(); paint(); });
   pace.addEventListener('input', () => { set.pace = Number(pace.value); save(); paint(); });
   pace.addEventListener('change', () => restart());
-  tourBox.addEventListener('change', () => { set.tours = tourBox.checked; save(); leadPages(); paint(); });
   segs.forEach((b) => b.addEventListener('click', () => { set.show = b.dataset.show as Show; save(); applyShow(); }));
-  $d('[data-dial-reset]').addEventListener('click', () => { set = { ...DEFAULTS }; save(); leadPages(); applyShow(); });
+  $d('[data-dial-reset]').addEventListener('click', () => { set = { ...DEFAULTS }; save(); restart(); applyShow(); });
 
   function openDial(btn: HTMLButtonElement) {
     opener = btn; dialing = true; sync();
@@ -160,7 +142,6 @@ if (fig && track) {
   });
   dial.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeDial(); opener?.focus(); } });
 
-  leadPages();
   applyShow();
   update();
 }

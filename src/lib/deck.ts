@@ -34,7 +34,7 @@ export const host = (u?: string | null) => { try { return u ? new URL(u).host.re
  * website shots keep their frame on purpose; the Kem fan's small windows crop it.)
  */
 export interface Frame { x: number; y: number; w: number; h: number; ratio: number }
-export type DeckPage = { src: string; frame?: Frame } | { mesh: string; icon: string; collage?: string[] } | { video: string; poster?: string };
+export type DeckPage = { src: string; frame?: Frame } | { mesh: string; icon: string; collage?: string[] };
 
 const frames = new Map<string, Promise<Frame | undefined>>();
 async function findFrame(src: string): Promise<Frame | undefined> {
@@ -117,8 +117,7 @@ export async function getDeck() {
       kind: 'client' as const, slug: w.slug, title: w.data.title, partner: w.data.partnership ?? null,
       sub: `${w.data.partnership ? `With ${w.data.partnership}` : 'Solo'} · ${workDate(w).getUTCFullYear()}`,
       url: host(w.data.liveLink ?? w.data.waybackUrl),
-      // The site tour leads when there is one, then the screenshots
-      pages: [...(w.data.video ? [{ video: w.data.video, poster: w.data.videoPoster ? shot(w.data.videoPoster) : undefined }] : []), ...shotsOf(w).map((s) => ({ src: shot(s) }))],
+      pages: shotsOf(w).map((s) => ({ src: shot(s) })),
       link: { href: `/work/${w.slug}/`, label: 'Read the write-up →', external: false },
     })),
     ...apps.map((p, i) => ({

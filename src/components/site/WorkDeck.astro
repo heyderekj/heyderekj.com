@@ -28,8 +28,7 @@ const { slides } = await getDeck();
             <div class="pages" role="group" aria-label={`${s.title} pages`}>
               {s.pages.map((p, n) => (
                 <button class="sq" data-page-to={n} aria-current={n === 0 ? 'true' : 'false'} aria-label={`Page ${n + 1}`} style={`--n:${n}`}>
-                  {'video' in p ? <span class="pages__tour">{p.poster && <img src={p.poster} alt="" loading="lazy" decoding="async" />}<svg viewBox="0 0 16 16" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M5.5 3.8v8.4c0 .5.5.8.9.5l6.3-4.2c.4-.2.4-.8 0-1l-6.3-4.2c-.4-.3-.9 0-.9.5Z" /></svg></span>
-                    : 'mesh' in p ? <span class="mesh" data-mesh={p.mesh}><img src={p.icon} alt="" /></span> : <img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" />}
+                  {'mesh' in p ? <span class="mesh" data-mesh={p.mesh}><img src={p.icon} alt="" /></span> : <img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" />}
                 </button>
               ))}
             </div>
@@ -51,6 +50,5 @@ const { slides } = await getDeck();
         <button type="button" role="radio" data-show="all">All</button><button type="button" role="radio" data-show="client">Sites</button><button type="button" role="radio" data-show="app">Apps</button>
       </div>
     </div>
-    <label class="dial__row dial__switch"><span>Play site tours</span><input type="checkbox" data-dial="tours" /><i aria-hidden="true"></i></label>
   </div>
 </figure>
