@@ -36,8 +36,10 @@ if (form) {
   };
   const ORDER = SERVICES.map((s) => s.id);
   const toggleService = (id: ServiceId | 'unsure', on?: boolean) => {
-    if (id === 'unsure') { draft.unsure = on ?? !draft.unsure; return; }
+    // "Not sure yet" stands alone: picking it clears the rest, and picking anything else clears it
+    if (id === 'unsure') { draft.unsure = on ?? !draft.unsure; if (draft.unsure) draft.services = []; return; }
     const want = on ?? !draft.services.includes(id);
+    if (want) draft.unsure = false;
     draft.services = ORDER.filter((s) => (s === id ? want : draft.services.includes(s)));
   };
   const field = (n: string) => (form!.elements.namedItem(n) as HTMLInputElement | null)?.value.trim() ?? '';

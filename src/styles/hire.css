@@ -91,10 +91,11 @@
 .hire-app { --est: min(72rem, calc(100vw - 32px)); width: var(--est); margin: 64px 0 0 calc((var(--read) - var(--est)) / 2); scroll-margin-top: 20px; }
 @media (max-width: 720px) { .hire-app { width: 100%; margin-left: 0; } }
 .est { --r: 26px; overflow: hidden; border-radius: 26px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
-.est__top { position: relative; display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--hair); }
+/* Title on the left, the steps truly centered */
+.est__top { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--hair); }
 .est__title { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; white-space: nowrap; }
 .est__title .icon { font-size: 17px; color: var(--you); }
-.est__steps { display: flex; gap: 4px; margin: 0 auto; padding: 0; list-style: none; }
+.est__steps { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
 .est__steps li { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--muted); transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
 .est__steps li i { width: 7px; height: 7px; border-radius: 50%; background: var(--hair); transition: background var(--t-ui) var(--ease); }
 .est__steps li.is-done { color: var(--ink-soft); }
@@ -106,8 +107,20 @@
 .est__bar i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--you); transition: width 420ms var(--ease); }
 @media (max-width: 720px) { .est__steps { display: none; } }
 .est__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); }
+/* On a desktop the whole app fits in the window, so Continue is always in reach. The estimate runs the
+   full height on the right; the title, steps and progress sit over the questions only. The questions and
+   the estimate each scroll on their own when they run long. */
+@media (min-width: 901px) {
+  .est { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); grid-template-rows: auto minmax(0, 1fr); height: clamp(560px, calc(100svh - 40px), 840px); }
+  .est__body { display: contents; }
+  .est__top { grid-column: 1; grid-row: 1; }
+  .est__panel { grid-column: 1; grid-row: 2; min-height: 0; border-right: 0; }
+  .est__screens { min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+  .est__side { grid-column: 2; grid-row: 1 / span 2; display: flex; min-height: 0; border-left: 1px solid var(--hair); }
+  .est__side .prop { flex: 1; min-height: 0; }
+}
 @media (max-width: 900px) { .est__body { grid-template-columns: 1fr; } }
-.est__panel { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 560px; border-right: 1px solid var(--hair); }
+.est__panel { display: grid; grid-template-rows: minmax(0, 1fr) auto; border-right: 1px solid var(--hair); }
 @media (max-width: 900px) { .est__panel { border-right: 0; border-bottom: 1px solid var(--hair); min-height: 0; } }
 .est__screens { position: relative; padding: 22px 22px 8px; }
 .est__screen { display: none; gap: 4px; align-content: start; }
@@ -130,7 +143,6 @@
 .est__btn--send { color: #fff; background: var(--you); }
 .est__btn:disabled { opacity: 0.55; cursor: progress; translate: none; }
 .est__side { padding: 18px; background: color-mix(in oklch, var(--ink) 2.5%, var(--paper)); }
-@media (min-width: 901px) { .est__side .prop { position: sticky; top: 18px; } }
 
 /* Choices */
 .hire-picks, .hire-when { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -215,7 +227,6 @@
 .prop__body::-webkit-scrollbar { display: none; }
 .prop__body[data-top] { --ft: 28px; }
 .prop__body[data-more] { --fb: 72px; }
-@media (min-width: 901px) { .est__side .prop { max-height: calc(100vh - 36px); } }
 .prop__more { position: absolute; left: 50%; bottom: 92px; z-index: 2; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font: 600 12.5px var(--font); color: var(--ink); background: var(--sheet); box-shadow: 0 0 0 1px var(--hair), 0 6px 16px -8px rgb(0 0 0 / 0.25); translate: -50% 0; animation: hire-in 220ms var(--ease) both; transition: translate var(--t-ui) var(--ease); }
 .prop__more:hover { translate: -50% 2px; }
 .prop__more[hidden] { display: none; }
