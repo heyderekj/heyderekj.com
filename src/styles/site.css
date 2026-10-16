@@ -234,8 +234,8 @@ mark.hl { background: color-mix(in oklch, var(--hl) 55%, transparent); color: in
 
 
 .byline { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
-.byline img { --r: 14px; width: 56px; height: 56px; object-fit: cover; box-shadow: 0 0 0 1px var(--hair); }
-.byline b { display: block; font-size: 17px; font-weight: 700; letter-spacing: -0.015em; }
+.byline img { --r: 16px; width: 60px; height: 60px; object-fit: cover; box-shadow: 0 0 0 1px var(--hair); }
+.byline b { display: block; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 2px; }
 .byline small { font-size: 13.5px; color: var(--muted); }
 .hello-head { display: grid; }
 .hello-head .sig-slot { width: min(180px, 50%); margin-top: 20px; }
