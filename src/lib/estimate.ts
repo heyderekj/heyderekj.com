@@ -4,7 +4,7 @@
  * (client/hire.ts) and the request function (functions/api/hire.ts) all price it the same way;
  * the function recalculates rather than trusting the browser's number.
  */
-import { CAPACITY, EXTRAS, PAY_LARGE, PAY_SMALL, PLANS, PRICES, RATE, RETAINER_TERMS, RUSH_DEPOSIT, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
+import { BUDGETS, BUDGET_STRETCH, CAPACITY, EXTRAS, PAY_LARGE, PAY_SMALL, PLANS, PRICES, RATE, RETAINER_TERMS, RUSH_DEPOSIT, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 
 export interface Answers {
   services: ServiceId[];
@@ -72,7 +72,7 @@ export function estimate(a: Answers): Estimate {
     lines.push({
       title: `${kind === 'redesign' ? 'Website redesign' : 'New website'}`,
       desc: `${what} across ${pages} page${pages === 1 ? '' : 's'}${platform === 'webflow' ? ' on Webflow' : ''}${cms ? ', with a CMS your team can update' : ''}.${pages < P.minPages ? ` Priced at the ${P.minPages}-page minimum.` : ''}${scope !== 'build' ? ' Two rounds of revision in design and two in the build.' : ' Two rounds of revision in the build.'}`,
-      price: round50(n * P.perPage * P.scope[scope] + (cms ? P.cms * (scope === 'design' ? 0.5 : 1) : 0)),
+      price: round50((P.base + (n - 1) * P.perPage) * P.scope[scope] + (cms ? P.cms * (scope === 'design' ? 0.5 : 1) : 0)),
       step: 'site',
     });
   }
@@ -89,7 +89,7 @@ export function estimate(a: Answers): Estimate {
   }
   if (a.feedback) {
     const on = { site: 'your site', app: 'your app', brand: 'your brand' }[a.feedback.on];
-    lines.push({ title: 'Feedback', desc: a.feedback.how === 'call' ? `An hour-long call walking through ${on}, after I’ve spent time with it first.` : `A careful look at ${on}, written up: what’s working, what isn’t, and what I’d do next.`, price: PRICES.feedback[a.feedback.how], step: 'feedback' });
+    lines.push({ title: 'Feedback', desc: a.feedback.how === 'call' ? `An hour-long call walking through ${on}, after I’ve spent time with it first. $${PRICES.feedback.rate}/hr.` : `A careful look at ${on}, written up: what’s working, what isn’t, and what I’d do next. About ${PRICES.feedback.hours.notes} hours at $${PRICES.feedback.rate}/hr.`, price: PRICES.feedback.rate * PRICES.feedback.hours[a.feedback.how], step: 'feedback' });
   }
   if (a.ai) {
     const kind = { workflow: 'An AI workflow or automation', tool: 'An internal tool with AI in it', prototype: 'A first version of an app' }[a.ai.kind];
@@ -205,4 +205,53 @@ export function schedule(a: Answers, e: Estimate, free: string, today: string): 
   let approveBy = plus(start, -3);
   while (off(approveBy)) approveBy = plus(approveBy, -1);
   return { approveBy, steps };
+}
+
+// ---- When the budget won't cover it
+
+/** A change to the answers, merged one level deep (so { site: { cms: false } } keeps the rest of site) */
+export type Patch = Partial<{ [K in keyof Answers]: Answers[K] extends object | undefined ? Partial<NonNullable<Answers[K]>> : Answers[K] }>;
+export const patched = <T extends Answers>(a: T, p: Patch): T => {
+  const out = structuredClone(a) as T & Record<string, unknown>;
+  for (const [k, v] of Object.entries(p)) out[k] = v && typeof v === 'object' && !Array.isArray(v) ? { ...(out[k] as object), ...v } : v;
+  return out;
+};
+
+export interface Gap { top: number; total: number; ideas: { text: string; patch: Patch; total: number }[]; fits: boolean }
+
+/**
+ * When the estimate is well past their budget (more than BUDGET_STRETCH over its top), the ways to bring
+ * it down, each with what it would come to, biggest saving first, and all of them together if that helps.
+ */
+export function budgetGap(a: Answers, budget: string): Gap | null {
+  const top = BUDGETS[budget], total = estimate(a).total;
+  if (!top || top === Infinity || total <= top * BUDGET_STRETCH) return null;
+  const tries: { text: string; patch: Patch }[] = [];
+  if (a.timeline === 'asap') tries.push({ text: 'Start when I’m free, without the rush', patch: { timeline: 'flexible' } });
+  if (a.extras?.length) tries.push({ text: 'Leave out the extras for now', patch: { extras: [] } });
+  if (a.site) {
+    const P = PRICES.site;
+    if (a.site.cms) tries.push({ text: 'Skip the CMS', patch: { site: { cms: false } } });
+    if (a.site.scope === 'both') tries.push({ text: 'Design now, build later', patch: { site: { scope: 'design' } } });
+    // The most pages that would fit, everything else as it is
+    let n = a.site.pages;
+    while (n > P.minPages && estimate(patched(a, { site: { pages: n } })).total > top) n--;
+    if (n < a.site.pages) tries.push({ text: `Start with ${n} page${n === 1 ? '' : 's'}`, patch: { site: { pages: n } } });
+  }
+  if (a.rebrand?.has === 'full') tries.push({ text: 'Keep your logo, refresh the rest', patch: { rebrand: { has: 'keepLogo' } } });
+  if (a.logo?.kind === 'new' && a.logo.type !== 'wordmark') tries.push({ text: 'A wordmark on its own', patch: { logo: { type: 'wordmark' } } });
+  if (a.ai && a.ai.size !== 'small') tries.push({ text: `A ${a.ai.size === 'large' ? 'medium' : 'small'} first version`, patch: { ai: { size: a.ai.size === 'large' ? 'medium' : 'small' } } });
+  const near = top * BUDGET_STRETCH, cost = (p: Patch) => estimate(clean(patched(a, p))).total;
+  const ideas = tries.map((t) => ({ ...t, total: cost(t.patch) })).filter((t) => t.total < total).sort((x, y) => x.total - y.total);
+  // If no one change gets close, stack them, biggest saving first, only until it does
+  if (ideas.length > 1 && ideas[0].total > near) {
+    let patch: Patch = {}, used: string[] = [], sum = total;
+    for (const i of ideas) {
+      patch = patched(patch as Answers, i.patch) as Patch; used.push(i.text[0].toLowerCase() + i.text.slice(1)); sum = cost(patch);
+      if (sum <= near) break;
+    }
+    if (used.length > 1) ideas.unshift({ text: `Together, ${used.slice(0, -1).join(', ')} and ${used[used.length - 1]}`, patch, total: sum });
+  }
+  const top3 = ideas.slice(0, 3);
+  return { top, total, ideas: top3, fits: top3.some((i) => i.total <= near) };
 }

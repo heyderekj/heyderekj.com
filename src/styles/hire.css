@@ -181,6 +181,15 @@
 .hire-slider input { flex: 0 1 220px; accent-color: var(--ink); }
 
 /* Extras: things to add, each with its price */
+/* When the budget won't stretch that far */
+.hire-gap { --r: 14px; display: grid; gap: 10px; margin-top: 10px; padding: 12px 14px; border-radius: 14px; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); background: color-mix(in oklch, var(--you) 7%, var(--paper)); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--you) 22%, transparent); animation: hire-in 220ms var(--ease) both; }
+.hire-gap[hidden] { display: none; }
+.hire-gap p { margin: 0; text-wrap: pretty; }
+.hire-gap b { color: var(--ink); font-weight: 600; }
+.hire-gap__ideas { display: flex; flex-wrap: wrap; gap: 6px; }
+.hire-gap__ideas button { --r: 999px; display: inline-flex; align-items: baseline; gap: 8px; padding: 6px 12px; border-radius: 999px; font: 500 13px var(--font); text-align: left; color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.hire-gap__ideas button:hover { translate: 0 -1px; box-shadow: inset 0 0 0 1px var(--ink); }
+.hire-gap__ideas em { font-style: normal; font-weight: 600; color: var(--money); font-variant-numeric: tabular-nums; }
 .hire-extras { display: grid; gap: 6px; margin-top: 10px; padding-top: 14px; border-top: 1px solid var(--hair); }
 .hire-extras__h { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .hire-extra { --r: 12px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease); }

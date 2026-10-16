@@ -2,7 +2,8 @@
  * Work with me (/hire/): what I offer, what it costs, and when I'm free. Every number on the page,
  * in the live estimate and in the request function (functions/api/hire.ts) comes from here, so this
  * is the one place to change a price. The starting points follow my contracts: $100 an hour,
- * $600 a page plus $600 for a CMS on a Webflow site (Agape Homes: six pages with listings, $4,200),
+ * a site from $1,600 for its first page and $400 for each after, plus $600 for a CMS (Agape Homes: six
+ * pages with listings, 1,600 + 5 × 400 + 600 = $4,200),
  * a $500/mo retainer for 5 hours, and 40% to start, 40% at design approval, 20% at launch.
  */
 
@@ -25,16 +26,20 @@ export const RATE = 100; // per hour, for anything beyond the scope (like a fift
 
 export const PRICES = {
   site: {
-    perPage: 600,
-    minPages: 3,
+    /** The first page (with the setup every site needs), then each page after it */
+    base: 1600,
+    perPage: 400,
+    minPages: 1,
     maxPages: 20,
     cms: 600, // posts, listings, a team page: content they can update themselves
     /** Design only, or building from someone else's designs */
     scope: { both: 1, design: 0.5, build: 0.6 },
   },
-  logo: { new: { wordmark: 900, mark: 1200, both: 1200 }, refresh: 800 },
+  // From $250 (a refresh); a new one by what it includes. Drafts between those, to adjust
+  logo: { new: { wordmark: 400, mark: 600, both: 800 }, refresh: 250 },
   rebrand: { keepLogo: 2000, full: 3000 },
-  feedback: { notes: 200, call: 200 },
+  // By the hour: written notes take about two, a call about one
+  feedback: { rate: 125, hours: { notes: 2, call: 1 } },
   ai: { small: 1000, medium: 2500, large: 5000 },
   retainer: { monthly: 500, hours: 5 },
 } as const;
@@ -77,10 +82,10 @@ export type ServiceId = 'site' | 'logo' | 'rebrand' | 'feedback' | 'ai';
 
 /** The five things I do, in the order they're offered */
 export const SERVICES: { id: ServiceId; name: string; icon: string; line: string; from: string; tags: string[] }[] = [
-  { id: 'site', name: 'Websites', icon: 'laptop', line: 'Designed and built in Webflow or custom code, with content your team can update. Two rounds of revisions in design, two in the build.', from: `from $${PRICES.site.perPage}/page`, tags: ['design', 'work'] },
+  { id: 'site', name: 'Websites', icon: 'laptop', line: 'Designed and built in Webflow or custom code, with content your team can update. Two rounds of revisions in design, two in the build.', from: `from $${PRICES.site.base.toLocaleString()}`, tags: ['design', 'work'] },
   { id: 'logo', name: 'Logos', icon: 'pencil', line: 'A mark or wordmark that fits who you are, with the files you need for everything.', from: `from $${PRICES.logo.refresh.toLocaleString()}`, tags: ['branding'] },
   { id: 'rebrand', name: 'Rebrands', icon: 'palette', line: 'Logo, type, color and a short guide, so everything starts to feel like the same place.', from: `from $${PRICES.rebrand.keepLogo.toLocaleString()}`, tags: ['branding'] },
-  { id: 'feedback', name: 'Feedback', icon: 'eye', line: 'A careful look at your site, app or brand: what’s working, what isn’t, and what I’d do next.', from: `$${PRICES.feedback.notes}`, tags: ['design'] },
+  { id: 'feedback', name: 'Feedback', icon: 'eye', line: 'A careful look at your site, app or brand: what’s working, what isn’t, and what I’d do next.', from: `$${PRICES.feedback.rate}/hr`, tags: ['design'] },
   { id: 'ai', name: 'AI workflows & apps', icon: 'branch', line: 'Putting AI to work where it actually helps: an automation, an internal tool, or a first version of an app.', from: `from $${PRICES.ai.small.toLocaleString()}`, tags: ['ai', 'making'] },
 ];
 
@@ -106,9 +111,16 @@ export const EXTRAS: { id: string; service: ServiceId; name: string; desc: strin
   { id: 'logo.kit', service: 'logo', name: 'Social and icon kit', desc: 'Avatars, a favicon and app icons from the new logo.', price: 200 },
   { id: 'logo.motion', service: 'logo', name: 'A little motion', desc: 'An animated version for video and the web.', price: 400 },
   { id: 'rebrand.templates', service: 'rebrand', name: 'Templates', desc: 'Slides, social posts and documents in the new look.', price: 600 },
-  { id: 'feedback.followup', service: 'feedback', name: 'A second look', desc: 'Another review after you’ve made changes.', price: 150 },
+  { id: 'feedback.followup', service: 'feedback', name: 'A second look', desc: 'Another review after you’ve made changes, about an hour.', price: 125 },
   { id: 'ai.handoff', service: 'ai', name: 'Docs and a walkthrough', desc: 'So your team can run it and change it without me.', price: 300 },
 ];
 
 /** The testimonials on /hire/, strongest first: clients on the work itself, then what came of it, then the craft */
 export const SAID_ORDER = ['Barrett Johnson', 'Josh Pigford', 'Corey Moen', 'Shelley Martin', 'Danny Begnoche'];
+
+/**
+ * The budgets people can pick, by their top. An estimate more than STRETCH past the top won't meet it,
+ * so the form says so and offers ways to get closer (lib/estimate.ts budgetGap).
+ */
+export const BUDGETS: Record<string, number> = { 'Under $2k': 2000, '$2–5k': 5000, '$5–10k': 10000, '$10k+': Infinity };
+export const BUDGET_STRETCH = 1.3;

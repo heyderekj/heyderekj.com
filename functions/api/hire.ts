@@ -11,7 +11,7 @@
  * With only one of them, it still does that one; with neither, it answers 503 and the page offers my email.
  */
 import { EmailMessage } from 'cloudflare:email';
-import { clean, estimate, money, schedule, short } from '../../src/lib/estimate';
+import { budgetGap, clean, estimate, money, schedule, short } from '../../src/lib/estimate';
 import { availability } from '../../src/data/hire';
 import { SERVICES } from '../../src/data/hire';
 
@@ -76,6 +76,7 @@ export async function onRequestPost({ request, env }: { request: Request; env: E
       ...(names.length ? names.map((n) => `· ${n}`) : []),
       ...(unsure ? ['· Not sure yet, wants to talk it through'] : []),
       `Start: ${TIMELINE[answers.timeline ?? 'flexible']}${budget ? ` · Budget in mind: ${budget}` : ''}`,
+      budgetGap(answers, budget) ? `Heads up: the estimate is well past their budget (${budget}).` : '',
       '',
       '— Their estimate',
       ...est.lines.map((l) => `${l.title}: ${money(l.price)}${l.unit ?? ''}\n  ${l.desc}`),

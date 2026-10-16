@@ -4,7 +4,7 @@
  * priced by lib/estimate.ts (the same code the request function uses). Sends to /api/hire, then a
  * signed note from me. Answers are kept in this browser until they're sent.
  */
-import { clean, DEFAULTS, estimate, extraPrice, money, schedule, short, type Answers } from '../lib/estimate';
+import { budgetGap, clean, DEFAULTS, estimate, extraPrice, money, patched, schedule, short, type Answers, type Gap } from '../lib/estimate';
 import { EXTRAS, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 import { copyText, toast } from './toast';
 
@@ -90,7 +90,27 @@ if (form) {
   form.addEventListener('submit', (e) => { e.preventDefault(); next(); });
 
   // ---- Painting the controls from the draft
+  // A budget the estimate is well past: say so plainly, and offer ways to get closer, each a tap to try
+  let gap: Gap | null = null;
+  function paintGap() {
+    const box = $('[data-gap]', form!);
+    gap = budgetGap(clean(draft), draft.budget);
+    box.hidden = !gap;
+    if (!gap) return;
+    const of = /^under/i.test(draft.budget) ? draft.budget.toLowerCase() : `of ${draft.budget}`;
+    box.innerHTML = `<p><b>This is well past a budget ${esc(of)}.</b> It comes to about ${money(gap.total)}.${gap.ideas.length ? ' A few ways to get closer:' : ''}</p>`
+      + (gap.ideas.length ? `<div class="hire-gap__ideas">${gap.ideas.map((x, n) => `<button type="button" class="sq" data-idea="${n}">${esc(x.text)}<em>${money(x.total)}</em></button>`).join('')}</div>` : '')
+      + (gap.fits ? '' : '<p>Even pared back, it’s more than that. Tell me what matters most and we’ll find the right first step.</p>');
+  }
+  form.addEventListener('click', (e) => {
+    const n = (e.target as HTMLElement).closest<HTMLElement>('[data-idea]')?.dataset.idea;
+    if (n === undefined || !gap) return;
+    Object.assign(draft, patched(draft, gap.ideas[Number(n)].patch));
+    paint(); toast('Estimate updated');
+  });
+
   function paintForm() {
+    paintGap();
     // Per-page extras follow the page count
     const now = clean(draft);
     for (const x of EXTRAS.filter((e) => e.perPage)) $$(`[data-extra-price="${x.id}"]`, form!).forEach((em) => { em.innerHTML = `+${money(extraPrice(x, now))}<small>$${x.price} × ${now.site?.pages ?? DEFAULTS.site.pages} pages</small>`; });
