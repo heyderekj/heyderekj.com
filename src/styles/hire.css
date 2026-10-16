@@ -67,7 +67,7 @@
 .hire-mini b { font-size: 15px; font-weight: 600; }
 .hire-mini > span:last-child { font-size: 13px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
 /* What people say: one at a time, sliding, under the intro */
-.hire-said { display: grid; gap: 10px; margin-top: 26px; }
+.hire-said { position: relative; margin-top: 26px; }
 /* The scroller reaches past the column on both sides and fades out there, so cards slide in and out
    softly instead of being cut at the column's edge. The gap is wider than that reach, so the next card
    never peeks in at rest. Room below for the cards' shadow. */
@@ -75,9 +75,13 @@
 .hire-said .said::-webkit-scrollbar { display: none; }
 @media (max-width: 720px) { .hire-said .said { --bleed: 16px; } }
 .hire-said .said__card { flex: 0 0 100%; scroll-snap-align: start; }
-.hire-said__nav { display: flex; align-items: center; justify-content: center; gap: 12px; }
-.hire-said__nav button { --r: 999px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; font-size: 14px; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease); }
-.hire-said__nav button:hover { color: var(--ink); }
+/* The controls sit in each card's top-right corner, where the big quote mark was; the headline keeps clear of them */
+.hire-said .said__card::before { content: none; }
+.hire-said .said__pull { padding-right: 150px; }
+@media (max-width: 560px) { .hire-said .said__pull { padding: 34px 0 0; } }
+.hire-said__nav { position: absolute; top: 18px; right: 16px; z-index: 1; display: flex; align-items: center; gap: 8px; padding: 3px; border-radius: 999px; background: color-mix(in oklch, var(--ink) 5%, transparent); }
+.hire-said__nav button { --r: 999px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; font-size: 13px; color: var(--muted); background: transparent; transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.hire-said__nav button:hover { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
 .hire-said__dots { display: flex; gap: 6px; }
 .hire-said__dots i { width: 6px; height: 6px; border-radius: 999px; background: var(--hair); transition: width 240ms var(--ease), background-color 240ms var(--ease); }
 .hire-said__dots i.is-on { width: 18px; background: var(--ink); }
