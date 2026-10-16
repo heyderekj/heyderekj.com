@@ -102,7 +102,7 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
           )}
         </span>
       )}
-      {figures.length > 0 && <span class="badge"><Icon name="spark" /> {figures.length} {figures.length === 1 ? 'figure' : 'figures'}</span>}
+      {figures.length > 0 && <span class="badge"><Icon name="figure" /> {figures.length} {figures.length === 1 ? 'figure' : 'figures'}</span>}
     </div>
 
     {d.type === 'link' && d.link ? (

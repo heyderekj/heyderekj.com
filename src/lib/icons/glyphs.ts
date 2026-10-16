@@ -69,6 +69,8 @@ export const GLYPHS = {
   // further out than a circle's.
   search: [{ c: [6.75, 6.75, 4.75] }, { d: 'M10.6 10.6L13.75 13.75' }],
   // A main spark and a small one, like a second thought.
+  // A figure: a framed picture, hills and a sun.
+  figure: [{ d: sq(1.75, 2.75, 12.5, 10.5, 2.5) }, { d: 'M4.25 10.75L6.75 8.25L8.75 10.25' }, { d: 'M8 9.5L9.5 8L11.75 10.25' }, dot(10.75, 5.75, 0.875)],
   spark: [
     { d: 'M6.75 4.25C7.15 7.25 8.75 8.85 11.75 9.25C8.75 9.65 7.15 11.25 6.75 14.25C6.35 11.25 4.75 9.65 1.75 9.25C4.75 8.85 6.35 7.25 6.75 4.25Z' },
     { d: 'M12 1.75V5.25' },
