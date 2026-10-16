@@ -207,6 +207,8 @@
 .prop__tags:empty { display: none; }
 .prop__head time { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .prop__mark { flex: none; display: inline-grid; place-items: center; width: 19px; height: 19px; border-radius: 50%; font-size: 11px; color: var(--you); box-shadow: inset 0 0 0 1.4px var(--you); }
+/* The arrow drawn at the ring's 1.4px, not scaled down with the 11px icon */
+.prop__mark svg path { stroke-width: 1.4px; vector-effect: non-scaling-stroke; }
 .prop section { display: grid; gap: 10px; }
 .prop section[hidden] { display: none; }
 .prop h4 { display: flex; align-items: center; gap: 9px; margin: 0; font-size: 15.5px; font-weight: 600; }
