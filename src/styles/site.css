@@ -1137,16 +1137,15 @@ body.site .four__col:focus-visible { outline: none; }
 .four__tally { margin: 0; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .four__tally b { color: var(--ink); font-weight: 600; }
 .four__controls { display: flex; flex-wrap: wrap; gap: 6px; }
-.four__controls button, .four-card__actions button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease); }
-.four__controls button:hover, .four-card__actions button:hover { color: var(--ink); }
-:is(.four__controls, .four-card__actions) button.is-primary { color: #fff; background: var(--you); font-weight: 600; }
+.four__controls button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease); }
+.four__controls button:hover { color: var(--ink); }
+.four__controls button.is-primary { color: #fff; background: var(--you); font-weight: 600; }
 .four__controls [data-four-again] { color: var(--ink); font-weight: 600; }
 .four__controls kbd { font: 600 10.5px var(--font); padding: 1px 5px; border-radius: 5px; box-shadow: inset 0 0 0 1px var(--hair); }
 /* The card maker (client/four-card.ts) */
 .four-card { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr); gap: 22px; align-items: start; padding: 16px; border-radius: 24px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); color: var(--ink); animation: lost-in 320ms var(--ease) both; }
 .four-card__preview canvas { display: block; width: 100%; height: auto; border-radius: 14px; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
 .four-card__tools { display: grid; gap: 14px; align-content: start; }
-.four-card__tools > b { font-size: 17px; font-weight: 650; }
 .four-card__designs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .four-card__designs button { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; font-size: 13.5px; font-weight: 500; color: var(--ink-soft); box-shadow: inset 0 0 0 1px var(--hair); }
 .four-card__designs button i { width: 18px; height: 18px; border-radius: 6px; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12); }
@@ -1179,25 +1178,27 @@ body.site .four__col:focus-visible { outline: none; }
 .four-card__as button small { font-size: 12px; color: var(--muted); font-weight: 500; }
 .four-card__as button[aria-checked="true"] { color: var(--ink); font-weight: 600; background: var(--card); box-shadow: 0 0 0 1px var(--hair), 0 1px 2px rgb(0 0 0 / 0.06); }
 .four-card.is-recording .four-card__as [data-as="clip"] .icon { color: #ff453a; }
-.four-card__actions { display: flex; flex-wrap: wrap; gap: 6px; }
-.four-card__actions button { padding: 8px 14px 8px 12px; font-size: 13.5px; color: var(--ink); }
-.four-card__actions button .icon { font-size: 15px; }
+/* One row: copy, save (and share where the browser can), then post it to X, Instagram, Facebook or a text.
+   Icon squircles that share the width; the posts take their brand colour on hover */
+.four-card__head { display: flex; align-items: center; justify-content: space-between; }
+.four-card__head b { font-size: 17px; font-weight: 650; }
+.four-card__head button { padding: 4px 2px; font-size: 13.5px; font-weight: 500; color: var(--muted); transition: color var(--t-ui) var(--ease); }
+.four-card__head button:hover { color: var(--ink); }
+.four-card__actions { display: flex; align-items: center; gap: 6px; }
+.four-card__actions button { --r: 11px; flex: 1 1 0; min-width: 0; display: grid; place-items: center; height: 40px; padding: 0; font-size: 17px; color: var(--ink-soft); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.four-card__actions button:hover, .four-card__actions button:focus-visible { color: var(--ink); background: color-mix(in oklch, var(--ink) 10%, transparent); }
+.four-card__actions button.is-primary { color: #fff; background: var(--you); }
 .four-card__actions button .i-done, .four-card__actions button.is-done .i-go { display: none; }
 .four-card__actions button.is-done .i-done { display: block; animation: lost-in 220ms var(--ease) both; }
-.four-card__actions button.is-quiet { margin-left: auto; padding-inline: 12px; color: var(--muted); background: none; }
 .four-card__actions button:disabled { opacity: 0.5; cursor: progress; }
+.four-card__sep { flex: none; width: 1px; height: 22px; margin: 0 2px; background: var(--hair); }
+.four-card__actions [data-post]:hover, .four-card__actions [data-post]:focus-visible { color: #fff; background: var(--brand); }
+.four-card__actions [data-post="x"] { --brand: #000; }
+.four-card__actions [data-post="instagram"] { --brand: linear-gradient(45deg, #f9ce34, #ee2a7b 50%, #6228d7); }
+.four-card__actions [data-post="facebook"] { --brand: #0866ff; }
+.four-card__actions [data-post="text"] { --brand: #34c759; }
 .four-card__status { font-size: 12.5px; color: var(--muted); }
 .four-card__status:empty { display: none; }
-/* Post it: a row of marks, each taking its own colour on hover */
-.four-card__post { display: flex; align-items: center; gap: 6px; }
-.four-card__post span { margin-right: auto; font-size: 13px; font-weight: 500; color: var(--muted); }
-.four-card__post button { --r: 11px; display: grid; place-items: center; width: 38px; height: 38px; font-size: 17px; color: var(--ink-soft); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
-.four-card__post button:hover, .four-card__post button:focus-visible { color: #fff; background: var(--brand); }
-.four-card__post button:disabled { opacity: 0.5; cursor: progress; }
-.four-card__post [data-post="x"] { --brand: #000; }
-.four-card__post [data-post="instagram"] { --brand: linear-gradient(45deg, #f9ce34, #ee2a7b 50%, #6228d7); }
-.four-card__post [data-post="facebook"] { --brand: #0866ff; }
-.four-card__post [data-post="text"] { --brand: #34c759; }
 @media (max-width: 640px) { .four-card { grid-template-columns: 1fr; } .four__board { border-radius: 20px; } }
 @media (prefers-reduced-motion: reduce) { .four__col i, .four__col i.drop, .four__col i.win, .four[data-turn="you"] .four__col i.next { animation: none; } }
 /* Letter shortcuts on the 404 chat's choices (client/lost-chat.ts) */

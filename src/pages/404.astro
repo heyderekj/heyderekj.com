@@ -62,7 +62,7 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
             <span class="four-card__bar" aria-hidden="true"></span>
           </div>
           <div class="four-card__tools">
-            <b>Make it yours</b>
+            <div class="four-card__head"><b>Make it yours</b><button type="button" data-card-close>Done</button></div>
             <div class="four-card__designs" role="radiogroup" aria-label="Design">
               <button type="button" role="radio" aria-checked="true" data-design="paper"><i style="--sw:#faf9f7"></i>Paper</button>
               <button type="button" role="radio" aria-checked="false" data-design="blueprint"><i style="--sw:#1d4b8c"></i>Blueprint</button>
@@ -85,13 +85,10 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
               <button type="button" role="radio" aria-checked="false" data-as="clip"><Icon name="clapper" />Clip<small data-clip-length></small></button>
             </div>
             <div class="four-card__actions">
-              <button type="button" data-card-copy><Icon name="copy" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span>Copy</span></button>
-              <button type="button" data-card-save><Icon name="file-down" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span>Save</span></button>
-              <button type="button" class="is-primary" data-card-share hidden><Icon name="arrow-up-right" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span>Share</span></button>
-              <button type="button" class="is-quiet" data-card-close>Done</button>
-            </div>
-            <div class="four-card__post">
-              <span>Post it</span>
+              <button type="button" class="sq" data-card-copy title="Copy"><Icon name="copy" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span class="visually-hidden">Copy</span></button>
+              <button type="button" class="sq" data-card-save title="Save"><Icon name="file-down" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span class="visually-hidden">Save</span></button>
+              <button type="button" class="sq is-primary" data-card-share title="Share" hidden><Icon name="arrow-up-right" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span class="visually-hidden">Share</span></button>
+              <i class="four-card__sep" aria-hidden="true"></i>
               <button type="button" class="sq" data-post="x" aria-label="Post on X" title="X"><Icon name="x" /></button>
               <button type="button" class="sq" data-post="instagram" aria-label="Post on Instagram" title="Instagram"><Icon name="instagram" /></button>
               <button type="button" class="sq" data-post="facebook" aria-label="Post on Facebook" title="Facebook"><Icon name="facebook" /></button>
