@@ -331,3 +331,6 @@ body.site .four__col:focus-visible { outline: none; }
 /* Playing: the page holds still (client/four.ts lock), and a drag on the board is a move, never a scroll */
 html.four-locked, html.four-locked body { overflow: hidden; overscroll-behavior: none; }
 .four__board { touch-action: none; }
+html.four-locked .bar { opacity: 0; translate: -50% 24px; pointer-events: none; }
+html.four-locked .lost { opacity: 0.45; filter: grayscale(0.3); transition: opacity 300ms var(--ease), filter 300ms var(--ease); }
+html.four-locked .lost-head__line { opacity: 0.45; }

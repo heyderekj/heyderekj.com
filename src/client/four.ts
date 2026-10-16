@@ -240,6 +240,9 @@ if (game && grid404 && head) {
   function lock(on: boolean) {
     locked = on;
     document.documentElement.classList.toggle('four-locked', on);
+    // Everything but the game goes quiet: the bar slides away, and the chat and the rest can't be
+    // clicked, focused or selected (inert) until the round ends
+    document.querySelectorAll<HTMLElement>('#bar, .lost, body > footer, .lost-head__line').forEach((el) => { el.inert = on; });
     if (on) {
       const r = game!.getBoundingClientRect();
       if (r.top < 0 || r.bottom > innerHeight) game!.scrollIntoView({ block: r.height < innerHeight ? 'center' : 'start', behavior: calm ? 'auto' : 'smooth' });
