@@ -80,4 +80,4 @@ export const EXTRAS: { id: string; service: ServiceId; name: string; desc: strin
 ];
 
 /** The testimonials on /hire/, strongest first: clients on the work itself, then what came of it, then the craft */
-export const SAID_ORDER = ['Barrett Johnson', 'Josh Pigford', 'Shelley Martin', 'Danny Begnoche', 'Corey Moen'];
+export const SAID_ORDER = ['Barrett Johnson', 'Josh Pigford', 'Corey Moen', 'Shelley Martin', 'Danny Begnoche'];
