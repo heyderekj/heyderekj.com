@@ -31,20 +31,8 @@ if (game && grid404 && head) {
   type Lines = { stop: string[]; start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[] };
   type Foe = { name: string; kind: 'cat' | 'dog'; tone: string; toneInk?: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
   const WARGAMES = 'The only winning move is not to play.';
+  // Oldest first: Lilo, Leroy, Kiya, Irma
   const FOES: Foe[] = [
-    { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
-      name: 'Leroy', kind: 'cat', tone: 'oklch(0.56 0.19 18)', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
-      lines: {
-        stop: ['Leaving? I’ll be right here.', 'Smart. Quit while you’re ahead.'],
-        start: ['Shall we play? Take your time. I will.'],
-        level: (l) => [`Level ${l}. I have all day.`, `Level ${l}. Slow and steady.`, `Level ${l}. I’m not going anywhere.`],
-        mine: ['Hmm. Hmm. Okay, here.', 'Slow and steady.', 'Still thinking. Don’t rush me.', 'I’ll get there.', 'Measure twice. Drop once.', 'Patience.', 'There. Worth the wait.'],
-        block: ['Not so fast.', 'I saw that a while ago.', 'Mm. No.', 'I’ll just sit right here.'],
-        youWin: ['Again. I’m not going anywhere.', 'Fine. Best of a hundred?', 'Noted. Again.'],
-        iWin: ['Told you. Slow and steady.', 'Four in a row. Took a while. Worth it.', 'Patience wins.'],
-        draw: ['A cat’s game. Naturally.', 'Cat’s game. I’ll take it.', 'Nobody wins. Except cats.'],
-      },
-    },
     { // Attentive and smart, but kind: always blocks you, and sometimes won't take the win
       name: 'Lilo', kind: 'dog', tone: 'oklch(0.55 0.17 300)', delay: [600, 1000], depth: (l) => Math.min(6, l + 1), slip: (l) => Math.max(0, 0.15 - 0.05 * (l - 1)), spares: 0.4,
       lines: {
@@ -57,6 +45,19 @@ if (game && grid404 && head) {
         youWin: ['Yay, you won! I’m so happy for you.', 'You did it! That was lovely.'],
         iWin: ['Oh no, I won. Are you okay?', 'Sorry! I didn’t mean to win.'],
         draw: ['A cat’s game? Leroy will be smug.', 'A tie! Leroy and Irma would love this.', WARGAMES],
+      },
+    },
+    { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
+      name: 'Leroy', kind: 'cat', tone: 'oklch(0.56 0.19 18)', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
+      lines: {
+        stop: ['Leaving? I’ll be right here.', 'Smart. Quit while you’re ahead.'],
+        start: ['Shall we play? Take your time. I will.'],
+        level: (l) => [`Level ${l}. I have all day.`, `Level ${l}. Slow and steady.`, `Level ${l}. I’m not going anywhere.`],
+        mine: ['Hmm. Hmm. Okay, here.', 'Slow and steady.', 'Still thinking. Don’t rush me.', 'I’ll get there.', 'Measure twice. Drop once.', 'Patience.', 'There. Worth the wait.'],
+        block: ['Not so fast.', 'I saw that a while ago.', 'Mm. No.', 'I’ll just sit right here.'],
+        youWin: ['Again. I’m not going anywhere.', 'Fine. Best of a hundred?', 'Noted. Again.'],
+        iWin: ['Told you. Slow and steady.', 'Four in a row. Took a while. Worth it.', 'Patience wins.'],
+        draw: ['A cat’s game. Naturally.', 'Cat’s game. I’ll take it.', 'Nobody wins. Except cats.'],
       },
     },
     { // Competitive and smart, but a bully and easily distracted: quick, mouthy, and wanders off
