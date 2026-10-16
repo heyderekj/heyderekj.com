@@ -9,13 +9,18 @@
 const $ = (s) => document.querySelector(s);
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const DSM = () => { if (window.__dsmHour != null) return window.__dsmHour; const [h, m] = new Date().toLocaleTimeString('en-GB', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', hour12: false }).split(':').map(Number); return h + m / 60; };
-function tickTime() { const el = $('#dsmTime'); if (el) el.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' }).toLowerCase(); sunday(); }
-// Easter egg: on Sunday mornings, Des Moines time, the card says where I probably am
+function tickTime() { const el = $('#dsmTime'); if (el) el.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' }).toLowerCase(); routine(); }
+// Easter egg: at the times I'm usually somewhere, Des Moines time, the card says where
+const ROUTINE = [
+  { day: 'Sun', from: 10, to: 12.5, text: 'Probably at church right now.' },
+  { day: 'Tue', from: 11, to: 11.5, text: 'In my weekly team sync with Kem Design.' },
+  { day: 'Fri', from: 12, to: 13, text: 'Hanging out with my best friend, Cam Pak.' },
+];
 let homeLine = null;
-function sunday() {
+function routine() {
   const el = $('.here__home'); if (!el) return; homeLine ??= el.textContent;
   const day = new Date().toLocaleDateString('en-US', { timeZone: 'America/Chicago', weekday: 'short' }), h = DSM();
-  el.textContent = day === 'Sun' && h >= 8.5 && h < 12.5 ? 'Probably at church right now.' : homeLine;
+  el.textContent = ROUTINE.find((r) => r.day === day && h >= r.from && h < r.to)?.text ?? homeLine;
 }
 // Sky colours through the day: [hour, top, middle, horizon, star amount, light colour]
 const SKY = [
