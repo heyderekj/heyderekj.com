@@ -31,7 +31,7 @@ let openCardImpl: (g: Game) => void = () => {};
 // Your side of the card: your pet, if you add one (a square crop, drawn once), and their name
 let petPhoto: HTMLCanvasElement | null = null, petName = '';
 // Under each animal's name on the card
-const TAGS: Record<string, string> = { Leroy: 'Slow, smart, persistent', Lilo: 'Kind, avoids conflict', Kiya: 'Competitive, easily distracted', Irma: 'Not smart, plays hard' };
+const TAGS: Record<string, string> = { Leroy: 'Slow and steady', Lilo: 'Too kind', Kiya: 'The bully', Irma: 'Plays hard' };
 
 // ---- Drawing the card. `upto` and `fall` animate the clip: how many moves are in, and how far the last has dropped
 function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fall = 1, flash = true) {
@@ -86,7 +86,7 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
     ctx.textAlign = 'left';
   };
   const mine = design === 'orange' ? t.ink : '#ea580c';
-  side(petPhoto ?? chip('orange'), mine, gutter + r, petName || (petPhoto ? 'Your pet' : 'You'), petPhoto && !petName ? 'Unnamed, undefeated' : 'The challenger', 'left');
+  side(petPhoto ?? chip('orange'), mine, gutter + r, petName || (petPhoto ? 'Your pet' : 'You'), petPhoto && !petName ? 'Unnamed' : 'Challenger', 'left');
   side(pets.get(g.foe) ?? chip(g.foe.toLowerCase()), g.foeTone, W - gutter - r, g.foe, TAGS[g.foe] ?? '', 'right');
   ctx.fillStyle = t.muted; ctx.font = `600 26px ${mono}`; ctx.textAlign = 'center'; ctx.fillText('VS', W / 2, cy + 10); ctx.textAlign = 'left';
 

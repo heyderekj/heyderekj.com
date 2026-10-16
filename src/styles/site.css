@@ -1096,11 +1096,10 @@ html.orange-mode body.site { transition: background-color 400ms var(--ease); }
 .lost-head__play .icon { color: #ea580c; font-size: 16px; }
 .lost-head__play:hover { translate: 0 -1px; box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow-lift); }
 html.four-on .lost-head__play, html.four-on .lost-head__line { display: none; }
-/* Beside the dots, where the 4's crossbar runs out: it reads as the bar pointing at it */
-@media (min-width: 600px) {
-  .lost-head { position: relative; }
-  .lost-head__play { position: absolute; margin: 0; left: calc(var(--cols) * 20px + 6px); top: calc(3 * 20px + 7px); transform: translateY(-50%); }
-}
+/* Under the chat, as one more thing to do here */
+.lost-play { display: flex; justify-content: center; margin: 18px 0 0; }
+.lost-play .lost-head__play { margin: 0; }
+html.four-on .lost-play { display: none; }
 /* The 404's dots gather into the board's holes when the game starts (client/four.ts) */
 .four-morph { position: fixed; inset: 0; z-index: 40; pointer-events: none; transition: opacity 180ms ease; }
 .four-morph.is-done { opacity: 0; }

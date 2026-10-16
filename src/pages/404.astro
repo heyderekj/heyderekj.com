@@ -95,7 +95,6 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
         </div>
       </section>
       <p class="lost-head__line">Nothing lives at <code id="lostPath">this address</code></p>
-      <button type="button" class="lost-head__play" data-four-play><Icon name="controller" loop={false} /> Shall we play a game?</button>
     </header>
     <section class="lost sq" aria-label="Chat with Derek about the missing page" data-photo={photo}>
       <header class="lost__top">
@@ -118,6 +117,7 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
         <button type="submit" aria-label="Send"><svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg></button>
       </form>
     </section>
+    <p class="lost-play"><button type="button" class="lost-head__play" data-four-play><Icon name="controller" loop={false} /> Shall we play a game?</button></p>
   </main>
   <script src="../client/lost-chat.ts"></script>
   <script src="../client/four.ts"></script>
