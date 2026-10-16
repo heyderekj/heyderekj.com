@@ -81,19 +81,17 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
           </div>
           <div class="four-card__tools">
             <div class="four-card__head"><b>Make it yours</b><button type="button" data-card-close>Done</button></div>
-            <!-- Layout and colour together: three sketches of the card; the one you pick takes your colour, with the colours to choose from inside it -->
-            <div class="four-card__layouts" role="radiogroup" aria-label="Layout">
-              <div class="four-card__lay">
+            <!-- The look: which layout (a sketch of each) and which colour (a swatch of each), side by side -->
+            <div class="four-card__look">
+              <div class="four-card__layouts" role="radiogroup" aria-label="Layout">
                 <button type="button" role="radio" aria-checked="true" data-layout="classic" title="Classic"><Fragment set:html={mini.classic} /><span class="visually-hidden">Classic</span></button>
-                <span class="four-card__paints" role="group" aria-label="Colour"><button type="button" class="four-card__paint" data-design="paper" aria-pressed="true" title="Paper" style="--sw:#faf9f7"><span class="visually-hidden">Paper</span></button><button type="button" class="four-card__paint" data-design="arcade" aria-pressed="false" title="Arcade" style="--sw:#0d0c0b"><span class="visually-hidden">Arcade</span></button><button type="button" class="four-card__paint" data-design="orange" aria-pressed="false" title="Orange" style="--sw:#ea580c"><span class="visually-hidden">Orange</span></button></span>
-              </div>
-              <div class="four-card__lay">
                 <button type="button" role="radio" aria-checked="false" data-layout="poster" title="Poster"><Fragment set:html={mini.poster} /><span class="visually-hidden">Poster</span></button>
-                <span class="four-card__paints" role="group" aria-label="Colour"><button type="button" class="four-card__paint" data-design="paper" aria-pressed="true" title="Paper" style="--sw:#faf9f7"><span class="visually-hidden">Paper</span></button><button type="button" class="four-card__paint" data-design="arcade" aria-pressed="false" title="Arcade" style="--sw:#0d0c0b"><span class="visually-hidden">Arcade</span></button><button type="button" class="four-card__paint" data-design="orange" aria-pressed="false" title="Orange" style="--sw:#ea580c"><span class="visually-hidden">Orange</span></button></span>
-              </div>
-              <div class="four-card__lay">
                 <button type="button" role="radio" aria-checked="false" data-layout="faceoff" title="Face-off"><Fragment set:html={mini.faceoff} /><span class="visually-hidden">Face-off</span></button>
-                <span class="four-card__paints" role="group" aria-label="Colour"><button type="button" class="four-card__paint" data-design="paper" aria-pressed="true" title="Paper" style="--sw:#faf9f7"><span class="visually-hidden">Paper</span></button><button type="button" class="four-card__paint" data-design="arcade" aria-pressed="false" title="Arcade" style="--sw:#0d0c0b"><span class="visually-hidden">Arcade</span></button><button type="button" class="four-card__paint" data-design="orange" aria-pressed="false" title="Orange" style="--sw:#ea580c"><span class="visually-hidden">Orange</span></button></span>
+              </div>
+              <div class="four-card__colors" role="radiogroup" aria-label="Colour">
+                <button type="button" role="radio" aria-checked="true" data-design="paper" title="Paper" style="--sw:#faf9f7"><span class="visually-hidden">Paper</span></button>
+                <button type="button" role="radio" aria-checked="false" data-design="arcade" title="Arcade" style="--sw:#0d0c0b"><span class="visually-hidden">Arcade</span></button>
+                <button type="button" role="radio" aria-checked="false" data-design="orange" title="Orange" style="--sw:#ea580c"><span class="visually-hidden">Orange</span></button>
               </div>
             </div>
             <!-- Play as your own pet: a photo and a name, kept on your device -->

@@ -218,19 +218,19 @@ body.site .four__col:focus-visible { outline: none; }
 .four-card { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr); gap: 22px; align-items: start; padding: 16px; border-radius: 24px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); color: var(--ink); animation: lost-in 320ms var(--ease) both; }
 .four-card__preview canvas { display: block; width: 100%; height: auto; border-radius: 14px; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
 .four-card__tools { display: grid; gap: 14px; align-content: start; }
-/* Layout and colour together: three plain sketches of the card. The one you pick takes your colour, and
-   the colours to choose from sit inside it (four-card.ts sets --tb, the ground, and --ti, the sketch's ink) */
-.four-card__layouts { --tb: #faf9f7; --ti: #9a958d; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.four-card__lay { position: relative; display: grid; }
-.four-card__lay > button { --r: 14px; display: grid; place-items: center; height: 96px; padding: 0; border-radius: 14px; color: color-mix(in oklch, var(--ink) 24%, transparent); background: color-mix(in oklch, var(--ink) 4%, transparent); transition: background-color 240ms var(--ease), color 240ms var(--ease), box-shadow 240ms var(--ease), padding 240ms var(--ease); }
-.four-card__lay > button svg { width: 34px; height: 43px; fill: currentColor; transition: translate 260ms var(--ease); }
-.four-card__lay > button:hover svg { translate: 0 -2px; }
-.four-card__lay > button[aria-checked="true"] { padding-bottom: 26px; color: var(--ti); background: var(--tb); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08), 0 0 0 2px var(--card), 0 0 0 3.5px var(--ink); }
-.four-card__paints { position: absolute; left: 50%; bottom: 9px; display: none; gap: 6px; translate: -50% 0; }
-.four-card__lay:has([aria-checked="true"]) .four-card__paints { display: flex; animation: lost-in 220ms var(--ease) both; }
-.four-card__paint { width: 15px; height: 15px; padding: 0; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18), 0 0 0 1px rgb(255 255 255 / 0.5); transition: scale var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
-.four-card__paint:hover { scale: 1.15; }
-.four-card__paint[aria-pressed="true"] { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.18), 0 0 0 2px var(--tb), 0 0 0 3.5px currentColor; color: var(--ti); }
+/* The look on one row: a segmented control of layout sketches, then the colour swatches. Every target is
+   44px or more, for thumbs */
+.four-card__look { display: flex; align-items: center; gap: 12px; }
+.four-card__layouts { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 3px; border-radius: 14px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.four-card__layouts button { --r: 11px; display: grid; place-items: center; height: 54px; padding: 0; border-radius: 11px; color: color-mix(in oklch, var(--ink) 28%, transparent); transition: background-color var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
+.four-card__layouts svg { width: 26px; height: 33px; fill: currentColor; }
+.four-card__layouts button:hover { color: color-mix(in oklch, var(--ink) 50%, transparent); }
+.four-card__layouts button[aria-checked="true"] { color: var(--ink-soft); background: var(--card); box-shadow: 0 0 0 1px var(--hair), 0 1px 2px rgb(0 0 0 / 0.06); }
+.four-card__colors { display: flex; gap: 4px; }
+.four-card__colors button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%; }
+.four-card__colors button::before { content: ''; width: 32px; height: 32px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.14); transition: scale var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
+.four-card__colors button:hover::before { scale: 1.08; }
+.four-card__colors button[aria-checked="true"]::before { box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.14), 0 0 0 3px var(--card), 0 0 0 4.5px var(--ink); }
 /* Your pet: a round photo you tap to add, its name beside it */
 .four-card__pet { display: flex; align-items: center; gap: 10px; padding: 6px 10px 6px 6px; border-radius: 999px; background: color-mix(in oklch, var(--ink) 4%, transparent); transition: box-shadow var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
 .four-card__pet.is-over { background: color-mix(in oklch, var(--you) 8%, transparent); box-shadow: inset 0 0 0 1.5px var(--you); }

@@ -362,20 +362,14 @@ if (root) {
   // Layouts and colours
   root.querySelectorAll<HTMLButtonElement>('[data-design]').forEach((b) => b.addEventListener('click', () => {
     design = b.dataset.design as Design;
-    root.querySelectorAll<HTMLElement>('[data-design]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.design === design)));
-    tintLayouts(); changed();
+    root.querySelectorAll<HTMLElement>('[data-design]').forEach((x) => x.setAttribute('aria-checked', String(x.dataset.design === design)));
+    changed();
   }));
   root.querySelectorAll<HTMLButtonElement>('[data-layout]').forEach((b) => b.addEventListener('click', () => {
     layout = b.dataset.layout as Layout;
     root.querySelectorAll('[data-layout]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
     changed();
   }));
-
-  // The layout pictures take the colour you picked
-  function tintLayouts() {
-    const t = THEMES[design], box = root!.querySelector<HTMLElement>('.four-card__layouts')!;
-    box.style.setProperty('--tb', t.bg); box.style.setProperty('--ti', design === 'paper' ? '#9a958d' : t.muted);
-  }
 
   // Your pet: a photo (picked, dropped or pasted) and a name. The photo never leaves the browser
   const petBox = root.querySelector<HTMLElement>('.four-card__pet')!;
