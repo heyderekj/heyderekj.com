@@ -120,7 +120,7 @@ export const bragHero = {
   photoAlt: 'Derek Castelli',
   headline: 'Derek Castelli',
   location: 'Des Moines, Iowa metro',
-  bio: 'Self-taught designer designing brands and making websites for non-profits and startups since 2010. Oh and always working on a side project or three. Husband to my best friend, whose last name I took, and home in Des Moines with Lilo, Kiya, Leroy and Irma. And a Christian before all of it, making the apps I believe God called me to make.',
+  bio: 'Self-taught designer designing brands and making websites for non-profits and startups since 2010. Oh and always a side project or three. Husband to my best friend, home in Des Moines with Lilo, Kiya, Leroy and Irma. And a Christian before all of it.',
   profileHref: 'https://www.linkedin.com/in/heyderekj',
 };
 
