@@ -55,7 +55,12 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
             <button type="button" class="four__who sq" aria-haspopup="dialog" aria-expanded="false" aria-controls="fourDial" title="Who you’re playing, and settings"><i aria-hidden="true"><Icon name="chevron-down" loop={false} /></i></button>
             <span class="four__text" aria-live="polite"><b class="four__name"></b><span class="four__line"></span></span>
           </div>
-          <p class="four__tally"><span class="four__stats sq"><span title="Level"><small>Lvl</small><b data-four="level">1</b></span><span title="Points"><b data-four="score">0</b><small>pts</small></span><span title="Your best"><Icon name="star-solid" loop={false} /><b data-four="best">0</b></span></span><button type="button" class="four__restart" data-four-restart aria-label="Start over" title="Start over"><Icon name="refresh" /></button><button type="button" class="four__quit" data-four-quit title="Quit (esc)" aria-label="Quit"><Icon name="close" loop={false} /></button></p>
+          <p class="four__tally"><button type="button" class="four__stats sq" aria-haspopup="dialog" aria-expanded="false" aria-controls="fourSheet" title="Your stats, and how the pets are doing"><span title="Level"><small>Lvl</small><b data-four="level">1</b></span><span title="Points"><b data-four="score">0</b><small>pts</small></span><span title="Your best"><Icon name="star-solid" loop={false} /><b data-four="best">0</b></span></button><button type="button" class="four__restart" data-four-restart aria-label="Start over" title="Start over"><Icon name="refresh" /></button><button type="button" class="four__quit" data-four-quit title="Quit (esc)" aria-label="Quit"><Icon name="close" loop={false} /></button></p>
+          <!-- Tap the score: a card that flips between your own record and how the pets are doing against everyone (client/four.ts) -->
+          <div class="dial four__sheet" id="fourSheet" role="dialog" aria-label="Your stats and the standings" hidden>
+            <div class="four__flip-tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-face="you">You</button><button type="button" role="tab" aria-selected="false" data-face="all">Everyone</button></div>
+            <div class="four__flip"><section class="four__face" data-sheet="you"></section><section class="four__face is-back" data-sheet="all"></section></div>
+          </div>
           <div class="dial four__dial" id="fourDial" role="dialog" aria-label="Who you’re playing, and settings" hidden>
             <div class="dial__head"><b>Playing</b></div>
             <div class="four__foes" role="group" aria-label="Pick who you play">
