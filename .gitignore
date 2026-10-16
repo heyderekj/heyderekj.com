@@ -8,3 +8,4 @@ dist/
 *.log
 # CSV import scratch space (repo root only — not `src/data/`)
 /data/
+/public/_v/

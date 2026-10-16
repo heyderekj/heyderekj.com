@@ -6,8 +6,9 @@
   "license": "UNLICENSED",
   "description": "Personal site for Derek Castelli",
   "scripts": {
+    "predev": "node scripts/image-variants.mjs",
     "dev": "astro dev",
-    "prebuild": "node scripts/ensure-git-history.mjs && node scripts/project-redirects.mjs",
+    "prebuild": "node scripts/ensure-git-history.mjs && node scripts/project-redirects.mjs && node scripts/image-variants.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -31,6 +32,7 @@
     "@phosphor-icons/web": "2.1.1",
     "image-size": "^1.2.1",
     "marked": "^12.0.2",
-    "plyr": "^3.8.4"
+    "plyr": "^3.8.4",
+    "sharp": "0.33.5"
   }
 }

@@ -45,7 +45,7 @@ Site ID is set in `src/components/Head.astro` (`data-site` on the Fathom script)
 
 ## Deploy
 
-Cloudflare is connected to the git repo (build: `npm run build`, output: `dist`, `NODE_VERSION=20`). Redirects live in [public/_redirects](public/_redirects) and headers in [public/_headers](public/_headers). Domain and DNS live in the Cloudflare dashboard. Set `IMAGE_CDN=cloudflare` in the build environment to serve resized images through Cloudflare Image Transformations (custom domain only).
+Cloudflare is connected to the git repo (build: `npm run build`, output: `dist`, `NODE_VERSION=20`). Redirects live in [public/_redirects](public/_redirects) and headers in [public/_headers](public/_headers). Domain and DNS live in the Cloudflare dashboard. Set `IMAGE_CDN=cloudflare` in the build environment to serve resized images through Cloudflare Image Transformations (custom domain only). Without it, the build makes its own smaller WebP copies (480, 960 and 1600px) of the screenshots and photos in `public/_v/` (`scripts/image-variants.mjs`, run before `dev` and `build`; not committed), and pages use the nearest one.
 
 Optional manual deploy: `npx wrangler pages deploy dist` when logged in locally.
 

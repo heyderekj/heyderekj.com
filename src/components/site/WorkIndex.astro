@@ -17,9 +17,9 @@ const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct
 const rows = await Promise.all([...work].sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf()).map(async (w) => {
   const done = workDate(w), first = shotsOf(w)[0];
   return {
-    thumb: first ? await pageOf(first, 640) : undefined, at: done.valueOf(), type: w.data.workType ?? '',
+    thumb: first ? await pageOf(first, 480) : undefined, at: done.valueOf(), type: w.data.workType ?? '',
     // Every shot of the site, for the Stack layout
-    shots: await Promise.all(shotsOf(w).slice(0, 4).map((s) => pageOf(s, 640))),
+    shots: await Promise.all(shotsOf(w).slice(0, 4).map((s) => pageOf(s, 480))),
     href: `/work/${w.slug}/`, title: w.data.title, year: done.getUTCFullYear(), date: `${MON[done.getUTCMonth()]}`,
     sub: [w.data.partnership ? `With ${w.data.partnership}` : 'Solo', w.data.workType].filter(Boolean).join(' · '),
     img: first ? shot(first, 640) : undefined, url: host(w.data.liveLink ?? w.data.waybackUrl),
