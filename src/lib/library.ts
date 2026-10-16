@@ -25,7 +25,7 @@ export const KIND_META: Record<LibraryKind, KindMeta> = {
     many: 'Interests',
     path: 'interests',
     code: 'IN',
-    icon: 'spark',
+    icon: 'star',
     intro: 'Things I’m into outside of work.',
   },
   book: {
