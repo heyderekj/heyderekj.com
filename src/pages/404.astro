@@ -5,7 +5,6 @@
  * really sends one. Runs in client/lost-chat.ts; without JavaScript, plain links.
  */
 import Site from '../layouts/Site.astro';
-import PageHead from '../components/site/PageHead.astro';
 import Icon from '../components/Icon.astro';
 import { imgSrc } from '../lib/img';
 
@@ -21,10 +20,24 @@ const PROMPTS = [
 const siteUrl = (Astro.site?.toString() ?? 'https://heyderekj.com').replace(/\/$/, '');
 const canonical = `${siteUrl}/404/`;
 const photo = imgSrc('/assets/about/derek-photo.jpeg', 120);
+
+// "404" lit up on the dot grid: a 5×7 dot font, one column of space between digits
+const GLYPHS: Record<string, string[]> = {
+  '4': ['10010', '10010', '10010', '11111', '00010', '00010', '00010'],
+  '0': ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
+};
+const rows = Array.from({ length: 7 }, (_, r) => ['4', '0', '4'].map((d) => GLYPHS[d][r]).join('0'));
+const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1', d: c + r })));
 ---
 <Site title="Page not found — Derek Castelli" description="This URL does not exist on heyderekj.com." canonical={canonical} noindex includeAnalytics={false} bar={{ kind: 'page', title: 'Not found' }}>
   <main class="home">
-    <PageHead meta="404 · Not found" title="Let’s find it" />
+    <header class="lost-head">
+      <h1 class="visually-hidden">Page not found</h1>
+      <div class="lost-404" aria-hidden="true" style={`--cols:${rows[0].length}`}>
+        {dots.map((x) => <i class={x.on ? 'on' : undefined} style={`--d:${x.d}`}></i>)}
+      </div>
+      <p class="lost-head__line">Nothing lives at <code id="lostPath">this address</code>. Let’s find what you were after.</p>
+    </header>
     <section class="lost sq" aria-label="Chat with Derek about the missing page" data-photo={photo}>
       <header class="lost__top">
         <img class="sq" src={photo} alt="" width="36" height="36" />

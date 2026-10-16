@@ -1063,3 +1063,13 @@ body.site .lost__input input:focus-visible { outline: none; } /* the field shows
 .lost.is-thinking .lost__input::after { opacity: 0.55; }
 @keyframes lost-spin { to { --lost-a: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .lost__input::before, .lost__input::after { animation: none; } .lost__prompt, .lost__follow { animation: none; } }
+/* 404, lit up on the dot grid (pages/404.astro) */
+.lost-head { margin-bottom: 26px; }
+.lost-404 { display: grid; grid-template-columns: repeat(var(--cols), 14px); gap: 6px; margin: 4px 0 22px; }
+.lost-404 i { width: 14px; height: 14px; border-radius: 50%; background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.lost-404 i.on { background: var(--ink); animation: dot-on 520ms var(--ease) both; animation-delay: calc(var(--d) * 28ms); }
+@keyframes dot-on { from { background: color-mix(in srgb, var(--ink) 9%, transparent); scale: 0.4; } 60% { scale: 1.15; } }
+.lost-head__line { margin: 0; font-size: 18.5px; line-height: 1.55; color: var(--muted); text-wrap: balance; }
+.lost-head__line code { font: 15px/1.4 ui-monospace, SFMono-Regular, monospace; color: var(--ink); padding: 2px 7px; border-radius: 7px; background: color-mix(in oklch, var(--ink) 6%, transparent); overflow-wrap: anywhere; }
+@media (max-width: 560px) { .lost-404 { grid-template-columns: repeat(var(--cols), 9px); gap: 4px; } .lost-404 i { width: 9px; height: 9px; } }
+@media (prefers-reduced-motion: reduce) { .lost-404 i.on { animation: none; } }

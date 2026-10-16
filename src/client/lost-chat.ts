@@ -89,7 +89,7 @@ if (box && thread && slash && prompts && form && input) {
     day.textContent = `Today ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`;
     thread!.append(day);
     const path = decodeURIComponent(location.pathname);
-    await say(`Hey! I looked everywhere, but there’s nothing at <code>${esc(path)}</code>.`);
+    await say('Hey! I looked everywhere for that page, but it’s not here.');
     const found = rank(await load(), words(path));
     if (found.length) await say('Were you looking for one of these?', () => links(found.map(card)));
     else await say('It might have moved when I redesigned the site, or the link has a typo.');
@@ -179,5 +179,6 @@ if (box && thread && slash && prompts && form && input) {
     const v = !slash.hidden && picks[at] ? `/${picks[at][0]}` : input.value;
     input.value = ''; menu(); reply(v);
   });
+  const pathEl = document.getElementById('lostPath'); if (pathEl) pathEl.textContent = decodeURIComponent(location.pathname);
   intro();
 }
