@@ -78,3 +78,6 @@ export const EXTRAS: { id: string; service: ServiceId; name: string; desc: strin
   { id: 'feedback.followup', service: 'feedback', name: 'A second look', desc: 'Another review after you’ve made changes.', price: 150 },
   { id: 'ai.handoff', service: 'ai', name: 'Docs and a walkthrough', desc: 'So your team can run it and change it without me.', price: 300 },
 ];
+
+/** The testimonials on /hire/, strongest first: clients on the work itself, then what came of it, then the craft */
+export const SAID_ORDER = ['Barrett Johnson', 'Josh Pigford', 'Shelley Martin', 'Danny Begnoche', 'Corey Moen'];
