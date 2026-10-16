@@ -57,7 +57,7 @@ if (box && thread && slash && prompts && form && input) {
   }
   // Follow-ups under my answer, like an assistant's: three things to ask next, never the one just asked
   const ASKS: [string, string][] = [
-    ['Latest writing', 'What have you written lately?'], ['Work', 'What have you built?'], ['Projects', 'Show me your apps'],
+    ['Latest writing', 'What have you written?'], ['Work', 'What have you built?'], ['Projects', 'Show me your apps'],
     ['About', 'Who are you?'], ['Leave a note', 'Leave you a note'], ['Home', 'Take me home'],
   ];
   const ASK_OF = Object.fromEntries(ASKS.map(([a, q]) => [q.toLowerCase(), a]));
