@@ -58,7 +58,10 @@ world.node_tree.nodes['Background'].inputs['Color'].default_value = (0.6, 0.6, 0
 world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.6
 
 # You, then the animals you can play (their badge colours, client/four.ts)
-for name, color in (('orange', '#ea580c'), ('ink', '#1c1b19'), ('leroy', '#f2cf3b'), ('irma', '#f9bb92'), ('kiya', '#009a9b'), ('lilo', '#8254c4')):
+# CHIPS=leroy,kiya renders just those
+only = [n for n in os.environ.get('CHIPS', '').split(',') if n]
+for name, color in (('orange', '#ea580c'), ('ink', '#1c1b19'), ('leroy', '#b8233a'), ('irma', '#f9bb92'), ('kiya', '#009a9b'), ('lilo', '#8254c4')):
+    if only and name not in only: continue
     bsdf.inputs['Base Color'].default_value = srgb(color)
     scene.render.filepath = os.path.join(OUT, f'chip-{name}.png')
     bpy.ops.render.render(write_still=True)

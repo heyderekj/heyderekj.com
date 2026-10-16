@@ -117,10 +117,18 @@ function save(blob: Blob) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileOf(blob).name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
+// What a post says: who won, against whom, and an invitation back to the game
+const PLAY_URL = 'https://heyderekj.com/404';
+function postText() {
+  if (!game) return '';
+  const me = petName || 'I', foe = game.foe, n = game.wins;
+  if (game.by === 'you') return `${me} beat ${foe} ${n === 1 ? 'once' : `${n} times`} at Connect Four. Your turn:`;
+  return n ? `${me} won ${n} before ${foe} took one at Connect Four. Your turn:` : `${foe} beat ${petName || 'me'} at Connect Four. Your turn:`;
+}
 async function shareOut(blob: Blob) {
   const file = fileOf(blob);
   if (!navigator.canShare?.({ files: [file] })) { save(blob); return 'saved'; }
-  try { await navigator.share({ files: [file], title: 'Shall we play a game?', text: `I played Connect Four against ${game?.foe ?? 'the animals'} on heyderekj.com/404` }); return 'shared'; }
+  try { await navigator.share({ files: [file], title: 'Shall we play a game?', text: `${postText()} ${PLAY_URL}` }); return 'shared'; }
   catch (e) { return (e as Error).name === 'AbortError' ? 'closed' : (save(blob), 'saved'); }
 }
 const canClip = typeof MediaRecorder !== 'undefined' && 'captureStream' in HTMLCanvasElement.prototype;
@@ -155,7 +163,7 @@ if (root) {
     as = next;
     root.querySelectorAll('[data-as]').forEach((x) => x.setAttribute('aria-checked', String((x as HTMLElement).dataset.as === as)));
     copyBtn.hidden = as === 'clip' || !canCopy;
-    if (as === 'image') { root.classList.remove('is-recording'); clearTimeout(stale); video.pause(); video.hidden = true; status.textContent = ''; render(); }
+    if (as === 'image') { root.classList.remove('is-recording'); clearTimeout(stale); video.pause(); video.hidden = true; say(''); render(); }
     else if (clip) showClip(); else record();
   };
   root.querySelectorAll<HTMLButtonElement>('[data-as]').forEach((b) => b.addEventListener('click', () => setAs(b.dataset.as as typeof as)));
@@ -177,7 +185,7 @@ if (root) {
     if (recording || !game) return recording;
     const g = game, type = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find((m) => MediaRecorder.isTypeSupported(m)) ?? '';
     const { from, per, replay, reveal, length } = clipPlan(g);
-    root!.classList.add('is-recording'); video.hidden = true; status.textContent = 'Recording the replay…';
+    root!.classList.add('is-recording'); video.hidden = true; // the Rec badge and bar say what's happening
     recording = (async () => {
       const stream = preview.captureStream(30), rec = new MediaRecorder(stream, type ? { mimeType: type, videoBitsPerSecond: 5_000_000 } : undefined), parts: Blob[] = [];
       rec.ondataavailable = (ev) => ev.data.size && parts.push(ev.data);
@@ -203,7 +211,6 @@ if (root) {
       render();
       if (cut) return null;
       clip = new Blob(parts, { type: rec.mimeType || 'video/webm' });
-      status.textContent = `${(length / 1000).toFixed(1)}s clip, ready`;
       if (as === 'clip') showClip();
       return clip;
     })();
@@ -223,14 +230,14 @@ if (root) {
     clearTimeout(Number(btn.dataset.t)); btn.dataset.t = String(setTimeout(() => { label.textContent = was; btn.classList.remove('is-done'); }, 1600));
   };
 
+  // A line under the buttons only when there's something to do about it, gone after a while
+  let hush = 0;
+  function say(text: string) { status.textContent = text; clearTimeout(hush); if (text) hush = window.setTimeout(() => (status.textContent = ''), 5000); }
+  // Safari wants the promise handed straight to the clipboard, inside the click
+  const copyImage = () => { render(); return navigator.clipboard.write([new ClipboardItem({ 'image/png': new Promise<Blob>((r, x) => preview.toBlob((b) => (b ? r(b) : x()), 'image/png')) })]); };
   copyBtn.addEventListener('click', async () => {
     if (!game) return;
-    render();
-    try {
-      // Safari wants the promise handed straight to the clipboard, inside the click
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': new Promise<Blob>((r, x) => preview.toBlob((b) => (b ? r(b) : x()), 'image/png')) })]);
-      did(copyBtn, 'Copied'); status.textContent = 'Paste it anywhere.';
-    } catch { status.textContent = 'Couldn’t copy here. Save it instead.'; }
+    try { await copyImage(); did(copyBtn, 'Copied'); } catch { say('Couldn’t copy here. Save it instead.'); }
   });
   saveBtn.addEventListener('click', async () => {
     saveBtn.disabled = true; const blob = await current(); saveBtn.disabled = false;
@@ -243,6 +250,32 @@ if (root) {
     const how = await shareOut(blob);
     if (how === 'shared') did(shareBtn, 'Shared'); else if (how === 'saved') did(saveBtn, 'Saved');
   });
+
+  // Post it: X and Facebook take a link, so the picture goes on the clipboard (or the clip into
+  // Downloads) to add to the post. Instagram and Messages take the picture itself, through the
+  // share sheet on phones; on a computer, Instagram gets a saved file and Text opens Messages
+  const enc = encodeURIComponent;
+  root.querySelectorAll<HTMLButtonElement>('[data-post]').forEach((b) => b.addEventListener('click', async () => {
+    if (!game) return;
+    const where = b.dataset.post!, text = postText();
+    if (where === 'instagram' || (where === 'text' && canShareFiles)) {
+      b.disabled = true; const blob = await current(); b.disabled = false;
+      if (!blob) return;
+      if ((await shareOut(blob)) === 'saved') say(where === 'instagram' ? 'Saved. Instagram only takes posts from its app, so add it from your phone.' : 'Saved to your downloads.');
+      return;
+    }
+    if (where === 'text') { location.href = `sms:?&body=${enc(`${text} ${PLAY_URL}`)}`; return; }
+    let note = '';
+    if (as === 'clip') {
+      if (!clip) { record(); say('Making the clip first. Tap again when it’s done.'); return; }
+      save(clip); note = 'Clip saved. Add it to your post.';
+    } else if (canCopy) {
+      try { await copyImage(); note = 'Card copied. Paste it into your post.'; } catch { /* the link alone, then */ }
+    }
+    const href = where === 'x' ? `https://x.com/intent/post?text=${enc(text)}&url=${enc(PLAY_URL)}` : `https://www.facebook.com/sharer/sharer.php?u=${enc(PLAY_URL)}`;
+    window.open(href, '_blank', 'noopener,width=620,height=680');
+    say(note);
+  }));
 
   // Designs
   root.querySelectorAll<HTMLButtonElement>('[data-design]').forEach((b) => b.addEventListener('click', () => {
@@ -260,7 +293,7 @@ if (root) {
   async function usePhoto(file: File | undefined) {
     if (!file || !file.type.startsWith('image/')) return;
     const url = URL.createObjectURL(file), img = new Image();
-    try { img.src = url; await img.decode(); } catch { status.textContent = 'That photo didn’t load. Try another.'; return; } finally { setTimeout(() => URL.revokeObjectURL(url), 0); }
+    try { img.src = url; await img.decode(); } catch { say('That photo didn’t load. Try another.'); return; } finally { setTimeout(() => URL.revokeObjectURL(url), 0); }
     // A centred square, small enough to keep around
     const c = document.createElement('canvas'), side = Math.min(img.naturalWidth, img.naturalHeight);
     c.width = c.height = 480;
@@ -283,7 +316,7 @@ if (root) {
 
   // Called by the game when you ask for a card
   openCardImpl = (g) => {
-    game = g; root.hidden = false; status.textContent = ''; clip = null;
+    game = g; root.hidden = false; say(''); clip = null;
     lengthLabel.textContent = ` · ${Math.round(clipPlan(g).length / 1000)}s`;
     setAs('image');
     chip('orange', render); chip(g.foe.toLowerCase(), render); portrait(g.foe, render);

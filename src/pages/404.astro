@@ -90,6 +90,13 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
               <button type="button" class="is-primary" data-card-share hidden><Icon name="arrow-up-right" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span>Share</span></button>
               <button type="button" class="is-quiet" data-card-close>Done</button>
             </div>
+            <div class="four-card__post">
+              <span>Post it</span>
+              <button type="button" class="sq" data-post="x" aria-label="Post on X" title="X"><Icon name="x" /></button>
+              <button type="button" class="sq" data-post="instagram" aria-label="Post on Instagram" title="Instagram"><Icon name="instagram" /></button>
+              <button type="button" class="sq" data-post="facebook" aria-label="Post on Facebook" title="Facebook"><Icon name="facebook" /></button>
+              <button type="button" class="sq" data-post="text" aria-label="Send as a text" title="Text"><Icon name="message" /></button>
+            </div>
             <small class="four-card__status" aria-live="polite"></small>
           </div>
         </div>

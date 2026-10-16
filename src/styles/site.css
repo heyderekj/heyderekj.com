@@ -1185,7 +1185,18 @@ body.site .four__col:focus-visible { outline: none; }
 .four-card__actions button.is-done .i-done { display: block; animation: lost-in 220ms var(--ease) both; }
 .four-card__actions button.is-quiet { margin-left: auto; padding-inline: 12px; color: var(--muted); background: none; }
 .four-card__actions button:disabled { opacity: 0.5; cursor: progress; }
-.four-card__status { min-height: 1em; font-size: 12.5px; color: var(--muted); }
+.four-card__status { font-size: 12.5px; color: var(--muted); }
+.four-card__status:empty { display: none; }
+/* Post it: a row of marks, each taking its own colour on hover */
+.four-card__post { display: flex; align-items: center; gap: 6px; }
+.four-card__post span { margin-right: auto; font-size: 13px; font-weight: 500; color: var(--muted); }
+.four-card__post button { --r: 11px; display: grid; place-items: center; width: 38px; height: 38px; font-size: 17px; color: var(--ink-soft); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.four-card__post button:hover, .four-card__post button:focus-visible { color: #fff; background: var(--brand); }
+.four-card__post button:disabled { opacity: 0.5; cursor: progress; }
+.four-card__post [data-post="x"] { --brand: #000; }
+.four-card__post [data-post="instagram"] { --brand: linear-gradient(45deg, #f9ce34, #ee2a7b 50%, #6228d7); }
+.four-card__post [data-post="facebook"] { --brand: #0866ff; }
+.four-card__post [data-post="text"] { --brand: #34c759; }
 @media (max-width: 640px) { .four-card { grid-template-columns: 1fr; } .four__board { border-radius: 20px; } }
 @media (prefers-reduced-motion: reduce) { .four__col i, .four__col i.drop, .four__col i.win, .four[data-turn="you"] .four__col i.next { animation: none; } }
 /* Letter shortcuts on the 404 chat's choices (client/lost-chat.ts) */

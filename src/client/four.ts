@@ -29,7 +29,7 @@ if (game && grid404 && head) {
   const WARGAMES = 'A strange game. The only winning move is not to play.';
   const FOES: Foe[] = [
     { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
-      name: 'Leroy', kind: 'cat', tone: 'oklch(0.86 0.16 95)', toneInk: '#3d3a35', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
+      name: 'Leroy', kind: 'cat', tone: 'oklch(0.56 0.19 18)', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
       lines: {
         stop: ['Leaving? I’ll be right here.', 'Smart. Quit while you’re ahead.'],
         start: ['Leroy here. Shall we play a game? Take your time. I will.'],
