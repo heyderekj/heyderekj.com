@@ -17,6 +17,8 @@ export const TM_TILES: [slug: string, color: string][] = [
 const APP_ORDER = ['harvous', 'koati', 'revisemy', 'heres-my-church', 'dinky', 'binky'];
 /** Highlighted work left out of the home deck (ReviseMy and Harvous already show in the apps half). */
 const NOT_IN_DECK = ['revisemy', 'harvouscom', 'david-energy', 'tutorme', 'ai-explorer'];
+/** The three Kem Design sites the Kem chip fans out, left to right. */
+const KEM_FAN = ['care-continuity', 'throne', 'claimable'];
 /** The websites the deck opens with, in this order; the rest follow newest first. */
 const DECK_FIRST = ['throne', 'river-valley-church', 'scenery', 'exodus51'];
 
@@ -78,7 +80,7 @@ export async function getDeck() {
         : { href: 'https://testamentmade.com', label: 'Coming soon ↗', external: true },
     })),
   ];
-  const kem = work.filter((w) => w.data.partnership === 'Kem Design' && shotsOf(w).length).slice(0, 3);
+  const kem = KEM_FAN.map((slug) => work.find((w) => w.slug === slug)).filter((w): w is Work => Boolean(w && shotsOf(w).length));
   const icons = Object.fromEntries(apps.map((p) => [p.slug, { title: p.data.name, icon: p.data.icon ? shot(p.data.icon, 160) : '' }]));
   return { slides, clients, apps, kem, icons, work };
 }
