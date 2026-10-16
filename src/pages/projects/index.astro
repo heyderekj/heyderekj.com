@@ -55,6 +55,7 @@ const archive = all
     family: familyOf(p.data.category),
     kind: KIND[p.data.category ?? ''] ?? p.data.category ?? 'Idea',
     about: p.body.replace(/^#+ .*$/gm, '').trim(),
+    fact: p.data.funFact,
   }));
 
 const first = archive[0].year, last = archive[archive.length - 1].year;
@@ -109,6 +110,7 @@ const families = FAMILIES.map((f) => ({ ...f, n: archive.filter((a) => a.family 
                 <span class="pt__sym" aria-hidden="true">{a.sym}</span>
                 <span class="pt__name">{a.name}</span>
                 <span class="pt__kind">{a.kind}</span>
+                {a.fact && <span class="pt__fact" title="Has a fun fact"><Icon name="spark" loop={false} /></span>}
               </button>
             ))}
           </div>
@@ -116,6 +118,7 @@ const families = FAMILIES.map((f) => ({ ...f, n: archive.filter((a) => a.family 
             <div class="pt__note" id={`pt-${a.slug}`} hidden>
               <b>{a.name}</b> <span>{a.year} · {a.kind}</span>
               <p>{a.about}</p>
+              {a.fact && <p class="pt__funfact"><em><Icon name="spark" loop={false} /> Fun fact</em> {a.fact}</p>}
             </div>
           ))}
         </div>

@@ -202,6 +202,8 @@ const projects = defineCollection({
     /** Order within a tier (lower first); ties fall back to newest `started`. */
     order: z.number().default(0),
     status: z.enum(['active', 'maintained', 'paused', 'retired']).default('active'),
+    /** A fun fact, shown when the project's element is opened on /projects/ */
+    funFact: z.string().optional(),
     draft: z.boolean().default(false),
   }),
 });

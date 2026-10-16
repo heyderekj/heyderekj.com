@@ -879,3 +879,9 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .resume summary:hover .tl__bar:not(.is-now) { background: color-mix(in oklch, var(--ink) 13%, var(--card)); }
 .resume summary:hover .tl__bar.is-school { background: repeating-linear-gradient(-45deg, color-mix(in oklch, var(--ink) 13%, var(--card)) 0 4px, var(--card) 4px 8px); }
 .tl__tick:last-of-type em { left: auto; right: 4px; }
+/* A fun fact: a spark on the element, and a line in its note */
+.pt__fact { position: absolute; top: 8px; right: 9px; font-size: 13px; color: #fff; animation: fact-twinkle 2.6s ease-in-out infinite; }
+@keyframes fact-twinkle { 50% { opacity: 0.55; scale: 0.85; } }
+.pt__note .pt__funfact { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--hair); color: var(--ink); }
+.pt__funfact em { display: inline-flex; align-items: center; gap: 4px; margin-right: 6px; padding: 1px 8px; border-radius: 999px; font-style: normal; font-size: 12px; font-weight: 600; color: var(--ink); background: color-mix(in oklch, var(--ink) 8%, transparent); }
+@media (prefers-reduced-motion: reduce) { .pt__fact { animation: none; } }
