@@ -1,6 +1,9 @@
 ---
 /** Where else to find me, at the bottom of the home page and the inner pages. */
 import Icon from '../Icon.astro';
+
+interface Props { linkedin?: boolean }
+const { linkedin = false } = Astro.props;
 ---
 <section class="elsewhere-block" aria-labelledby="elsewhere-h">
   <h2 class="h h--quiet" id="elsewhere-h">Elsewhere</h2>
@@ -11,6 +14,7 @@ import Icon from '../Icon.astro';
       <a href="https://x.com/heyderekj" target="_blank" rel="noopener" aria-label="X"><Icon name="x" /></a>
       <a href="https://github.com/heyderekj" target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" /></a>
       <a href="/rss.xml" aria-label="RSS"><Icon name="rss" /></a>
+      {linkedin && <a class="links__text" href="https://www.linkedin.com/in/heyderekj" target="_blank" rel="noopener">LinkedIn</a>}
     </div>
   </div>
 </section>

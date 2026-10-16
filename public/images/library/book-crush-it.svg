@@ -9,9 +9,9 @@
   </defs>
   <rect width="240" height="360" fill="url(#g)"/>
   <rect width="240" height="360" fill="url(#G)"/>
-  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#3d3a35" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M120 70 L134 104 L170 92 L154 124 L188 142 L152 152 L164 188 L130 170 L120 204 L110 170 L76 188 L88 152 L52 142 L86 124 L70 92 L106 104 Z"/>
-    <text x="120" y="146" text-anchor="middle" font-family="ui-sans-serif, -apple-system, Helvetica, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="1.5" fill="#ea580c" stroke="none">CRUSH IT!</text>
+    <text x="120" y="146" text-anchor="middle" font-family="ui-sans-serif, -apple-system, Helvetica, Arial, sans-serif" font-size="15" font-weight="800" letter-spacing="1.5" fill="#3d3a35" stroke="none">CRUSH IT!</text>
     <rect x="90" y="226" width="60" height="100" rx="10" transform="translate(0 -12)"/>
     <circle cx="120" cy="244" r="3"/><path d="M104 290 H136"/>
   </g>

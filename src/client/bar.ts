@@ -101,26 +101,32 @@ if (bar) {
 
   // ---- Long pages with an "On this page" list (components/ApplicationToc.astro): the menu lists the
   // sections and the label follows the one you're reading
-  const tocLinks = [...document.querySelectorAll<HTMLAnchorElement>('.app-toc--desktop [data-app-toc-link]')];
+  // Sections come from an "On this page" list, or from headings marked [data-bar-section]
+  const fromToc = [...document.querySelectorAll<HTMLAnchorElement>('.app-toc--desktop [data-app-toc-link]')]
+    .map((l) => ({ id: l.dataset.appTocLink!, label: l.textContent!.trim() }));
+  const fromHeads = [...document.querySelectorAll<HTMLElement>('[data-bar-section]')]
+    .map((h) => ({ id: h.id, label: h.dataset.barSection || h.textContent!.trim() }));
+  const tocLinks = (fromToc.length ? fromToc : fromHeads).filter((s) => s.id);
   if (tocLinks.length) {
     const group = document.createElement('div');
     group.className = 'bar__group';
     group.innerHTML = '<span class="bar__lbl">On this page</span><div class="bar__figs"></div>';
     const list = group.querySelector('.bar__figs')!;
-    const sections = tocLinks.map((l) => {
+    const sections = tocLinks.map((s) => {
       const a = document.createElement('a');
-      a.className = 'bar__fig'; a.href = l.getAttribute('href')!; a.textContent = l.textContent!.trim();
+      a.className = 'bar__fig'; a.href = `#${s.id}`; a.textContent = s.label;
       list.append(a);
-      return { el: document.getElementById(l.dataset.appTocLink!), label: a.textContent };
+      return { el: document.getElementById(s.id), label: s.label };
     }).filter((s): s is { el: HTMLElement; label: string } => Boolean(s.el));
     menu.prepend(group);
-    const seen = new Map<Element, boolean>();
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => seen.set(en.target, en.isIntersecting));
-      const at = sections.find((s) => seen.get(s.el));
-      if (at) text.textContent = at.label;
-    }, { rootMargin: '-30% 0px -60% 0px' });
-    sections.forEach((s) => io.observe(s.el));
+    // The label is the last section whose heading you've scrolled past
+    const initial = text.textContent;
+    const follow = () => {
+      const line = innerHeight * 0.35;
+      const at = sections.filter((s) => s.el.getBoundingClientRect().top < line).pop();
+      text.textContent = at ? at.label : initial;
+    };
+    addEventListener('scroll', follow, { passive: true }); follow();
   }
 
   // ---- What the label says: the section you're in on the home page, set by the page

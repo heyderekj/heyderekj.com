@@ -1,5 +1,6 @@
 ---
 import Site from '../../../layouts/Site.astro';
+import PageHead from '../../../components/site/PageHead.astro';
 import PostIndex from '../../../components/site/PostIndex.astro';
 import { getPublishedPosts, TYPE_LABELS, typeHref, type PostType } from '../../../lib/posts';
 
@@ -29,8 +30,7 @@ const label = TYPE_LABELS[type];
 ---
 <Site bar={{ kind: 'page', title: label.many }} title={`${label.many} — Derek Castelli`} description={INTROS[type]}>
   <main class="home">
-    <h1 class="page-h">{label.many}</h1>
-    <p class="page-lede">{INTROS[type]}</p>
+    <PageHead title={label.many} meta={`Writing · ${entries.length}`}><Fragment slot="lede">{INTROS[type]}</Fragment></PageHead>
     <div class="work-chips">
       <a class="wchip sq" href="/#writing">Everything <span>{all.length}</span></a>
       {(Object.keys(TYPE_LABELS) as PostType[]).filter((k) => counts[k]).map((k) => (

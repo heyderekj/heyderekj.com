@@ -1,0 +1,11 @@
+---
+/** The top of a page, set like an essay: a small meta line, the title, and a lede. A slot goes after the lede. */
+interface Props { meta?: string; title: string; lede?: string }
+const { meta, title, lede } = Astro.props;
+---
+<header class="page-head">
+  {meta && <div class="essay__meta"><span>{meta}</span></div>}
+  <h1>{title}</h1>
+  {(lede || Astro.slots.has('lede')) && <p class="lede">{lede}<slot name="lede" /></p>}
+  <slot />
+</header>

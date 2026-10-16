@@ -1,5 +1,6 @@
 ---
 import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/site/PageHead.astro';
 import { getPublishedPosts, tagCounts, topicHref } from '../../lib/posts';
 import { topicLabel, topics } from '../../data/topics';
 
@@ -8,8 +9,7 @@ const counts = tagCounts(posts);
 ---
 <Site bar={{ kind: 'page', title: 'Topics' }} title="Topics — Derek Castelli" description="Everything I write about, grouped by topic.">
   <main class="home">
-    <h1 class="page-h">Topics</h1>
-    <p class="page-lede">Everything I write about, by topic. Or read it all <a href="/#writing">by date</a>.</p>
+    <PageHead title="Topics" meta={`Writing · ${counts.length} topics`}><Fragment slot="lede">Everything I write about, by topic. Or read it all <a href="/#writing">by date</a>.</Fragment></PageHead>
     <div class="list">
       <section class="list__year">
         {counts.map(({ tag, count }) => (

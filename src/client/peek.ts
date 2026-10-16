@@ -13,7 +13,7 @@ if (peek && matchMedia('(hover: hover)').matches) {
     return '';
   };
   let current: HTMLElement | null = null;
-  const column = peek.closest('main') ?? document.body;
+  const column = document.querySelector('main.home, article.essay') ?? document.body;
   document.addEventListener('pointermove', (e) => {
     if (e.pointerType !== 'mouse') return;
     const r = (e.target as HTMLElement).closest?.<HTMLElement>('[data-peek-img], [data-peek-quote]');

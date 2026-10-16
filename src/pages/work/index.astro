@@ -1,5 +1,6 @@
 ---
 import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/site/PageHead.astro';
 import WorkIndex from '../../components/site/WorkIndex.astro';
 import Elsewhere from '../../components/site/Elsewhere.astro';
 import { getPublishedWork } from '../../lib/work';
@@ -13,8 +14,7 @@ const entries = await getPublishedWork();
   bar={{ kind: 'page', title: 'Work' }}
 >
   <main class="home">
-    <h1 class="page-h">Websites</h1>
-    <p class="page-lede">Write-ups from the sites I've designed and built, on my own and with studios. My apps live at <a href="https://testamentmade.com" target="_blank" rel="noopener">testamentmade.com</a>.</p>
+    <PageHead title="Websites" meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">Write-ups from the sites I've designed and built, on my own and with studios. My apps live at <a href="https://testamentmade.com" target="_blank" rel="noopener">testamentmade.com</a>.</Fragment></PageHead>
     <WorkIndex work={entries} />
 
     <h2 class="h">What people say</h2>

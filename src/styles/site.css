@@ -486,3 +486,58 @@ body.site .legacy-col main.main a:hover { text-decoration-color: currentColor; }
 body.site .legacy-col main.main :is(a.entry-link, .entries a, a.chip, a.cta, a.work-link-pill, .intro-pill, a.about-exp-pill, a[class*="card"], .library-card a, nav a) { text-decoration: none; }
 /* The bar carries "On this page" now */
 body.site .app-toc { display: none !important; }
+
+/* ---------- Page heads: every page opens like an essay ---------- */
+.page-head { margin-bottom: 32px; }
+.page-head h1 { margin: 10px 0 14px; font-size: clamp(34px, 5vw, 46px); line-height: 1.05; font-weight: 700; letter-spacing: -0.035em; text-wrap: balance; }
+.page-head .lede { margin: 0 0 24px; font-size: 20px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+.page-head .lede a, .essay .lede a { color: var(--ink); text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: 4px; }
+.page-head > :last-child { margin-bottom: 0; }
+
+/* ---------- Elsewhere, anywhere ---------- */
+.elsewhere-block { margin-top: 56px; }
+.elsewhere-block h2.h--quiet { margin: 0 0 10px; font-size: 15px; line-height: 1.2; color: var(--muted); font-weight: 600; letter-spacing: 0; }
+.links .links__text { width: auto; padding: 0 10px; font-size: 14px; font-weight: 600; text-decoration: none; }
+
+/* ---------- About: the letter ---------- */
+.about .byline { margin-bottom: 18px; }
+.about .lede { margin-bottom: 8px; }
+.row__kicker { grid-column: 1 / -1; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.essay .list { margin-top: 8px; }
+.essay .list .row { text-decoration: none; }
+.essay .list .row__desc { font-size: 15px; line-height: 1.5; }
+.list__year h3 { margin: 18px 0 6px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.list__year h3:first-child { margin-top: 0; }
+.sublist { display: grid; margin: -4px 0 10px 18px; padding-left: 12px; border-left: 1px solid var(--hair); }
+.row--sub { padding-block: 6px; }
+.row--sub .row__title { font-size: 15px; font-weight: 500; }
+.row--sub .row__date { font-size: 12.5px; }
+.about__stat { color: var(--ink); font-weight: 600; }
+.about__quote, .about__epigraph { margin: 6px 0 18px; }
+.about__epigraph { margin-top: 40px; }
+.about__epigraph p { font-size: 20px; }
+.about__skills { display: flex; flex-wrap: wrap; gap: 6px; font-size: 15px; }
+.about__skills .wchip { cursor: default; padding: 4px 10px; }
+.essay .clipcard { margin: 6px 0 12px; }
+.clipcard__play .icon { font-size: 14px; }
+.clipcard small { display: block; }
+
+/* ---------- Library ---------- */
+.lib { margin-top: 48px; }
+.lib h2.h { margin: 0 0 6px; font-size: 22px; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.lib h2.h a { font-size: 14px; font-weight: 600; letter-spacing: 0; color: var(--muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.lib h2.h a:hover { color: var(--ink); }
+.lib .list { margin-top: 0; }
+.lib__quotes { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 8px; }
+.lib__quotes .qcard { text-decoration: none; color: inherit; transition: background var(--t-ui) var(--ease); }
+.lib__quotes .qcard:hover { background: color-mix(in oklch, var(--ink) 3%, var(--card)); }
+.lib__quotes .qcard p { font-size: 15.5px; }
+.row__fav { color: var(--muted); font-size: 0.85em; }
+.lib__art { --r: 12px; display: block; width: 100%; height: auto; }
+/* The library's drawings are ink on transparent; flip them for dark paper */
+@media (prefers-color-scheme: dark) { .peek img[src$=".svg"], .lib__art[src$=".svg"] { filter: invert(1) hue-rotate(180deg); } }
+.peek .browser__view img[src$=".svg"] { object-fit: contain; }
+.colophon__build { font-size: 14px; color: var(--muted); }
+.home > h2.h--quiet { margin: 40px 0 0; }
+.home > h2.h--quiet + .writing { margin-top: 8px; }
+@media (max-width: 560px) { .clipcard { grid-template-columns: auto minmax(0, 1fr); } .clipcard time { grid-column: 2; } }

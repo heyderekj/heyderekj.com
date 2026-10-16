@@ -9,7 +9,7 @@
   </defs>
   <rect width="400" height="300" fill="url(#g)"/>
   <rect width="400" height="300" fill="url(#G)"/>
-  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#3d3a35" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M60 40 H340 M60 40 V68 M120 40 V68 M180 40 V68 M240 40 V68 M300 40 V68" stroke-opacity="0.45"/>
     <path d="M60 68 H340 M90 68 V96 M150 68 V96 M210 68 V96 M270 68 V96 M330 68 V96" stroke-opacity="0.45"/>
     <path d="M60 96 H340 M60 96 V124 M120 96 V124 M180 96 V124 M240 96 V124 M300 96 V124" stroke-opacity="0.45"/>

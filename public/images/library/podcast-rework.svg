@@ -9,7 +9,7 @@
   </defs>
   <rect width="300" height="300" fill="url(#g)"/>
   <rect width="300" height="300" fill="url(#G)"/>
-  <g fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <g fill="none" stroke="#3d3a35" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="112" y="60" width="44" height="86" rx="22"/>
     <path d="M112 90 H156 M112 110 H156"/>
     <path d="M98 118 Q98 170 134 170 Q170 170 170 118 M134 170 V222 M104 222 H164"/>

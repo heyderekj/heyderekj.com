@@ -1,5 +1,6 @@
 ---
 import Site from '../../../layouts/Site.astro';
+import PageHead from '../../../components/site/PageHead.astro';
 import WorkIndex from '../../../components/site/WorkIndex.astro';
 import { getPublishedWork, partnersOf, partnerSlug, PARTNER_SITES, type Partner } from '../../../lib/work';
 
@@ -19,8 +20,7 @@ const site = PARTNER_SITES[partner.name];
   bar={{ kind: 'page', title: `With ${partner.name}` }}
 >
   <main class="home">
-    <h1 class="page-h">With {partner.name}</h1>
-    <p class="page-lede">Sites I've built in partnership with {site ? <a href={site} target="_blank" rel="noopener">{partner.name}</a> : partner.name}.</p>
+    <PageHead title={`With ${partner.name}`} meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">Sites I've built in partnership with {site ? <a href={site} target="_blank" rel="noopener">{partner.name}</a> : partner.name}.</Fragment></PageHead>
     <WorkIndex work={entries} active={partner.slug} />
   </main>
 </Site>

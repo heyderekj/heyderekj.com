@@ -76,7 +76,7 @@ document.addEventListener('click', async (e) => {
 
 // The bar says which part of the page you're on
 const sections = $$<HTMLElement>('[data-bar-label]');
-if (sections.length) {
+if (sections.length && document.getElementById('bar')?.dataset.kind === 'home') {
   const visible = new Map<Element, boolean>();
   const io = new IntersectionObserver((entries) => {
     entries.forEach((en) => visible.set(en.target, en.isIntersecting));

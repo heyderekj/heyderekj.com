@@ -9,19 +9,15 @@
 import Icon from '../Icon.astro';
 import Signature from '../Signature.astro';
 import Browser from './Browser.astro';
+import Byline from './Byline.astro';
 import { getDeck, host, shot, shotsOf, TM_TILES } from '../../lib/deck';
 import { TOPICS } from '../../lib/bar';
-import { imgSrc } from '../../lib/img';
 
 const { kem, icons } = await getDeck();
-const photo = imgSrc('/assets/about/derek-photo.jpeg', 160);
 const last = TOPICS.length - 1;
 ---
 <header class="hello-head" data-bar-label="Home">
-  <div class="byline">
-    <img class="sq" src={photo} alt="Derek Castelli" width="56" height="56" />
-    <span><b>Derek Castelli</b><small>Christian, husband, and designer</small></span>
-  </div>
+  <Byline />
   <p class="hello">
     I make websites with <button class="wchip sq" data-act="kem"><Icon name="work" /> Kem Design<span class="pop"><span class="fan">{kem.map((w) => <Browser pages={[{ src: shot(shotsOf(w)[0], 480) }]} url={host(w.data.liveLink)} />)}</span></span></button>
     and apps at <button class="wchip sq" data-act="apps"><span class="tm" aria-hidden="true">{TM_TILES.map(([, c]) => <i style={`--c:${c}`}></i>)}</span>Testament Made<span class="pop"><span class="spread">{TM_TILES.map(([slug, c], i) => (
