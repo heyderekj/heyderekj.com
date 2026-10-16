@@ -92,7 +92,7 @@ const families = FAMILIES.map((f) => ({ ...f, n: archive.filter((a) => a.family 
       </ul>
     </section>
 
-    <h2 class="h" id="archive" data-bar-section="The archive">The archive <span>{archive.length} elements</span></h2>
+    <h2 class="h" id="archive" data-bar-section="The archive">The archive <span>{archive.length}</span></h2>
     <div class="work-chips pt-fams" role="group" aria-label="Highlight a family">
       <button type="button" class="wchip sq is-current" data-fam="" aria-pressed="true">All</button>
       {families.map((f) => <button type="button" class="wchip sq" data-fam={f.key} aria-pressed="false"><i class={`pt-dot pt--${f.key}`}></i>{f.label} <span>{f.n}</span></button>)}
