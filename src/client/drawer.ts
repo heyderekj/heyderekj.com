@@ -1,7 +1,8 @@
 /**
  * The page drawer (components/site/Browser.astro with `drawer`): the sidebar button in a preview's
  * toolbar slides its rail of pages out or back. In the deck one switch covers every project.
- * The choice is remembered in this browser.
+ * The choice is remembered in this browser. Other controls (the deck's dial) can set it with
+ * `drawer:set` (detail: open) and hear about changes on `drawer:change`.
  */
 const KEY = 'hdj:drawer';
 const read = () => { try { return localStorage.getItem(KEY) === 'open'; } catch { return false; } };
@@ -30,5 +31,12 @@ if (roots.length && !document.documentElement.dataset.drawerReady) {
     const next = root.dataset.drawer !== 'open';
     set(root, next, true);
     write(next);
+    document.dispatchEvent(new CustomEvent('drawer:change', { detail: next }));
+  });
+  document.addEventListener('drawer:set', (e) => {
+    const next = (e as CustomEvent<boolean>).detail;
+    roots.forEach((r) => set(r, next, true));
+    write(next);
+    document.dispatchEvent(new CustomEvent('drawer:change', { detail: next }));
   });
 }

@@ -5,8 +5,8 @@
  * while you're hovering or have just used it, and stops when the deck is off screen. Any tick jumps. Each project's
  * pages are on a rail you browse yourself. Swipe sideways on touch to change project.
  * Other scripts can move it with `deck:go` (detail: 'kem' | 'apps' | an index).
- * The settings button in each window's toolbar opens a small dial panel: autoplay, pace and which
- * projects to show. It's remembered in this browser.
+ * The settings button in each window's toolbar opens a small dial panel: autoplay, pace, the
+ * thumbnail rail (client/drawer.ts) and which projects to show. It's remembered in this browser.
  */
 import { calm } from './toast';
 
@@ -101,10 +101,10 @@ if (fig && track) {
   let opener: HTMLButtonElement | null = null;
   const $d = <T extends HTMLElement>(s: string) => dial.querySelector<T>(s)!;
   const auto = $d<HTMLInputElement>('[data-dial="autoplay"]'), pace = $d<HTMLInputElement>('[data-dial="pace"]');
-  const paceOut = $d<HTMLOutputElement>('[data-dial-out="pace"]');
+  const paceOut = $d<HTMLOutputElement>('[data-dial-out="pace"]'), thumbs = $d<HTMLInputElement>('[data-dial="thumbs"]');
   const segs = [...dial.querySelectorAll<HTMLButtonElement>('[data-show]')];
   function paint() {
-    auto.checked = set.autoplay; pace.value = String(set.pace); paceOut.textContent = `${set.pace}s`;
+    thumbs.checked = track.dataset.drawer === 'open'; auto.checked = set.autoplay; pace.value = String(set.pace); paceOut.textContent = `${set.pace}s`;
     dial.style.setProperty('--fill', `${((set.pace - 4) / 10) * 100}%`);
     pace.closest('.dial__slider')!.classList.toggle('is-off', !set.autoplay);
     segs.forEach((b) => { const on = b.dataset.show === set.show; b.classList.toggle('is-on', on); b.setAttribute('aria-checked', String(on)); });
@@ -118,8 +118,10 @@ if (fig && track) {
   auto.addEventListener('change', () => { set.autoplay = auto.checked; save(); restart(); paint(); });
   pace.addEventListener('input', () => { set.pace = Number(pace.value); save(); paint(); });
   pace.addEventListener('change', () => restart());
+  thumbs.addEventListener('change', () => document.dispatchEvent(new CustomEvent('drawer:set', { detail: thumbs.checked })));
+  document.addEventListener('drawer:change', () => paint());
   segs.forEach((b) => b.addEventListener('click', () => { set.show = b.dataset.show as Show; save(); applyShow(); }));
-  $d('[data-dial-reset]').addEventListener('click', () => { set = { ...DEFAULTS }; save(); restart(); applyShow(); });
+  $d('[data-dial-reset]').addEventListener('click', () => { set = { ...DEFAULTS }; save(); document.dispatchEvent(new CustomEvent('drawer:set', { detail: false })); restart(); applyShow(); });
 
   function openDial(btn: HTMLButtonElement) {
     opener = btn; dialing = true; sync();
