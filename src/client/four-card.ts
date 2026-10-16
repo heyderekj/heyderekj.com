@@ -7,14 +7,13 @@
  */
 export type Move = { c: number; r: number; who: 1 | 2 };
 type Game = { board: number[]; moves: Move[]; run: number[]; by: 'you' | 'them'; score: number; level: number; wins: number; foe: string; foeTone: string };
-type Design = 'paper' | 'arcade' | 'orange';
+type Design = 'paper' | 'arcade';
 type Layout = 'classic' | 'poster' | 'faceoff';
 
 const W = 1080, H = 1350, COLS = 7, ROWS = 6;
 const THEMES: Record<Design, { bg: string; ink: string; muted: string; board: string; hole: string; edge: string; accent: string }> = {
   paper: { bg: '#faf9f7', ink: '#161513', muted: '#6c6760', board: '#fdfcfa', hole: 'rgba(22,21,19,0.07)', edge: 'rgba(22,21,19,0.12)', accent: '#ea580c' },
   arcade: { bg: '#0d0c0b', ink: '#f6f4f0', muted: '#8a847b', board: '#1b1a18', hole: '#2a2824', edge: 'rgba(246,244,240,0.12)', accent: '#ea580c' },
-  orange: { bg: '#ea580c', ink: '#fff7ef', muted: 'rgba(255,247,239,0.78)', board: 'rgba(255,255,255,0.14)', hole: 'rgba(0,0,0,0.14)', edge: 'rgba(255,255,255,0.35)', accent: '#fff7ef' },
 };
 
 const root = document.querySelector<HTMLElement>('.four-card');
@@ -42,11 +41,11 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
   ctx.save(); ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = t.bg; ctx.fillRect(0, 0, W, H);
   // The ground: a dot grid, or scanlines
-  if (design === 'paper' || design === 'orange') { ctx.fillStyle = design === 'paper' ? 'rgba(22,21,19,0.1)' : 'rgba(255,255,255,0.16)'; for (let y = 27; y < H; y += 36) for (let x = 27; x < W; x += 36) { ctx.beginPath(); ctx.arc(x, y, 2, 0, 7); ctx.fill(); } }
+  if (design === 'paper') { ctx.fillStyle = 'rgba(22,21,19,0.1)'; for (let y = 27; y < H; y += 36) for (let x = 27; x < W; x += 36) { ctx.beginPath(); ctx.arc(x, y, 2, 0, 7); ctx.fill(); } }
   if (design === 'arcade') { ctx.fillStyle = 'rgba(255,255,255,0.025)'; for (let y = 0; y < H; y += 6) ctx.fillRect(0, y, W, 2); }
 
   const sans = 'Figtree, ui-sans-serif, system-ui, sans-serif', mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
-  const mine = design === 'orange' ? t.ink : '#ea580c', foeChip = chip(g.foe.toLowerCase()), myChip = chip('orange');
+  const mine = '#ea580c', foeChip = chip(g.foe.toLowerCase()), myChip = chip('orange');
 
   // The title: the WOPR's question, in the accent colour (the clip fades it up)
   const title = (x: number, y: number, center: boolean) => {
@@ -77,7 +76,6 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
       ctx.globalAlpha = reveal >= 0 && !g.run.includes(m.r * COLS + m.c) ? 1 - 0.6 * Math.min(1, reveal * 2) : 1;
       const [x, y] = at(m.c, m.r), last = n === shown.length - 1 && fall < 1;
       const yy = last ? by + pad - hole + (y - (by + pad - hole)) * easeOutBounce(fall) : y;
-      if (design === 'orange' && m.who === 1) { ctx.fillStyle = 'rgba(255,247,239,0.9)'; ctx.beginPath(); ctx.arc(x + hole / 2, yy + hole / 2, hole / 2 + 3, 0, 7); ctx.fill(); }
       ctx.drawImage(m.who === 1 ? myChip : foeChip, x, yy, hole, hole);
     });
     ctx.globalAlpha = 1;
