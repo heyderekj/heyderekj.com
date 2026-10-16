@@ -835,13 +835,14 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 }
 /* The résumé, folded away at the end */
 .resume { margin-top: 56px; border-top: 1px solid var(--hair); }
-.resume summary { display: flex; align-items: center; gap: 10px; padding: 16px 0; cursor: pointer; list-style: none; }
+.resume summary { display: grid; gap: 14px; padding: 16px 0 18px; cursor: pointer; list-style: none; }
+.resume__head { display: flex; align-items: center; gap: 10px; }
 .resume summary::-webkit-details-marker { display: none; }
-.resume summary span { font-size: 17px; font-weight: 600; }
-.resume summary small { font-size: 14px; color: var(--muted); }
+.resume__head > span { font-size: 17px; font-weight: 600; }
+.resume__head small { font-size: 14px; color: var(--muted); }
 .resume summary .icon { margin-left: auto; color: var(--muted); transition: rotate var(--t-ui) var(--ease); }
 .resume[open] summary .icon { rotate: 180deg; }
-.resume summary:hover span { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--hair); }
+.resume summary:hover .resume__head > span { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--hair); }
 .resume .list { margin-top: 0; }
 .resume__skills { margin: 18px 0 0; font-size: 15px; line-height: 1.6; color: var(--muted); }
 .resume__skills b { color: var(--ink); font-weight: 600; }
@@ -860,3 +861,14 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .vidcard small { font-size: 15px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
 .vidcard:focus-visible { outline: none; }
 .vidcard:focus-visible .vidcard__still { outline: 2px solid var(--ink); outline-offset: 3px; }
+/* The timeline: a bar per role on one axis, year ticks below, current roles in ink */
+.tl { position: relative; display: block; height: calc(var(--lanes) * 26px + 22px); }
+.tl__tick { position: absolute; top: 0; bottom: 0; width: 1px; background: repeating-linear-gradient(to bottom, var(--hair) 0 3px, transparent 3px 6px); }
+.tl__tick em { position: absolute; bottom: 0; left: 4px; font-style: normal; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tl__bar { --r: 7px; position: absolute; top: calc(var(--lane) * 26px); height: 22px; display: flex; align-items: center; padding: 0 7px; border-radius: 7px; overflow: hidden; font-size: 11.5px; font-weight: 600; color: var(--ink); background: color-mix(in oklch, var(--ink) 9%, var(--card)); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--ink) 10%, transparent); transition: background var(--t-ui) var(--ease); }
+.tl__bar span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tl__bar.is-now { background: var(--ink); color: var(--paper); box-shadow: none; }
+.tl__bar.is-school { background: repeating-linear-gradient(-45deg, color-mix(in oklch, var(--ink) 9%, var(--card)) 0 4px, var(--card) 4px 8px); }
+.resume summary:hover .tl__bar:not(.is-now) { background: color-mix(in oklch, var(--ink) 13%, var(--card)); }
+.resume summary:hover .tl__bar.is-school { background: repeating-linear-gradient(-45deg, color-mix(in oklch, var(--ink) 13%, var(--card)) 0 4px, var(--card) 4px 8px); }
+.tl__tick:last-of-type em { left: auto; right: 4px; }

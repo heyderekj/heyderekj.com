@@ -21,6 +21,18 @@ const highlights = bragClippings.slice(0, 3).map((clip) => {
   return { clip, video, href: clip.href, peek: image?.src ? imgSrc(image.src, 640) : undefined };
 });
 const roles = aboutExperienceGroups.filter((g) => g.title !== 'Education').reduce((n, g) => n + g.items.length, 0);
+
+// The résumé's timeline: every role and school as a bar on one axis, overlaps on their own lanes
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const now = new Date(), nowY = now.getUTCFullYear() + now.getUTCMonth() / 12;
+const at = (s: string) => { const [m, y] = s.trim().split(/\s+/); return /present/i.test(s) ? nowY : Number(y) + Math.max(0, MONTHS.indexOf(m)) / 12; };
+const spans = aboutExperienceGroups.flatMap((g) => g.items.map((it) => { const [a, b] = it.range.split('—'); return { name: it.name.replace(/ (LLC|Co\.)$/, ''), from: at(a), to: at(b ?? 'Present'), current: /present/i.test(b ?? ''), school: g.title === 'Education' }; }))
+  .sort((x, y) => x.from - y.from);
+const lanes: number[] = [];
+const bars = spans.map((s) => { let lane = lanes.findIndex((end) => end <= s.from + 0.01); if (lane < 0) lane = lanes.length; lanes[lane] = s.to; return { ...s, lane }; });
+const t0 = Math.floor(Math.min(...spans.map((s) => s.from))), t1 = Math.ceil(nowY);
+const pct = (y: number) => `${(((y - t0) / (t1 - t0)) * 100).toFixed(2)}%`;
+const ticks = Array.from({ length: t1 - t0 + 1 }, (_, i) => t0 + i).filter((y) => (y - t0) % 4 === 0 || y === t1);
 ---
 <Site title="About — Derek Castelli" description={bragMeta.description} bar={{ kind: 'page', title: 'About' }}>
   <article class="essay about" data-select>
@@ -67,7 +79,13 @@ const roles = aboutExperienceGroups.filter((g) => g.title !== 'Education').reduc
     <div class="essay__sign"><Signature /></div>
 
     <details class="resume">
-      <summary><span>Résumé</span><small>{roles} roles · 2007 to now</small><Icon name="chevron-down" /></summary>
+      <summary>
+        <span class="resume__head"><span>Résumé</span><small>{roles} roles · {t0} to now</small><Icon name="chevron-down" /></span>
+        <span class="tl" style={`--lanes:${lanes.length}`} aria-hidden="true">
+          {ticks.map((y) => <i class="tl__tick" style={`left:${pct(y)}`}><em>{y === t1 ? 'Now' : y}</em></i>)}
+          {bars.map((b) => <b class:list={['tl__bar', b.current && 'is-now', b.school && 'is-school']} style={`left:${pct(b.from)};width:calc(${pct(b.to)} - ${pct(b.from)});--lane:${b.lane}`} title={b.name}><span>{b.name}</span></b>)}
+        </span>
+      </summary>
       <div class="list">
         {aboutExperienceGroups.map((g) => (
           <section class="list__year">
