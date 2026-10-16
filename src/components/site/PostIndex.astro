@@ -1,0 +1,53 @@
+---
+/**
+ * The writing, by year. Hovering a row shows a small preview in the margin (client/peek.ts):
+ * a picture of what the essay is about, or one sentence from inside it.
+ * The topic chips above filter it (client/chips.ts).
+ */
+import Icon from '../Icon.astro';
+import { getPublishedPosts, postHref, postTitle } from '../../lib/posts';
+import { peekFor, readingMinutes, type Subject } from '../../lib/pullquote';
+import { getDeck, host, shot, shotsOf } from '../../lib/deck';
+
+interface Props { show?: number }
+const { show = 3 } = Astro.props;
+
+const posts = await getPublishedPosts();
+const { apps, work } = await getDeck();
+// Things an essay might be about, with the picture we already have for each
+const subjects: Subject[] = [
+  ...apps.filter((p) => p.data.image || p.data.icon).map((p) => ({ name: p.data.name, img: shot((p.data.image || p.data.icon)!, 640), url: host(p.data.url), type: 'project' as const })),
+  ...work.filter((w) => shotsOf(w).length).map((w) => ({ name: w.data.title.replace(/\.com$/, ''), img: shot(shotsOf(w)[0], 640), url: host(w.data.liveLink), type: 'work' as const })),
+].filter((s) => s.name.length > 3);
+
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const rows = posts.map((p) => {
+  const peek = peekFor(p, subjects);
+  return {
+    href: postHref(p), title: postTitle(p), year: p.data.date.getUTCFullYear(),
+    date: `${MON[p.data.date.getUTCMonth()]} ${p.data.date.getUTCDate()}`,
+    tags: p.data.tags.join(' '),
+    figures: (p.body.match(/<Fig[A-Z]\w*/g) || []).length,
+    peek, mins: readingMinutes(p),
+  };
+});
+const years = [...new Set(rows.map((r) => r.year))];
+---
+<section class="writing" id="writing" data-bar-label="Writing">
+  <div class="topic-note" id="topicNote" hidden></div>
+  <div class="list" id="list">
+    {years.map((y, n) => (
+      <section class="list__year" hidden={n >= show} data-older={n >= show ? '' : undefined}>
+        <h2>{y}</h2>
+        {rows.filter((r) => r.year === y).map((r) => (
+          <a class="row sq" href={r.href} data-tags={r.tags} data-peek-img={r.peek.img ?? undefined} data-peek-url={r.peek.url || undefined} data-peek-quote={!r.peek.img && r.peek.quote ? r.peek.quote : undefined} data-mins={r.mins}>
+            <span class="row__title">{r.title}{r.figures > 0 && <span class="badge"><Icon name="spark" /> {r.figures} {r.figures === 1 ? 'figure' : 'figures'}</span>}</span>
+            <span class="row__date">{r.date}</span>
+          </a>
+        ))}
+      </section>
+    ))}
+    {years.length > show && <div class="more-rows"><button class="btn" data-show-older>All {rows.length} posts, back to {years[years.length - 1]}</button></div>}
+  </div>
+</section>
+<div class="peek sq" id="peek" aria-hidden="true"></div>

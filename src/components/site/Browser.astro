@@ -1,0 +1,20 @@
+---
+/**
+ * The work preview used everywhere: a small browser window around a site's pages.
+ * `ticks` lets you flip through pages by moving across it (client/browser.ts);
+ * in the deck, a rail beside it does that instead.
+ */
+import type { DeckPage } from '../../lib/deck';
+
+interface Props { pages: DeckPage[]; url?: string; ticks?: boolean; eager?: boolean; deck?: boolean }
+const { pages, url = '', ticks = false, eager = false, deck = false } = Astro.props;
+---
+<div class="browser sq" data-n={pages.length}>
+  <div class="browser__bar"><span class="browser__dots"><i></i><i></i><i></i></span><span class="browser__url">{url}</span><span style="width:37px"></span></div>
+  <div class="browser__view">
+    {pages.map((p, n) => 'mesh' in p
+      ? <div class={`mesh${n ? '' : ' is-on'}`} data-page data-mesh={p.mesh} style={`opacity:${n ? 0 : 1}`}><img src={p.icon} alt="" /></div>
+      : <img src={p.src} alt="" data-page class={n ? '' : 'is-on'} loading={n || !eager ? 'lazy' : undefined} decoding="async" />)}
+    {ticks && !deck && pages.length > 1 && <div class="browser__ticks">{pages.map((_, n) => <i class={n ? '' : 'is-on'}></i>)}</div>}
+  </div>
+</div>

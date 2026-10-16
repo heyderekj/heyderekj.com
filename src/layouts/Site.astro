@@ -1,0 +1,37 @@
+---
+/**
+ * The writing-first layout (2026 redesign): one centered reading column on dot-grid paper.
+ * No header or footer chrome; the bottom bar (components/Bar.astro) is the only navigation.
+ * Legacy stylesheets still load because the MDX post components rely on them.
+ */
+import '../styles/global.css';
+import '../styles/figures.css';
+import '../styles/tokens.css';
+import '../styles/site.css';
+import Head from '../components/Head.astro';
+import Bar from '../components/Bar.astro';
+import type { Props as HeadProps } from '../components/Head.astro';
+import type { BarContext } from '../lib/bar';
+
+type Props = HeadProps & { bar?: BarContext };
+const { bar, ...head } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <Head {...head} />
+  </head>
+  <body class="site">
+    <slot />
+    <Bar context={bar} />
+    <div class="toast" id="toast" role="status"></div>
+    <script src="../client/signature.ts"></script>
+    <script src="../client/plyr-init.ts"></script>
+    <script src="../client/zoom.ts"></script>
+    <script src="../client/figures.ts"></script>
+    <script src="../client/accordion.ts"></script>
+    <script src="../client/copy.ts"></script>
+    <script src="../client/media-prefetch.ts"></script>
+    <script src="../client/icon-morph.ts"></script>
+  </body>
+</html>

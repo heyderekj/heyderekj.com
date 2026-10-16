@@ -1,0 +1,50 @@
+---
+/**
+ * Derek's signature. `draw` writes it stroke by stroke (client/signature.ts):
+ * centre lines drawn with a wide pen inside a mask of the real ink, so the result
+ * is the signature exactly as signed. `mark` is the plain filled ink, for small sizes.
+ */
+import { signatureInk, signatureStrokes, signatureViewBox } from '../data/signature';
+
+interface Props {
+  variant?: 'draw' | 'mark';
+  class?: string;
+  label?: string;
+}
+const { variant = 'draw', class: className = '', label = "Derek Castelli's signature" } = Astro.props;
+
+// Timing: each stroke's share of 1.5s by its length, with a short pen lift between strokes
+const SIGN_SECONDS = 1.5, PEN_LIFT = 0.08;
+const EI = 'cubic-bezier(0.45, 0.05, 0.55, 0.95)', EIN = 'cubic-bezier(0.45, 0.05, 1, 1)', EOUT = 'cubic-bezier(0, 0, 0.55, 0.95)';
+const totalInk = signatureStrokes.reduce((s, x) => s + x.length, 0);
+let penAt = 0;
+const timing = signatureStrokes.map((s, n) => {
+  const next = signatureStrokes[n + 1];
+  if (s.join) penAt -= PEN_LIFT;
+  const dur = Math.max(0.12, (s.length / totalInk) * SIGN_SECONDS);
+  const t = { d: s.d, delay: penAt.toFixed(3), dur: dur.toFixed(3), ease: s.join ? EOUT : next?.join ? EIN : EI };
+  penAt += dur + PEN_LIFT;
+  return t;
+});
+const maskId = `ink-${Math.random().toString(36).slice(2, 8)}`;
+---
+{variant === 'mark' ? (
+  <svg class={`sig-mark ${className}`} viewBox={signatureViewBox} role="img" aria-label={label}>
+    {signatureInk.map((d) => <path d={d} />)}
+  </svg>
+) : (
+  <div class={`sig ${className}`} role="img" aria-label={label} data-sign data-total={Math.round(penAt * 1000)}>
+    <svg viewBox={signatureViewBox} aria-hidden="true">
+      <defs>
+        <mask id={maskId} maskUnits="userSpaceOnUse" x="-100" y="-100" width="3462" height="1009">
+          {signatureInk.map((d) => <path d={d} fill="#fff" />)}
+        </mask>
+      </defs>
+      <g mask={`url(#${maskId})`}>
+        {timing.map((t) => (
+          <path class="sig__stroke" d={t.d} pathLength="1" style={`--delay:${t.delay}s;--dur:${t.dur}s;--ease:${t.ease}`} />
+        ))}
+      </g>
+    </svg>
+  </div>
+)}

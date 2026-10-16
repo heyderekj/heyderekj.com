@@ -1,0 +1,45 @@
+---
+/**
+ * The top of the home page: a byline, one paragraph of chips, and the signature as a sign-off.
+ * Each chip opens a small view of what it names without moving a word (client/chips.ts):
+ * Kem fans out three of its sites, Testament Made's six blocks grow into its apps,
+ * Des Moines opens a drawing of downtown for the hour and weather (client/dsm-sketch.ts),
+ * and the topics filter the writing below.
+ */
+import Icon from '../Icon.astro';
+import Signature from '../Signature.astro';
+import Browser from './Browser.astro';
+import { getDeck, host, shot, shotsOf, TM_TILES } from '../../lib/deck';
+import { TOPICS } from '../../lib/bar';
+import { imgSrc } from '../../lib/img';
+
+const { kem, icons } = await getDeck();
+const photo = imgSrc('/assets/about/derek-photo.jpeg', 160);
+const last = TOPICS.length - 1;
+---
+<header class="hello-head" data-bar-label="Home">
+  <div class="byline">
+    <img class="sq" src={photo} alt="Derek Castelli" width="56" height="56" />
+    <span><b>Derek Castelli</b><small>Christian, husband, and designer</small></span>
+  </div>
+  <p class="hello">
+    I make websites with <button class="wchip sq" data-act="kem"><Icon name="work" /> Kem Design<span class="pop"><span class="fan">{kem.map((w) => <Browser pages={[{ src: shot(shotsOf(w)[0], 480) }]} url={host(w.data.liveLink)} />)}</span></span></button>
+    and apps at <button class="wchip sq" data-act="apps"><span class="tm" aria-hidden="true">{TM_TILES.map(([, c]) => <i style={`--c:${c}`}></i>)}</span>Testament Made<span class="pop"><span class="spread">{TM_TILES.map(([slug, c], i) => (
+      <span class="tmapp" style={`--i:${i};--col:${(i % 3) - 1};--row:${Math.floor(i / 3) - 0.5};--c:${c}`}><img src={icons[slug]?.icon ?? ''} alt={icons[slug]?.title ?? ''} /></span>
+    ))}</span></span></button>,
+    from <button class="wchip sq" data-act="here"><Icon name="iowa" /> Des Moines, IA<span class="pop"><span class="here sq">
+      <span class="sky"><canvas id="dsmCanvas" aria-label="A drawing of downtown Des Moines right now"></canvas></span>
+      <span class="here__body">
+        <span class="here__row"><b id="dsmTime"></b><span class="temp" id="dsmTemp"></span></span>
+        <span class="here__cond" id="dsmCond">Downtown Des Moines</span>
+        <span class="here__home">Home with my wife, Lilo, Kiya, Leroy and Irma.</span>
+      </span>
+    </span></span></button>.
+    Here I write about {TOPICS.map((t, i) => (
+      <Fragment>
+        <button class="wchip sq topic" data-tag={t.key} data-tags={t.tags.join(' ')} aria-pressed="false">{t.label}</button>{i < last - 1 ? ', ' : i === last - 1 ? ' and ' : '.'}
+      </Fragment>
+    ))}
+  </p>
+  <div class="sig-slot"><Signature /></div>
+</header>

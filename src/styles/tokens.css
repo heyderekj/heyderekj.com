@@ -1,0 +1,63 @@
+/* ============================================================
+   Tokens (2026 redesign): one paper, one ink, one curve.
+   Colour only ever comes from a project's own mesh or imagery.
+   Loaded after global.css so the older names below follow along
+   and legacy pages restyle without rewrites.
+   ============================================================ */
+:root {
+  --paper: #faf9f7;
+  --card: #fdfcfa;
+  --ink: #161513;
+  --ink-soft: #3d3a35;
+  --muted: #6c6760;
+  --hair: #e3e0da;
+  --tint: color-mix(in oklch, #161513 5%, #fdfcfa);
+  --hl: #ffd54a;
+  --k-green: #18c26a;
+  --k-orange: #f2803a;
+  --k-blue: #3d8bf2;
+  --k-purple: #9b6bff;
+  --glass: rgb(253 252 250 / 0.86);
+  --shadow: 0 1px 2px rgb(22 21 19 / 0.05), 0 10px 28px -14px rgb(22 21 19 / 0.22);
+  --shadow-lift: 0 2px 4px rgb(22 21 19 / 0.06), 0 18px 40px -18px rgb(22 21 19 / 0.3);
+  --font: 'Figtree', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-ui: 180ms;
+  --t-move: 360ms;
+  --read: 40rem;
+  --fig: 58rem;
+  --gutter-l: max(16px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(16px, env(safe-area-inset-right, 0px));
+  --edge-mask: radial-gradient(ellipse 72% 78% at 50% 50%, rgb(0 0 0 / 0.05) 35%, rgb(0 0 0 / 0.45) 70%, #000 100%);
+
+  /* The older names, mapped onto the new ones */
+  --bg: var(--paper);
+  --bg-elevated: var(--card);
+  --fg: var(--ink);
+  --fg-soft: var(--ink-soft);
+  --muted-strong: var(--muted);
+  --border: var(--hair);
+  --border-strong: color-mix(in srgb, var(--ink) 14%, transparent);
+  --rule: var(--hair);
+  --tick: color-mix(in srgb, var(--ink) 30%, transparent);
+  --accent: var(--ink);
+  --accent-hover: var(--ink-soft);
+  --accent-soft: color-mix(in srgb, var(--ink) 8%, transparent);
+  --nav-active-bg: color-mix(in srgb, var(--ink) 4%, var(--paper));
+  --highlight: color-mix(in oklch, var(--hl) 50%, transparent);
+  --font-sans: var(--font);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #191816; --card: #23211e; --ink: #f6f4f0; --ink-soft: #d9d4cc; --muted: #a29c93; --hair: #34312c;
+    --tint: color-mix(in oklch, #f6f4f0 6%, #23211e); --hl: #b88a12; --glass: rgb(35 33 30 / 0.86);
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 28px -14px rgb(0 0 0 / 0.6);
+    --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.3), 0 18px 40px -18px rgb(0 0 0 / 0.7);
+    color-scheme: dark;
+  }
+}
+
+/* Squircles on everything that has a corner */
+.sq { border-radius: var(--r, 14px); }
+@supports (corner-shape: squircle) { .sq { corner-shape: squircle; border-radius: calc(var(--r, 14px) * 1.7); } }
+[hidden] { display: none !important; }

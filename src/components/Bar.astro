@@ -1,0 +1,65 @@
+---
+/**
+ * The bottom bar: the site's only chrome. A compact pill that says where you are,
+ * opens a menu, and turns into search (press /). It morphs between those states
+ * without moving anything on the page. Behaviour lives in client/bar.ts.
+ */
+import Icon from './Icon.astro';
+import Signature from './Signature.astro';
+import { TOPICS, type BarContext } from '../lib/bar';
+
+interface Props { context?: BarContext }
+const { context = { kind: 'page', title: 'Derek Castelli' } } = Astro.props;
+const label = context.kind === 'home' ? 'Home' : context.title;
+const figures = context.kind === 'essay' ? context.figures ?? [] : [];
+const nav = [
+  { href: '/#writing', label: 'Writing', icon: 'writing' as const },
+  { href: '/work/', label: 'Work', icon: 'work' as const },
+  { href: 'https://testamentmade.com', label: 'Apps', icon: 'projects' as const, external: true },
+  { href: '/about/', label: 'About', icon: 'about' as const },
+];
+---
+<nav class="bar" id="bar" aria-label="Site" data-kind={context.kind}>
+  <div class="bar__panel" id="barPanel" hidden>
+    <div class="bar__results" id="barResults" role="listbox" aria-label="Search results" hidden></div>
+    <div class="bar__menu" id="barMenu" hidden>
+      {figures.length > 0 && (
+        <div class="bar__group">
+          <span class="bar__lbl">In this essay</span>
+          <div class="bar__figs">{figures.map((f) => <a class="bar__fig" href={`#${f.id}`}><b>{f.no}</b> {f.title}</a>)}</div>
+          <span class="bar__hls" id="barHls" hidden></span>
+        </div>
+      )}
+      <div class="bar__nav">
+        {nav.map((n) => (
+          <a href={n.href} {...(n.external ? { target: '_blank', rel: 'noopener' } : {})}><Icon name={n.icon} />{n.label}{n.external && <Icon name="arrow-up-right" class="bar__ext" />}</a>
+        ))}
+      </div>
+      <div class="bar__group">
+        <span class="bar__lbl">I write about</span>
+        <div class="bar__topics">{TOPICS.map((t) => <button class="wchip sq" data-topic={t.key}>{t.label}</button>)}</div>
+      </div>
+      <div class="bar__else">
+        <button class="bar__mail" data-copy-email>derekj@hey.com <span>Copy</span></button>
+        <a href="https://x.com/heyderekj" target="_blank" rel="noopener" aria-label="X"><Icon name="x" /></a>
+        <a href="https://github.com/heyderekj" target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" /></a>
+        <a href="/rss.xml" aria-label="RSS"><Icon name="rss" /></a>
+      </div>
+    </div>
+  </div>
+  <div class="bar__row">
+    <a class="bar__home" href="/" aria-label="Home"><Signature variant="mark" label="Derek Castelli, home" /></a>
+    <button class="bar__label" id="barLabel" aria-expanded="false" aria-controls="barMenu"><span id="barText">{label}</span><Icon name="chevron-up" /></button>
+    {context.kind === 'writeup' && (
+      <span class="bar__steps">
+        {context.newer ? <a class="bar__btn" href={context.newer.href} aria-label={`Newer: ${context.newer.title}`}><Icon name="chevron-left" /></a> : <span class="bar__btn is-off"><Icon name="chevron-left" /></span>}
+        {context.older ? <a class="bar__btn" href={context.older.href} aria-label={`Older: ${context.older.title}`}><Icon name="chevron-right" /></a> : <span class="bar__btn is-off"><Icon name="chevron-right" /></span>}
+      </span>
+    )}
+    <span class="bar__sep" aria-hidden="true"></span>
+    <button class="bar__find" id="barFind" aria-label="Search" aria-keyshortcuts="/"><Icon name="search" /><kbd>/</kbd></button>
+    <label class="bar__input"><Icon name="search" /><input id="barInput" type="search" placeholder="Find an essay, a website or an app" autocomplete="off" aria-controls="barResults" /><button class="bar__close" id="barClose" aria-label="Close search"><kbd>esc</kbd></button></label>
+  </div>
+  {context.kind === 'essay' && <span class="bar__progress" aria-hidden="true"><i id="barProg"></i></span>}
+</nav>
+<script src="../client/bar.ts"></script>
