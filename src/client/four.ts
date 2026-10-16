@@ -25,11 +25,11 @@ if (game && grid404 && head) {
 
   // ---- Who you're playing: one of the animals, each with their own way of playing and talking
   type Lines = { stop: string[]; start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[] };
-  type Foe = { name: string; tone: string; toneInk?: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
+  type Foe = { name: string; kind: 'cat' | 'dog'; tone: string; toneInk?: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
   const WARGAMES = 'A strange game. The only winning move is not to play.';
   const FOES: Foe[] = [
     { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
-      name: 'Leroy', tone: 'oklch(0.86 0.16 95)', toneInk: '#3d3a35', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
+      name: 'Leroy', kind: 'cat', tone: 'oklch(0.86 0.16 95)', toneInk: '#3d3a35', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
       lines: {
         stop: ['Leaving? I’ll be right here.', 'Smart. Quit while you’re ahead.'],
         start: ['Leroy here. Shall we play a game? Take your time. I will.'],
@@ -38,11 +38,11 @@ if (game && grid404 && head) {
         block: ['Not so fast.', 'I saw that a while ago.', 'Mm. No.', 'I’ll just sit right here.'],
         youWin: ['Again. I’m not going anywhere.', 'Fine. Best of a hundred?', 'Noted. Again.'],
         iWin: ['Told you. Slow and steady.', 'Four in a row. Took a while. Worth it.', 'Patience wins.'],
-        draw: [WARGAMES, 'A draw. I could do this all day.'],
+        draw: ['A cat’s game. Naturally.', 'Cat’s game. I’ll take it.', 'Nobody wins. Except cats.'],
       },
     },
     { // Attentive and smart, but kind: always blocks you, and sometimes won't take the win
-      name: 'Lilo', tone: 'oklch(0.55 0.17 300)', delay: [600, 1000], depth: (l) => Math.min(6, l + 1), slip: (l) => Math.max(0, 0.15 - 0.05 * (l - 1)), spares: 0.4,
+      name: 'Lilo', kind: 'dog', tone: 'oklch(0.55 0.17 300)', delay: [600, 1000], depth: (l) => Math.min(6, l + 1), slip: (l) => Math.max(0, 0.15 - 0.05 * (l - 1)), spares: 0.4,
       lines: {
         stop: ['Good game! Come back anytime.', 'That was so fun. Thank you!'],
         start: ['Hi, I’m Lilo! Want to play? You go first.'],
@@ -52,11 +52,11 @@ if (game && grid404 && head) {
         spare: ['I could have… never mind. Your turn!', 'Oops. I’ll go over here instead.'],
         youWin: ['Yay, you won! I’m so happy for you.', 'You did it! That was lovely.'],
         iWin: ['Oh no, I won. Are you okay?', 'Sorry! I didn’t mean to win.'],
-        draw: ['A draw! Everybody wins.', WARGAMES],
+        draw: ['A cat’s game? Should we tell Leroy and Irma?', 'A tie! Leroy and Irma would love this.', WARGAMES],
       },
     },
     { // Competitive and smart, but a bully and easily distracted: quick, mouthy, and wanders off
-      name: 'Kiya', tone: 'oklch(0.62 0.11 195)', delay: [250, 520], depth: (l) => Math.min(6, l + 1), slip: () => 0.18,
+      name: 'Kiya', kind: 'dog', tone: 'oklch(0.62 0.11 195)', delay: [250, 520], depth: (l) => Math.min(6, l + 1), slip: () => 0.18,
       lines: {
         stop: ['Scared? Thought so.', 'Running away? Classic.'],
         start: ['Kiya. You’re going down. Go first, it won’t help.'],
@@ -66,11 +66,11 @@ if (game && grid404 && head) {
         slip: ['Wait, what was I doing? Here.', 'Ooh, something shiny. Anyway.', 'Was that a bird? Whatever, here.'],
         youWin: ['Rematch. Now.', 'I wasn’t even trying.', 'I got distracted. Doesn’t count.'],
         iWin: ['Winner! As usual.', 'Too easy. Next.', 'Told you you’d go down.'],
-        draw: ['A draw? Lame.', WARGAMES],
+        draw: ['A CAT’s game?! Absolutely not. Rematch.', 'Ugh. Cats get a game named after them?'],
       },
     },
     { // Dumb, but plays hard: barely looks ahead, moves fast and loud, grabs any win
-      name: 'Irma', tone: 'oklch(0.84 0.09 55)', toneInk: '#3d3a35', delay: [200, 420], depth: () => 1, slip: (l) => Math.max(0.15, 0.4 - 0.05 * (l - 1)),
+      name: 'Irma', kind: 'cat', tone: 'oklch(0.84 0.09 55)', toneInk: '#3d3a35', delay: [200, 420], depth: () => 1, slip: (l) => Math.max(0.15, 0.4 - 0.05 * (l - 1)),
       lines: {
         stop: ['NOOO! Okay. Bye!', 'Already? Again soon?!'],
         start: ['IRMA! LET’S PLAY! You go first!'],
@@ -79,7 +79,7 @@ if (game && grid404 && head) {
         block: ['Did I just do something?', 'Whoa! I blocked it? I blocked it!'],
         youWin: ['Again! Again!', 'You win! That was SO fun!'],
         iWin: ['I WON?! I WON!', 'Four in a row! How?!'],
-        draw: ['Did… anyone win?', WARGAMES],
+        draw: ['CAT’S GAME! THAT’S ME!', 'A cat’s game?! I won! Did I win?'],
       },
     },
   ];
@@ -293,9 +293,24 @@ if (game && grid404 && head) {
     lastGame = { board: [...b], moves: [...moves], run, by, score, level: by === 'you' ? level - 1 : level, wins: level - 1, foe: foe.name, foeTone: foe.tone };
     setTimeout(() => { if (by === 'them') talk(record ? 'New best! Make a card of it?' : 'Game over. Make a card of it, or go again?'); againBtn.hidden = cardBtn.hidden = false; }, calm ? 300 : by === 'you' ? 600 : 1400); // stopping keeps their parting line
   }
+  // A draw is a cat's game: a stamp, and paw prints across the board in their colour.
+  // The cats (Leroy, Irma) are thrilled; the dogs (Lilo, Kiya) are not.
   function roundDraw() {
-    turn = 'off'; paint(); score += 50; tally(); talk(pick(LINES.draw)); beep([440, 440, 440], 0.12, 'triangle');
-    setTimeout(() => playing && round(), calm ? 600 : 2200);
+    turn = 'off'; paint(); score += 50; tally(); talk(pick(LINES.draw));
+    beep(foe.kind === 'cat' ? [784, 988, 1175, 988, 1319] : [392, 370, 349], foe.kind === 'cat' ? 0.09 : 0.14, 'triangle');
+    catsGame();
+    setTimeout(() => { board.querySelector('.four__cats')?.remove(); if (playing) round(); }, calm ? 1200 : 3000);
+  }
+  function catsGame() {
+    const paw = document.getElementById('fourPaw')?.innerHTML ?? '';
+    const d = document.createElement('div'); d.className = `four__cats is-${foe.kind}`; d.setAttribute('aria-hidden', 'true');
+    // Steps from the bottom left to the top right, left and right feet in turn
+    const steps = 9;
+    d.innerHTML = `<b>Cat’s game</b>` + Array.from({ length: steps }, (_, i) => {
+      const t = i / (steps - 1), x = 6 + t * 82, y = 84 - t * 74, side = i % 2 ? 1 : -1;
+      return `<span style="left:${x + side * 2.5}%;top:${y + side * 3}%;--i:${i}">${paw}</span>`;
+    }).join('');
+    board.append(d);
   }
   function gameOver() {
     const run = won(b, 2); flash(run); turn = 'off'; paint();

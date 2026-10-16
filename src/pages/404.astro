@@ -41,6 +41,7 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
       </div>
       <section class="four" aria-label="Connect Four" hidden>
         <div class="four__board" role="group" aria-label="Board: pick a column"></div>
+        <template id="fourPaw"><Icon name="paw" loop={false} /></template>
         <div class="four__bar">
           <p class="four__say" aria-live="polite"><span class="four__who sq" role="img"></span><span class="four__line"></span></p>
           <p class="four__tally">vs <b class="four__vs"></b> · Level <b data-four="level">1</b> · <b data-four="score">0</b> pts · best <b data-four="best">0</b></p>
@@ -54,7 +55,12 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
           <button type="button" data-four-quit>Quit <kbd>esc</kbd></button>
         </div>
         <div class="four-card" role="dialog" aria-label="Make a card" hidden>
-          <div class="four-card__preview"><canvas width="1080" height="1350" aria-label="Your card"></canvas></div>
+          <div class="four-card__preview">
+            <canvas width="1080" height="1350" aria-label="Your card"></canvas>
+            <video muted loop playsinline aria-label="Your clip" hidden></video>
+            <span class="four-card__rec" aria-hidden="true"><i></i>Rec</span>
+            <span class="four-card__bar" aria-hidden="true"></span>
+          </div>
           <div class="four-card__tools">
             <b>Make it yours</b>
             <div class="four-card__designs" role="radiogroup" aria-label="Design">
@@ -64,10 +70,15 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
               <button type="button" role="radio" aria-checked="false" data-design="orange"><i style="--sw:#ea580c"></i>Orange</button>
             </div>
             <div class="four-card__pad"><canvas aria-label="Sign here"></canvas><span>Sign here</span><button type="button" data-sign-clear>Clear</button></div>
+            <div class="four-card__as" role="radiogroup" aria-label="Share it as">
+              <button type="button" role="radio" aria-checked="true" data-as="image">Image</button>
+              <button type="button" role="radio" aria-checked="false" data-as="clip"><Icon name="clapper" />Clip<small data-clip-length></small></button>
+            </div>
             <div class="four-card__actions">
-              <button type="button" class="is-primary" data-share-image>Share image</button>
-              <button type="button" data-share-clip>Share a clip</button>
-              <button type="button" data-card-close>Done</button>
+              <button type="button" data-card-copy><Icon name="copy" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span>Copy</span></button>
+              <button type="button" data-card-save><Icon name="file-down" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span>Save</span></button>
+              <button type="button" class="is-primary" data-card-share hidden><Icon name="arrow-up-right" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span>Share</span></button>
+              <button type="button" class="is-quiet" data-card-close>Done</button>
             </div>
             <small class="four-card__status" aria-live="polite"></small>
           </div>
