@@ -55,7 +55,7 @@ export const SERVICES: { id: ServiceId; name: string; icon: string; line: string
 ];
 
 /** Write-ups to show as samples, by service (slugs); otherwise the highlighted ones */
-export const SAMPLES: Partial<Record<ServiceId, string[]>> = {};
+export const SAMPLES: Partial<Record<ServiceId, string[]>> = { site: ['revisemy', 'exodus51', 'throne', 'care-continuity'] };
 
 /** Things a project can include beyond the core, by service (drafts: change freely) */
 export const EXTRAS: { id: string; service: ServiceId; name: string; desc: string; price: number }[] = [

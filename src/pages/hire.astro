@@ -9,15 +9,13 @@ import Icon from '../components/Icon.astro';
 import Said from '../components/site/Said.astro';
 import Signature from '../components/Signature.astro';
 import { availability, EXTRAS, PRICES, SAMPLES, SERVICES, TIMELINE } from '../data/hire';
-import { getPublishedWork, partnersOf } from '../lib/work';
+import { getPublishedWork } from '../lib/work';
 import { frameAttrs, pageOf, shot, shotsOf, workDate } from '../lib/deck';
 import { imgSrc } from '../lib/img';
 import { workTestimonials } from '../data/about';
 import '../styles/hire.css';
 
 const work = await getPublishedWork();
-const partners = partnersOf(work).map((p) => p.name).slice(0, 4);
-const list = (xs: string[]) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
 
 // Some sites to show: any picked in the data file, else the highlighted ones, newest first
 const pinned = Object.values(SAMPLES).flat();
@@ -27,6 +25,7 @@ const sampleRows = await Promise.all(samples.map(async (w) => ({
   href: `/work/${w.slug}/`, title: w.data.title, year: workDate(w).getUTCFullYear(),
   sub: [w.data.partnership ? `With ${w.data.partnership}` : 'Solo', w.data.workType].filter(Boolean).join(' · '),
   thumb: await pageOf(shotsOf(w)[0], 480), img: shot(shotsOf(w)[0], 640),
+  shots: await Promise.all(shotsOf(w).slice(0, 4).map((s) => pageOf(s, 480))),
 })));
 
 const photo = imgSrc('/assets/about/derek-photo.jpeg', 240);
@@ -52,7 +51,7 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
         <b data-avail={availability.open ? 'big' : undefined}>{availability.open ? (availability.from === 'now' ? 'Right now' : `From ${availability.from}`) : 'For now'}</b>
       </div>
     </header>
-    <p class="lede hire-lede">I’m Derek, a self-taught designer in Des Moines, and I’ve been designing since 2010. I make sites, logos and brands, give honest feedback when something isn’t working, and lately help people put AI to work where it actually helps. I’ve done it on my own and with studios like {list(partners)}. When you work with me, you get one person who does the work and answers your emails.</p>
+    <p class="lede hire-lede">I’m Derek, a self-taught designer in Des Moines, designing since 2010. I make sites, logos and brands, give honest feedback, and help put AI to work where it helps. One person, doing the work and answering your emails.</p>
 
     <h2 class="h">What I do</h2>
     <div class="hire-caps">
@@ -68,8 +67,8 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
     <div class="hire-proof">
       <div class="hire-shots">
         {sampleRows.slice(0, 4).map((r) => (
-          <a class="hire-shot sq" href={r.href} data-peek-img={r.img}>
-            <span class="hire-shot__img sq" aria-hidden="true">{'src' in r.thumb && <img src={r.thumb.src} alt="" class={frameAttrs(r.thumb).class} style={frameAttrs(r.thumb).style} loading="lazy" decoding="async" />}</span>
+          <a class="hire-shot sq" href={r.href}>
+            <span class="row__shots" aria-hidden="true">{r.shots.map((p, i) => 'src' in p && <span class="row__shot sq" style={`--i:${i}`}><img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" /></span>)}</span>
             <b>{r.title}</b><small>{r.sub}</small>
           </a>
         ))}

@@ -37,9 +37,13 @@
 .hire-shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 640px) { .hire-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .hire-shot { --r: 14px; display: grid; gap: 2px; text-decoration: none; color: var(--ink); }
-.hire-shot__img { --r: 10px; position: relative; aspect-ratio: 16 / 10; overflow: hidden; margin-bottom: 6px; background: var(--card); box-shadow: 0 0 0 1px var(--hair); container-type: size; transition: translate var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
-.hire-shot__img img:not(.framed) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
-.hire-shot:hover .hire-shot__img { translate: 0 -2px; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.hire-shot { position: relative; z-index: 0; }
+.hire-shot .row__shots { position: relative; display: block; aspect-ratio: 16 / 10; margin-bottom: 10px; }
+.hire-shot:is(:hover, :focus-visible) { z-index: 30; }
+/* Hover: the shots fan up and out like the work page's stack, and the others step back */
+.hire-shot:is(:hover, :focus-visible) .row__shot { transform: translateY(-22px) rotate(calc((var(--k) + var(--shift, 0)) * 14deg)) scale(1.1); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.hire-shots .hire-shot { transition: opacity 260ms var(--ease), filter 260ms var(--ease); }
+.hire-shots:has(.hire-shot:hover) .hire-shot:not(:hover) { opacity: 0.35; filter: grayscale(0.5); }
 .hire-shot b { font-size: 14px; font-weight: 600; }
 .hire-shot small { font-size: 12.5px; color: var(--muted); }
 .hire-proof .hire-more { justify-self: start; margin: 0 0 6px; }
