@@ -60,7 +60,7 @@ export type Example = { work: string } | { app: string; show?: 'icon' | 'image' 
 export const EXAMPLES: Record<ServiceId, Example[]> = {
   site: ['throne', 'care-continuity', 'exodus51', 'revisemy', 'claimable', 'harvouscom', 'eternity-church-2', 'river-valley-church', 'ccc-omaha', 'david-energy'].map((work) => ({ work })),
   // Logos for Josh Pigford's projects, and my own apps' icons
-  logo: [{ work: 'schemakit' }, { app: 'harvous', show: 'icon' }, { work: 'namesnag' }, { app: 'revisemy', show: 'icon' }, { work: 'revise-dev' }, { work: 'linkscout' }],
+  logo: [{ app: 'harvous', show: 'icon' }, { work: 'namesnag' }, { app: 'revisemy', show: 'icon' }, { work: 'revise-dev' }, { work: 'linkscout' }, { work: 'schemakit' }],
   rebrand: [{ work: 'crowdhealth' }, { work: 'scenery' }, { work: 'bowen-design-and-print' }],
   // Consulting: no examples, so these show as short rows
   feedback: [],
