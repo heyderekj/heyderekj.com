@@ -166,7 +166,8 @@
 .hire-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 52px; padding: 10px 0; border-top: 1px solid var(--hair); }
 .est__screen h3 + .hire-row, .hire-when + .hire-row { border-top: 0; }
 .hire-row > span { font-size: 14.5px; font-weight: 500; }
-.hire-row > span small { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 400; color: var(--muted); }
+.hire-row > span { line-height: 1.35; }
+.hire-row > span small { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.35; font-weight: 400; color: var(--muted); }
 .hire-seg { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; padding: 3px; border-radius: 11px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
 .hire-seg button { padding: 6px 11px; border-radius: 8px; font: 500 13.5px var(--font); color: var(--muted); transition: background-color var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
 .hire-seg button[aria-checked="true"] { color: var(--ink); font-weight: 600; background: var(--card); box-shadow: 0 1px 2px rgb(0 0 0 / 0.1), 0 0 0 0.5px var(--hair); }
@@ -190,7 +191,7 @@
 .hire-gap__ideas button { --r: 999px; display: inline-flex; align-items: baseline; gap: 8px; padding: 6px 12px; border-radius: 999px; font: 500 13px var(--font); text-align: left; color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
 .hire-gap__ideas button:hover { translate: 0 -1px; box-shadow: inset 0 0 0 1px var(--ink); }
 .hire-gap__ideas em { font-style: normal; font-weight: 600; color: var(--money); font-variant-numeric: tabular-nums; }
-.hire-extras { display: grid; gap: 6px; margin-top: 10px; padding-top: 14px; border-top: 1px solid var(--hair); }
+.hire-extras { display: grid; gap: 6px; padding-top: 14px; border-top: 1px solid var(--hair); }
 .hire-extras__h { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 .hire-extra { --r: 12px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease); }
 .hire-extra input { width: 18px; height: 18px; margin: 0; accent-color: var(--ink); }
