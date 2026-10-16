@@ -139,7 +139,7 @@ export const aboutExperienceGroups: AboutExpGroup[] = [
     title: 'Current',
     items: [
       {
-        name: 'Testament Made LLC',
+        name: 'Testament Made, LLC',
         range: 'Jun 2020 — Present',
         description:
           'Freelance web designer partnering with clients and teams to make sites in Webflow, and making apps on the side.',

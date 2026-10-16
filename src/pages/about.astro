@@ -26,7 +26,7 @@ const roles = aboutExperienceGroups.filter((g) => g.title !== 'Education').reduc
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const now = new Date(), nowY = now.getUTCFullYear() + now.getUTCMonth() / 12;
 const at = (s: string) => { const [m, y] = s.trim().split(/\s+/); return /present/i.test(s) ? nowY : Number(y) + Math.max(0, MONTHS.indexOf(m)) / 12; };
-const spans = aboutExperienceGroups.flatMap((g) => g.items.map((it) => { const [a, b] = it.range.split('—'); return { name: it.name.replace(/ (LLC|Co\.)$/, ''), from: at(a), to: at(b ?? 'Present'), current: /present/i.test(b ?? ''), school: g.title === 'Education' }; }))
+const spans = aboutExperienceGroups.flatMap((g) => g.items.map((it) => { const [a, b] = it.range.split('—'); return { name: it.name.replace(/ Co\.$/, ''), from: at(a), to: at(b ?? 'Present'), current: /present/i.test(b ?? ''), school: g.title === 'Education' }; }))
   .sort((x, y) => x.from - y.from);
 const lanes: number[] = [];
 const bars = spans.map((s) => { let lane = lanes.findIndex((end) => end <= s.from + 0.01); if (lane < 0) lane = lanes.length; lanes[lane] = s.to; return { ...s, lane }; });
