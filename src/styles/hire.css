@@ -25,7 +25,7 @@
    strip of all of them (scroll it sideways; each links to its write-up) and a button into the estimate.
    On touch screens the strip simply sits under the words. */
 .hire-caps { display: grid; gap: 4px; }
-.hire-cap { --r: 16px; position: relative; display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 22px; align-items: center; margin: 0 -12px; padding: 14px 12px; transition: background-color var(--t-ui) var(--ease), opacity 260ms var(--ease), filter 260ms var(--ease); }
+.hire-cap { --r: 16px; position: relative; display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 40px; align-items: center; margin: 0 -12px; padding: 14px 12px; transition: background-color var(--t-ui) var(--ease), opacity 260ms var(--ease), filter 260ms var(--ease); }
 .hire-caps:has(.hire-cap:hover) .hire-cap:not(:hover) { opacity: 0.45; filter: grayscale(0.4); }
 .hire-cap:is(:hover, :focus-within) { background: color-mix(in oklch, var(--ink) 4%, transparent); }
 .hire-cap__stack { position: relative; display: block; aspect-ratio: 16 / 10; transition: opacity 200ms var(--ease); }
@@ -195,7 +195,10 @@
 .est__screen[data-screen="sent"].is-on ~ * { display: none; }
 
 /* The proposal */
-.prop { --r: 22px; position: relative; overflow: hidden; display: grid; align-content: start; min-height: 440px; gap: 22px; padding: 26px 26px 104px; border-radius: 22px; font-size: 14.5px; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+/* A sheet of paper: square corners, a little whiter than the page, and one more sheet peeking out under it */
+.prop { --sheet: #fff; position: relative; overflow: hidden; display: grid; align-content: start; min-height: 440px; gap: 22px; padding: 30px 28px 104px; border-radius: 0; font-size: 14.5px; color: var(--ink); background: var(--sheet);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 7%, transparent), 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 0 -1px var(--sheet), 0 4px 0 0 color-mix(in oklch, var(--ink) 8%, transparent), 0 22px 40px -22px rgb(0 0 0 / 0.28); }
+@media (prefers-color-scheme: dark) { .prop { --sheet: var(--card); } }
 .prop__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .prop__head div { display: grid; gap: 2px; }
 .prop__title { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
