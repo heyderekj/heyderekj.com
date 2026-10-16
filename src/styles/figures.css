@@ -547,3 +547,7 @@ main.main .post-content .data-footnote-backref { border-bottom: none; }
   text-transform: uppercase;
   color: var(--muted-strong);
 }
+
+/* A photo fills its frame at its own shape: no square mat, no padding (Figure's `fill`) */
+.pfig--fill .zoom-trigger, .pfig--fill.zoomable.is-zoomed > .zoom-trigger { aspect-ratio: auto; background: none; }
+.pfig--fill img { height: auto; padding: 0; object-fit: cover; }

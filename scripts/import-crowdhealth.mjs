@@ -17,6 +17,11 @@ const whole = [
   ['card_current.png', 'card-before'], ['card_current-1.png', 'card-after'],
   ['social-header_current.png', 'social-header-before'], ['social-header_new.png', 'social-header-after'],
   ['social-post_current.png', 'social-post-before'], ['social-post_new.png', 'social-post-after'],
+  // The new logo on its own, the brand in the world (mockups), and the home page's video
+  ['Slide 16_9 - 8.png', 'logo-new'], ['Frame 104.png', 'cards'], ['Frame 101.png', 'billboard'],
+  ['Frame 103.png', 'site-laptop'], ['Frame 102.png', 'app-pocket'], ['Home.png', 'home-video'],
+  // The cover: the mark, big, behind the logo
+  ['Frame 100.png', 'cover'],
 ];
 const firstScreen = [['home_current.png', 'home-before'], ['home_new.png', 'home-after'], ['exit-diabetes_current.png', 'landing-before'], ['exit-diabetes_new.png', 'landing-after']];
 const webp = (img) => img.resize({ width: MAX, withoutEnlargement: true }).webp({ quality: 90, smartSubsample: true });
@@ -25,4 +30,4 @@ for (const [f, name] of firstScreen) {
   const { width } = await sharp(join(src, f)).metadata();
   await webp(sharp(join(src, f)).extract({ left: 0, top: 0, width, height: Math.round((width * 10) / 16) })).toFile(`${out}/${name}.webp`);
 }
-console.log('done; the cover (cover.webp) is made separately from the logo slide');
+console.log('done');
