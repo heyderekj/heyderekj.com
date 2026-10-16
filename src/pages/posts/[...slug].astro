@@ -73,7 +73,6 @@ const postJsonLd = {
 
 const fmtDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
-const fmtShort = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 ---
 <Site
@@ -91,13 +90,6 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
       {d.type !== 'essay' && <a class="post-kind" href={typeHref(d.type)}>{TYPE_LABELS[d.type].one}</a>}
       <time datetime={published}>{fmtDate(d.date)}</time>
       {d.type === 'essay' && <span>· {mins} min read</span>}
-      {revisions.rev > 1 ? (
-        <a href={revisions.historyUrl} target="_blank" rel="noopener" title="Every change, on GitHub">· revised {fmtShort(revisions.updated ?? d.date)} (rev {revisions.rev})</a>
-      ) : d.status === 'working' ? (
-        <a href="/colophon/#revisions" title="Published, and still being worked on">· in progress</a>
-      ) : d.status === 'outdated' ? (
-        <a href="/colophon/#revisions" title="Kept for the record">· may be out of date</a>
-      ) : null}
       {d.type === 'link' && d.link && (
         <span class="post-link-host">
           · {host(d.link)}
