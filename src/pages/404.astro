@@ -1,12 +1,22 @@
 ---
 /**
  * Not found, as a chat with me: I say what I couldn't find, offer the closest pages, and answer
- * suggested replies or anything typed (it searches the site; / opens the shortcuts). "Leave a note"
+ * starter prompts, follow-ups or anything typed (it searches the site; / opens the shortcuts). "Leave a note"
  * really sends one. Runs in client/lost-chat.ts; without JavaScript, plain links.
  */
 import Site from '../layouts/Site.astro';
 import PageHead from '../components/site/PageHead.astro';
+import Icon from '../components/Icon.astro';
 import { imgSrc } from '../lib/img';
+
+// Where to start, like an assistant's empty state (the reply each one sends is `ask`)
+const PROMPTS = [
+  { icon: 'writing', q: 'What have you written lately?', d: 'The newest essays', ask: 'Latest writing' },
+  { icon: 'work', q: 'What have you built?', d: 'Sites, solo and with studios', ask: 'Work' },
+  { icon: 'projects', q: 'Show me your apps', d: 'Testament Made and side projects', ask: 'Projects' },
+  { icon: 'about', q: 'Who are you?', d: 'The short version, and the story', ask: 'About' },
+  { icon: 'mail', q: 'Leave you a note', d: 'Straight to my inbox', ask: 'Leave a note' },
+] as const;
 
 const siteUrl = (Astro.site?.toString() ?? 'https://heyderekj.com').replace(/\/$/, '');
 const canonical = `${siteUrl}/404/`;
@@ -24,6 +34,11 @@ const photo = imgSrc('/assets/about/derek-photo.jpeg', 120);
         <noscript>
           <p class="lost__msg"><span class="lost__bubble">I couldn’t find that page. Try <a href="/">home</a>, <a href="/work/">work</a>, <a href="/projects/">projects</a> or <a href="/about/">about</a>.</span></p>
         </noscript>
+      </div>
+      <div class="lost__prompts" id="lostPrompts" aria-label="Suggestions" hidden>
+        {PROMPTS.map((p) => (
+          <button type="button" class="lost__prompt sq" data-ask={p.ask}><Icon name={p.icon} loop={false} /><b>{p.q}</b><small>{p.d}</small></button>
+        ))}
       </div>
       <form class="lost__input" id="lostForm" autocomplete="off">
         <ul class="lost__slash" id="lostSlash" role="listbox" aria-label="Shortcuts" hidden></ul>

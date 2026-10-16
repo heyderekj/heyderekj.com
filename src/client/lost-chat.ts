@@ -9,9 +9,10 @@ type Item = { k: string; t: string; h: string; y: string; x?: 1; s: string };
 const box = document.querySelector<HTMLElement>('.lost');
 const thread = document.getElementById('lostThread');
 const slash = document.getElementById('lostSlash');
+const prompts = document.getElementById('lostPrompts');
 const form = document.getElementById('lostForm') as HTMLFormElement | null;
 const input = document.getElementById('lostText') as HTMLInputElement | null;
-if (box && thread && slash && form && input) {
+if (box && thread && slash && prompts && form && input) {
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const photo = box.dataset.photo ?? '';
   let index: Promise<Item[]> | null = null;
@@ -29,7 +30,8 @@ if (box && thread && slash && form && input) {
     thread!.append(p); scroll();
   }
   function you(text: string) {
-    thread!.querySelector('.lost__suggest')?.remove();
+    thread!.querySelector('.lost__follow')?.remove();
+    prompts!.hidden = true;
     lastStatus?.remove();
     const p = document.createElement('p'); p.className = 'lost__msg is-you';
     const b = document.createElement('span'); b.className = 'lost__bubble'; b.textContent = text; p.append(b);
@@ -48,19 +50,26 @@ if (box && thread && slash && form && input) {
     if (lastStatus) lastStatus.textContent = 'Read';
     const t = document.createElement('p'); t.className = 'lost__msg is-me lost__typing';
     t.innerHTML = `<img class="lost__face sq" src="${photo}" alt="" /><span class="lost__bubble" aria-label="Derek is typing"><i></i><i></i><i></i></span>`;
-    thread!.append(t); scroll();
+    thread!.append(t); scroll(); box!.classList.add('is-thinking');
     await wait(Math.min(1300, 450 + html.replace(/<[^>]+>/g, '').length * 12));
-    t.remove(); me(html); extra?.();
+    t.remove(); box!.classList.remove('is-thinking'); me(html); extra?.();
     await wait(120);
   }
-  // Suggested replies sit in the thread after my last message, like drafts; they go when you reply
-  function offer(list: string[]) {
-    thread!.querySelector('.lost__suggest')?.remove();
-    const d = document.createElement('div'); d.className = 'lost__suggest'; d.setAttribute('aria-label', 'Suggested replies');
-    d.innerHTML = list.map((c) => `<button type="button">${esc(c)}</button>`).join('');
+  // Follow-ups under my answer, like an assistant's: three things to ask next, never the one just asked
+  const ASKS: [string, string][] = [
+    ['Latest writing', 'What have you written lately?'], ['Work', 'What have you built?'], ['Projects', 'Show me your apps'],
+    ['About', 'Who are you?'], ['Leave a note', 'Leave you a note'], ['Home', 'Take me home'],
+  ];
+  const ASK_OF = Object.fromEntries(ASKS.map(([a, q]) => [q.toLowerCase(), a]));
+  const FOLLOW = '<svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v5.5a2 2 0 0 0 2 2h6.5"/><path d="M10 8l2.5 2.5L10 13"/></svg>';
+  let lastAsk = '';
+  function offer(list?: string[]) {
+    thread!.querySelector('.lost__follow')?.remove();
+    const items = list ? list.map((a) => [a, a] as [string, string]) : ASKS.filter(([a]) => a !== lastAsk).slice(0, 3);
+    const d = document.createElement('div'); d.className = 'lost__follow'; d.setAttribute('aria-label', 'Ask next');
+    d.innerHTML = `<span>${list ? '' : 'Ask next'}</span>` + items.map(([, q]) => `<button type="button">${FOLLOW}${esc(q)}</button>`).join('');
     thread!.append(d); scroll();
   }
-  const MENU = ['Home', 'Latest writing', 'Work', 'Projects', 'About', 'Leave a note'];
 
   // ---- Finding things
   const STOP = new Set(['the', 'and', 'for', 'with', 'www', 'html', 'php', 'index', 'page', 'posts', 'post', 'work', 'p', 'a', 'of', 'to', 'in', 'my', 'is']);
@@ -84,20 +93,22 @@ if (box && thread && slash && form && input) {
     const found = rank(await load(), words(path));
     if (found.length) await say('Were you looking for one of these?', () => links(found.map(card)));
     else await say('It might have moved when I redesigned the site, or the link has a typo.');
-    await say('Tell me what you’re after and I’ll look around, or pick one below.');
-    offer(MENU);
+    await say('Tell me what you’re after and I’ll look around, or start with one of these.');
+    prompts!.hidden = false; requestAnimationFrame(scroll);
   }
 
   async function answer(raw: string) {
     const text = raw.trim(); if (!text) return;
     you(text);
     if (noting) return sendNote(text);
-    const cmd = text.toLowerCase().replace(/^\//, '').replace(/[.!?]+$/, '');
+    const asked = ASK_OF[text.toLowerCase()] ?? text;
+    lastAsk = ASKS.find(([a]) => a === asked)?.[0] ?? '';
+    const cmd = asked.toLowerCase().replace(/^\//, '').replace(/[.!?]+$/, '');
     if (/^(help|commands|\?)$/.test(cmd)) {
       return say('Type anything and I’ll search the site. Or type <code>/</code> for shortcuts: home, writing, work, projects, about, note and clear.');
     }
     if (/^(home|go home|take me home)$/.test(cmd)) { await say('Heading home…'); return void setTimeout(() => { location.href = '/'; }, calm ? 0 : 500); }
-    if (/^(clear|reset)$/.test(cmd)) { thread!.innerHTML = ''; lastStatus = null; return intro(); }
+    if (/^(clear|reset)$/.test(cmd)) { thread!.innerHTML = ''; lastStatus = null; lastAsk = ''; return intro(); }
     if (/^(latest writing|writing|latest|essays|blog|posts)$/.test(cmd)) {
       const all = await load();
       return say('Here’s what I wrote most recently:', () => links(all.filter((i) => i.k === 'Essay').slice(0, 3).map(card).concat({ t: 'Everything I’ve written', h: '/', sub: 'Home' })));
@@ -136,8 +147,9 @@ if (box && thread && slash && form && input) {
   }
   function endNote() { noting = 0; box!.classList.remove('is-noting'); input!.placeholder = 'Message, or / for shortcuts'; }
 
-  async function reply(v: string) { await answer(v); if (!noting && !thread!.querySelector('.lost__suggest')) offer(MENU); }
-  thread.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest('.lost__suggest button'); if (b) reply(b.textContent ?? ''); });
+  async function reply(v: string) { await answer(v); if (!noting && prompts!.hidden && !thread!.querySelector('.lost__follow')) offer(); }
+  thread.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest('.lost__follow button'); if (b) reply(b.textContent ?? ''); });
+  prompts.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('[data-ask]'); if (b) reply(b.querySelector('b')?.textContent ?? b.dataset.ask!); });
 
   // ---- Slash shortcuts: type / for a little menu above the field (arrows and Enter, or click)
   const SHORTCUTS = [

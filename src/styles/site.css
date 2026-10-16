@@ -990,7 +990,7 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .dial__pill.is-current span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
 
 /* 404: a chat with me (pages/404.astro, client/lost-chat.ts) */
-.lost { --r: 24px; --me: var(--tint); --you: #ea580c; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: min(640px, calc(100svh - 260px)); min-height: 440px; margin-top: 8px; overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.lost { --r: 24px; --me: var(--tint); --you: #ea580c; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; height: min(660px, calc(100svh - 260px)); min-height: 440px; margin-top: 8px; overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
 .lost__top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--hair); background: color-mix(in oklch, var(--card) 80%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .lost__top img { --r: 10px; width: 36px; height: 36px; object-fit: cover; }
 .lost__top span { display: grid; line-height: 1.25; }
@@ -1033,12 +1033,33 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .lost.is-noting .lost__input { box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--you) 55%, transparent); }
 @media (prefers-reduced-motion: reduce) { .lost__msg, .lost__links { animation: none; } .lost__typing .lost__bubble i { animation: none; } }
 body.site .lost__input input:focus-visible { outline: none; } /* the field shows focus with its ring */
-/* Suggested replies: drafts in the visitor's colour, right-aligned under my last message */
-.lost__suggest { align-self: flex-end; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 88%; margin-top: 8px; animation: lost-in 320ms var(--ease) 120ms both; }
-.lost__suggest button { padding: 7px 13px; border-radius: 18px 18px 6px 18px; font-size: 14px; font-weight: 500; color: var(--you); background: color-mix(in oklch, var(--you) 7%, var(--card)); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--you) 22%, transparent); transition: background var(--t-ui) var(--ease), color var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
-.lost__suggest button:hover { color: #fff; background: var(--you); box-shadow: none; translate: 0 -1px; }
 /* The slash menu above the field */
 .lost__slash { --r: 14px; position: absolute; left: 0; right: 0; bottom: calc(100% + 8px); z-index: 3; margin: 0; padding: 6px; list-style: none; border-radius: 16px; background: var(--glass); -webkit-backdrop-filter: blur(16px) saturate(150%); backdrop-filter: blur(16px) saturate(150%); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); animation: lost-in 180ms var(--ease) both; }
 .lost__slash li { display: flex; align-items: baseline; gap: 10px; padding: 7px 10px; border-radius: 10px; cursor: pointer; font-size: 14px; color: var(--muted); }
 .lost__slash li code { min-width: 76px; font: 600 13px/1.4 ui-monospace, SFMono-Regular, monospace; color: var(--ink); }
 .lost__slash li[aria-selected="true"], .lost__slash li:hover { background: color-mix(in oklch, var(--ink) 7%, transparent); color: var(--ink); }
+/* Starter prompts, like an assistant's empty state (pages/404.astro) */
+.lost__prompts { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 6px 12px 2px; scroll-snap-type: x proximity; }
+.lost__prompts::-webkit-scrollbar { display: none; }
+.lost__prompt { --r: 14px; flex: 0 0 168px; display: grid; gap: 2px; align-content: start; padding: 11px 12px 12px; text-align: left; scroll-snap-align: start; background: var(--paper); box-shadow: 0 0 0 1px var(--hair); animation: lost-in 320ms var(--ease) both; transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.lost__prompt:nth-child(2) { animation-delay: 60ms; } .lost__prompt:nth-child(3) { animation-delay: 120ms; } .lost__prompt:nth-child(4) { animation-delay: 180ms; } .lost__prompt:nth-child(5) { animation-delay: 240ms; }
+.lost__prompt .icon { font-size: 16px; color: var(--you); margin-bottom: 6px; }
+.lost__prompt b { font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+.lost__prompt small { font-size: 12px; color: var(--muted); line-height: 1.35; }
+.lost__prompt:hover { box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow); translate: 0 -1px; }
+/* Follow-ups under an answer: quiet rows, like an assistant's related questions */
+.lost__follow { display: grid; justify-items: start; gap: 2px; margin: 6px 0 0 34px; animation: lost-in 320ms var(--ease) 120ms both; }
+.lost__follow span:empty { display: none; }
+.lost__follow span { font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em; color: var(--muted); margin: 0 0 2px 2px; }
+.lost__follow button { display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px 5px 6px; border-radius: 10px; font-size: 14px; color: var(--ink-soft); transition: background var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
+.lost__follow button svg { color: var(--muted); font-size: 14px; }
+.lost__follow button:hover { color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.lost__follow button:hover svg { color: var(--you); }
+/* Thinking: a Siri-like glow turns around the field's edge */
+@property --lost-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+.lost__input::before, .lost__input::after { content: ''; position: absolute; inset: -1.5px; border-radius: inherit; padding: 1.5px; background: conic-gradient(from var(--lost-a), #ff7a18, #ff3d77, #a855f7, #3b82f6, #22d3ee, #ff7a18); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 400ms var(--ease); pointer-events: none; animation: lost-spin 2.4s linear infinite; }
+.lost__input::after { inset: -6px; padding: 6px; filter: blur(10px); }
+.lost.is-thinking .lost__input::before { opacity: 1; }
+.lost.is-thinking .lost__input::after { opacity: 0.55; }
+@keyframes lost-spin { to { --lost-a: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .lost__input::before, .lost__input::after { animation: none; } .lost__prompt, .lost__follow { animation: none; } }
