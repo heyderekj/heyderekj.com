@@ -42,7 +42,7 @@
 .hire-cap .row__shot.is-icon { display: grid; place-items: center; background: color-mix(in oklch, var(--ink) 4%, var(--card)); }
 .hire-cap .row__shot.is-icon img { position: static; width: 46%; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: 22%; box-shadow: 0 6px 14px -8px rgb(0 0 0 / 0.4); }
 .hire-cap__text { display: grid; gap: 4px; min-width: 0; }
-.hire-cap__text b { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 650; }
+.hire-cap__text b { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; }
 .hire-cap__text b .icon { font-size: 15px; color: var(--muted); }
 .hire-cap__text > span { font-size: 14.5px; line-height: 1.5; color: var(--ink-soft); text-wrap: pretty; }
 .hire-cap__text small { font-size: 12.5px; color: var(--muted); }
@@ -52,7 +52,7 @@
 .hire-mini { --r: 14px; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 2px 12px; align-items: start; padding: 12px 14px; text-align: left; font: inherit; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
 .hire-mini:hover { translate: 0 -1px; box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow); }
 .hire-mini__icon { --r: 9px; grid-row: 1 / span 2; display: grid; place-items: center; width: 30px; height: 30px; font-size: 15px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
-.hire-mini b { font-size: 15px; font-weight: 650; }
+.hire-mini b { font-size: 15px; font-weight: 600; }
 .hire-mini > span:last-child { font-size: 13px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
 .hire-proof { margin-top: 28px; }
 
@@ -61,7 +61,7 @@
 @media (max-width: 720px) { .hire-app { width: 100%; margin-left: 0; } }
 .est { --r: 26px; overflow: hidden; border-radius: 26px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
 .est__top { position: relative; display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--hair); }
-.est__title { font-size: 15px; font-weight: 650; white-space: nowrap; }
+.est__title { font-size: 15px; font-weight: 600; white-space: nowrap; }
 .est__steps { display: flex; gap: 4px; margin: 0 auto; padding: 0; list-style: none; }
 .est__steps li { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--muted); transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
 .est__steps li i { width: 7px; height: 7px; border-radius: 50%; background: var(--hair); transition: background var(--t-ui) var(--ease); }
