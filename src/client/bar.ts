@@ -1,7 +1,7 @@
 /**
  * The bottom bar (components/Bar.astro). Three states, one pill:
  *   rest   — home mark, where you are, search
- *   menu   — tap the label: places, topics, and how to reach me
+ *   menu   — tap the label: places, and how to reach me
  *   search — press / or tap search: results grow upward as you type
  * Changing state animates the pill's size from what it was to what it becomes; nothing on the page moves.
  */
@@ -87,14 +87,8 @@ if (bar) {
     if (e.key === 'Enter') { const a = results.querySelector<HTMLAnchorElement>(`#hit-${sel}`); if (a) { e.preventDefault(); a.click(); } }
   });
 
-  // ---- Menu: topics filter the writing on the home page, or take you there
+  // ---- Menu
   menu.addEventListener('click', async (e) => {
-    const t = (e.target as HTMLElement).closest<HTMLElement>('[data-topic]');
-    if (t) {
-      const key = t.dataset.topic!;
-      if (bar.dataset.kind === 'home') { document.dispatchEvent(new CustomEvent('topic', { detail: key })); setState('rest'); }
-      else location.href = `/?topic=${key}#writing`;
-    }
     if ((e.target as HTMLElement).closest('[data-copy-email]')) toast(await copyText('derekj@hey.com') ? 'Email copied' : 'Select the address to copy it');
     if ((e.target as HTMLElement).closest('.bar__fig, .bar__nav a')) setState('rest');
   });

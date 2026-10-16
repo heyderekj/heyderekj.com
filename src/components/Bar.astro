@@ -6,7 +6,7 @@
  */
 import Icon from './Icon.astro';
 import { imgSrc } from '../lib/img';
-import { TOPICS, type BarContext } from '../lib/bar';
+import type { BarContext } from '../lib/bar';
 
 interface Props { context?: BarContext }
 const { context = { kind: 'page', title: 'Derek Castelli' } } = Astro.props;
@@ -34,10 +34,6 @@ const nav = [
         {nav.map((n) => (
           <a href={n.href} {...(n.external ? { target: '_blank', rel: 'noopener' } : {})}><Icon name={n.icon} />{n.label}{n.external && <Icon name="arrow-up-right" class="bar__ext" />}</a>
         ))}
-      </div>
-      <div class="bar__group">
-        <span class="bar__lbl">I write about</span>
-        <div class="bar__topics">{TOPICS.map((t) => <button class="wchip sq" data-topic={t.key}>{t.label}</button>)}</div>
       </div>
       <div class="bar__else">
         <button class="bar__mail" data-copy-email>derekj@hey.com <span>Copy</span></button>
