@@ -87,7 +87,7 @@ if (game && grid404 && head) {
   const whoEl = $('.four__who');
   // Who you play: picked at random each game (never the last one twice), unless you pick someone from the faces
   const foesEl = $('.four__foes');
-  foesEl.innerHTML = FOES.map((f) => `<button type="button" class="sq" data-foe="${f.name}" title="Play ${f.name}" aria-label="${f.name}" aria-pressed="false" style="--tone:${f.tone};background-image:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp)"></button>`).join('');
+  foesEl.innerHTML = FOES.map((f) => `<button type="button" class="sq" data-foe="${f.name}" title="Play ${f.name}" aria-label="${f.name}" aria-pressed="false" style="--tone:${f.tone};background:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp) center / cover no-repeat"></button>`).join('');
   let chosen = '';
   function meet(name = chosen) {
     let last = ''; try { last = localStorage.getItem('hdj:four:foe') ?? ''; } catch {}

@@ -1140,7 +1140,7 @@ body.site .four__col:focus-visible { outline: none; }
 .four__pick { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
 .four__pick small { font-size: 12.5px; color: var(--muted); }
 .four__foes { display: inline-flex; gap: 6px; }
-.four__foes button { --r: 9px; width: 30px; height: 30px; padding: 0; background: var(--hair) center / cover no-repeat; filter: grayscale(1); opacity: 0.55; transition: opacity var(--t-ui) var(--ease), filter var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
+.four__foes button { --r: 9px; width: 30px; height: 30px; padding: 0; filter: grayscale(1); opacity: 0.55; transition: opacity var(--t-ui) var(--ease), filter var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
 .four__foes button:hover, .four__foes button:focus-visible { filter: none; opacity: 1; }
 .four__foes button[aria-pressed="true"] { filter: none; opacity: 1; box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px var(--tone); }
 .four[data-turn="me"] .four__foes button:not([aria-pressed="true"]) { pointer-events: none; }
