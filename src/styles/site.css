@@ -1139,14 +1139,30 @@ body.site .four__col:focus-visible { outline: none; }
 .four__name { font-size: 12px; font-weight: 650; letter-spacing: 0.01em; color: color-mix(in oklch, var(--foe, var(--ink)) 70%, var(--ink)); }
 .four__tally { margin: 0; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .four__tally b { color: var(--ink); font-weight: 600; }
-/* The faces you can play: whoever's up in colour with their ring, the rest quiet until you hover */
-.four__pick { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
-.four__pick small { font-size: 12.5px; color: var(--muted); }
-.four__foes { display: inline-flex; gap: 6px; }
-.four__foes button { --r: 9px; width: 30px; height: 30px; padding: 0; filter: grayscale(1); opacity: 0.55; transition: opacity var(--t-ui) var(--ease), filter var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
-.four__foes button:hover, .four__foes button:focus-visible { filter: none; opacity: 1; }
-.four__foes button[aria-pressed="true"] { filter: none; opacity: 1; box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px var(--tone); }
-.four[data-turn="me"] .four__foes button:not([aria-pressed="true"]) { pointer-events: none; }
+/* Their face opens the dial: who you're playing (or random) and the game's settings, like the work dial */
+.four__bar { position: relative; }
+.four__who { position: relative; cursor: pointer; transition: scale var(--t-ui) var(--ease); }
+.four__who:hover, .four__who[aria-expanded="true"] { scale: 1.06; }
+.four__who i { position: absolute; right: -6px; bottom: -6px; display: grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; font-size: 10px; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair), 0 1px 2px rgb(0 0 0 / 0.12); transition: rotate var(--t-ui) var(--ease); }
+.four__who[aria-expanded="true"] i { rotate: 180deg; }
+.four__dial { top: calc(100% + 8px); left: 0; width: 264px; transform-origin: top left; }
+.four__foes { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 0 2px 2px; }
+.four__foes button { display: flex; align-items: center; gap: 8px; padding: 5px 8px 5px 5px; border-radius: 11px; font: 500 13px var(--font); color: var(--ink-soft); transition: background-color var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
+.four__foes button:hover { background: color-mix(in oklch, var(--ink) 5%, transparent); color: var(--ink); }
+.four__foes button i { --r: 7px; flex: none; width: 26px; height: 26px; filter: grayscale(1); opacity: 0.7; transition: filter var(--t-ui) var(--ease), opacity var(--t-ui) var(--ease); }
+.four__foes button:hover i { filter: none; opacity: 1; }
+.four__foes button[aria-pressed="true"] { color: var(--ink); font-weight: 600; background: var(--card); box-shadow: 0 0 0 1px var(--hair), 0 1px 2px rgb(0 0 0 / 0.06); }
+.four__foes button[aria-pressed="true"] i { filter: none; opacity: 1; box-shadow: 0 0 0 1.5px var(--card), 0 0 0 3px var(--tone); }
+.four[data-turn="me"] .four__foes button, .four[data-turn="me"] [data-foe-random] { pointer-events: none; opacity: 0.6; }
+.dial__reset[aria-pressed="true"] { color: var(--ink); background: color-mix(in oklch, var(--ink) 7%, transparent); }
+/* Quit sits at the end of the score line */
+.four__tally button { margin-left: 10px; vertical-align: middle; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease); }
+.four__tally button:hover { color: var(--ink); }
+.four__tally kbd { font: 600 10.5px var(--font); padding: 1px 5px; border-radius: 5px; box-shadow: inset 0 0 0 1px var(--hair); }
+/* Settings: no ghost chip, or less motion */
+.four.no-hints[data-turn="you"] .four__col i.next { background-image: none; background-color: color-mix(in srgb, var(--ink) 7%, transparent); box-shadow: inset 0 3px 6px -2px rgb(0 0 0 / 0.14); animation: none; }
+.four.is-calm .four__col i, .four.is-calm .four__col i.drop, .four.is-calm .four__col i.win, .four.is-calm .four__col i.next, .four.is-calm .four__cats * { animation: none !important; }
+.four__controls:not(:has(> :not([hidden]))) { display: none; }
 .four__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .four__controls button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease); }
 .four__controls button:hover { color: var(--ink); }
@@ -1243,7 +1259,7 @@ body.site .four__col:focus-visible { outline: none; }
 /* Key hints mean nothing without a keyboard: the letters on the chat's choices and the game's esc / ↵.
    The letters keep their grid slot (at no width) so the rows don't reflow */
 @media (hover: none) and (pointer: coarse) {
-  .four__controls kbd { display: none; }
+  .four__controls kbd, .four__tally kbd { display: none; }
   .lost__key { visibility: hidden; min-width: 0; width: 0; padding: 0; margin: 0 !important; box-shadow: none; }
 }
 .four__cats { position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit; overflow: hidden; }

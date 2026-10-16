@@ -43,17 +43,26 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
         <div class="four__board" role="group" aria-label="Board: pick a column"></div>
         <template id="fourPaw"><Icon name="paw" loop={false} /></template>
         <div class="four__bar">
-          <p class="four__say" aria-live="polite"><span class="four__who sq" role="img"></span><span class="four__text"><b class="four__name"></b><span class="four__line"></span></span></p>
-          <p class="four__tally">Level <b data-four="level">1</b> · <b data-four="score">0</b> pts · best <b data-four="best">0</b></p>
+          <div class="four__say">
+            <button type="button" class="four__who sq" aria-haspopup="dialog" aria-expanded="false" aria-controls="fourDial" title="Who you’re playing, and settings"><i aria-hidden="true"><Icon name="chevron-down" loop={false} /></i></button>
+            <span class="four__text" aria-live="polite"><b class="four__name"></b><span class="four__line"></span></span>
+          </div>
+          <p class="four__tally">Level <b data-four="level">1</b> · <b data-four="score">0</b> pts · best <b data-four="best">0</b><button type="button" data-four-quit>Quit <kbd>esc</kbd></button></p>
+          <div class="dial four__dial" id="fourDial" role="dialog" aria-label="Who you’re playing, and settings" hidden>
+            <div class="dial__head"><b>Playing</b><button type="button" class="dial__reset" data-foe-random aria-pressed="true">Random</button></div>
+            <div class="four__foes" role="group" aria-label="Pick who you play"></div>
+            <div class="dial__head dial__head--gap"><b>Settings</b></div>
+            <label class="dial__row dial__switch"><span>Sound</span><input type="checkbox" data-four-set="sound" /><i aria-hidden="true"></i></label>
+            <label class="dial__row dial__switch"><span>Show where it lands</span><input type="checkbox" data-four-set="hints" /><i aria-hidden="true"></i></label>
+            <label class="dial__row dial__switch"><span>Quick turns</span><input type="checkbox" data-four-set="quick" /><i aria-hidden="true"></i></label>
+            <label class="dial__row dial__switch"><span>Less motion</span><input type="checkbox" data-four-set="calm" /><i aria-hidden="true"></i></label>
+          </div>
         </div>
         <div class="four__controls">
           <button type="button" class="is-primary" data-four-next hidden>Next level</button>
           <button type="button" data-four-stop hidden>Stop here</button>
           <button type="button" class="is-primary" data-four-card hidden>Make a card</button>
           <button type="button" data-four-again hidden>Play again</button>
-          <button type="button" data-four-sound aria-pressed="true">Sound on</button>
-          <button type="button" data-four-quit>Quit <kbd>esc</kbd></button>
-          <span class="four__pick"><small>Playing</small><span class="four__foes" role="group" aria-label="Who you’re playing. Pick one, or they’re picked at random"></span></span>
         </div>
         <div class="four-card" role="dialog" aria-label="Make a card" hidden>
           <div class="four-card__preview">

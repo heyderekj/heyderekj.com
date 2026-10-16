@@ -1,0 +1,37 @@
+---
+/** A list of one kind of post: Posts (the long-form ones, at /posts/), Notes or Links, with chips to switch. */
+import Site from '../../layouts/Site.astro';
+import PageHead from './PageHead.astro';
+import PostIndex from './PostIndex.astro';
+import { getPublishedPosts, TYPE_LABELS, typeHref, type PostType } from '../../lib/posts';
+
+const INTROS: Record<PostType, string> = {
+  essay: 'Long-form writing with an argument. Each one carries a status and revision number, and changes over time.',
+  note: 'Short thoughts, half-formed ideas, and things I’m noticing. Less polish, more often.',
+  link: 'Things worth reading elsewhere, with a bit of commentary. The title goes to the source; ★ is the permalink.',
+};
+
+interface Props {
+  type: PostType;
+}
+
+const { type } = Astro.props;
+const all = await getPublishedPosts();
+const entries = all.filter((p) => p.data.type === type);
+const counts = { essay: 0, note: 0, link: 0 } as Record<PostType, number>;
+for (const p of all) counts[p.data.type]++;
+const label = TYPE_LABELS[type];
+---
+<Site bar={{ kind: 'page', title: label.many }} title={`${label.many} — Derek Castelli`} description={INTROS[type]}>
+  <main class="home">
+    <PageHead title={label.many} meta={`Writing · ${entries.length}`}><Fragment slot="lede">{INTROS[type]}</Fragment></PageHead>
+    <div class="work-chips">
+      <a class="wchip sq" href="/#writing">All <span>{all.length}</span></a>
+      {(Object.keys(TYPE_LABELS) as PostType[]).filter((k) => counts[k]).map((k) => (
+        <a class:list={['wchip sq', k === type && 'is-current']} href={typeHref(k)} aria-current={k === type ? 'page' : undefined}>{TYPE_LABELS[k].many} <span>{counts[k]}</span></a>
+      ))}
+    </div>
+    <PostIndex posts={entries} show={Infinity} />
+  </main>
+  <script src="../../client/peek.ts"></script>
+</Site>

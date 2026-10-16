@@ -1,6 +1,6 @@
 # Cloudflare redirects Cloudflare ignores `force`; redirects always win over assets.
-/posts / 301
-/posts/ / 301
+/posts/essays /posts/ 301
+/posts/essays/ /posts/ 301
 /now /about/ 301
 /now/ /about/ 301
 /uses /library/tools/ 301

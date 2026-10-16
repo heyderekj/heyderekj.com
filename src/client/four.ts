@@ -16,11 +16,15 @@ const grid404 = document.querySelector<HTMLElement>('.lost-404');
 const head = document.querySelector<HTMLElement>('.lost-head');
 if (game && grid404 && head) {
   const $ = <T extends HTMLElement>(s: string) => game.querySelector<T>(s)!;
-  const board = $('.four__board'), say = $('.four__line'), soundBtn = $<HTMLButtonElement>('[data-four-sound]');
+  const board = $('.four__board'), say = $('.four__line');
   const levelEl = $('[data-four="level"]'), scoreEl = $('[data-four="score"]'), bestEl = $('[data-four="best"]');
   const againBtn = $<HTMLButtonElement>('[data-four-again]'), cardBtn = $<HTMLButtonElement>('[data-four-card]');
   const nextBtn = $<HTMLButtonElement>('[data-four-next]'), stopBtn = $<HTMLButtonElement>('[data-four-stop]');
-  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Settings, from the dial under their face: sound, the ghost chip, quick turns, less motion (kept in this browser)
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefs = { sound: true, hints: true, quick: false, calm: false };
+  try { Object.assign(prefs, JSON.parse(localStorage.getItem('hdj:four:set') || '{}')); if (localStorage.getItem('hdj:four:sound') === 'off') prefs.sound = false; } catch {}
+  let calm = reduce || prefs.calm;
   const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
 
   // ---- Who you're playing: one of the animals, each with their own way of playing and talking
@@ -87,7 +91,8 @@ if (game && grid404 && head) {
   const whoEl = $('.four__who');
   // Who you play: picked at random each game (never the last one twice), unless you pick someone from the faces
   const foesEl = $('.four__foes');
-  foesEl.innerHTML = FOES.map((f) => `<button type="button" class="sq" data-foe="${f.name}" title="Play ${f.name}" aria-label="${f.name}" aria-pressed="false" style="--tone:${f.tone};background:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp) center / cover no-repeat"></button>`).join('');
+  foesEl.innerHTML = FOES.map((f) => `<button type="button" data-foe="${f.name}" aria-pressed="false" style="--tone:${f.tone}"><i class="sq" style="background:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp) center / cover no-repeat"></i>${f.name}</button>`).join('');
+  const randomBtn = $<HTMLButtonElement>('[data-foe-random]');
   let chosen = '';
   function meet(name = chosen) {
     let last = ''; try { last = localStorage.getItem('hdj:four:foe') ?? ''; } catch {}
@@ -96,22 +101,19 @@ if (game && grid404 && head) {
     try { localStorage.setItem('hdj:four:foe', foe.name); } catch {}
     game!.style.setProperty('--foe', foe.tone); game!.style.setProperty('--foe-ink', foe.toneInk ?? '#fff');
     game!.style.setProperty('--foe-chip', `url(/images/four/chip-${foe.name.toLowerCase()}.webp)`); // their chip, in their colour
-    whoEl.style.backgroundImage = `url(/images/four/pet-${foe.name.toLowerCase()}-sm.webp)`; whoEl.setAttribute('aria-label', foe.name); // their face, ringed in their colour
+    whoEl.style.background = `url(/images/four/pet-${foe.name.toLowerCase()}-sm.webp) center / cover no-repeat`; whoEl.setAttribute('aria-label', foe.name); // their face, ringed in their colour
     $('.four__name').textContent = foe.name;
     foesEl.querySelectorAll<HTMLElement>('[data-foe]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.foe === foe.name)));
+    randomBtn.setAttribute('aria-pressed', String(!chosen));
   }
   const LINES = { get start() { return foe.lines.start; }, level: (l: number) => foe.lines.level(l), get mine() { return foe.lines.mine; }, get block() { return foe.lines.block; }, get youWin() { return foe.lines.youWin; }, get iWin() { return foe.lines.iWin; }, get draw() { return foe.lines.draw; } };
   const sayEl = say.closest<HTMLElement>('.four__say')!;
   const talk = (t: string) => { say.textContent = t; sayEl.classList.remove('is-new'); void say.offsetWidth; sayEl.classList.add('is-new'); };
 
   // ---- Sound: tiny synth blips (Web Audio, resumed on the first click)
-  let ac: AudioContext | null = null, sound = true;
-  try { sound = localStorage.getItem('hdj:four:sound') !== 'off'; } catch {}
-  const paintSound = () => { soundBtn.textContent = sound ? 'Sound on' : 'Sound off'; soundBtn.setAttribute('aria-pressed', String(sound)); };
-  paintSound();
-  soundBtn.addEventListener('click', () => { sound = !sound; try { localStorage.setItem('hdj:four:sound', sound ? 'on' : 'off'); } catch {} paintSound(); });
+  let ac: AudioContext | null = null;
   async function beep(freqs: number[], step = 0.07, type: OscillatorType = 'square', vol = 0.06) {
-    if (!sound) return;
+    if (!prefs.sound) return;
     try { ac ??= new AudioContext(); await ac.resume(); } catch { return; }
     freqs.forEach((f, i) => {
       const t = ac!.currentTime + i * step, o = ac!.createOscillator(), g = ac!.createGain();
@@ -263,7 +265,7 @@ if (game && grid404 && head) {
     if (full(b)) return roundDraw();
     turn = 'me'; paint();
     game!.classList.add('is-thinking');
-    await new Promise((r) => setTimeout(r, calm ? 150 : foe.delay[0] + Math.random() * (foe.delay[1] - foe.delay[0])));
+    await new Promise((r) => setTimeout(r, calm ? 150 : (foe.delay[0] + Math.random() * (foe.delay[1] - foe.delay[0])) * (prefs.quick ? 0.3 : 1)));
     const threat = ORDER.find((cc) => { const r = open(b, cc); if (r < 0) return false; b[r * COLS + cc] = 1; const w = won(b, 1); b[r * COLS + cc] = 0; return Boolean(w); });
     const mine = think(b, level);
     game!.classList.remove('is-thinking');
@@ -332,9 +334,11 @@ if (game && grid404 && head) {
   board.addEventListener('pointerover', (e) => { const col = (e.target as HTMLElement).closest<HTMLElement>('.four__col'); if (col) { aim = Number(col.dataset.col); paint(); } });
   game.addEventListener('keydown', (e) => {
     if ((e.target as HTMLElement).closest('.four-card')) return;
+    if ((e.target as HTMLElement).closest('.four__dial') && e.key !== 'Escape') return;
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); aim = (aim + (e.key === 'ArrowRight' ? 1 : -1) + COLS) % COLS; cols[aim].focus(); paint(); }
     if (/^[1-7]$/.test(e.key)) { aim = Number(e.key) - 1; cols[aim].focus(); youMove(aim); }
     if (e.key === 'Enter' && !nextBtn.hidden && e.target !== stopBtn) { e.preventDefault(); next(); }
+    if (e.key === 'Escape' && !dial.hidden) { closeDial(); whoEl.focus(); return; }
     if (e.key === 'Escape') { quit(); document.querySelector<HTMLElement>('[data-four-play]')?.focus(); }
   });
   $('[data-four-quit]').addEventListener('click', quit);
@@ -347,9 +351,30 @@ if (game && grid404 && head) {
   againBtn.addEventListener('click', rematch);
   foesEl.addEventListener('click', (e) => {
     const name = (e.target as HTMLElement).closest<HTMLElement>('[data-foe]')?.dataset.foe;
-    if (!name || name === foe.name || turn === 'me') return; // not mid-move
-    chosen = name; beep([523, 659], 0.06); rematch(); cols[aim].focus({ preventScroll: true });
+    if (!name || turn === 'me') return; // not mid-move
+    const same = name === foe.name; chosen = name; randomBtn.setAttribute('aria-pressed', 'false');
+    closeDial(); if (same) return;
+    beep([523, 659], 0.06); rematch(); cols[aim].focus({ preventScroll: true });
   });
+  randomBtn.addEventListener('click', () => { if (turn === 'me') return; chosen = ''; closeDial(); beep([523, 659, 784], 0.05); rematch(); cols[aim].focus({ preventScroll: true }); });
+
+  // ---- The dial: their face opens it
+  const dial = $('.four__dial');
+  const openDial = () => { dial.hidden = false; dial.classList.remove('is-in'); void dial.offsetWidth; dial.classList.add('is-in'); whoEl.setAttribute('aria-expanded', 'true'); };
+  function closeDial() { if (dial.hidden) return; dial.hidden = true; whoEl.setAttribute('aria-expanded', 'false'); }
+  whoEl.addEventListener('click', () => (dial.hidden ? openDial() : closeDial()));
+  document.addEventListener('pointerdown', (e) => { if (!dial.hidden && !(e.target as HTMLElement).closest('.four__dial, .four__who')) closeDial(); });
+  const applyPrefs = () => {
+    calm = reduce || prefs.calm;
+    game.classList.toggle('no-hints', !prefs.hints); game.classList.toggle('is-calm', calm);
+    dial.querySelectorAll<HTMLInputElement>('[data-four-set]').forEach((x) => (x.checked = prefs[x.dataset.fourSet as keyof typeof prefs]));
+  };
+  dial.querySelectorAll<HTMLInputElement>('[data-four-set]').forEach((x) => x.addEventListener('change', () => {
+    prefs[x.dataset.fourSet as keyof typeof prefs] = x.checked;
+    try { localStorage.setItem('hdj:four:set', JSON.stringify(prefs)); localStorage.removeItem('hdj:four:sound'); } catch {}
+    applyPrefs(); if (x.dataset.fourSet === 'sound' && x.checked) beep([659, 784], 0.06);
+  }));
+  applyPrefs();
   nextBtn.addEventListener('click', next);
   stopBtn.addEventListener('click', stop);
   cardBtn.addEventListener('click', () => { if (lastGame) openCard(lastGame); });

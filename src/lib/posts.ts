@@ -37,7 +37,7 @@ export function topicHref(tag: string): string {
 }
 
 export function typeHref(type: PostType): string {
-  return `/posts/${TYPE_LABELS[type].path}/`;
+  return type === 'essay' ? '/posts/' : `/posts/${TYPE_LABELS[type].path}/`;
 }
 
 /** Markdown / MDX body → plain text (good enough for excerpts and feed summaries). */
