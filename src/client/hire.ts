@@ -219,6 +219,20 @@ if (form) {
   // Copy my email
   $$<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', async () => { if (await copyText(b.dataset.copy!)) toast('Email copied'); }));
 
+  // What people say: a slider under the intro, moving on every 7 seconds unless you're reading it
+  const said = document.querySelector<HTMLElement>('.hire-said');
+  if (said) {
+    const track = $('.said', said), cards = $$('.said__card', track), dots = $$('.hire-said__dots i', said);
+    const index = () => Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+    const go = (i: number) => track.scrollTo({ left: ((i + cards.length) % cards.length) * track.clientWidth, behavior: calm() ? 'auto' : 'smooth' });
+    track.addEventListener('scroll', () => dots.forEach((d, n) => d.classList.toggle('is-on', n === index())), { passive: true });
+    $$<HTMLButtonElement>('[data-said]', said).forEach((b) => b.addEventListener('click', () => go(index() + Number(b.dataset.said))));
+    let held = false;
+    said.addEventListener('pointerenter', () => (held = true)); said.addEventListener('pointerleave', () => (held = false));
+    said.addEventListener('focusin', () => (held = true)); said.addEventListener('focusout', () => (held = false));
+    if (!calm()) setInterval(() => { if (!held && !document.hidden) go(index() + 1); }, 7000);
+  }
+
   // The examples strips under What I do scroll sideways with a plain mouse wheel too
   $$('.hire-cap__strip').forEach((strip) => strip.addEventListener('wheel', (e) => {
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // a trackpad already scrolls it

@@ -17,7 +17,7 @@ import '../styles/hire.css';
 
 const work = await getPublishedWork();
 
-// Each service's examples, newest first: a write-up's first shot, or one of my apps (its icon or picture)
+// Each service's examples, in a chosen order: a write-up's first shot, or one of my apps (its icon or picture)
 const apps = await getApps();
 type Layer = { src: string; title: string; href: string; at: number; frame?: { class?: string; style?: string }; icon?: boolean; mesh?: string };
 const stacks = Object.fromEntries(await Promise.all(SERVICES.map(async (s) => {
@@ -31,7 +31,7 @@ const stacks = Object.fromEntries(await Promise.all(SERVICES.map(async (s) => {
     const a = apps.find((x) => x.slug === ex.app); if (!a) return null;
     const icon = ex.show === 'icon' || comingSoon(a), src = icon ? a.data.icon : appPicture(a);
     return src ? { src: imgSrc(src, icon ? 240 : 640), title: a.data.name, href: a.data.url || '/projects/', at: Date.UTC(a.data.year ?? new Date().getUTCFullYear(), 0), icon, mesh: a.slug } : null;
-  }))).filter((l): l is Layer => Boolean(l)).sort((x, y) => y.at - x.at);
+  }))).filter((l): l is Layer => Boolean(l)); // in the order the data file gives, strongest first
   return [s.id, layers] as const;
 })));
 
@@ -57,6 +57,15 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
     </header>
     <p class="lede hire-lede">I’m Derek, a self-taught designer in Des Moines, designing since 2010. I make sites, logos and brands, give honest feedback, and help put AI to work where it helps. You’ll work with me directly, from the first call to launch.</p>
 
+    <section class="hire-said" aria-label="What people say" aria-roledescription="carousel">
+      <Said />
+      <div class="hire-said__nav">
+        <button type="button" class="sq" data-said="-1" aria-label="Previous"><Icon name="arrow-left" loop={false} /></button>
+        <span class="hire-said__dots" aria-hidden="true">{workTestimonials.map((_, i) => <i class:list={[!i && 'is-on']}></i>)}</span>
+        <button type="button" class="sq" data-said="1" aria-label="Next"><Icon name="arrow-right" loop={false} /></button>
+      </div>
+    </section>
+
     <h2 class="h">What I do</h2>
     <div class="hire-caps">
       {SERVICES.filter((s) => stacks[s.id].length).map((s) => (
@@ -67,7 +76,7 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
           <span class="hire-cap__text">
             <b><Icon name={s.icon as never} loop={false} /> {s.name}</b>
             <span>{s.line}</span>
-            <small>{stacks[s.id].length} examples, newest first</small>
+            <small>{stacks[s.id].length} examples</small>
           </span>
           <div class="hire-cap__strip" aria-label={`${s.name}: examples`}>
             {stacks[s.id].map((l, i) => (
@@ -88,9 +97,6 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
           <span>{s.line}</span>
         </button>
       ))}
-    </div>
-    <div class="hire-proof">
-      <Said testimonials={workTestimonials.slice(0, 2)} />
     </div>
 
     <section class="hire-app" id="estimate" aria-label="Get an estimate">

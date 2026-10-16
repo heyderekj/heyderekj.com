@@ -66,7 +66,17 @@
 .hire-mini__icon { --r: 9px; grid-row: 1 / span 2; display: grid; place-items: center; width: 30px; height: 30px; font-size: 15px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
 .hire-mini b { font-size: 15px; font-weight: 600; }
 .hire-mini > span:last-child { font-size: 13px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
-.hire-proof { margin-top: 28px; }
+/* What people say: one at a time, sliding, under the intro */
+.hire-said { display: grid; gap: 10px; margin-top: 26px; }
+.hire-said .said { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; align-items: stretch; }
+.hire-said .said::-webkit-scrollbar { display: none; }
+.hire-said .said__card { flex: 0 0 100%; scroll-snap-align: start; }
+.hire-said__nav { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.hire-said__nav button { --r: 999px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; font-size: 14px; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease); }
+.hire-said__nav button:hover { color: var(--ink); }
+.hire-said__dots { display: flex; gap: 6px; }
+.hire-said__dots i { width: 6px; height: 6px; border-radius: 999px; background: var(--hair); transition: width 240ms var(--ease), background-color 240ms var(--ease); }
+.hire-said__dots i.is-on { width: 18px; background: var(--ink); }
 
 /* The estimate, as a small app: wider than the column */
 .hire-app { --est: min(72rem, calc(100vw - 32px)); width: var(--est); margin: 64px 0 0 calc((var(--read) - var(--est)) / 2); scroll-margin-top: 20px; }
