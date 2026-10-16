@@ -1,7 +1,7 @@
 ---
 /**
  * Projects: what I'm building now (the Testament Made apps), then every side project since 2008
- * set as a periodic table: one row per year, one element per project. Open an element to read
+ * set as a periodic table: one row per year, newest first, one element per project. Open an element to read
  * what it was; pick a family to light it up (client/elements.ts).
  */
 import { getCollection } from 'astro:content';
@@ -58,7 +58,7 @@ const archive = all
   }));
 
 const first = archive[0].year, last = archive[archive.length - 1].year;
-const years = Array.from({ length: last - first + 1 }, (_, i) => first + i).map((y) => ({ y, items: archive.filter((a) => a.year === y) }));
+const years = Array.from({ length: last - first + 1 }, (_, i) => first + i).map((y) => ({ y, items: archive.filter((a) => a.year === y).reverse() })).reverse();
 const families = FAMILIES.map((f) => ({ ...f, n: archive.filter((a) => a.family === f.key).length })).filter((f) => f.n);
 ---
 <Site
@@ -104,7 +104,7 @@ const families = FAMILIES.map((f) => ({ ...f, n: archive.filter((a) => a.family 
           <span class="pt__year">{y}</span>
           <div class="pt__row">
             {items.map((a) => (
-              <button type="button" class={`pt__el sq pt--${a.family}`} data-family={a.family} aria-expanded="false" aria-controls={`pt-${a.slug}`} style={`--d:${a.no}`}>
+              <button type="button" class={`pt__el sq pt--${a.family}`} data-family={a.family} aria-expanded="false" aria-controls={`pt-${a.slug}`} style={`--d:${archive.length + 1 - a.no}`}>
                 <span class="pt__no">{a.no}</span>
                 <span class="pt__sym" aria-hidden="true">{a.sym}</span>
                 <span class="pt__name">{a.name}</span>
