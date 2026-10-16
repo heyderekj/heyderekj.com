@@ -10,7 +10,7 @@ export interface Answers {
   services: ServiceId[];
   site?: { kind: 'new' | 'redesign'; pages: number; cms: boolean; scope: 'both' | 'design' | 'build'; platform: 'webflow' | 'open' };
   logo?: { kind: 'new' | 'refresh'; type: 'wordmark' | 'mark' | 'both' };
-  rebrand?: { has: 'keepLogo' | 'full' };
+  rebrand?: { has: 'keepLogo' | 'full'; sprints: '1' | '2' | '3' };
   feedback?: { on: 'site' | 'app' | 'brand'; how: 'notes' | 'call' };
   ai?: { kind: 'workflow' | 'tool' | 'prototype'; size: 'small' | 'medium' | 'large' };
   retainer?: boolean;
@@ -27,7 +27,7 @@ export interface Estimate { lines: Line[]; total: number; monthly: number; plan:
 export const DEFAULTS = {
   site: { kind: 'new', pages: 5, cms: false, scope: 'both', platform: 'webflow' },
   logo: { kind: 'new', type: 'both' },
-  rebrand: { has: 'full' },
+  rebrand: { has: 'full', sprints: '1' },
   feedback: { on: 'site', how: 'notes' },
   ai: { kind: 'workflow', size: 'small' },
 } as const;
@@ -53,7 +53,7 @@ export function clean(raw: unknown): Answers {
     };
   }
   if (services.includes('logo')) { const s = o('logo'); a.logo = { kind: pick(s.kind, ['new', 'refresh'] as const, DEFAULTS.logo.kind), type: pick(s.type, ['wordmark', 'mark', 'both'] as const, DEFAULTS.logo.type) }; }
-  if (services.includes('rebrand')) a.rebrand = { has: pick(o('rebrand').has, ['keepLogo', 'full'] as const, DEFAULTS.rebrand.has) };
+  if (services.includes('rebrand')) a.rebrand = { has: pick(o('rebrand').has, ['keepLogo', 'full'] as const, DEFAULTS.rebrand.has), sprints: pick(String(o('rebrand').sprints ?? ''), ['1', '2', '3'] as const, DEFAULTS.rebrand.sprints) };
   if (services.includes('feedback')) { const s = o('feedback'); a.feedback = { on: pick(s.on, ['site', 'app', 'brand'] as const, DEFAULTS.feedback.on), how: pick(s.how, ['notes', 'call'] as const, DEFAULTS.feedback.how) }; }
   if (services.includes('ai')) { const s = o('ai'); a.ai = { kind: pick(s.kind, ['workflow', 'tool', 'prototype'] as const, DEFAULTS.ai.kind), size: pick(s.size, ['small', 'medium', 'large'] as const, DEFAULTS.ai.size) }; }
   return a;
@@ -83,9 +83,12 @@ export function estimate(a: Answers): Estimate {
       : { title: `New logo`, desc: `${type === 'wordmark' ? 'A wordmark' : type === 'mark' ? 'A mark' : 'A mark and a wordmark'}, from a few directions down to one. Two rounds of revision, and every file you’ll need.`, price: PRICES.logo.new[type], step: 'logo' });
   }
   if (a.rebrand) {
-    lines.push(a.rebrand.has === 'keepLogo'
-      ? { title: 'Rebrand, keeping your logo', desc: 'Type, color and a short guide built around the logo you have.', price: PRICES.rebrand.keepLogo, step: 'rebrand' }
-      : { title: 'Full rebrand', desc: 'A new logo with the type, color and short guide around it, so everything feels like the same place.', price: PRICES.rebrand.full, step: 'rebrand' });
+    const n = Number(a.rebrand.sprints), core = a.rebrand.has === 'keepLogo' ? 'type, color and a short guide around the logo you have' : 'a logo, type, color and a short guide';
+    lines.push({
+      title: `Brand sprint${n > 1 ? 's' : ''} × ${n}`,
+      desc: `A week each. The first gets ${core}, like CrowdHealth’s.${n > 1 ? ' The second puts it to work: templates, social and a fuller guide.' : ''}${n > 2 ? ' The third leaves room for more directions and more of it in use.' : ''}`,
+      price: n * PRICES.rebrand.sprint, step: 'rebrand',
+    });
   }
   if (a.feedback) {
     const on = { site: 'your site', app: 'your app', brand: 'your brand' }[a.feedback.on];
@@ -101,7 +104,8 @@ export function estimate(a: Answers): Estimate {
   // Starting right away moves other work around
   const rush = TIMELINE[a.timeline ?? 'flexible'].rush, core = lines.reduce((t, l) => t + l.price, 0);
   if (rush && core) lines.push({ title: 'Starting right away', desc: `A ${Math.round(rush * 100)}% rush, for moving other work around to begin within a few weeks.`, price: round50(core * rush), step: 'timing' });
-  if (lines.length && (a.site || a.logo || a.rebrand)) {
+  // Sprints are time-boxed, so only sites and logos count rounds of revision
+  if (lines.length && (a.site || a.logo)) {
     lines.push({ title: 'More than the included revisions', desc: 'Any round beyond what’s included above.', price: RATE, unit: '/hr' });
   }
   if (a.retainer) {
@@ -109,17 +113,24 @@ export function estimate(a: Answers): Estimate {
   }
   const total = lines.filter((l) => !l.unit).reduce((t, l) => t + l.price, 0);
   const monthly = lines.filter((l) => l.unit === '/mo').reduce((t, l) => t + l.price, 0);
-  const plan = payPlan(a, lines, total), steps = PLANS[plan].steps.map((x) => ({ ...x }));
+  const plan = payPlan(a, lines, total), sprints = Number(a.rebrand?.sprints ?? 1);
+  // Sprints: one is half to book and half when it wraps; more are each paid as they start
+  const steps = plan !== 'sprints' ? PLANS[plan].steps.map((x) => ({ ...x }))
+    : sprints === 1 ? [{ pct: 50, when: 'To book the sprint', after: 'is due' }, { pct: 50, when: 'When it wraps, the remaining', after: 'is due' }]
+    : Array.from({ length: sprints }, (_, i) => ({ pct: Math.round(100 / sprints), when: i ? `At the start of sprint ${i + 1}` : 'To book the first sprint', after: 'is due' }));
+  if (plan === 'sprints') steps[steps.length - 1].pct = 100 - steps.slice(0, -1).reduce((t, x) => t + x.pct, 0);
   // Starting right away moves some of the second payment into the deposit
-  const asap = a.timeline === 'asap' && steps.length > 1 && steps[0].pct < RUSH_DEPOSIT.upTo;
+  const asap = plan !== 'sprints' && a.timeline === 'asap' && steps.length > 1 && steps[0].pct < RUSH_DEPOSIT.upTo;
   if (asap) { const d = Math.min(RUSH_DEPOSIT.add, RUSH_DEPOSIT.upTo - steps[0].pct, steps[1].pct - 10); steps[0].pct += d; steps[1].pct -= d; }
   let left = total;
   const payments = steps.map((p, i) => {
-    const amount = i === steps.length - 1 ? left : Math.round((total * p.pct) / 100);
+    // Sprints split evenly to the dollar; the rest by percent, the last taking what's left
+    const amount = i === steps.length - 1 ? left : plan === 'sprints' ? Math.round(total / steps.length) : Math.round((total * p.pct) / 100);
     left -= amount;
     return { when: p.when, pct: p.pct, amount, after: p.after };
   });
-  const terms = [total ? PLANS[plan].why : '', total && asap ? RUSH_DEPOSIT.why : '', monthly ? RETAINER_TERMS : ''].filter(Boolean).join(' ');
+  const why = plan === 'sprints' && sprints === 1 ? 'One sprint: half to book it, half when it wraps.' : PLANS[plan].why;
+  const terms = [total ? why : '', total && asap ? RUSH_DEPOSIT.why : '', monthly ? RETAINER_TERMS : ''].filter(Boolean).join(' ');
   return { lines, total, monthly, plan, terms, payments: total ? payments : [] };
 }
 
@@ -134,7 +145,7 @@ export function payPlan(a: Answers, lines: Line[], total: number): string {
   // AI and brand work together: paid the way the bigger part is
   const sum = (steps: string[]) => lines.filter((l) => l.step && steps.includes(l.step)).reduce((t, l) => t + l.price, 0);
   if (a.ai && (!brand || sum(['ai']) >= sum(['logo', 'rebrand']))) return a.ai.size === 'large' ? 'aiLarge' : 'ai';
-  return 'brand';
+  return a.rebrand ? 'sprints' : 'brand';
 }
 
 // ---- When it happens
@@ -183,7 +194,8 @@ export function schedule(a: Answers, e: Estimate, free: string, today: string): 
   const brand = a.logo || a.rebrand, W = weeks(hours(['site', 'logo', 'rebrand', 'ai', 'feedback']));
   if (brand && a.site) {
     const b = weeks(hours(['logo', 'rebrand'])), s = weeks(hours(['site']));
-    steps.push({ title: 'Brand kickoff', when: start, desc: `First directions by ${short(phase(Math.max(1.5, 0.4 * b + 1)))}, final files by ${short(phase(Math.max(1, 0.6 * b + 1)))}.` });
+    if (a.rebrand) { const n = Number(a.rebrand.sprints); steps.push({ title: `Brand sprint${n > 1 ? 's' : ''}`, when: start, desc: `${n > 1 ? `${n} weeks, ` : 'A week, '}final files by ${short(phase(n - 3 / 7))}.` }); }
+    else steps.push({ title: 'Brand kickoff', when: start, desc: `First directions by ${short(phase(Math.max(1.5, 0.4 * b + 1)))}, final files by ${short(phase(Math.max(1, 0.6 * b + 1)))}.` });
     const site = t = monday(plus(t, 1));
     steps.push({ title: 'Site kickoff', when: site, desc: `Design through ${short(phase(Math.max(2, 0.5 * s + 1.5)))}, build through ${short(phase(Math.max(1.5, 0.3 * s + 1.2)))}.` });
     steps.push({ title: 'Launch', when: phase(1) });
@@ -192,6 +204,10 @@ export function schedule(a: Answers, e: Estimate, free: string, today: string): 
     if (scope === 'design') { steps.push({ title: 'Kickoff', when: start, desc: 'Designs for every page, ready to hand off.' }); steps.push({ title: 'Design handoff', when: phase(Math.max(2, W + 1)) }); }
     else if (scope === 'build') { steps.push({ title: 'Kickoff', when: start, desc: `Build through ${short(phase(Math.max(1.5, W + 1)))}.` }); steps.push({ title: 'Launch', when: phase(1) }); }
     else { steps.push({ title: 'Kickoff', when: start, desc: `Design through ${short(phase(Math.max(2, 0.5 * W + 1.5)))}, build through ${short(phase(Math.max(1.5, 0.3 * W + 1.2)))}.` }); steps.push({ title: 'Launch', when: phase(1) }); }
+  } else if (a.rebrand) {
+    // A sprint is a calendar week, Monday to Friday
+    const n = Number(a.rebrand.sprints);
+    for (let i = 1; i <= n; i++) steps.push({ title: `Sprint ${i}`, when: i === 1 ? start : plus(t, 3), desc: `Wraps ${short(phase(i === 1 ? 4 / 7 : 1))}${i === n ? ', with your final files' : ''}.` });
   } else if (brand) {
     steps.push({ title: 'Kickoff', when: start, desc: `First directions by ${short(phase(Math.max(1.5, 0.4 * W + 1)))}.` });
     steps.push({ title: 'Final files', when: phase(Math.max(1, 0.6 * W + 1)) });
@@ -238,7 +254,7 @@ export function budgetGap(a: Answers, budget: string): Gap | null {
     while (n > P.minPages && estimate(patched(a, { site: { pages: n } })).total > top) n--;
     if (n < a.site.pages) tries.push({ text: `Start with ${n} page${n === 1 ? '' : 's'}`, patch: { site: { pages: n } } });
   }
-  if (a.rebrand?.has === 'full') tries.push({ text: 'Keep your logo, refresh the rest', patch: { rebrand: { has: 'keepLogo' } } });
+  if (a.rebrand && a.rebrand.sprints !== '1') tries.push({ text: 'One brand sprint to start', patch: { rebrand: { sprints: '1' } } });
   if (a.logo?.kind === 'new' && a.logo.type !== 'wordmark') tries.push({ text: 'A wordmark on its own', patch: { logo: { type: 'wordmark' } } });
   if (a.ai && a.ai.size !== 'small') tries.push({ text: `A ${a.ai.size === 'large' ? 'medium' : 'small'} first version`, patch: { ai: { size: a.ai.size === 'large' ? 'medium' : 'small' } } });
   const near = top * BUDGET_STRETCH, cost = (p: Patch) => estimate(clean(patched(a, p))).total;

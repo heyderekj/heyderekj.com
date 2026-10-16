@@ -37,7 +37,12 @@ export const PRICES = {
   },
   // From $250 (a refresh); a new one by what it includes. Drafts between those, to adjust
   logo: { new: { wordmark: 400, mark: 600, both: 800 }, refresh: 250 },
-  rebrand: { keepLogo: 2000, full: 3000 },
+  /**
+   * Rebrands are brand sprints: a week of my freelance hours (20 × $100) on the brand. One sprint is the
+   * core identity: logo, type, color and a short guide, like CrowdHealth, which took a few days. More
+   * sprints put it to work (templates, social, a fuller guide) and leave room for more directions.
+   */
+  rebrand: { sprint: 2000 },
   // By the hour: written notes take about two, a call about one
   feedback: { rate: 125, hours: { notes: 2, call: 1 } },
   ai: { small: 1000, medium: 2500, large: 5000 },
@@ -55,6 +60,8 @@ export const PLANS: Record<string, { why: string; steps: Step[] }> = {
   full: { why: 'It’s a short piece of work, so it’s paid when you book it.', steps: [{ pct: 100, when: 'To book it', after: 'is due' }] },
   // Anything small, whatever the kind
   halves: { why: 'A smaller project: half to start, half when it’s done.', steps: [start(50), { pct: 50, when: 'On delivery, the remaining', after: 'is due' }] },
+  // Brand sprints, each paid as it starts (lib/estimate.ts writes the steps for the number of sprints)
+  sprints: { why: 'Paid by the sprint: each one when it starts.', steps: [] },
   brand: { why: 'Brand work is paid as it moves: when we start, when you pick a direction, and with the final files.', steps: [start(40), { pct: 40, when: 'When you pick a direction', after: 'is due' }, { pct: 20, when: 'With the final files, the remaining', after: 'is due' }] },
   site: { why: 'Paid in three parts, at the points where the work changes hands.', steps: [start(40), { pct: 40, when: 'Then at design approval', after: 'is due' }, { pct: 20, when: 'To launch, the remaining', after: 'is due' }] },
   siteLarge: { why: 'A bigger build, so it’s split into four smaller payments.', steps: [start(30), { pct: 30, when: 'Then at design approval', after: 'is due' }, { pct: 30, when: 'At build review', after: 'is due' }, { pct: 10, when: 'To launch, the remaining', after: 'is due' }] },
@@ -84,7 +91,7 @@ export type ServiceId = 'site' | 'logo' | 'rebrand' | 'feedback' | 'ai';
 export const SERVICES: { id: ServiceId; name: string; icon: string; line: string; from: string; tags: string[] }[] = [
   { id: 'site', name: 'Websites', icon: 'laptop', line: 'Designed and built in Webflow or custom code, with content your team can update. Two rounds of revisions in design, two in the build.', from: `from $${PRICES.site.base.toLocaleString()}`, tags: ['design', 'work'] },
   { id: 'logo', name: 'Logos', icon: 'pencil', line: 'A mark or wordmark that fits who you are, with the files you need for everything.', from: `from $${PRICES.logo.refresh.toLocaleString()}`, tags: ['branding'] },
-  { id: 'rebrand', name: 'Rebrands', icon: 'palette', line: 'Logo, type, color and a short guide, so everything starts to feel like the same place.', from: `from $${PRICES.rebrand.keepLogo.toLocaleString()}`, tags: ['branding'] },
+  { id: 'rebrand', name: 'Rebrands', icon: 'palette', line: 'Week-long brand sprints: logo, type, color and a short guide, so everything starts to feel like the same place.', from: `$${PRICES.rebrand.sprint.toLocaleString()} a sprint`, tags: ['branding'] },
   { id: 'feedback', name: 'Feedback', icon: 'eye', line: 'A careful look at your site, app or brand: what’s working, what isn’t, and what I’d do next.', from: `$${PRICES.feedback.rate}/hr`, tags: ['design'] },
   { id: 'ai', name: 'AI workflows & apps', icon: 'branch', line: 'Putting AI to work where it actually helps: an automation, an internal tool, or a first version of an app.', from: `from $${PRICES.ai.small.toLocaleString()}`, tags: ['ai', 'making'] },
 ];
