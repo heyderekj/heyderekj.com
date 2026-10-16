@@ -35,7 +35,7 @@ const TAGS: Record<string, string> = { Leroy: 'Slow and steady', Lilo: 'Too kind
 
 // ---- Drawing the card. `upto` and `fall` animate the clip: how many moves are in, and how far the last has dropped.
 // `flash` rings the winning four; as a number (0–1) it's the clip's reveal, ringing them one by one as the rest dim.
-// `intro` (0–1) drops the title's four chips in, one after another, then brings up its words.
+// `intro` (0–1) fades the title up at the start of the clip.
 // Three layouts arrange the same parts: the title, the result, the board, the two players and the footer.
 function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fall = 1, flash: boolean | number = true, intro = 1) {
   const t = THEMES[design];
@@ -48,19 +48,12 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
   const sans = 'Figtree, ui-sans-serif, system-ui, sans-serif', mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
   const mine = design === 'orange' ? t.ink : '#ea580c', foeChip = chip(g.foe.toLowerCase()), myChip = chip('orange');
 
-  // The title: four chips, yours and theirs, dropped in a row like a winning line, then the WOPR's question
+  // The title: the WOPR's question, in the accent colour (the clip fades it up)
   const title = (x: number, y: number, center: boolean) => {
-    const d = 34, gap = 8, words = 'Shall we play a game?';
-    ctx.font = `600 34px ${sans}`;
-    const tw = 4 * d + 3 * gap + 18 + ctx.measureText(words).width, x0 = center ? (W - tw) / 2 : x;
-    [myChip, foeChip, myChip, foeChip].forEach((img, k) => {
-      const p = Math.max(0, Math.min(1, (intro - k * 0.12) / 0.4)); if (!p) return;
-      const cx = x0 + k * (d + gap), cy = y - d + 6 - (1 - easeOutBounce(p)) * 70;
-      ctx.globalAlpha = Math.min(1, p * 3); ctx.drawImage(img, cx, cy, d, d);
-    });
-    ctx.globalAlpha = Math.max(0, Math.min(1, (intro - 0.55) / 0.35));
-    ctx.fillStyle = t.accent; ctx.fillText(words, x0 + 4 * d + 3 * gap + 18, y);
-    ctx.globalAlpha = 1;
+    ctx.font = `600 36px ${sans}`; ctx.fillStyle = t.accent; ctx.textAlign = center ? 'center' : 'left';
+    ctx.globalAlpha = Math.max(0, Math.min(1, intro / 0.5));
+    ctx.fillText('Shall we play a game?', center ? W / 2 : x, y);
+    ctx.globalAlpha = 1; ctx.textAlign = 'left';
   };
   // This game: who took it, and in how many moves
   const heading = (x: number, y: number, size: number, center: boolean) => {
