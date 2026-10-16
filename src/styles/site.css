@@ -780,3 +780,47 @@ img.framed { --iw: max(100cqw / var(--fw), 100cqh * var(--fr) / var(--fh)); posi
 @media (prefers-reduced-motion: reduce) { .collage img { animation: none !important; } }
 .browser__view .collage[data-count="2"] .collage__card:nth-child(1) { left: 58%; }
 .browser__view .collage[data-count="2"] .collage__card:nth-child(2) { left: 7cqw; top: 12cqh; width: 44cqw; }
+
+/* Site tours lead a website's pages in the deck (client/deck.ts) */
+.browser__view video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; opacity: 0; transition: opacity 160ms linear; background: var(--tint); }
+.browser__view video.is-on { opacity: 1; }
+.pages__tour { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; }
+.pages__tour img { position: absolute; inset: 0; }
+.pages__tour svg { position: relative; width: 22px; height: 22px; padding: 5px 4px 5px 6px; border-radius: 50%; background: rgb(22 21 19 / 0.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.browser__end { display: flex; justify-content: flex-end; }
+.browser__dial { margin: 0; padding: 0 5px; }
+.browser__dial[aria-expanded="true"] { background: color-mix(in oklch, var(--ink) 10%, transparent); color: var(--ink); }
+
+/* The deck's dial panel: a few live controls, set like the bar */
+#fig-deck { position: relative; }
+.dial { --r: 18px; position: absolute; z-index: 30; width: 248px; display: grid; gap: 4px; padding: 8px; border-radius: 18px; background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); font-size: 13px; color: var(--ink); transform-origin: top right; }
+.dial.is-in { animation: dial-in 220ms var(--ease) both; }
+@keyframes dial-in { from { opacity: 0; scale: 0.96; translate: 0 -4px; } }
+.dial__head { display: flex; align-items: center; justify-content: space-between; padding: 2px 6px 4px; }
+.dial__head b { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.02em; }
+.dial__reset { font: 500 12px var(--font); color: var(--muted); padding: 2px 6px; border-radius: 6px; }
+.dial__reset:hover { color: var(--ink); background: color-mix(in oklch, var(--ink) 7%, transparent); }
+.dial__row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 34px; padding: 0 6px 0 10px; border-radius: 10px; }
+.dial__row > span { font-weight: 500; }
+/* A switch */
+.dial__switch { cursor: pointer; }
+.dial__switch:hover { background: color-mix(in oklch, var(--ink) 4%, transparent); }
+.dial__switch input { position: absolute; opacity: 0; pointer-events: none; }
+.dial__switch i { position: relative; width: 30px; height: 18px; border-radius: 999px; background: color-mix(in oklch, var(--ink) 16%, transparent); transition: background var(--t-ui) var(--ease); }
+.dial__switch i::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--card); box-shadow: 0 1px 2px rgb(0 0 0 / 0.2); transition: translate var(--t-ui) var(--ease); }
+.dial__switch input:checked + i { background: var(--ink); }
+.dial__switch input:checked + i::after { translate: 12px 0; }
+.dial__switch input:focus-visible + i { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* A slider: the label and value sit inside the track, the fill shows the level */
+.dial__slider { position: relative; display: flex; align-items: center; justify-content: space-between; height: 34px; padding: 0 12px 0 10px; border-radius: 10px; overflow: hidden; background: color-mix(in oklch, var(--ink) 5%, transparent); cursor: ew-resize; transition: opacity var(--t-ui) var(--ease); }
+.dial__slider.is-off { opacity: 0.45; }
+.dial__slider i { position: absolute; inset: 0 auto 0 0; width: var(--fill, 30%); background: color-mix(in oklch, var(--ink) 9%, transparent); border-right: 2px solid color-mix(in oklch, var(--ink) 35%, transparent); pointer-events: none; transition: width 60ms linear; }
+.dial__slider span, .dial__slider output { position: relative; z-index: 1; font-weight: 500; pointer-events: none; }
+.dial__slider output { font-variant-numeric: tabular-nums; color: var(--muted); }
+.dial__slider input { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+.dial__slider:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 1px; }
+/* Segmented */
+.dial__seg { display: flex; gap: 2px; padding: 2px; border-radius: 9px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.dial__seg button { font: 500 12px var(--font); color: var(--muted); padding: 4px 9px; border-radius: 7px; transition: background var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
+.dial__seg button.is-on { color: var(--ink); background: var(--card); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 0 0 0.5px var(--hair); }
+@media (prefers-reduced-motion: reduce) { .dial.is-in { animation: none; } }

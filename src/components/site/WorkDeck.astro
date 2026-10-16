@@ -23,12 +23,13 @@ const { slides } = await getDeck();
     <div class="deck__track" id="deckTrack" data-drawer="closed">
       {slides.map((s, i) => (
         <section class:list={['wslide', i === 0 && 'is-on']} data-kind={s.kind} data-title={s.title} data-partner={s.partner ?? ''} aria-label={`${i + 1} of ${slides.length}: ${s.title}`}>
-          <Browser pages={s.pages} url={s.url} deck drawer eager={i === 0} />
+          <Browser pages={s.pages} url={s.url} deck drawer settings eager={i === 0} />
           {s.pages.length > 1 && (
             <div class="pages" role="group" aria-label={`${s.title} pages`}>
               {s.pages.map((p, n) => (
                 <button class="sq" data-page-to={n} aria-current={n === 0 ? 'true' : 'false'} aria-label={`Page ${n + 1}`} style={`--n:${n}`}>
-                  {'mesh' in p ? <span class="mesh" data-mesh={p.mesh}><img src={p.icon} alt="" /></span> : <img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" />}
+                  {'video' in p ? <span class="pages__tour">{p.poster && <img src={p.poster} alt="" loading="lazy" decoding="async" />}<svg viewBox="0 0 16 16" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M5.5 3.8v8.4c0 .5.5.8.9.5l6.3-4.2c.4-.2.4-.8 0-1l-6.3-4.2c-.4-.3-.9 0-.9.5Z" /></svg></span>
+                    : 'mesh' in p ? <span class="mesh" data-mesh={p.mesh}><img src={p.icon} alt="" /></span> : <img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" />}
                 </button>
               ))}
             </div>
@@ -40,5 +41,16 @@ const { slides } = await getDeck();
         </section>
       ))}
     </div>
+  </div>
+  <div class="dial" role="dialog" aria-label="Customize the slideshow" hidden>
+    <div class="dial__head"><b>Slideshow</b><button type="button" class="dial__reset" data-dial-reset>Reset</button></div>
+    <label class="dial__row dial__switch"><span>Autoplay</span><input type="checkbox" data-dial="autoplay" /><i aria-hidden="true"></i></label>
+    <label class="dial__slider"><span>Pace</span><output data-dial-out="pace"></output><input type="range" min="4" max="14" step="1" data-dial="pace" aria-label="Seconds per project" /><i aria-hidden="true"></i></label>
+    <div class="dial__row"><span>Show</span>
+      <div class="dial__seg" role="radiogroup" aria-label="Show">
+        <button type="button" role="radio" data-show="all">All</button><button type="button" role="radio" data-show="client">Sites</button><button type="button" role="radio" data-show="app">Apps</button>
+      </div>
+    </div>
+    <label class="dial__row dial__switch"><span>Play site tours</span><input type="checkbox" data-dial="tours" /><i aria-hidden="true"></i></label>
   </div>
 </figure>
