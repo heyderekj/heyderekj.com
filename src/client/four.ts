@@ -24,11 +24,11 @@ if (game && grid404 && head) {
 
   // ---- Who you're playing: one of the animals, each with their own way of playing and talking
   type Lines = { start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[] };
-  type Foe = { name: string; tone: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
+  type Foe = { name: string; tone: string; toneInk?: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
   const WARGAMES = 'A strange game. The only winning move is not to play.';
   const FOES: Foe[] = [
     { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
-      name: 'Leroy', tone: 'oklch(0.52 0.12 330)', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
+      name: 'Leroy', tone: 'oklch(0.86 0.16 95)', toneInk: '#3d3a35', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
       lines: {
         start: ['Leroy here. Shall we play a game? Take your time. I will.'],
         level: (l) => [`Level ${l}. I have all day.`, `Level ${l}. Slow and steady.`, `Level ${l}. I’m not going anywhere.`],
@@ -40,7 +40,7 @@ if (game && grid404 && head) {
       },
     },
     { // Attentive and smart, but kind: always blocks you, and sometimes won't take the win
-      name: 'Lilo', tone: 'oklch(0.55 0.13 240)', delay: [600, 1000], depth: (l) => Math.min(6, l + 1), slip: (l) => Math.max(0, 0.15 - 0.05 * (l - 1)), spares: 0.4,
+      name: 'Lilo', tone: 'oklch(0.55 0.17 300)', delay: [600, 1000], depth: (l) => Math.min(6, l + 1), slip: (l) => Math.max(0, 0.15 - 0.05 * (l - 1)), spares: 0.4,
       lines: {
         start: ['Hi, I’m Lilo! Want to play? You go first.'],
         level: (l) => [`Level ${l}. We can keep going, if you want.`, `Level ${l}! You’re doing so well.`],
@@ -53,7 +53,7 @@ if (game && grid404 && head) {
       },
     },
     { // Competitive and smart, but a bully and easily distracted: quick, mouthy, and wanders off
-      name: 'Kiya', tone: 'oklch(0.6 0.16 15)', delay: [250, 520], depth: (l) => Math.min(6, l + 1), slip: () => 0.18,
+      name: 'Kiya', tone: 'oklch(0.62 0.11 195)', delay: [250, 520], depth: (l) => Math.min(6, l + 1), slip: () => 0.18,
       lines: {
         start: ['Kiya. You’re going down. Go first, it won’t help.'],
         level: (l) => [`Level ${l}. Now I’m annoyed.`, `Level ${l}. Lucky. Won’t happen again.`],
@@ -66,7 +66,7 @@ if (game && grid404 && head) {
       },
     },
     { // Dumb, but plays hard: barely looks ahead, moves fast and loud, grabs any win
-      name: 'Irma', tone: 'oklch(0.6 0.12 128)', delay: [200, 420], depth: () => 1, slip: (l) => Math.max(0.15, 0.4 - 0.05 * (l - 1)),
+      name: 'Irma', tone: 'oklch(0.84 0.09 55)', toneInk: '#3d3a35', delay: [200, 420], depth: () => 1, slip: (l) => Math.max(0.15, 0.4 - 0.05 * (l - 1)),
       lines: {
         start: ['IRMA! LET’S PLAY! You go first!'],
         level: (l) => [`Level ${l}! More! More!`, `Level ${l}! I’m trying SO hard!`],
@@ -85,7 +85,7 @@ if (game && grid404 && head) {
     const pool = FOES.filter((f) => f.name !== last);
     foe = pick(pool.length ? pool : FOES);
     try { localStorage.setItem('hdj:four:foe', foe.name); } catch {}
-    game!.style.setProperty('--foe', foe.tone);
+    game!.style.setProperty('--foe', foe.tone); game!.style.setProperty('--foe-ink', foe.toneInk ?? '#fff');
     whoEl.textContent = foe.name[0]; whoEl.setAttribute('aria-label', foe.name);
     $('.four__vs').textContent = foe.name;
   }
@@ -203,12 +203,40 @@ if (game && grid404 && head) {
     if (playing) return;
     playing = true; level = 1; score = 0; againBtn.hidden = cardBtn.hidden = true; meet();
     document.documentElement.classList.add('four-on');
-    // The 404's lit dots fall away, then the board fills in
-    grid404!.querySelectorAll<HTMLElement>('i.on').forEach((d) => { d.style.setProperty('--dx', `${(Math.random() - 0.5) * 80}px`); d.style.setProperty('--rot', `${(Math.random() - 0.5) * 140}deg`); d.style.setProperty('--fd', `${Math.random() * 220}ms`); });
-    grid404!.classList.add('is-falling');
-    setTimeout(() => { grid404!.hidden = true; grid404!.classList.remove('is-falling'); game!.hidden = false; round(); cols[aim].focus({ preventScroll: true }); }, calm ? 0 : 650);
-    head!.scrollIntoView({ block: 'start', behavior: calm ? 'auto' : 'smooth' });
+    head!.scrollIntoView({ block: 'start', behavior: 'auto' });
     beep([392, 523, 659, 784], 0.09);
+    if (calm) { grid404!.hidden = true; game!.hidden = false; round(); cols[aim].focus({ preventScroll: true }); return; }
+    morph();
+  }
+  // The 404's dots gather into the board: each hole takes the dot nearest its spot on the 404 grid,
+  // and every other dot flows into its nearest hole and melts away. Clones fly between the two layouts.
+  function morph() {
+    const dots = [...grid404!.querySelectorAll<HTMLElement>('i')], from = dots.map((d) => d.getBoundingClientRect());
+    const dcols = Number(getComputedStyle(grid404!).getPropertyValue('--cols')) || 17, drows = Math.round(dots.length / dcols);
+    const lit = dots.map((d) => d.classList.contains('on'));
+    grid404!.hidden = true; game!.hidden = false; game!.classList.add('is-morph'); round();
+    const to = cells.map((c) => c.getBoundingClientRect()), holeColor = getComputedStyle(cells[0]).backgroundColor;
+    // Which dot each hole takes, and which hole every dot heads for
+    const taken = new Map<number, number>();
+    cells.forEach((_, i) => { const c = i % COLS, r = Math.floor(i / COLS); taken.set(Math.round((r * (drows - 1)) / (ROWS - 1)) * dcols + Math.round((c * (dcols - 1)) / (COLS - 1)), i); });
+    const near = (d: number) => { const x = from[d].left + from[d].width / 2, y = from[d].top + from[d].height / 2; let best = 0, bd = Infinity; to.forEach((t, i) => { const dd = (t.left + t.width / 2 - x) ** 2 + (t.top + t.height / 2 - y) ** 2; if (dd < bd) { bd = dd; best = i; } }); return best; };
+    const layer = document.createElement('div'); layer.className = 'four-morph'; document.body.append(layer);
+    const ink = getComputedStyle(dots.find((d) => d.classList.contains('on')) ?? dots[0]).backgroundColor, faint = getComputedStyle(dots.find((d) => !d.classList.contains('on')) ?? dots[0]).backgroundColor;
+    const flights = dots.map((_, d) => {
+      const f = from[d], hole = taken.get(d), keep = hole != null, t = to[keep ? hole! : near(d)];
+      const el = document.createElement('i'); el.style.cssText = `left:${f.left}px;top:${f.top}px;width:${f.width}px;height:${f.height}px;background:${lit[d] ? ink : faint}`;
+      layer.append(el);
+      const dx = t.left + t.width / 2 - (f.left + f.width / 2), dy = t.top + t.height / 2 - (f.top + f.height / 2), k = (keep ? t.width : t.width * 0.5) / f.width;
+      return { el, keep, dx, dy, k, delay: (f.left - from[0].left) * 0.35 + (f.top - from[0].top) * 0.6 };
+    });
+    requestAnimationFrame(() => requestAnimationFrame(() => flights.forEach(({ el, keep, dx, dy, k, delay }) => {
+      el.style.transitionDelay = `${delay}ms`;
+      el.style.transform = `translate(${dx}px, ${dy}px) scale(${k})`;
+      el.style.background = holeColor;
+      if (!keep) el.style.opacity = '0';
+    })));
+    const longest = Math.max(...flights.map((f) => f.delay)) + 720;
+    setTimeout(() => { game!.classList.remove('is-morph'); layer.classList.add('is-done'); setTimeout(() => layer.remove(), 200); cols[aim].focus({ preventScroll: true }); }, longest);
   }
   function quit() {
     playing = false; turn = 'off';
