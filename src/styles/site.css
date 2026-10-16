@@ -483,7 +483,7 @@ body.site .app-toc { display: none !important; }
 /* ---------- Page heads: every page opens like an essay ---------- */
 .page-head { margin-bottom: 32px; }
 .page-head h1 { margin: 10px 0 14px; font-size: clamp(34px, 5vw, 46px); line-height: 1.05; font-weight: 700; letter-spacing: -0.035em; text-wrap: balance; }
-.page-head .lede { margin: 0 0 22px; max-width: 34em; font-size: 18.5px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+.page-head .lede { margin: 0 0 22px; max-width: 34em; font-size: 18.5px; line-height: 1.55; color: var(--muted); text-wrap: balance; }
 .page-head .lede a, .essay .lede a { color: var(--ink); text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: 4px; }
 .page-head > :last-child { margin-bottom: 0; }
 
