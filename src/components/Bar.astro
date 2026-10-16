@@ -6,6 +6,7 @@
  */
 import { availability, availabilityWhen } from '../data/hire';
 import Icon from './Icon.astro';
+import { imgSrc } from '../lib/img';
 import type { BarContext } from '../lib/bar';
 
 interface Props { context?: BarContext }
@@ -37,7 +38,7 @@ const nav = [
       </div>
       <!-- Work with me, set apart: what it is, then whether I'm free -->
       <a class:list={['bar__hire', !availability.open && 'is-closed']} href="/hire/">
-        <span class="bar__hire-mark"><Icon name="gear" /></span>
+        <img class="bar__hire-mark sq" src={imgSrc('/assets/about/derek-photo.jpeg', 240)} alt="" width="32" height="32" loading="lazy" decoding="async" />
         <span class="bar__hire-text"><b>Work with me</b><small><i aria-hidden="true"></i><span data-avail={availability.open ? 'line' : undefined}>{availability.open ? (availability.from === 'now' ? 'Open now' : `Open from ${availabilityWhen}`) : 'Booked up for now'}</span></small></span>
         <Icon name="arrow-right" class="bar__hire-go" />
       </a>
