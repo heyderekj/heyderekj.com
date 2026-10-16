@@ -5,7 +5,7 @@
  * without moving anything on the page. Behaviour lives in client/bar.ts.
  */
 import Icon from './Icon.astro';
-import Signature from './Signature.astro';
+import { imgSrc } from '../lib/img';
 import { TOPICS, type BarContext } from '../lib/bar';
 
 interface Props { context?: BarContext }
@@ -48,7 +48,7 @@ const nav = [
     </div>
   </div>
   <div class="bar__row">
-    <a class="bar__home" href="/" aria-label="Home"><Signature variant="mark" label="Derek Castelli, home" /></a>
+    <a class="bar__home" href="/" aria-label="Derek Castelli, home"><img class="sq" src={imgSrc('/assets/about/derek-photo.jpeg', 80)} alt="" width="28" height="28" /></a>
     <button class="bar__label" id="barLabel" aria-expanded="false" aria-controls="barMenu"><span id="barText">{label}</span><Icon name="chevron-up" /></button>
     {context.kind === 'writeup' && (
       <span class="bar__steps">

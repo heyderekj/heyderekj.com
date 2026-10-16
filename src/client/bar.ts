@@ -99,6 +99,13 @@ if (bar) {
     if ((e.target as HTMLElement).closest('.bar__fig, .bar__nav a')) setState('rest');
   });
 
+  // ---- The address at the end of a page copies instead of opening a mail app
+  document.addEventListener('click', async (e) => {
+    const a = (e.target as HTMLElement).closest('.endnote [data-copy-email]'); if (!a) return;
+    e.preventDefault();
+    toast(await copyText('derekj@hey.com') ? 'Email copied' : 'Select the address to copy it');
+  });
+
   // ---- Long pages with an "On this page" list (components/ApplicationToc.astro): the menu lists the
   // sections and the label follows the one you're reading
   // Sections come from an "On this page" list, or from headings marked [data-bar-section]

@@ -11,6 +11,7 @@ import '../styles/tokens.css';
 import '../styles/site.css';
 import Head from '../components/Head.astro';
 import Bar from '../components/Bar.astro';
+import Signature from '../components/Signature.astro';
 import type { Props as HeadProps } from '../components/Head.astro';
 import type { BarContext } from '../lib/bar';
 
@@ -24,6 +25,8 @@ const { bar, legacy = false, ...head } = Astro.props;
     <Head {...head} />
   </head>
   <body class="site">
+    <!-- The signature, large and faint, writes itself at the top of every page; the title sits over it -->
+    <div class="wm" aria-hidden="true"><div class="wm__in"><Signature label="" /></div></div>
     {legacy ? <div class="legacy-col"><main class="main"><slot /></main></div> : <slot />}
     <Bar context={bar} />
     <div class="toast" id="toast" role="status"></div>

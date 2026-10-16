@@ -360,8 +360,8 @@ body.site { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .bar__row { position: relative; display: flex; align-items: center; gap: 2px; height: 44px; padding: 4px; }
 .bar a, .bar button { color: var(--ink); text-decoration: none; transition: background var(--t-ui) var(--ease); }
 .bar a:hover, .bar button:hover { background: color-mix(in oklch, var(--ink) 8%, transparent); }
-.bar__home { width: 50px; height: 36px; display: grid; place-items: center; border-radius: 999px; }
-.bar__home svg { width: 36px; height: auto; fill: currentColor; display: block; }
+.bar__home { width: 40px; height: 36px; display: grid; place-items: center; border-radius: 999px; }
+.bar__home img { --r: 9px; width: 28px; height: 28px; object-fit: cover; display: block; }
 .bar__label { height: 36px; padding: 0 10px 0 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; letter-spacing: -0.005em; min-width: 0; }
 .bar__label span { max-width: min(38vw, 260px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bar__label .icon { font-size: 12px; color: var(--muted); transition: rotate var(--t-move) var(--ease); }
@@ -494,10 +494,17 @@ body.site .app-toc { display: none !important; }
 .page-head .lede a, .essay .lede a { color: var(--ink); text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: 4px; }
 .page-head > :last-child { margin-bottom: 0; }
 
-/* ---------- Elsewhere, anywhere ---------- */
-.elsewhere-block { margin-top: 56px; }
-.elsewhere-block h2.h--quiet { margin: 0 0 10px; font-size: 15px; line-height: 1.2; color: var(--muted); font-weight: 600; letter-spacing: 0; }
-.links .links__text { width: auto; padding: 0 10px; font-size: 14px; font-weight: 600; text-decoration: none; }
+/* ---------- The end of a page: how to reach me, one quiet line ---------- */
+.endnote { margin-top: 48px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 14px; color: color-mix(in srgb, var(--muted) 70%, transparent); }
+.endnote a { color: var(--muted); text-decoration: none; transition: color var(--t-ui) var(--ease); }
+.endnote a:hover { color: var(--ink); }
+
+/* ---------- The signature as a watermark at the top of every page; the title sits over it ---------- */
+.wm { position: absolute; top: 0; left: 0; right: 0; z-index: -1; pointer-events: none; }
+.wm__in { width: min(var(--read), calc(100% - 32px)); margin: 0 auto; padding-top: 34px; }
+.wm .sig { width: min(600px, 96%); margin-left: -3%; color: var(--ink); opacity: 0.075; }
+@media (prefers-color-scheme: dark) { .wm .sig { opacity: 0.1; } }
+@media (max-width: 760px) { .wm__in { padding-top: 30px; } }
 
 /* ---------- About: the letter ---------- */
 .about .byline { margin-bottom: 18px; }

@@ -3,7 +3,7 @@
  * side has room; pressing one does the thing it names. On touch, the first tap peeks.
  * Topics filter the writing below, and the bar's menu can ask for a topic too (`topic` event, or ?topic=).
  */
-import { calm, copyText, toast } from './toast';
+import { calm } from './toast';
 
 const $$ = <T extends HTMLElement>(s: string, r: ParentNode = document) => [...r.querySelectorAll<T>(s)];
 
@@ -68,11 +68,6 @@ document.addEventListener('click', (e) => {
 document.addEventListener('topic', (e) => setTopic((e as CustomEvent<string>).detail));
 const asked = new URLSearchParams(location.search).get('topic');
 if (asked) setTopic(asked);
-
-// Copy my email (Elsewhere)
-document.addEventListener('click', async (e) => {
-  if ((e.target as HTMLElement).closest('.elsewhere [data-copy-email]')) toast(await copyText('derekj@hey.com') ? 'Email copied' : 'Select the address to copy it');
-});
 
 // The bar says which part of the page you're on
 const sections = $$<HTMLElement>('[data-bar-label]');

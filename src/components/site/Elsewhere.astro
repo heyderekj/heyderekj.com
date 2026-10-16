@@ -1,20 +1,18 @@
 ---
-/** Where else to find me, at the bottom of the home page and the inner pages. */
-import Icon from '../Icon.astro';
-
+/**
+ * How to reach me, as one quiet line at the end of a page. The address copies on click
+ * (client/bar.ts); the bar's menu has the same links.
+ */
 interface Props { linkedin?: boolean }
 const { linkedin = false } = Astro.props;
+const links = [
+  { label: 'X', href: 'https://x.com/heyderekj' },
+  { label: 'GitHub', href: 'https://github.com/heyderekj' },
+  ...(linkedin ? [{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/heyderekj' }] : []),
+  { label: 'RSS', href: '/rss.xml' },
+];
 ---
-<section class="elsewhere-block" aria-labelledby="elsewhere-h">
-  <h2 class="h h--quiet" id="elsewhere-h">Elsewhere</h2>
-  <div class="elsewhere">
-    <div>My apps live at <a href="https://testamentmade.com" target="_blank" rel="noopener">testamentmade.com</a>.</div>
-    <div class="links">
-      <code>derekj@hey.com</code><button class="btn" data-copy-email>Copy</button>
-      <a href="https://x.com/heyderekj" target="_blank" rel="noopener" aria-label="X"><Icon name="x" /></a>
-      <a href="https://github.com/heyderekj" target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" /></a>
-      <a href="/rss.xml" aria-label="RSS"><Icon name="rss" /></a>
-      {linkedin && <a class="links__text" href="https://www.linkedin.com/in/heyderekj" target="_blank" rel="noopener">LinkedIn</a>}
-    </div>
-  </div>
-</section>
+<footer class="endnote">
+  <a href="mailto:derekj@hey.com" data-copy-email title="Copy my email">derekj@hey.com</a>
+  {links.map((l) => <><span aria-hidden="true">·</span><a href={l.href} {...(l.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>{l.label}</a></>)}
+</footer>

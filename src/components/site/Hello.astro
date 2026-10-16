@@ -2,12 +2,12 @@
 /**
  * The top of the home page: a byline, one paragraph of chips, and the signature as a sign-off.
  * Each chip opens a small view of what it names without moving a word (client/chips.ts):
+ * (The signature now sits behind it as the site-wide watermark.)
  * Kem fans out three of its sites, Testament Made's six blocks grow into its apps,
  * Des Moines opens a drawing of downtown for the hour and weather (client/dsm-sketch.ts),
  * and the topics filter the writing below.
  */
 import Icon from '../Icon.astro';
-import Signature from '../Signature.astro';
 import Browser from './Browser.astro';
 import Byline from './Byline.astro';
 import { getDeck, host, shot, shotsOf, TM_TILES } from '../../lib/deck';
@@ -37,5 +37,4 @@ const last = TOPICS.length - 1;
       </Fragment>
     ))}
   </p>
-  <div class="sig-slot"><Signature /></div>
 </header>
