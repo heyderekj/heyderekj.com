@@ -180,17 +180,17 @@ if (box && thread && slash && prompts && form && input) {
     input.value = ''; menu(); reply(v);
   });
   // The 404's dots, thinking like WOPR in WarGames: orange lights blink on and off at random across the
-  // unlit dots, a few at a time, while the page is on screen
+  // unlit dots, one at a time, while the page is on screen
   const lights = [...document.querySelectorAll<HTMLElement>('.lost-404 i:not(.on)')];
   if (lights.length && !calm) {
     const blink = () => {
-      if (!document.hidden) for (let n = 0; n < 1 + Math.floor(Math.random() * 3); n++) {
+      if (!document.hidden) for (let n = 0; n < 1; n++) {
         const dot = lights[Math.floor(Math.random() * lights.length)];
         if (dot.classList.contains('wopr')) continue;
         dot.classList.add('wopr');
-        setTimeout(() => dot.classList.remove('wopr'), 260 + Math.random() * 1100);
+        setTimeout(() => dot.classList.remove('wopr'), 500 + Math.random() * 700);
       }
-      setTimeout(blink, 90 + Math.random() * 160);
+      setTimeout(blink, 450 + Math.random() * 700);
     };
     setTimeout(blink, 1200); // after the 404 lights up
   }
