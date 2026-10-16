@@ -1,0 +1,87 @@
+---
+/**
+ * The video lightbox: any link with `data-clip` (a youtube-nocookie embed URL) opens it, with the player
+ * starting on the moment. The player is made when it opens and removed when it closes, so closing always
+ * stops the video. Without JS the link still goes to YouTube. Used by post Clips and testimonials; with
+ * several on a page, the first one serves them all.
+ */
+import Icon from './Icon.astro';
+---
+
+<dialog class="pclip-box" data-clip-box aria-label="Video">
+  <div class="pclip-box__frame" data-clip-frame></div>
+  <button type="button" class="pclip-box__close" data-clip-close autofocus aria-label="Close video"><Icon name="close" loop={false} /></button>
+</dialog>
+
+<script>
+  const box = document.querySelector<HTMLDialogElement>('[data-clip-box]');
+  const frame = box?.querySelector<HTMLElement>('[data-clip-frame]');
+
+  box?.addEventListener('close', () => frame?.replaceChildren());
+  box?.addEventListener('click', (e) => {
+    // The backdrop is the dialog itself; its contents are the frame and button.
+    if (e.target === box || (e.target as Element).closest('[data-clip-close]')) box.close();
+  });
+
+  document.addEventListener('click', (e) => {
+    const a = (e.target as Element).closest<HTMLAnchorElement>('[data-clip]');
+    if (!a || !box || !frame || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    const iframe = document.createElement('iframe');
+    iframe.src = a.dataset.clip!;
+    iframe.title = a.dataset.clipTitle ?? 'Video';
+    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    frame.replaceChildren(iframe);
+    box.showModal();
+  });
+</script>
+
+<style>
+  .pclip-box {
+    width: min(960px, calc(100vw - 32px));
+    max-width: none;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+  .pclip-box::backdrop {
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+  }
+  .pclip-box__frame {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-lg, 14px);
+    corner-shape: squircle;
+    background: #000;
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+  }
+  .pclip-box__frame :global(iframe) { display: block; width: 100%; height: 100%; border: 0; }
+  .pclip-box__close {
+    position: absolute;
+    top: -46px;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.18s ease;
+  }
+  .pclip-box__close:hover { background: rgba(255, 255, 255, 0.26); }
+  .pclip-box__close:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .pclip-box[open] { animation: pclip-in 0.22s cubic-bezier(0.2, 0, 0, 1); }
+    .pclip-box[open]::backdrop { animation: pclip-fade 0.22s ease; }
+  }
+  @keyframes pclip-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+  @keyframes pclip-fade { from { opacity: 0; } }
+</style>
