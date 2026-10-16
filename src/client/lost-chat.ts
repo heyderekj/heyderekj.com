@@ -18,7 +18,10 @@ if (box && thread && slash && prompts && form && input) {
   let index: Promise<Item[]> | null = null;
   const load = () => (index ??= fetch('/search.json').then((r) => r.json()).catch(() => []));
   const wait = (ms: number) => new Promise((r) => setTimeout(r, calm ? 0 : ms));
-  const scroll = () => { thread.scrollTop = thread.scrollHeight; relabel(); };
+  // While you type, your own "typing" bubble sits at the end of the thread
+  const yours = document.createElement('p'); yours.className = 'lost__msg lost__typing is-yours'; yours.setAttribute('aria-hidden', 'true');
+  yours.innerHTML = '<span class="lost__bubble"><i></i><i></i><i></i></span>';
+  const scroll = () => { if (yours.isConnected) thread.append(yours); thread.scrollTop = thread.scrollHeight; relabel(); };
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
   let noting = 0; // when note mode started, or 0
   let lastStatus: HTMLElement | null = null;
@@ -57,6 +60,7 @@ if (box && thread && slash && prompts && form && input) {
     thread!.append(p); scroll();
   }
   function you(text: string) {
+    yours.remove();
     thread!.querySelector('.lost__follow')?.remove();
     prompts!.hidden = true;
     lastStatus?.remove();
@@ -100,7 +104,7 @@ if (box && thread && slash && prompts && form && input) {
 
   // ---- The cheat sheet: every easter egg, with the keys, and a Try for the ones that can go off here
   const EGGS: { keys: string; name: string; what: string; tryit?: 'blueprint' | 'konami' | 'play'; href?: string }[] = [
-    { keys: '<kbd>Play</kbd>', name: 'Shall we play a game?', what: 'Connect Four against me, right up top, with an arcade high score table.', tryit: 'play' },
+    { keys: '<kbd>Play</kbd>', name: 'Shall we play a game?', what: 'Connect Four against me, right up top. Then make a card of it to share.', tryit: 'play' },
     { keys: '<kbd>B</kbd>', name: 'Blueprint mode', what: 'The whole site as a cyanotype on graph paper. B again to go back.', tryit: 'blueprint' },
     { keys: '<kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd>', name: 'Orange mode', what: 'My favorite color, with a fanfare.', tryit: 'konami' },
     { keys: '<kbd>Click ×3</kbd>', name: 'Leave me a note', what: 'Triple-click my signature at the top of any page. One click goes home.' },
@@ -224,7 +228,12 @@ if (box && thread && slash && prompts && form && input) {
     slash!.innerHTML = picks.map(([c, d], i) => `<li role="option" id="slash-${c}" aria-selected="${i === at}" data-cmd="${c}"><code>/${c}</code><span>${d}</span></li>`).join('');
     if (picks[at]) input!.setAttribute('aria-activedescendant', `slash-${picks[at][0]}`); else input!.removeAttribute('aria-activedescendant');
   }
-  input.addEventListener('input', () => { at = 0; menu(); });
+  input.addEventListener('input', () => {
+    at = 0; menu();
+    const typing = input.value.trim().length > 0 && !input.value.startsWith('/');
+    if (typing && !yours.isConnected) { thread.append(yours); scroll(); } else if (!typing) yours.remove();
+  });
+  input.addEventListener('blur', () => { if (!input.value.trim()) yours.remove(); });
   input.addEventListener('keydown', (e) => {
     if (slash.hidden) return;
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); at = (at + (e.key === 'ArrowDown' ? 1 : -1) + picks.length) % picks.length; menu(); }

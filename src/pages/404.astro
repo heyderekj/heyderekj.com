@@ -40,23 +40,35 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
         {dots.map((x) => <i class={x.on ? 'on' : undefined} style={`--d:${x.d}`}></i>)}
       </div>
       <section class="four" aria-label="Connect Four against Derek" hidden>
-        <div class="four__hud" aria-live="off"><span>Level <b data-four="level">01</b></span><span>Score <b data-four="score">000000</b></span><span>Hi <b data-four="hi">000000</b></span></div>
-        <div class="four__main">
-          <div class="four__play">
-            <div class="four__board" role="group" aria-label="Board: pick a column"></div>
-            <p class="four__say" aria-live="polite"><img class="sq" src={photo} alt="" width="22" height="22" /><span></span></p>
-            <form class="four__initials" hidden>
-              <label>New score <b class="four__final">000000</b>. Your initials</label>
-              <input name="i" maxlength="3" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="AAA" aria-label="Your initials" />
-              <button type="submit">Enter</button>
-            </form>
-            <div class="four__controls">
-              <button type="button" data-four-again hidden>Play again</button>
-              <button type="button" data-four-sound aria-pressed="true">Sound on</button>
-              <button type="button" data-four-quit>Quit <kbd>esc</kbd></button>
+        <div class="four__board" role="group" aria-label="Board: pick a column"></div>
+        <div class="four__bar">
+          <p class="four__say" aria-live="polite"><img class="sq" src={photo} alt="" width="22" height="22" /><span></span></p>
+          <p class="four__tally">Level <b data-four="level">1</b> · <b data-four="score">0</b> pts · best <b data-four="best">0</b></p>
+        </div>
+        <div class="four__controls">
+          <button type="button" class="is-primary" data-four-card hidden>Make a card</button>
+          <button type="button" data-four-again hidden>Play again</button>
+          <button type="button" data-four-sound aria-pressed="true">Sound on</button>
+          <button type="button" data-four-quit>Quit <kbd>esc</kbd></button>
+        </div>
+        <div class="four-card" role="dialog" aria-label="Make a card" hidden>
+          <div class="four-card__preview"><canvas width="1080" height="1350" aria-label="Your card"></canvas></div>
+          <div class="four-card__tools">
+            <b>Make it yours</b>
+            <div class="four-card__designs" role="radiogroup" aria-label="Design">
+              <button type="button" role="radio" aria-checked="true" data-design="paper"><i style="--sw:#faf9f7"></i>Paper</button>
+              <button type="button" role="radio" aria-checked="false" data-design="blueprint"><i style="--sw:#1d4b8c"></i>Blueprint</button>
+              <button type="button" role="radio" aria-checked="false" data-design="arcade"><i style="--sw:#0d0c0b"></i>Arcade</button>
+              <button type="button" role="radio" aria-checked="false" data-design="orange"><i style="--sw:#ea580c"></i>Orange</button>
             </div>
+            <div class="four-card__pad"><canvas aria-label="Sign here"></canvas><span>Sign here</span><button type="button" data-sign-clear>Clear</button></div>
+            <div class="four-card__actions">
+              <button type="button" class="is-primary" data-share-image>Share image</button>
+              <button type="button" data-share-clip>Share a clip</button>
+              <button type="button" data-card-close>Done</button>
+            </div>
+            <small class="four-card__status" aria-live="polite"></small>
           </div>
-          <aside class="four__scores" aria-label="High scores"><b>Hi-scores</b><small>Scores in this browser</small><ol></ol></aside>
         </div>
       </section>
       <p class="lost-head__line">Nothing lives at <code id="lostPath">this address</code></p>
