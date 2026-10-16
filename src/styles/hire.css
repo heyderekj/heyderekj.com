@@ -6,23 +6,19 @@
 @keyframes hire-in { from { opacity: 0; translate: 0 6px; } }
 
 /* Me, and whether I'm free */
-.hire-me { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; gap: 20px; }
+.hire-me { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 20px; }
 .hire-me__photo { --r: 26px; width: 104px; height: 104px; object-fit: cover; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
-.hire-me__name { display: grid; gap: 6px; padding-bottom: 4px; }
+.hire-me__name { display: grid; gap: 4px; }
 .hire-me__name h1 { margin: 0; font-size: clamp(34px, 6vw, 46px); line-height: 1.02; letter-spacing: -0.035em; }
 .hire-me .essay__meta { margin: 0; }
 .hire-lede { margin-top: 22px; }
-.hire-status { --r: 14px; display: grid; gap: 1px; padding: 8px 12px 9px; border-radius: 14px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
-.hire-status__light { display: flex; align-items: center; gap: 6px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #15a85b; }
-.hire-status__light i { width: 7px; height: 7px; border-radius: 50%; background: #18c26a; box-shadow: 0 0 0 3px color-mix(in srgb, #18c26a 22%, transparent); animation: hire-pulse 2.4s ease-in-out infinite; }
-.hire-status b { font-size: 16px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; white-space: nowrap; }
-.hire-status.is-closed .hire-status__light { color: var(--muted); }
-.hire-status.is-closed .hire-status__light i { background: var(--muted); box-shadow: none; animation: none; }
+.hire-status { display: flex; align-items: center; gap: 8px; margin: 2px 0 0; font-size: 14.5px; font-weight: 600; color: var(--ink); }
+.hire-status > i { width: 8px; height: 8px; border-radius: 50%; background: #18c26a; box-shadow: 0 0 0 3px color-mix(in srgb, #18c26a 22%, transparent); animation: hire-pulse 2.4s ease-in-out infinite; }
+.hire-status > span { font-weight: 500; color: var(--muted); }
+.hire-status.is-closed > i { background: var(--muted); box-shadow: none; animation: none; }
 @keyframes hire-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, #18c26a 8%, transparent); } }
 @media (max-width: 560px) {
-  .hire-me { grid-template-columns: auto minmax(0, 1fr); }
   .hire-me__photo { width: 76px; height: 76px; --r: 20px; }
-  .hire-status { grid-column: 1 / -1; justify-self: start; }
 }
 
 /* What I do: each service beside a stack of examples that fans out on hover (like the work page's);
@@ -38,6 +34,9 @@
 .hire-cap:is(:hover, :focus-visible) .row__shot { transform: translateX(calc(var(--i) * (100% * 0.88 + 12px))) scale(0.88); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); transition-delay: calc(var(--i) * 30ms); }
 .hire-cap__text { transition: opacity 200ms var(--ease); }
 .hire-cap:is(:hover, :focus-visible) .hire-cap__text { opacity: 0; }
+.hire-cap__go { position: absolute; right: 14px; top: 50%; z-index: 40; display: inline-flex; align-items: center; gap: 6px; padding: 9px 15px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--paper); background: var(--ink); box-shadow: var(--shadow-lift); opacity: 0; translate: 0 calc(-50% + 6px); pointer-events: none; transition: opacity 200ms var(--ease) 80ms, translate 260ms var(--ease) 80ms; }
+.hire-cap:is(:hover, :focus-visible) .hire-cap__go { opacity: 1; translate: 0 -50%; }
+@media (hover: none) { .hire-cap__go { display: none; } }
 .hire-cap__tag { position: absolute; left: 6px; bottom: 6px; z-index: 1; max-width: calc(100% - 12px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 8px; border-radius: 999px; font-style: normal; font-size: 11px; font-weight: 600; color: #fff; background: rgb(22 21 19 / 0.72); opacity: 0; transition: opacity 200ms var(--ease) 120ms; }
 .hire-cap:is(:hover, :focus-visible) .hire-cap__tag { opacity: 1; }
 .hire-cap .row__shot.is-icon { display: grid; place-items: center; background: color-mix(in oklch, var(--ink) 4%, var(--card)); }
