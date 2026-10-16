@@ -58,3 +58,13 @@ Triple-clicking the signature watermark opens a "Leave me a note" card (`src/cli
 3. Redeploy.
 
 Until the binding exists, the function answers 503 and the card tells the visitor to email instead. Notes come from `notes@heyderekj.com`.
+
+### The 404 game's high scores
+
+"Shall we play a game?" on the 404 page is Connect Four against me ([src/client/four.ts](src/client/four.ts)). Its arcade high score table is shared through a Pages Function, [functions/api/scores.ts](functions/api/scores.ts), which keeps the top ten (three initials, score, level, day) in Workers KV. One-time setup in the Cloudflare dashboard:
+
+1. **Workers & Pages → KV → Create namespace**, named something like `heyderekj-scores`.
+2. In the Pages project, go to **Settings → Bindings → Add → KV namespace**. Name it `SCORES` and pick that namespace.
+3. Redeploy.
+
+Until the binding exists, the function answers 503 and each player sees the scores kept in their own browser.

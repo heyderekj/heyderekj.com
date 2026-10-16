@@ -1092,3 +1092,65 @@ html.orange-mode { --paper: #fff3e8; --card: #fff8f1; --tint: #ffe8d0; --hl: #fd
 @media (prefers-color-scheme: dark) { html.orange-mode { --paper: #1c0e02; --card: #271200; --tint: #33190a; } }
 html.orange-mode body.site { transition: background-color 400ms var(--ease); }
 .lost__thread > * { flex-shrink: 0; } /* messages never squeeze; the thread scrolls */
+
+/* "Shall we play a game?": Connect Four on the 404's dot grid (pages/404.astro, client/four.ts) */
+.lost-head__play { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 7px 14px 7px 12px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); transition: translate var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
+.lost-head__play .icon { color: #ea580c; font-size: 16px; }
+.lost-head__play:hover { translate: 0 -1px; box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow-lift); }
+html.four-on .lost-head__play, html.four-on .lost-head__line { display: none; }
+/* The 404's lit dots fall away when the game starts */
+.lost-404.is-falling i.on { animation: dot-fall 620ms cubic-bezier(0.5, 0, 0.9, 0.6) var(--fd, 0ms) forwards; }
+@keyframes dot-fall { to { translate: var(--dx, 0) 160px; rotate: var(--rot, 0deg); opacity: 0; } }
+.lost-404.is-falling i:not(.on) { transition: opacity 400ms ease; opacity: 0.3; }
+/* While playing, the rest of the page steps back */
+html.four-on .lost, html.four-on .bar { opacity: 0.25; filter: grayscale(0.6); transition: opacity 500ms var(--ease), filter 500ms var(--ease); }
+html.four-on .lost:hover, html.four-on .bar:hover { opacity: 1; filter: none; }
+.four { --hole: 38px; --gap: 9px; --you: #ea580c; display: grid; gap: 14px; margin: 4px 0 6px; animation: lost-in 380ms var(--ease) both; }
+.four__hud { display: flex; gap: 22px; font: 600 12px/1 ui-monospace, SFMono-Regular, monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.four__hud b { color: var(--ink); font-weight: 700; margin-left: 6px; font-variant-numeric: tabular-nums; }
+.four__main { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 28px; align-items: start; }
+.four__play { display: grid; gap: 12px; justify-items: start; }
+.four__board { display: flex; gap: var(--gap); padding: 12px; border-radius: 22px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.four__col { display: grid; gap: var(--gap); padding: 4px; margin: -4px; border-radius: 999px; cursor: pointer; transition: background var(--t-ui) var(--ease); }
+.four__col i { width: var(--hole); height: var(--hole); border-radius: 50%; background: color-mix(in srgb, var(--ink) 9%, transparent); animation: four-in 420ms var(--ease) both; animation-delay: calc(var(--d) * 35ms); transition: background 160ms ease, box-shadow 160ms ease; }
+@keyframes four-in { from { scale: 0; opacity: 0; } }
+.four[data-turn="you"] .four__col:hover, .four[data-turn="you"] .four__col.is-aim, .four[data-turn="you"] .four__col:focus-visible { background: color-mix(in oklch, var(--you) 8%, transparent); }
+.four[data-turn="you"] .four__col i.next { box-shadow: inset 0 0 0 2px color-mix(in oklch, var(--you) 50%, transparent); }
+body.site .four__col:focus-visible { outline: none; }
+.four__col i.you { background: var(--you); }
+.four__col i.me { background: var(--ink); }
+.four__col i.drop { animation: four-drop 380ms cubic-bezier(0.4, 0, 0.7, 1.4) both; }
+@keyframes four-drop { from { translate: 0 calc(var(--fall) * (var(--hole) + var(--gap)) * -1); } }
+.four__col i.win { animation: four-win 700ms ease-in-out infinite alternate; box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px currentColor; }
+.four__col i.you.win { color: var(--you); } .four__col i.me.win { color: var(--ink); }
+@keyframes four-win { to { scale: 0.86; } }
+.four__col i.wopr { background: color-mix(in srgb, var(--you) 55%, transparent); }
+.four__say { display: flex; align-items: center; gap: 8px; margin: 0; min-height: 28px; font-size: 15px; color: var(--ink-soft); }
+.four__say img { --r: 7px; width: 22px; height: 22px; object-fit: cover; }
+.four__say.is-new span { animation: lost-in 260ms var(--ease) both; }
+.four__controls { display: flex; flex-wrap: wrap; gap: 6px; }
+.four__controls button { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.four__controls button:hover { color: var(--ink); }
+.four__controls [data-four-again] { color: #fff; background: var(--you); font-weight: 600; }
+.four__controls kbd { font: 600 10.5px var(--font); padding: 1px 5px; border-radius: 5px; box-shadow: inset 0 0 0 1px var(--hair); }
+.four__initials { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-soft); }
+.four__initials b { font: 700 14px ui-monospace, monospace; color: var(--you); letter-spacing: 0.08em; }
+.four__initials input { width: 4.2em; height: 34px; padding: 0 8px; border: 0; border-radius: 10px; font: 700 18px ui-monospace, SFMono-Regular, monospace; letter-spacing: 0.3em; text-transform: uppercase; text-align: center; color: var(--ink); background: var(--card); box-shadow: inset 0 0 0 1.5px var(--you); }
+.four__initials button { padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; color: #fff; background: var(--you); }
+/* The high score table, arcade style */
+.four__scores { display: grid; gap: 2px; padding: 14px 16px; border-radius: 18px; background: var(--ink); color: var(--paper); font-family: ui-monospace, SFMono-Regular, monospace; box-shadow: var(--shadow); }
+.four__scores > b { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--you); }
+.four__scores > small { font-size: 10.5px; letter-spacing: 0.06em; color: color-mix(in srgb, var(--paper) 55%, transparent); margin-bottom: 6px; }
+.four__scores ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.four__scores li { display: grid; grid-template-columns: 2.2em 3.4em 1fr auto; gap: 8px; font-size: 13px; letter-spacing: 0.08em; white-space: pre; color: color-mix(in srgb, var(--paper) 85%, transparent); }
+.four__scores li span, .four__scores li small { color: color-mix(in srgb, var(--paper) 45%, transparent); }
+.four__scores li em { font-style: normal; font-variant-numeric: tabular-nums; }
+.four__scores li.is-mine { color: var(--you); animation: four-blink 900ms steps(2, start) infinite; }
+@keyframes four-blink { to { opacity: 0.35; } }
+@media (max-width: 640px) { .four { --hole: 30px; --gap: 7px; } .four__main { grid-template-columns: 1fr; } }
+@media (max-width: 400px) { .four { --hole: 26px; --gap: 6px; } }
+@media (prefers-reduced-motion: reduce) { .four__col i, .four__col i.drop, .four__col i.win, .lost-404.is-falling i.on, .four__scores li.is-mine { animation: none; } }
+/* Letter shortcuts on the 404 chat's choices (client/lost-chat.ts) */
+.lost__key { display: inline-grid; place-items: center; flex: none; min-width: 18px; height: 18px; margin-right: 7px; padding: 0 4px; border-radius: 5px; vertical-align: 1px; font: 600 10.5px var(--font); color: var(--muted); background: var(--card); box-shadow: inset 0 -1px 0 var(--hair), 0 0 0 1px var(--hair); }
+.lost__follow button .lost__key { margin-right: 0; }
+.lost__egg :is(button, a) .lost__key { color: var(--ink); margin-right: 5px; }
