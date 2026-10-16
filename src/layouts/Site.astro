@@ -23,6 +23,23 @@ const { bar, legacy = false, ...head } = Astro.props;
 <html lang="en">
   <head>
     <Head {...head} />
+    <script is:inline>
+      // Moving along one canvas (site.css): mark back navigations so the pan reverses, and give a
+      // fresh visit (not a page-to-page transition) a short load-in.
+      (function () {
+        var root = document.documentElement, back = function (a) { return a && a.navigationType === 'traverse' && a.from && a.entry && a.entry.index < a.from.index; };
+        var loadIn = function () { root.classList.add('load-in'); setTimeout(function () { root.classList.remove('load-in'); }, 700); };
+        if ('onpagereveal' in window) {
+          addEventListener('pagereveal', function (e) {
+            if (e.viewTransition) { if (window.navigation && back(navigation.activation)) e.viewTransition.types.add('back'); }
+            else loadIn();
+          });
+          addEventListener('pageswap', function (e) {
+            if (e.viewTransition && e.activation && e.activation.navigationType === 'traverse' && window.navigation && e.activation.entry.index < navigation.currentEntry.index) e.viewTransition.types.add('back');
+          });
+        } else loadIn();
+      })();
+    </script>
   </head>
   <body class="site">
     <!-- The signature, large and faint, writes itself at the top of every page; the title sits over it. Click it to go home (client/sig-egg.ts) -->
@@ -32,6 +49,7 @@ const { bar, legacy = false, ...head } = Astro.props;
     <div class="toast" id="toast" role="status"></div>
     <script src="../client/signature.ts"></script>
     <script src="../client/sig-egg.ts"></script>
+    <script src="../client/canvas.ts"></script>
     <script src="../client/plyr-init.ts"></script>
     <script src="../client/zoom.ts"></script>
     <script src="../client/figures.ts"></script>

@@ -4,7 +4,9 @@
    Loaded by layouts/Site.astro after tokens.css.
    ============================================================ */
 body.site { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; font-feature-settings: normal; padding-left: var(--gutter-l); padding-right: var(--gutter-r); }
-body.site::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 14%, transparent) 1px, transparent 1.4px); background-size: 24px 24px; -webkit-mask-image: var(--edge-mask); mask-image: var(--edge-mask); }
+/* The dot grid: one canvas under everything. It reaches a little past the window's sides so it can pan
+   between pages (below), and it moves with the page as you scroll (client/canvas.ts sets --sy). */
+body.site::before { content: ''; position: fixed; inset: 0 -48px; z-index: -1; pointer-events: none; background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 14%, transparent) 1px, transparent 1.4px); background-size: 24px 24px; background-position: 0 calc(var(--sy, 0) * -1px); -webkit-mask-image: var(--edge-mask); mask-image: var(--edge-mask); view-transition-name: canvas; }
 :where(body.site) button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 :where(body.site) a { color: inherit; }
 body.site :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 8px; }
@@ -633,3 +635,38 @@ body.wm-hot { cursor: pointer; }
 .wm__send:hover { transform: translateY(-1px); }
 .wm__note.is-sending .wm__send { opacity: 0.5; }
 .wm__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+/* ---------- Moving along one canvas: pages pan across the dot grid ----------
+   Cross-document view transitions: the page and the dots slide two grid cells together, like the
+   camera moving along the canvas; going back pans the other way. The bar and the watermark hold still. */
+@view-transition { navigation: auto; }
+.bar { view-transition-name: bar; }
+.wm { view-transition-name: wm; }
+::view-transition-group(root) { animation-duration: 300ms; }
+::view-transition-old(root) { animation: vt-out 110ms cubic-bezier(.4, 0, 1, 1) both; }
+::view-transition-new(root) { animation: vt-in 240ms cubic-bezier(.2, .8, .2, 1) 70ms both; }
+::view-transition-old(canvas) { animation: none; opacity: 0; }
+::view-transition-new(canvas) { animation: canvas-in 300ms cubic-bezier(.2, .8, .2, 1) both; }
+::view-transition-old(wm), ::view-transition-new(wm) { animation-duration: 160ms; }
+html:active-view-transition-type(back)::view-transition-old(root) { animation-name: vt-out-back; }
+html:active-view-transition-type(back)::view-transition-new(root) { animation-name: vt-in-back; }
+html:active-view-transition-type(back)::view-transition-new(canvas) { animation-name: canvas-in-back; }
+@keyframes vt-out { to { opacity: 0; transform: translateX(-16px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateX(24px); } }
+@keyframes vt-out-back { to { opacity: 0; transform: translateX(16px); } }
+@keyframes vt-in-back { from { opacity: 0; transform: translateX(-24px); } }
+@keyframes canvas-in { from { transform: translateX(48px); } }
+@keyframes canvas-in-back { from { transform: translateX(-48px); } }
+
+/* A fresh visit: the page's parts rise in, one after another */
+html.load-in :is(main.home, article.essay, .legacy-col > .main) > * { animation: deck-rise 420ms var(--ease) both; }
+html.load-in :is(main.home, article.essay, .legacy-col > .main) > :nth-child(2) { animation-delay: 40ms; }
+html.load-in :is(main.home, article.essay, .legacy-col > .main) > :nth-child(3) { animation-delay: 80ms; }
+html.load-in :is(main.home, article.essay, .legacy-col > .main) > :nth-child(4) { animation-delay: 120ms; }
+html.load-in :is(main.home, article.essay, .legacy-col > .main) > :nth-child(n + 5) { animation-delay: 150ms; }
+html.load-in .bar { animation: deck-fade 360ms var(--ease) 150ms both; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  html.load-in :is(main.home, article.essay, .legacy-col > .main) > *, html.load-in .bar { animation: none !important; }
+}
