@@ -1,0 +1,326 @@
+/* Work with me (pages/hire.astro, client/hire.ts). The estimate is a small app: one screen at a time,
+   beside a proposal set like the ones I send (orange circled arrows, dotted leaders to green prices,
+   the gear in the corner). */
+.hire { --money: #2f9e44; --you: #ea580c; }
+@media (prefers-color-scheme: dark) { .hire { --money: #5cc46a; } }
+@keyframes hire-in { from { opacity: 0; translate: 0 6px; } }
+
+/* Me, and whether I'm free */
+.hire-me { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 20px; }
+.hire-me__photo { --r: 26px; width: 104px; height: 104px; object-fit: cover; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.hire-me__name { display: grid; gap: 4px; }
+.hire-me__name h1 { margin: 0; font-size: clamp(34px, 6vw, 46px); line-height: 1.02; letter-spacing: -0.035em; }
+.hire-me .essay__meta { margin: 0; }
+/* The intro, set like every page's lede (site.css .page-head .lede) */
+.hire-lede { margin: 22px 0 0; max-width: 34em; font-size: 18.5px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+.hire-status { display: flex; align-items: center; gap: 8px; margin: 2px 0 0; font-size: 14.5px; font-weight: 600; color: var(--ink); }
+.hire-status > i { width: 8px; height: 8px; border-radius: 50%; background: #18c26a; box-shadow: 0 0 0 3px color-mix(in srgb, #18c26a 22%, transparent); animation: hire-pulse 2.4s ease-in-out infinite; }
+.hire-status > span { font-weight: 500; color: var(--muted); }
+.hire-status.is-closed > i { background: var(--muted); box-shadow: none; animation: none; }
+@keyframes hire-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, #18c26a 8%, transparent); } }
+@media (max-width: 560px) {
+  .hire-me__photo { width: 76px; height: 76px; --r: 20px; }
+}
+
+/* What I do: each service beside a stack of its newest examples. On hover the stack gives way to a
+   strip of all of them (scroll it sideways; each links to its write-up) and a button into the estimate.
+   On touch screens the strip simply sits under the words. */
+.hire-caps { display: grid; gap: 4px; }
+.hire-cap { --r: 16px; position: relative; display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 40px; align-items: center; margin: 0 -12px; padding: 14px 12px; transition: background-color var(--t-ui) var(--ease), opacity 260ms var(--ease), filter 260ms var(--ease); }
+.hire-caps:has(.hire-cap:hover) .hire-cap:not(:hover) { opacity: 0.45; filter: grayscale(0.4); }
+.hire-cap:is(:hover, :focus-within) { background: color-mix(in oklch, var(--ink) 4%, transparent); }
+.hire-cap__stack { position: relative; display: block; aspect-ratio: 16 / 10; transition: opacity 200ms var(--ease); }
+
+.hire-cap__text { display: grid; gap: 4px; min-width: 0; transition: opacity 200ms var(--ease); }
+.hire-cap__text b { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; }
+.hire-cap__text b .icon { font-size: 15px; color: var(--muted); }
+.hire-cap__text > span { font-size: 14.5px; line-height: 1.5; color: var(--ink-soft); text-wrap: pretty; }
+.hire-cap__text small { font-size: 12.5px; color: var(--muted); }
+
+.hire-cap__strip { position: absolute; left: 4px; right: 176px; top: 50%; translate: 0 -50%; display: flex; gap: 10px; padding: 10px 8px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; scrollbar-width: none; opacity: 0; pointer-events: none; transition: opacity 200ms var(--ease); -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 36px), transparent); }
+.hire-cap__strip::-webkit-scrollbar { display: none; }
+.hire-ex { --r: 9px; position: relative; flex: none; width: 152px; aspect-ratio: 16 / 10; overflow: hidden; scroll-snap-align: start; container-type: size; background: var(--tint); box-shadow: 0 0 0 1px var(--hair), var(--shadow); text-decoration: none; transition: translate 240ms var(--ease), box-shadow 240ms var(--ease); }
+.hire-ex img:not(.framed) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.hire-ex:hover { translate: 0 -3px; box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.hire-ex i { position: absolute; left: 6px; bottom: 6px; z-index: 1; max-width: calc(100% - 12px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 8px; border-radius: 999px; font-style: normal; font-size: 11px; font-weight: 600; color: #fff; background: rgb(22 21 19 / 0.72); }
+.hire-ex.is-icon i { left: 50%; translate: -50% 0; }
+.hire-cap__go { position: absolute; right: 14px; top: 50%; z-index: 2; display: inline-flex; align-items: center; gap: 6px; padding: 9px 15px; border-radius: 999px; font: 600 14px var(--font); color: var(--paper); background: var(--ink); box-shadow: var(--shadow-lift); opacity: 0; translate: 0 calc(-50% + 6px); pointer-events: none; transition: opacity 200ms var(--ease) 60ms, translate 260ms var(--ease) 60ms; }
+
+@media (hover: hover) {
+  .hire-cap:is(:hover, :focus-within) :is(.hire-cap__stack, .hire-cap__text) { opacity: 0; }
+  .hire-cap:is(:hover, :focus-within) :is(.hire-cap__strip, .hire-cap__go) { opacity: 1; pointer-events: auto; }
+  .hire-cap:is(:hover, :focus-within) .hire-cap__go { translate: 0 -50%; }
+  .hire-cap:is(:hover, :focus-within) .hire-ex { animation: hire-deal 380ms var(--ease) both; animation-delay: calc(min(var(--n), 5) * 40ms); }
+}
+@keyframes hire-deal { from { opacity: 0; translate: calc(-18px - var(--n) * 6px) 0; } }
+@media (hover: none) {
+  .hire-cap { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .hire-cap__stack { display: none; }
+  .hire-cap__strip { position: static; translate: none; opacity: 1; pointer-events: auto; margin: 0 -12px; padding: 4px 12px 8px; }
+  .hire-cap__go { position: static; justify-self: start; opacity: 1; translate: none; pointer-events: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .hire-ex { animation: none !important; } }
+.hire-consult { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+@media (max-width: 560px) { .hire-consult { grid-template-columns: 1fr; } }
+.hire-mini { --r: 14px; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 2px 12px; align-items: start; padding: 12px 14px; text-align: left; font: inherit; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.hire-mini:hover { translate: 0 -1px; box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow); }
+.hire-mini__icon { --r: 9px; grid-row: 1 / span 2; display: grid; place-items: center; width: 30px; height: 30px; font-size: 15px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.hire-mini b { font-size: 15px; font-weight: 600; }
+.hire-mini > span:last-child { font-size: 13px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
+/* What people say: one at a time, sliding, under the intro */
+.hire-said { position: relative; margin-top: 26px; }
+/* The scroller reaches past the column on both sides and fades out there, so cards slide in and out
+   softly instead of being cut at the column's edge. The gap is wider than that reach, so the next card
+   never peeks in at rest. Room below for the cards' shadow. */
+.hire-said .said { --bleed: 40px; display: flex; gap: calc(var(--bleed) + 12px); padding: 2px var(--bleed) 26px; margin: -2px calc(-1 * var(--bleed)) -24px; scroll-padding-inline: var(--bleed); -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--bleed), #000 calc(100% - var(--bleed)), transparent); mask-image: linear-gradient(to right, transparent, #000 var(--bleed), #000 calc(100% - var(--bleed)), transparent); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; align-items: stretch; }
+.hire-said .said::-webkit-scrollbar { display: none; }
+@media (max-width: 720px) { .hire-said .said { --bleed: 16px; } }
+.hire-said .said__card { flex: 0 0 100%; scroll-snap-align: start; }
+/* The controls sit in each card's top-right corner, where the big quote mark was; the headline keeps clear of them */
+.hire-said .said__card::before { content: none; }
+.hire-said .said__pull { padding-right: 150px; }
+@media (max-width: 560px) { .hire-said .said__pull { padding: 34px 0 0; } }
+.hire-said__nav { position: absolute; top: 18px; right: 16px; z-index: 1; display: flex; align-items: center; gap: 8px; padding: 3px; border-radius: 999px; background: color-mix(in oklch, var(--ink) 5%, transparent); }
+.hire-said__nav button { --r: 999px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; font-size: 13px; color: var(--muted); background: transparent; transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.hire-said__nav button:hover { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
+.hire-said__dots { display: flex; gap: 6px; }
+.hire-said__dots i { width: 6px; height: 6px; border-radius: 999px; background: var(--hair); transition: width 240ms var(--ease), background-color 240ms var(--ease); }
+.hire-said__dots i.is-on { width: 18px; background: var(--ink); }
+
+/* The estimate, as a small app: wider than the column */
+.hire-app { --est: min(72rem, calc(100vw - 32px)); width: var(--est); margin: 64px 0 0 calc((var(--read) - var(--est)) / 2); scroll-margin-top: 20px; }
+@media (max-width: 720px) { .hire-app { width: 100%; margin-left: 0; } }
+.est { --r: 26px; overflow: hidden; border-radius: 26px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+/* Title on the left, the steps truly centered */
+.est__top { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--hair); }
+.est__title { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; white-space: nowrap; }
+.est__title .icon { font-size: 17px; color: var(--you); }
+.est__steps { display: flex; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.est__steps li { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--muted); transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.est__steps li i { width: 7px; height: 7px; border-radius: 50%; background: var(--hair); transition: background var(--t-ui) var(--ease); }
+.est__steps li.is-done { color: var(--ink-soft); }
+.est__steps li.is-done i { background: var(--money); }
+.est__steps li.is-on { color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.est__steps li.is-on i { background: var(--you); }
+.est__count { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.est__bar { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; }
+.est__bar i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--you); transition: width 420ms var(--ease); }
+@media (max-width: 720px) { .est__steps { display: none; } }
+.est__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); }
+/* On a desktop the whole app fits in the window, so Continue is always in reach. The estimate runs the
+   full height on the right; the title, steps and progress sit over the questions only. The questions and
+   the estimate each scroll on their own when they run long. */
+@media (min-width: 901px) {
+  .est { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); grid-template-rows: auto minmax(0, 1fr); height: clamp(560px, calc(100svh - 40px), 840px); }
+  .est__body { display: contents; }
+  .est__top { grid-column: 1; grid-row: 1; border-right: 1px solid var(--hair); }
+  .est__panel { grid-column: 1; grid-row: 2; min-height: 0; }
+  .est__screens { min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+  .est__side { grid-column: 2; grid-row: 1 / span 2; display: flex; min-height: 0; }
+  .est__side .prop { flex: 1; min-height: 0; }
+}
+@media (max-width: 900px) { .est__body { grid-template-columns: 1fr; } }
+.est__panel { display: grid; grid-template-rows: minmax(0, 1fr) auto; border-right: 1px solid var(--hair); }
+@media (max-width: 900px) { .est__panel { border-right: 0; border-bottom: 1px solid var(--hair); min-height: 0; } }
+.est__screens { position: relative; padding: 22px 22px 8px; }
+.est__screen { display: none; gap: 4px; align-content: start; }
+.est__screen.is-on { display: grid; animation: app-in 320ms var(--ease) both; }
+.est__screen.is-on.from-back { animation-name: app-back; }
+@keyframes app-in { from { opacity: 0; translate: 18px 0; } }
+@keyframes app-back { from { opacity: 0; translate: -18px 0; } }
+@media (prefers-reduced-motion: reduce) { .est__screen.is-on { animation: none; } }
+.est__screen h3 { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 12px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.est__screen h3 small { flex-basis: 100%; font-size: 14px; font-weight: 400; letter-spacing: 0; color: var(--muted); }
+.est__screen h3 .icon { font-size: 20px; color: var(--muted); }
+.est__nav { display: flex; align-items: center; gap: 12px; padding: 14px 22px 18px; }
+.est__hint { flex: 1; font-size: 13px; color: var(--muted); }
+.est__hint.is-bad { color: #e5484d; }
+.est__btn { --r: 999px; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; font: 600 14.5px var(--font); color: var(--ink); background: color-mix(in oklch, var(--ink) 7%, transparent); transition: translate var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.est__btn:hover { translate: 0 -1px; }
+.est__btn--quiet { background: none; color: var(--muted); padding-inline: 12px; }
+.est__btn--quiet:hover { color: var(--ink); background: color-mix(in oklch, var(--ink) 5%, transparent); }
+.est__btn--go { margin-left: auto; color: var(--paper); background: var(--ink); }
+.est__btn--send { color: #fff; background: var(--you); }
+.est__btn:disabled { opacity: 0.55; cursor: progress; translate: none; }
+.est__side { padding: 18px; background: color-mix(in oklch, var(--ink) 2.5%, var(--paper)); }
+/* The estimate sits on a little stack: two more sheets under it, each knocked a touch off square */
+.est__side { position: relative; isolation: isolate; }
+.est__side::before, .est__side::after { content: ''; position: absolute; inset: 18px; z-index: -1; background: #fff; box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 9%, transparent), 0 10px 24px -14px rgb(0 0 0 / 0.22); pointer-events: none; }
+.est__side::before { rotate: -2.2deg; translate: -3px 4px; }
+.est__side::after { rotate: 1.4deg; translate: 4px 2px; }
+@media (prefers-color-scheme: dark) { .est__side::before, .est__side::after { background: var(--card); } }
+.est__side .prop { z-index: 1; }
+
+/* Choices */
+.hire-picks, .hire-when { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 520px) { .hire-picks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.hire-when { margin-bottom: 10px; }
+.hire-pick { --r: 14px; display: grid; justify-items: start; align-content: start; gap: 2px; padding: 12px; text-align: left; font: inherit; color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.hire-pick .icon { margin-bottom: 8px; font-size: 18px; color: var(--muted); transition: color var(--t-ui) var(--ease); }
+.hire-pick b { font-size: 14.5px; font-weight: 600; }
+.hire-pick small { font-size: 12.5px; color: var(--muted); }
+.hire-pick:hover { translate: 0 -1px; box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--ink) 25%, transparent); }
+.hire-pick:is([aria-pressed="true"], [aria-checked="true"]) { background: var(--card); box-shadow: inset 0 0 0 2px var(--ink), var(--shadow); }
+.hire-pick:is([aria-pressed="true"], [aria-checked="true"]) .icon { color: var(--ink); }
+
+.hire-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 52px; padding: 10px 0; border-top: 1px solid var(--hair); }
+.est__screen h3 + .hire-row, .hire-when + .hire-row { border-top: 0; }
+.hire-row > span { font-size: 14.5px; font-weight: 500; }
+.hire-row > span { line-height: 1.35; }
+.hire-row > span small { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.35; font-weight: 400; color: var(--muted); }
+.hire-seg { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; padding: 3px; border-radius: 11px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.hire-seg button { padding: 6px 11px; border-radius: 8px; font: 500 13.5px var(--font); color: var(--muted); transition: background-color var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
+.hire-seg button[aria-checked="true"] { color: var(--ink); font-weight: 600; background: var(--card); box-shadow: 0 1px 2px rgb(0 0 0 / 0.1), 0 0 0 0.5px var(--hair); }
+.hire-switch { cursor: pointer; }
+.hire-switch input { position: absolute; opacity: 0; pointer-events: none; }
+.hire-switch i { position: relative; flex: none; width: 36px; height: 22px; border-radius: 999px; background: color-mix(in oklch, var(--ink) 16%, transparent); transition: background var(--t-ui) var(--ease); }
+.hire-switch i::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--card); box-shadow: 0 1px 2px rgb(0 0 0 / 0.2); transition: translate var(--t-ui) var(--ease); }
+.hire-switch input:checked + i { background: var(--ink); }
+.hire-switch input:checked + i::after { translate: 14px 0; }
+.hire-switch input:focus-visible + i { outline: 2px solid var(--ink); outline-offset: 2px; }
+.hire-slider output { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+.hire-slider input { flex: 0 1 220px; accent-color: var(--ink); }
+
+/* Extras: things to add, each with its price */
+/* When the budget won't stretch that far */
+.hire-gap { --r: 14px; display: grid; gap: 10px; margin-top: 10px; padding: 12px 14px; border-radius: 14px; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); background: color-mix(in oklch, var(--you) 7%, var(--paper)); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--you) 22%, transparent); animation: hire-in 220ms var(--ease) both; }
+.hire-gap[hidden] { display: none; }
+.hire-gap p { margin: 0; text-wrap: pretty; }
+.hire-gap b { color: var(--ink); font-weight: 600; }
+.hire-gap__ideas { display: flex; flex-wrap: wrap; gap: 6px; }
+.hire-gap__ideas button { --r: 999px; display: inline-flex; align-items: baseline; gap: 8px; padding: 6px 12px; border-radius: 999px; font: 500 13px var(--font); text-align: left; color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.hire-gap__ideas button:hover { translate: 0 -1px; box-shadow: inset 0 0 0 1px var(--ink); }
+.hire-gap__ideas em { font-style: normal; font-weight: 600; color: var(--money); font-variant-numeric: tabular-nums; }
+.hire-extras { display: grid; gap: 6px; padding-top: 14px; border-top: 1px solid var(--hair); }
+.hire-extras__h { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.hire-extra { --r: 12px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease); }
+.hire-extra input { width: 18px; height: 18px; margin: 0; accent-color: var(--ink); }
+.hire-extra b { display: block; font-size: 14px; font-weight: 600; }
+.hire-extra small { font-size: 12.5px; color: var(--muted); }
+.hire-extra em { display: grid; justify-items: end; font-style: normal; font-size: 13.5px; font-weight: 600; color: var(--money); font-variant-numeric: tabular-nums; }
+.hire-extra em small { font-size: 11.5px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.hire-extra:has(input:checked) { box-shadow: inset 0 0 0 1.5px var(--ink); background: var(--card); }
+
+.hire-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 520px) { .hire-fields { grid-template-columns: 1fr; } }
+.hire-fields label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.hire-fields__wide { grid-column: 1 / -1; }
+.hire-fields :is(input, textarea) { width: 100%; padding: 11px 12px; border: 0; border-radius: 12px; font: 400 15px/1.45 var(--font); color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); resize: vertical; }
+.hire-fields :is(input, textarea):focus { outline: none; box-shadow: inset 0 0 0 1.5px var(--ink); }
+.hire-fields .is-bad { box-shadow: inset 0 0 0 1.5px #e5484d; }
+.hire-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+/* Review: what you're sending, each part a tap away */
+.hire-review { display: grid; margin: 0; }
+.hire-review div { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 11px 0; border-top: 1px solid var(--hair); }
+.hire-review div:first-child { border-top: 0; }
+.hire-review dt { font-size: 13px; font-weight: 600; color: var(--muted); }
+.hire-review dd { margin: 0; font-size: 14.5px; line-height: 1.5; }
+.hire-review button { font: 600 13px var(--font); color: var(--muted); padding: 2px 8px; border-radius: 999px; }
+.hire-review button:hover { color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+
+/* Sent: a note from me, signed */
+.hire-note { position: relative; display: grid; justify-items: start; gap: 12px; padding: 4px 2px 6px; }
+.hire-note__photo { --r: 16px; width: 56px; height: 56px; object-fit: cover; box-shadow: 0 0 0 1px var(--hair); rotate: -3deg; }
+.hire-note h3 { display: block; margin: 0; font-size: 30px; }
+.hire-note > p { margin: 0; max-width: 46ch; font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
+.hire-next { counter-reset: n; display: grid; gap: 8px; width: 100%; margin: 6px 0 0; padding: 0; list-style: none; }
+.hire-next li { counter-increment: n; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 0 10px; align-items: baseline; }
+.hire-next li::before { content: counter(n); grid-row: 1 / span 2; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: 700; color: var(--you); box-shadow: inset 0 0 0 1.5px var(--you); }
+.hire-next b { font-size: 15px; font-weight: 500; }
+.hire-next span { font-size: 13.5px; color: var(--muted); }
+.hire-note__sign { width: 200px; color: var(--ink); }
+.hire-note__sign .sig { width: 100%; }
+.hire-note__acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.est__screen[data-screen="sent"].is-on ~ * { display: none; }
+
+/* The proposal */
+/* A sheet of paper: square corners, a little whiter than the page (the stack under it is on .est__side) */
+.prop { --sheet: #fff; position: relative; overflow: hidden; overflow: clip; display: flex; flex-direction: column; min-height: 440px; padding: 0 0 84px; border-radius: 0; font-size: 14.5px; color: var(--ink); background: var(--sheet);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 7%, transparent), 0 1px 2px rgb(0 0 0 / 0.05), 0 22px 40px -22px rgb(0 0 0 / 0.28); }
+@media (prefers-color-scheme: dark) { .prop { --sheet: var(--card); } }
+/* Long estimates scroll inside the sheet: it stops at the screen's height, fades where there's more, and a
+   See all pill takes you down. The footer stays put. */
+.prop__body { display: grid; align-content: start; gap: 22px; min-height: 0; padding: 30px 28px 20px; overflow-y: auto; scrollbar-width: none; --ft: 0px; --fb: 0px; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--ft), #000 calc(100% - var(--fb)), transparent); mask-image: linear-gradient(to bottom, transparent, #000 var(--ft), #000 calc(100% - var(--fb)), transparent); }
+.prop__body::-webkit-scrollbar { display: none; }
+.prop__body[data-top] { --ft: 28px; }
+.prop__body[data-more] { --fb: 72px; }
+.prop__more { position: absolute; left: 50%; bottom: 92px; z-index: 2; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font: 600 12.5px var(--font); color: var(--ink); background: var(--sheet); box-shadow: 0 0 0 1px var(--hair), 0 6px 16px -8px rgb(0 0 0 / 0.25); translate: -50% 0; animation: hire-in 220ms var(--ease) both; transition: translate var(--t-ui) var(--ease); }
+.prop__more:hover { translate: -50% 2px; }
+.prop__more[hidden] { display: none; }
+.prop__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.prop__head div { display: grid; gap: 2px; }
+.prop__title { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.prop__head small { font-size: 13px; color: var(--muted); }
+.prop__tags { display: flex; flex-wrap: wrap; gap: 2px 12px; }
+.prop__tags:empty { display: none; }
+.prop__head time { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.prop__mark { flex: none; display: inline-grid; place-items: center; width: 19px; height: 19px; border-radius: 50%; font-size: 11px; color: var(--you); box-shadow: inset 0 0 0 1.4px var(--you); }
+/* The arrow drawn at the ring's 1.4px, not scaled down with the 11px icon */
+.prop__mark svg path { stroke-width: 1.4px; vector-effect: non-scaling-stroke; }
+.prop section { display: grid; gap: 10px; }
+.prop section[hidden] { display: none; }
+.prop h4 { display: flex; align-items: center; gap: 9px; margin: 0; font-size: 15.5px; font-weight: 600; }
+.prop__overview { margin: 0; color: var(--ink-soft); line-height: 1.6; text-wrap: pretty; }
+.prop__lines { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.prop__lines li { display: grid; grid-template-columns: auto minmax(12px, 1fr) auto; align-items: baseline; gap: 2px 8px; animation: hire-in 220ms var(--ease) both; }
+.prop__lines li::after { content: ''; grid-column: 2; grid-row: 1; align-self: center; border-bottom: 1px dotted var(--hair); }
+.prop__lines b { font-weight: 500; }
+.prop__lines em { grid-column: 3; font-style: normal; font-weight: 600; color: var(--money); font-variant-numeric: tabular-nums; }
+.prop__lines small { grid-column: 1 / -1; font-size: 13px; line-height: 1.5; color: var(--muted); }
+/* Each line opens the screen it came from: a tint over the line, a pencil in the margin */
+.prop__lines li { position: relative; }
+.prop__edit { position: absolute; inset: -6px -10px -6px -26px; z-index: 1; display: flex; align-items: flex-start; padding: 8px 0 0 6px; border-radius: 10px; font-size: 13px; color: var(--muted); background: transparent; cursor: pointer; opacity: 0.001; transition: opacity var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.prop__edit:is(:hover, :focus-visible) { opacity: 1; background: color-mix(in oklch, var(--ink) 4%, transparent); }
+.prop__edit:focus-visible { outline: 2px solid var(--you); outline-offset: 0; }
+.prop__edit svg { pointer-events: none; }
+.prop.is-final .prop__edit { display: none; }
+.prop__lines--totals b { font-weight: 600; }
+.prop__pay { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; color: var(--ink-soft); }
+.prop__terms { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+.prop__terms:empty { display: none; }
+.prop__pay em { font-style: normal; font-weight: 600; color: var(--money); }
+.prop__foot { position: absolute; inset: auto 0 0 0; height: 84px; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 22px 18px; }
+.prop__gear { position: absolute; left: -92px; bottom: -164px; width: 240px; height: 251px; rotate: -18deg; fill: color-mix(in oklch, var(--you) 5%, transparent); stroke: var(--you); stroke-width: 1.6; vector-effect: non-scaling-stroke; pointer-events: none; }
+.prop__foot span { position: relative; display: grid; flex: none; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.prop__foot span b { font-size: 13px; font-weight: 500; color: var(--ink); }
+.prop__foot p { position: relative; max-width: 200px; margin: 0; font-size: 12px; line-height: 1.4; color: var(--muted); text-align: right; }
+
+/* Phones: the proposal follows the form, and a bar keeps the total in sight */
+.hire-sum { display: none; }
+@media (max-width: 900px) {
+  .hire-sum:not([hidden]) { --r: 999px; position: fixed; z-index: 45; left: 50%; bottom: calc(70px + env(safe-area-inset-bottom, 0px)); translate: -50% 0; display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 999px; font-size: 14px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); animation: hire-in 220ms var(--ease) both; }
+  .hire-sum { white-space: nowrap; }
+  .hire-sum span { color: var(--muted); }
+  .hire-sum b { color: var(--money); font-variant-numeric: tabular-nums; }
+  .hire-sum a { display: inline-flex; align-items: center; gap: 4px; padding: 5px 11px; border-radius: 999px; font-weight: 600; text-decoration: none; color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+}
+
+.hire-more { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; letter-spacing: 0; color: var(--muted); text-decoration: none; }
+.hire-close { margin: 64px 0 0; font-size: 17px; color: var(--ink-soft); text-align: center; }
+/* Get an estimate, floating above the bar until the estimate itself is on screen */
+.hire-float { --r: 999px; position: fixed; z-index: 45; left: 50%; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px 10px 14px; border-radius: 999px; font: 600 14.5px var(--font); text-decoration: none; color: var(--paper); background: var(--ink); box-shadow: var(--shadow-lift); translate: -50% 12px; opacity: 0; pointer-events: none; transition: opacity 240ms var(--ease), translate 320ms var(--ease); }
+.hire-float .icon { font-size: 16px; }
+.hire-float[data-on] { translate: -50% 0; opacity: 1; pointer-events: auto; }
+.hire-float[data-on]:hover { translate: -50% -2px; }
+@media (prefers-reduced-motion: reduce) { .hire-float { transition: opacity 160ms linear; translate: -50% 0; } }
+.hire-mail { --r: 999px; display: inline-flex; align-items: baseline; gap: 8px; padding: 3px 10px; border-radius: 999px; font: 600 16px var(--font); color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.hire-mail small { font-size: 12px; color: var(--muted); }
+
+/* Save as PDF: just the proposal, on a letter page like the real ones */
+@media print {
+  @page { size: letter; margin: 0.6in; }
+  body * { visibility: hidden; }
+  .prop, .prop * { visibility: visible; }
+  .prop { position: absolute; left: 0; top: 0; width: 100%; min-height: 9.6in; box-shadow: none; border-radius: 0; padding: 0 0 120px; font-size: 13pt; background: #fff; color: #161513; }
+  .prop__foot { padding: 0 0 0; }
+  .prop__body { overflow: visible; padding: 0; -webkit-mask-image: none; mask-image: none; }
+  .prop__more { display: none !important; }
+  .bar, .peek, .toast { display: none !important; }
+}
+
+/* App icons, as on testamentmade.com: the icon on a soft mesh of its own colours (site.css .mesh) */
+.hire-cap .row__shot.is-icon .mesh img:not(.framed), .hire-ex.is-icon .mesh img:not(.framed) { position: relative; inset: auto; width: 44cqh; height: 44cqh; max-width: none; translate: 0 -8cqh; }
+.hire-cap .row__shot.is-icon .mesh img:not(.framed) { translate: none; width: 48cqh; height: 48cqh; }
+.hire-ex.is-icon:hover .mesh img { scale: 1.06; }
+.hire-ex.is-icon .mesh img { transition: scale 240ms var(--ease); }

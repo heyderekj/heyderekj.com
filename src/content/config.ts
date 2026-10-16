@@ -14,6 +14,8 @@ const posts = defineCollection({
       title: z.string().optional(),
       date: z.coerce.date(),
       description: z.string().optional(),
+      /** One sentence from the post shown when its row is hovered on the home page. Picked automatically when unset (src/lib/pullquote.ts). */
+      pullquote: z.string().optional(),
       /** Kebab-case topic slugs; labels live in `src/data/topics.ts`. */
       tags: z.array(z.string().regex(/^[a-z0-9-]+$/, 'tags are kebab-case slugs')).default([]),
       /** Hidden / unpublished (not the same as `status: working`). */
@@ -200,6 +202,8 @@ const projects = defineCollection({
     /** Order within a tier (lower first); ties fall back to newest `started`. */
     order: z.number().default(0),
     status: z.enum(['active', 'maintained', 'paused', 'retired']).default('active'),
+    /** A fun fact, shown when the project's element is opened on /projects/ */
+    funFact: z.string().optional(),
     draft: z.boolean().default(false),
   }),
 });

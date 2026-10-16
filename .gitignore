@@ -8,3 +8,8 @@ dist/
 *.log
 # CSV import scratch space (repo root only — not `src/data/`)
 /data/
+/public/_v/
+/.wrangler/
+
+# Local secrets for wrangler pages dev (NOTION_TOKEN and friends)
+.dev.vars

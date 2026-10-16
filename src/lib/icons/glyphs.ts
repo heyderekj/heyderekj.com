@@ -69,6 +69,10 @@ export const GLYPHS = {
   // further out than a circle's.
   search: [{ c: [6.75, 6.75, 4.75] }, { d: 'M10.6 10.6L13.75 13.75' }],
   // A main spark and a small one, like a second thought.
+  // The Derek J Design mark, drawn like the rest: a rounded pentagon around a smaller one, like a gear.
+  gear: [{ d: 'M14 8L9.5 13.75L2.25 11.5L2 4.25L9.5 2Z' }, { d: 'M10.75 8L8.75 10.75L5.5 9.75L5.5 6.25L8.75 5.25Z' }],
+  // A figure: a framed picture, hills and a sun.
+  figure: [{ d: sq(1.75, 2.75, 12.5, 10.5, 2.5) }, { d: 'M4.25 10.75L6.75 8.25L8.75 10.25' }, { d: 'M8 9.5L9.5 8L11.75 10.25' }, dot(10.75, 5.75, 0.875)],
   spark: [
     { d: 'M6.75 4.25C7.15 7.25 8.75 8.85 11.75 9.25C8.75 9.65 7.15 11.25 6.75 14.25C6.35 11.25 4.75 9.65 1.75 9.25C4.75 8.85 6.35 7.25 6.75 4.25Z' },
     { d: 'M12 1.75V5.25' },
@@ -172,6 +176,15 @@ export const GLYPHS = {
     { d: 'M5.75 8H10.25' },
     { d: 'M5.75 10.5H8.25' },
   ],
+  // An estimate: a sheet with two line items, each a label and its price, over the total.
+  estimate: [
+    { d: sq(3, 1.75, 10, 12.5, 2.5) },
+    { d: 'M5.75 5.25H7.75' },
+    dot(10, 5.25, 0.7),
+    { d: 'M5.75 7.75H7.75' },
+    dot(10, 7.75, 0.7),
+    { d: 'M5.75 10.75H10.25' },
+  ],
   users: [
     { c: [6, 5.5, 2.25] },
     { d: 'M2 13.25C2.4 10.9 4 9.75 6 9.75C8 9.75 9.6 10.9 10 13.25' },
@@ -232,14 +245,15 @@ export const GLYPHS = {
   laptop: [{ d: sq(3, 3, 10, 7.5, 2) }, { d: 'M1.75 12.75H14.25' }],
   // Sitcoms: an old set with rabbit ears.
   tv: [{ d: sq(2, 4.5, 12, 9, 2.5) }, { d: 'M5.5 1.75L8 4.25L10.5 1.75' }],
+  // A gamepad: soft shoulders, round grips, a d-pad and two buttons.
   controller: [
     {
-      d: 'M5 4.5H11C13 4.5 14.25 6 14.5 8.5L14.75 10.5C15 12.3 13.25 13.2 12 12L10.75 10.75H5.25L4 12C2.75 13.2 1 12.3 1.25 10.5L1.5 8.5C1.75 6 3 4.5 5 4.5Z',
+      d: 'M5 4H11C13.1 4 14.3 5.4 14.6 7.6L14.9 10.1C15.1 11.9 13.4 12.9 12.1 11.9L10.9 10.9C10.6 10.65 10.25 10.5 9.85 10.5H6.15C5.75 10.5 5.4 10.65 5.1 10.9L3.9 11.9C2.6 12.9 0.9 11.9 1.1 10.1L1.4 7.6C1.7 5.4 2.9 4 5 4Z',
     },
-    { d: 'M4.75 6.75V9.25' },
-    { d: 'M3.5 8H6' },
-    dot(10.75, 7.25, 0.75),
-    dot(12, 8.75, 0.75),
+    { d: 'M4.75 6V8.5' },
+    { d: 'M3.5 7.25H6' },
+    dot(10.75, 6.5, 0.8),
+    dot(12, 8, 0.8),
   ],
   // Lego: one brick, two studs.
   lego: [
@@ -248,6 +262,12 @@ export const GLYPHS = {
     { d: 'M9 6V4.25C9 3.7 9.2 3.5 9.75 3.5H11.25C11.8 3.5 12 3.7 12 4.25V6' },
   ],
   bolt: [{ d: 'M9 1.75L3.75 9H8L7 14.25L12.25 7H8Z' }],
+  // Sound: a speaker and two waves (the waves go when it's off, site.css .bar__sound).
+  sound: [
+    { d: 'M1.75 6.25C1.75 5.7 2.2 5.25 2.75 5.25H4.5L7.75 2.75V13.25L4.5 10.75H2.75C2.2 10.75 1.75 10.3 1.75 9.75Z' },
+    { d: 'M10 6C10.9 6.9 10.9 9.1 10 10' },
+    { d: 'M12 4.25C13.75 6.1 13.75 9.9 12 11.75' },
+  ],
   // F1: a chequered flag on its pole.
   flag: [
     { d: 'M3 14.25V2.25' },

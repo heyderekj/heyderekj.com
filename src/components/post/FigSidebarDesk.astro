@@ -1,0 +1,21 @@
+---
+/**
+ * Packaging Koati, "Sidebar to desk": a working miniature of Koati in both layouts.
+ * Pick a page or board, then switch layouts and watch everything move to its new place
+ * (client/fig-koati.ts).
+ */
+import { getEntry } from 'astro:content';
+import { imgSrc } from '../../lib/img';
+
+interface Props { n?: number }
+const { n = 1 } = Astro.props;
+const koati = await getEntry('projects', 'koati');
+const icon = koati?.data.icon ? imgSrc(koati.data.icon, 64) : '';
+---
+<figure class="fig sq" id="fig-desk" data-fig="desk" data-icon={icon}>
+  <div class="fig__head"><span class="fig__no">FIG {n}</span><span class="fig__title">Sidebar to desk</span><button class="fig__reset" data-reset>Reset</button></div>
+  <div class="fig__stage"><div class="app sq is-sidebar" data-app></div></div>
+  <div class="fig__controls"><span class="seg" role="group" aria-label="Layout"><button data-layout="sidebar" aria-pressed="true">Sidebar</button><button data-layout="desk" aria-pressed="false">Desk</button></span><span class="fig__hint">Try a board, then switch layouts.</span></div>
+  <p class="fig__cap">A working miniature, not a screenshot. On the desk, Today is gone, Plan lives inside Work, and a board pill filters Inbox, Chat and Work at once.</p>
+</figure>
+<script src="../../client/fig-koati.ts"></script>

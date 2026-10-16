@@ -1,0 +1,38 @@
+---
+/**
+ * The work preview used everywhere: a small browser window around a site's pages.
+ * `ticks` lets you flip through pages by moving across it (client/browser.ts);
+ * in the deck and write-ups, a rail of pages slides out beside it from the toolbar's sidebar button.
+ */
+import { frameAttrs, type DeckPage } from '../../lib/deck';
+
+interface Props {
+  pages: DeckPage[]; url?: string; ticks?: boolean; eager?: boolean; deck?: boolean;
+  /** Show a sidebar button in the toolbar that opens the page rail beside it (client/drawer.ts) */
+  drawer?: boolean;
+  /** Show a settings button at the toolbar's right that opens the deck's dial panel (client/deck.ts) */
+  settings?: boolean;
+}
+const { pages, url = '', ticks = false, eager = false, deck = false, drawer = false, settings = false } = Astro.props;
+---
+<div class="browser sq" data-n={pages.length}>
+  <div class="browser__bar"><span class="browser__dots"><i></i><i></i><i></i></span>{drawer && pages.length > 1 && (
+    <button class="browser__side" data-drawer-toggle data-count={pages.length} aria-expanded="false" aria-label={`Show all ${pages.length} pages`} title="Pages">
+      <svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="10.5" rx="2.5" /><path d="M6 2.75v10.5" /></svg>
+      <span>{pages.length}</span>
+    </button>
+  )}<span class="browser__url">{url}</span><span class="browser__end" style={`width:${drawer && pages.length > 1 ? 82 : 37}px`}>{settings && (
+    <button class="browser__side browser__dial" data-dial-toggle aria-expanded="false" aria-haspopup="dialog" aria-label="Customize the slideshow" title="Customize">
+      <svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M2.5 5h4.25M11.25 5h2.25M2.5 11h2.25M9.25 11h4.25" /><circle cx="9" cy="5" r="1.9" /><circle cx="7" cy="11" r="1.9" /></svg>
+    </button>
+  )}</span></div>
+  <div class="browser__view">
+    {pages.map((p, n) => 'mesh' in p
+      ? p.collage?.length
+        ? <div class={`mesh collage${n ? '' : ' is-on'}`} data-page data-mesh={p.mesh} data-count={p.collage.length} style={`opacity:${n ? 0 : 1}`}>{p.collage.map((src) => <img class="collage__card" src={src} alt="" loading={eager ? undefined : 'lazy'} decoding="async" />)}{p.icon && <img class="collage__icon" src={p.icon} alt="" />}</div>
+        : <div class={`mesh${n ? '' : ' is-on'}`} data-page data-mesh={p.mesh} style={`opacity:${n ? 0 : 1}`}><img src={p.icon} alt="" /></div>
+      : <img src={p.src} alt="" data-page class:list={[frameAttrs(p).class, !n && 'is-on']} style={frameAttrs(p).style} loading={n || !eager ? 'lazy' : undefined} decoding="async" />)}
+    {ticks && !deck && pages.length > 1 && <div class="browser__ticks">{pages.map((_, n) => <i class={n ? '' : 'is-on'}></i>)}</div>}
+  </div>
+</div>
+<script src="../../client/drawer.ts"></script>

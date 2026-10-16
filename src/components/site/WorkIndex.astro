@@ -1,0 +1,71 @@
+---
+/**
+ * Every website write-up by year, like the writing on the home page, each with a small thumbnail of
+ * the site (cropped to its screen). Hover a row to see it bigger in the margin (client/peek.ts). Partner chips narrow it to the work done with a studio.
+ */
+import { getPublishedWork, partnerHref, partnersOf, type Work } from '../../lib/work';
+import { frameAttrs, host, pageOf, shot, shotsOf, workDate } from '../../lib/deck';
+
+interface Props { work: Work[]; active?: string }
+const { work, active } = Astro.props;
+const all = await getPublishedWork();
+const partners = partnersOf(all);
+const solo = all.filter((w) => !w.data.partnership?.trim()).length;
+// What the toolbar button says you're looking at
+const showing = active === 'solo' ? { label: 'Solo', n: solo } : active ? { label: partners.find((p) => p.slug === active)?.name ?? 'Sites', n: work.length } : { label: 'All sites', n: all.length };
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const rows = await Promise.all([...work].sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf()).map(async (w) => {
+  const done = workDate(w), first = shotsOf(w)[0];
+  return {
+    thumb: first ? await pageOf(first, 480) : undefined, at: done.valueOf(), type: w.data.workType ?? '',
+    // Every shot of the site, for the Stack layout
+    shots: await Promise.all(shotsOf(w).slice(0, 4).map((s) => pageOf(s, 480))),
+    href: `/work/${w.slug}/`, title: w.data.title, year: done.getUTCFullYear(), date: `${MON[done.getUTCMonth()]}`,
+    sub: [w.data.partnership ? `With ${w.data.partnership}` : 'Solo', w.data.workType].filter(Boolean).join(' · '),
+    img: first ? shot(first, 640) : undefined, url: host(w.data.liveLink ?? w.data.waybackUrl),
+  };
+}));
+const years = [...new Set(rows.map((r) => r.year))];
+---
+<div class="work-tools">
+<button type="button" class="work-tools__btn sq" data-wdial-toggle aria-expanded="false" aria-haspopup="dialog" aria-label={`Filter and view: ${showing.label}`}>
+  <svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M2.5 5h4.25M11.25 5h2.25M2.5 11h2.25M9.25 11h4.25" /><circle cx="9" cy="5" r="1.9" /><circle cx="7" cy="11" r="1.9" /></svg>
+  <b>{showing.label}</b><span>{showing.n}</span>
+  <svg class="work-tools__chev" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.25l4 4 4-4" /></svg>
+</button>
+<div class="dial work-dial" role="dialog" aria-label="Customize this list" hidden>
+  <div class="dial__head"><b>Studio</b></div>
+  <nav class="dial__pills" aria-label="Filter by studio">
+    <a class:list={['dial__pill', !active && 'is-current']} href="/work/" aria-current={!active ? 'page' : undefined}>All <span>{all.length}</span></a>
+    <a class:list={['dial__pill', active === 'solo' && 'is-current']} href="/work/solo/" aria-current={active === 'solo' ? 'page' : undefined} data-tip="Under Derek J Design" aria-describedby="soloTip">Solo <span>{solo}</span></a>
+    {partners.map((p) => (
+      <a class:list={['dial__pill', active === p.slug && 'is-current']} href={partnerHref(p.name)} aria-current={active === p.slug ? 'page' : undefined}>{p.name} <span>{p.count}</span></a>
+    ))}
+  </nav>
+  <div class="dial__head dial__head--gap"><b>View</b><button type="button" class="dial__reset" data-wdial-reset>Reset</button></div>
+  <div class="dial__row"><span>Layout</span><div class="dial__seg" role="radiogroup" aria-label="Layout"><button type="button" role="radio" data-set="layout:stack">Stack</button><button type="button" role="radio" data-set="layout:grid">Grid</button><button type="button" role="radio" data-set="layout:list">List</button></div></div>
+  <div class="dial__row"><span>Sort</span><div class="dial__seg" role="radiogroup" aria-label="Sort"><button type="button" role="radio" data-set="sort:new">Newest</button><button type="button" role="radio" data-set="sort:old">Oldest</button><button type="button" role="radio" data-set="sort:az">A–Z</button></div></div>
+  <div class="dial__row"><span>Type</span><div class="dial__seg" role="radiogroup" aria-label="Type"><button type="button" role="radio" data-set="type:all">All</button><button type="button" role="radio" data-set="type:design">Design</button><button type="button" role="radio" data-set="type:dev">Dev</button></div></div>
+  <label class="dial__row dial__switch"><span>Group by year</span><input type="checkbox" data-switch="group" /><i aria-hidden="true"></i></label>
+</div>
+</div>
+<span id="soloTip" hidden>Under Derek J Design</span>
+<div class="list work-list is-stack">
+  {years.map((y) => (
+    <section class="list__year">
+      <h2>{y}</h2>
+      {rows.filter((r) => r.year === y).map((r) => (
+        <a class="row row--thumb sq" href={r.href} data-peek-img={r.img} data-peek-url={r.url || undefined} data-at={r.at} data-title={r.title} data-type={r.type}>
+          <span class="row__thumb sq" aria-hidden="true">{r.thumb && 'src' in r.thumb && <img src={r.thumb.src} alt="" class={frameAttrs(r.thumb).class} style={frameAttrs(r.thumb).style} loading="lazy" decoding="async" />}</span>
+          <span class="row__title">{r.title}</span>
+          <span class="row__date">{r.date}</span>
+          <span class="row__shots" aria-hidden="true" style={`--n:${r.shots.length}`}>{r.shots.map((p, i) => 'src' in p && <span class="row__shot sq" style={`--i:${i}`}><img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" /></span>)}<em>{r.title}</em></span>
+          <span class="row__desc">{r.sub}</span>
+        </a>
+      ))}
+    </section>
+  ))}
+</div>
+<div class="peek sq" id="peek" aria-hidden="true"></div>
+<script src="../../client/peek.ts"></script>
+<script src="../../client/work-dial.ts"></script>

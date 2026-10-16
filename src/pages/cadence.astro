@@ -2,7 +2,7 @@
 import Icon from '../components/Icon.astro';
 import { imgAttrs, imgFixed } from '../lib/img';
 import { getCollection } from 'astro:content';
-import Base from '../layouts/Base.astro';
+import Site from '../layouts/Site.astro';
 import PageTitle from '../components/PageTitle.astro';
 import ApplicationToc from '../components/ApplicationToc.astro';
 import FeaturedWorkGrid from '../components/FeaturedWorkGrid.astro';
@@ -26,13 +26,15 @@ const tocItems = [
 ];
 ---
 
-<Base
+<Site
+    legacy
+    bar={{ kind: 'page', title: 'For Cadence' }}
   title={cadenceMeta.title}
   description={cadenceMeta.description}
   ogImage={cadenceMeta.ogImage}
   noindex={true}
 >
-  <PageTitle path="/cadence" />
+  <PageTitle title="For Cadence" path="/cadence" />
 
   <ApplicationToc items={tocItems} />
 
@@ -101,7 +103,7 @@ const tocItems = [
       Posts
     </a>
   </nav>
-</Base>
+</Site>
 
 <style is:global>
   [id="why-cadence"] .cadence-chip {

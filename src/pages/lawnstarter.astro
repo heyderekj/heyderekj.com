@@ -1,6 +1,6 @@
 ---
 import Icon from '../components/Icon.astro';
-import Base from '../layouts/Base.astro';
+import Site from '../layouts/Site.astro';
 import PageTitle from '../components/PageTitle.astro';
 import BragClippingFeed from '../components/BragClippingFeed.astro';
 import TestimonialCarousel from '../components/TestimonialCarousel.astro';
@@ -10,13 +10,15 @@ import { lawnstarterMeta, lawnstarterLetter, lawnstarterClippings } from '../dat
 const letter = lawnstarterLetter;
 ---
 
-<Base
+<Site
+    legacy
+    bar={{ kind: 'page', title: 'For LawnStarter' }}
   title={lawnstarterMeta.title}
   description={lawnstarterMeta.description}
   ogImage={lawnstarterMeta.ogImage}
   noindex={true}
 >
-  <PageTitle path="/lawnstarter" />
+  <PageTitle title="For LawnStarter" path="/lawnstarter" />
 
   <section class="lawnstarter-letter" aria-label="Cover letter" tabindex="0" data-lawnstarter-letter>
     <div class="lawnstarter-letter__sheet">
@@ -59,7 +61,7 @@ const letter = lawnstarterLetter;
       Posts
     </a>
   </nav>
-</Base>
+</Site>
 
 <script>
   function initLawnstarterLetter() {

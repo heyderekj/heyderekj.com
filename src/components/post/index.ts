@@ -8,6 +8,8 @@ import Callout from './Callout.astro';
 import Clip from './Clip.astro';
 import Compare from './Compare.astro';
 import Figure from './Figure.astro';
+import FigSameList from './FigSameList.astro';
+import FigSidebarDesk from './FigSidebarDesk.astro';
 import Prompt from './Prompt.astro';
 import Sidenote from './Sidenote.astro';
 import Snapshots from './Snapshots.astro';
@@ -18,6 +20,8 @@ export const postComponents = {
   Clip,
   Compare,
   Figure,
+  FigSameList,
+  FigSidebarDesk,
   Prompt,
   Sidenote,
   Snapshots,

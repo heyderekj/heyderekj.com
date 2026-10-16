@@ -1,5 +1,4 @@
-import { getCollection } from 'astro:content';
-import { getPublishedPosts, postHref, tagCounts, topicHref, TYPE_LABELS } from '../lib/posts';
+import { getPublishedPosts, postHref, tagCounts, topicHref, typeHref } from '../lib/posts';
 import { getRevisions } from '../lib/revisions';
 import { getPublishedWork, partnerHref, partnersOf } from '../lib/work';
 
@@ -8,23 +7,22 @@ export async function GET(context) {
 
   const posts = await getPublishedPosts();
   const work = await getPublishedWork();
-  const types = [...new Set(posts.map((p) => p.data.type))].map((t) => `/posts/${TYPE_LABELS[t].path}/`);
+  const types = [...new Set(posts.map((p) => p.data.type))].map((t) => typeHref(t));
   const topicPaths = tagCounts(posts).map(({ tag }) => topicHref(tag));
 
   const staticPaths = [
     '/',
-    '/posts/',
     ...types,
     '/topics/',
     ...topicPaths,
     '/work/',
-    ...partnersOf(work).map((p) => partnerHref(p.name)),
+    '/work/solo/',
     '/projects/',
+    ...partnersOf(work).map((p) => partnerHref(p.name)),
+    '/hire/',
     '/about/',
     '/colophon/',
   ];
-
-  const projects = await getCollection('projects', ({ data }) => !data.draft && data.status !== 'retired');
 
   const urls = [
     ...staticPaths.map((p) => ({ loc: `${site}${p}`, lastmod: null })),
@@ -35,10 +33,6 @@ export async function GET(context) {
     ...work.map((p) => ({
       loc: `${site}/work/${p.slug}/`,
       lastmod: p.data.date.toISOString().slice(0, 10),
-    })),
-    ...projects.map((p) => ({
-      loc: `${site}/projects/${p.slug}/`,
-      lastmod: null,
     })),
   ];
 

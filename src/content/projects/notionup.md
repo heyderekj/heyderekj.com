@@ -5,6 +5,7 @@ started: 2010-04-03
 status: retired
 order: 0
 category: Network
+funFact: Years after I chose not to renew the domain, Notion picked it up.
 ---
 
 ## About

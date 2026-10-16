@@ -1,0 +1,19 @@
+---
+/** The work I did on my own, under Derek J Design: the Solo chip on /work/. */
+import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/site/PageHead.astro';
+import WorkIndex from '../../components/site/WorkIndex.astro';
+import { getPublishedWork } from '../../lib/work';
+
+const entries = (await getPublishedWork()).filter((w) => !w.data.partnership?.trim());
+---
+<Site
+  title="Solo work — Derek Castelli"
+  description="Sites Derek Castelli designed and built on his own, under Derek J Design."
+  bar={{ kind: 'page', title: 'Solo' }}
+>
+  <main class="home">
+    <PageHead title="Solo" meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">Sites I've designed and built on my own, under Derek J Design.</Fragment></PageHead>
+    <WorkIndex work={entries} active="solo" />
+  </main>
+</Site>

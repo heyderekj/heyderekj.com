@@ -1,0 +1,44 @@
+---
+/**
+ * What people say: testimonial cards, each leading with its best line, then the full quote with that
+ * line highlighted, and who said it. Each person has their own colour. Used on /work/ and /hire/.
+ */
+import { workTestimonials } from '../../data/about';
+import Icon from '../Icon.astro';
+import VideoBox from '../VideoBox.astro';
+
+interface Props { testimonials?: typeof workTestimonials }
+const { testimonials = workTestimonials } = Astro.props;
+
+const TONE: Record<string, string> = { 'Shelley Martin': 'green', 'Barrett Johnson': 'purple', 'Josh Pigford': 'blue', 'Danny Begnoche': 'pink', 'Corey Moen': 'yellow' };
+// A YouTube link (with ?t=) opens in the lightbox at that moment instead of leaving the page
+const clipOf = (href?: string) => {
+  const m = href?.match(/(?:youtu\.be\/|[?&]v=)([\w-]{11})/);
+  if (!m) return undefined;
+  const t = Number(new URL(href!).searchParams.get('t')?.replace(/s$/, '') ?? 0);
+  return `https://www.youtube-nocookie.com/embed/${m[1]}?start=${t}&autoplay=1&rel=0&modestbranding=1`;
+};
+const said = testimonials.map((t) => {
+  const [rel, when] = t.context.split(' · ');
+  const relation = t.relation ?? (/client/i.test(rel) ? 'Client' : /mentor/i.test(rel) ? 'Mentor' : /team/i.test(rel) ? 'Teammate' : rel);
+  const at = t.pull ? t.quote.indexOf(t.pull) : -1;
+  const pull = t.pull ? t.pull[0].toUpperCase() + t.pull.slice(1) : '';
+  return { ...t, relation, when, pull, clip: clipOf(t.href), parts: at < 0 ? [t.quote] : [t.quote.slice(0, at), t.pull!, t.quote.slice(at + t.pull!.length)], initials: t.author.split(' ').map((w) => w[0]).join('').slice(0, 2) };
+});
+---
+<div class="said">
+  {said.map((t) => (
+    <figure class="said__card sq" data-tone={TONE[t.author] ?? 'orange'}>
+      {t.pull && <blockquote class="said__pull">“{t.pull}.”</blockquote>}
+      <p class="said__full">{t.parts.length === 3 ? <Fragment>{t.parts[0]}<mark class="said__mark">{t.parts[1]}</mark>{t.parts[2]}</Fragment> : t.parts[0]}</p>
+      <figcaption class="said__by">
+        <span class="said__face sq" aria-hidden="true">{t.initials}</span>
+        <span class="said__who"><b>{t.author}</b><small>{t.role}</small></span>
+        {t.href
+          ? <a class="said__rel said__rel--link" href={t.href} target="_blank" rel="noopener" data-clip={t.clip} data-clip-title={`${t.author}, ${t.context.split(' · ')[0]}`} title={`Watch: ${t.context.split(' · ')[0]}`}><Icon name="play" loop={false} />{t.relation}{t.when && <time>{t.when}</time>}</a>
+          : <span class="said__rel">{t.relation}{t.when && <time>{t.when}</time>}</span>}
+      </figcaption>
+    </figure>
+  ))}
+</div>
+{said.some((t) => t.clip) && <VideoBox />}

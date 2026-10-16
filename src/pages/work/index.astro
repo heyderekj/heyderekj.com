@@ -1,44 +1,23 @@
 ---
-import Base from '../../layouts/Base.astro';
-import PageTitle from '../../components/PageTitle.astro';
-import FeaturedWorkGrid from '../../components/FeaturedWorkGrid.astro';
-import WorkFilters from '../../components/WorkFilters.astro';
-import { getPublishedWork, partnersOf } from '../../lib/work';
-import { testimonials } from '../../data/about';
+import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/site/PageHead.astro';
+import WorkIndex from '../../components/site/WorkIndex.astro';
+import { getPublishedWork } from '../../lib/work';
+import Said from '../../components/site/Said.astro';
 
 const entries = await getPublishedWork();
 ---
-<Base
+<Site
   title="Work — Derek Castelli"
-  description="Case studies and write-ups from client and shipped product work—Webflow builds, branding sites, and collaborations."
+  description="Write-ups from the sites I've designed and built, on my own and with studios like Kem Design."
+  bar={{ kind: 'page', title: 'Work' }}
 >
-  <PageTitle path="/work" />
-  <p style="color: var(--fg-soft); max-width: var(--max-prose);">
-    Selected posts from shipped sites and collaborations. Also see the full <a href="/posts/">posts archive</a> and{' '}
-    <a href="/projects/">projects</a>.
-  </p>
+  <main class="home">
+    <PageHead title="Sites" meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">The sites I've designed and built, on my own and with studios I love working alongside.</Fragment></PageHead>
+    <WorkIndex work={entries} />
 
-  <WorkFilters partners={partnersOf(entries)} total={entries.length} />
-
-  {entries.length > 0 ? (
-    <FeaturedWorkGrid work={entries} />
-  ) : (
-    <p style="color: var(--muted);">No work entries yet.</p>
-  )}
-
-  <section class="work-testimonials" aria-labelledby="work-testimonials-heading">
-    <h2 id="work-testimonials-heading" class="section-title">Recommendations</h2>
-    <ul class="work-testimonial-list">
-      {testimonials.map((t) => (
-        <li class="work-testimonial-card">
-          <p class="work-testimonial-quote">{t.quote}</p>
-          <footer class="work-testimonial-footer">
-            <p class="work-testimonial-name">{t.author}</p>
-            <p class="work-testimonial-role">{t.role}</p>
-            <p class="work-testimonial-context">{t.context}</p>
-          </footer>
-        </li>
-      ))}
-    </ul>
-  </section>
-</Base>
+    <h2 class="h">What people say</h2>
+    <Said />
+  </main>
+  <script src="../../client/chips.ts"></script>
+</Site>

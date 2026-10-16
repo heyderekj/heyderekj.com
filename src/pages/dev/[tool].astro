@@ -3,7 +3,7 @@
  * Dev-only workbench (never built — getStaticPaths returns nothing outside
  * `astro dev`): /dev/icons is the icon review sheet.
  */
-import Base from '../../layouts/Base.astro';
+import Site from '../../layouts/Site.astro';
 import Icon from '../../components/Icon.astro';
 import { GLYPHS, type Shape } from '../../lib/icons/glyphs';
 import { ICON_NAMES, type IconName } from '../../lib/icons';
@@ -41,7 +41,7 @@ const unlisted = ICON_NAMES.filter((n) => !listed.has(n));
 if (unlisted.length) groups.push({ title: 'Unsorted', names: unlisted });
 ---
 
-<Base title="Icons — Derek Castelli" noindex includeAnalytics={false}>
+<Site legacy bar={{ kind: 'page', title: 'Icons' }} title="Icons — Derek Castelli" noindex includeAnalytics={false}>
   {tool === 'icons' && (
     <div class="sheet" data-sheet>
       <h1>Icons</h1>
@@ -86,7 +86,7 @@ if (unlisted.length) groups.push({ title: 'Unsorted', names: unlisted });
       ))}
     </div>
   )}
-</Base>
+</Site>
 
 <script is:inline>
   const sheet = document.querySelector('[data-sheet]');

@@ -1,27 +1,25 @@
 ---
-import Base from '../../layouts/Base.astro';
-import PageTitle from '../../components/PageTitle.astro';
+import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/site/PageHead.astro';
 import { getPublishedPosts, tagCounts, topicHref } from '../../lib/posts';
 import { topicLabel, topics } from '../../data/topics';
 
 const posts = await getPublishedPosts();
 const counts = tagCounts(posts);
 ---
-<Base title="Topics — Derek Castelli" description="Everything I write about, grouped by topic.">
-  <PageTitle path="/topics" />
-  <p style="color: var(--fg-soft);">
-    Everything I write about, by topic. Or browse <a href="/posts/">all posts</a> by date.
-  </p>
-
-  <ul class="topic-list">
-    {counts.map(({ tag, count }) => (
-      <li>
-        <a href={topicHref(tag)} class="topic-link">
-          <span class="topic-link__name">{topicLabel(tag)}</span>
-          <span class="topic-link__count">{count}</span>
-          {topics[tag]?.description && <span class="topic-link__desc">{topics[tag].description}</span>}
-        </a>
-      </li>
-    ))}
-  </ul>
-</Base>
+<Site bar={{ kind: 'page', title: 'Topics' }} title="Topics — Derek Castelli" description="Everything I write about, grouped by topic.">
+  <main class="home">
+    <PageHead title="Topics" meta={`Writing · ${counts.length} topics`}><Fragment slot="lede">Everything I write about, by topic. Or read it all <a href="/#writing">by date</a>.</Fragment></PageHead>
+    <div class="list">
+      <section class="list__year">
+        {counts.map(({ tag, count }) => (
+          <a class="row sq" href={topicHref(tag)}>
+            <span class="row__title">{topicLabel(tag)}</span>
+            <span class="row__date">{count} {count === 1 ? 'post' : 'posts'}</span>
+            {topics[tag]?.description && <span class="row__desc">{topics[tag].description}</span>}
+          </a>
+        ))}
+      </section>
+    </div>
+  </main>
+</Site>

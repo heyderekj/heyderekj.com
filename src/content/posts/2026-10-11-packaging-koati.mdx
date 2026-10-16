@@ -53,23 +53,13 @@ Drawing the app on the homepage had a side effect: it put the app's layout in th
 
 The old layout was a sidebar: a dark rail with Today, Inbox, Chat, Work and Plan, then every board stacked under them. The new one is a desk. Inbox, Chat and Work sit across the top, the boards you're on are pills under them, and whatever you open is laid out as modules on the desk.
 
-<Compare
-  mode="stepper"
-  before={{ src: '/images/posts/packaging-koati/sidebar-today.webp', alt: "Koati's old layout: a dark sidebar of pages and boards beside the Today page", label: 'Sidebar' }}
-  after={{ src: '/images/posts/packaging-koati/desk-today.webp', alt: "Koati's new layout: Inbox, Chat and Work across the top, board pills under them, and the day as modules on a desk", label: 'Desk' }}
-  caption="Today, then the Inbox it became"
-/>
+<FigSidebarDesk n={1} />
 
 ### Today and the inbox were the same list
 
 The old Today had a section called To sort. The inbox had one called Needs sorting. They were the same requests drawn twice. So Today retired, and Inbox became everything waiting on your next step: what to sort, what came back from your assistant, what's yours by due date, then what's waiting on somebody else.
 
-<Compare
-  mode="stepper"
-  before={{ src: '/images/posts/packaging-koati/sidebar-inbox.webp', alt: 'The old inbox page in the sidebar layout', label: 'Sidebar' }}
-  after={{ src: '/images/posts/packaging-koati/desk-inbox.webp', alt: 'The new inbox on the desk', label: 'Desk' }}
-  caption="Inbox"
-/>
+<FigSameList n={2} />
 
 ### Three modes, not a long list of pages
 

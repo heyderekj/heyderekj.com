@@ -1,0 +1,59 @@
+---
+/**
+ * One kind of thing in the library, as rows like the writing on the home page.
+ * Hovering a row with a drawing shows it in the margin (client/peek.ts); saved posts are quotes.
+ */
+import Icon from '../Icon.astro';
+import { hostOf, itemHref, KIND_META, kindHref, type LibraryItem, type LibraryKind } from '../../lib/library';
+
+interface Props { kind: LibraryKind; items: LibraryItem[]; limit?: number; heading?: boolean }
+const { kind, items, limit, heading = true } = Astro.props;
+const shown = limit ? items.slice(0, limit) : items;
+const READING = { reading: 'Reading', read: 'Read', want: 'Want to read' } as const;
+const external = (href?: string) => Boolean(href && /^https?:/.test(href));
+const right = (i: LibraryItem) => {
+  const d = i.data;
+  if (kind === 'book') return d.reading ? READING[d.reading] : d.date ? String(d.date.getUTCFullYear()) : '';
+  if (kind === 'bookmark') return hostOf(d.url) ?? '';
+  return d.date ? String(d.date.getUTCFullYear()) : '';
+};
+const desc = (i: LibraryItem) => [i.data.by, i.data.note].filter(Boolean).join(' · ');
+// Tools read best grouped (Mac apps, browser, …); everything else is one list
+const groups = kind === 'tool'
+  ? [...shown.reduce((m, i) => m.set(i.data.group ?? 'Other', [...(m.get(i.data.group ?? 'Other') ?? []), i]), new Map<string, LibraryItem[]>())]
+  : [['', shown] as [string, LibraryItem[]]];
+const fmt = (iso: string) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+<section class="lib">
+  {heading && (
+    <h2 class="h" id={KIND_META[kind].path} data-bar-section={KIND_META[kind].many}>
+      {KIND_META[kind].many}
+      {limit && items.length > limit && <a href={kindHref(kind)}>See all {items.length} <Icon name="arrow-right" /></a>}
+    </h2>
+  )}
+  {kind === 'post' ? (
+    <div class="lib__quotes">
+      {shown.map((i) => (
+        <a class="qcard sq" href={i.data.url} target="_blank" rel="noopener">
+          <p>{i.data.post?.text ?? i.data.title}</p>
+          <span><b>{i.data.post?.handle ?? i.data.by}</b>{i.data.post?.postedAt && ` · ${fmt(String(i.data.post.postedAt))}`} ↗{i.data.note && <> · {i.data.note}</>}</span>
+        </a>
+      ))}
+    </div>
+  ) : (
+    <div class="list">
+      {groups.map(([g, list]) => (
+        <section class="list__year">
+          {g && groups.length > 1 && <h3>{g}</h3>}
+          {list.map((i) => {
+            const href = itemHref(i);
+            const attrs = { 'data-peek-img': i.data.image || undefined, 'data-peek-url': i.data.image ? KIND_META[kind].one : undefined };
+            return href
+              ? <a class="row sq" href={href} {...attrs} {...(external(href) ? { target: '_blank', rel: 'noopener' } : {})}><span class="row__title">{i.data.title}{i.data.favorite && <span class="row__fav" title="A favorite"> ★</span>}</span><span class="row__date">{right(i)}</span>{desc(i) && <span class="row__desc">{desc(i)}</span>}</a>
+              : <div class="row sq" {...attrs}><span class="row__title">{i.data.title}{i.data.favorite && <span class="row__fav" title="A favorite"> ★</span>}</span><span class="row__date">{right(i)}</span>{desc(i) && <span class="row__desc">{desc(i)}</span>}</div>;
+          })}
+        </section>
+      ))}
+    </div>
+  )}
+</section>

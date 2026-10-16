@@ -130,14 +130,14 @@ export const MORPHS: Partial<Record<Name | 'x' | 'github', Frame[]>> = {
   note: [
     { s: { 1: pt(base('note', 1), 5.75, 5.5), 2: pt(base('note', 2), 5.75, 8), 3: pt(base('note', 3), 5.75, 10.5) }, hold: 100 },
   ],
+  // The total adds itself up again.
+  estimate: [{ s: { 5: { d: pt(base('estimate', 5), 5.75, 10.75), o: 0 }, 2: [10, 5.25, 0.35], 4: [10, 7.75, 0.35] }, hold: 120 }],
   users: [{ s: { 2: tr(base('users', 2), 1.25, 0), 3: tr(base('users', 3), 1.25, 0), 0: [6, 5, 2.25] } }],
 
   /* ---- Contact ---- */
   // The flap opens.
   mail: [{ s: { 1: 'M3 5.75L6.9 3C7.55 2.55 8.45 2.55 9.1 3L13 5.75' }, hold: 600 }],
   rss: [{ s: { 2: sc(base('rss', 2), 1.15, 1.15, 5.5, 10.5) }, hold: 80 }, { s: { 3: sc(base('rss', 3), 1.1, 1.1, 5.5, 10.5) }, hold: 80 }],
-  x: [{ r: -10 }, { r: 6 }],
-  github: [{ r: -10 }, { r: 6 }],
 
   /* ---- Places & things ---- */
   'map-pin': [{ y: -2.25, hold: 0 }, { s: { 0: sc(base('map-pin', 0), 1.1, 0.88, 8, 14.25), 1: [8, 7.25, 1.6] }, hold: 120 }],
@@ -157,9 +157,15 @@ export const MORPHS: Partial<Record<Name | 'x' | 'github', Frame[]>> = {
   // The lid closes.
   laptop: [{ s: { 0: sq(3, 9.75, 10, 1.5, 0.75) }, hold: 300 }],
   tv: [{ s: { 1: 'M4.5 2.75L8 4.25L11 1.25' } }, { s: { 1: 'M5 1.25L8 4.25L11.5 2.75' } }],
-  controller: [{ s: { 3: [10.75, 7.25, 0.4] }, hold: 100 }, { s: { 4: [12, 8.75, 0.4] }, hold: 100 }],
+  // A notch around, the inside turning back the other way, like gears meshing.
+  gear: [{ r: 72, s: { 1: ro(base('gear', 1), -144, 8.1, 8) }, hold: 160 }, { r: 144, s: { 1: ro(base('gear', 1), -288, 8.1, 8) }, hold: 160 }],
+  // The sun comes up.
+  figure: [{ s: { 3: [10.75, 5, 0.875] }, hold: 300 }],
+  controller: [{ s: { 3: [10.75, 6.5, 0.4] }, hold: 100 }, { s: { 4: [12, 8, 0.4] }, hold: 100 }],
   lego: [{ s: { 1: tr(base('lego', 1), 0, -1.25) }, hold: 60 }, { s: { 2: tr(base('lego', 2), 0, -1.25) }, hold: 60 }],
   bolt: [{ s: { 0: sc(base('bolt', 0), 1.15) }, hold: 100 }],
+  // The waves ring out.
+  sound: [{ s: { 1: tr(base('sound', 1), 0.35, 0), 2: tr(base('sound', 2), 0.5, 0) }, hold: 120 }],
   // The flag waves; its checks ride along.
   flag: [...FLAG, ...FLAG],
 

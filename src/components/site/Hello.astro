@@ -1,0 +1,61 @@
+---
+/**
+ * The top of the home page: a byline, one paragraph of chips, and the signature as a sign-off.
+ * Each chip opens a small view of what it names without moving a word (client/chips.ts):
+ * (The signature now sits behind it as the site-wide watermark.)
+ * Kem fans out three of its sites, Testament Made's six blocks grow into its apps,
+ * Des Moines opens a drawing of downtown for the hour and weather (client/dsm-sketch.ts),
+ * and the topics filter the writing below.
+ */
+import Icon from '../Icon.astro';
+import Browser from './Browser.astro';
+import Byline from './Byline.astro';
+import Gear from './Gear.astro';
+import { availability, availabilityWhen, SERVICES } from '../../data/hire';
+import { getDeck, host, pageOf, shotsOf, TM_TILES } from '../../lib/deck';
+import { TOPICS } from '../../lib/bar';
+import { getPublishedPosts, postTitle } from '../../lib/posts';
+
+const { kem, icons } = await getDeck();
+// The fan's windows are small, so its shots are cropped to the screen (no device frame)
+const kemPages = await Promise.all(kem.map((w) => pageOf(shotsOf(w)[0], 480)));
+const last = TOPICS.length - 1;
+// Each topic's three latest posts, as a little pile of pages when you hover it (newest on top)
+const posts = await getPublishedPosts();
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+const pagesFor = Object.fromEntries(TOPICS.map((t) => {
+  const mine = posts.filter((p) => p.data.tags?.some((g) => t.tags.includes(g)));
+  const [a, b, c] = mine.slice(0, 3).map((p) => ({ title: postTitle(p), date: fmt(p.data.date) }));
+  return [t.key, { pages: [c, b, a].filter(Boolean) }];
+}));
+---
+<header class="hello-head" data-bar-label="Home">
+  <Byline />
+  <p class="hello">
+    I make sites with <button class="wchip sq" data-act="kem"><Icon name="work" /> Kem Design<span class="pop"><span class="fan">{kem.map((w, i) => <Browser pages={[kemPages[i]]} url={host(w.data.liveLink)} />)}</span></span></button>
+    and apps at <button class="wchip sq" data-act="apps"><span class="tm" aria-hidden="true">{TM_TILES.map(([, c]) => <i style={`--c:${c}`}></i>)}</span>Testament Made<span class="pop"><span class="spread">{TM_TILES.map(([slug, c], i) => (
+      <span class="tmapp" style={`--i:${i};--col:${(i % 3) - 1};--row:${Math.floor(i / 3) - 0.5};--c:${c}`}><img src={icons[slug]?.icon ?? ''} alt={icons[slug]?.title ?? ''} /></span>
+    ))}</span></span></button>,
+    from <button class="wchip sq" data-act="here"><Icon name="iowa" /> Des Moines, IA<span class="pop"><span class="here sq">
+      <span class="sky"><canvas id="dsmCanvas" aria-label="A drawing of downtown Des Moines right now"></canvas></span>
+      <span class="here__body">
+        <span class="here__row"><b id="dsmTime"></b><span class="temp" id="dsmTemp"></span></span>
+        <span class="here__cond" id="dsmCond">Downtown Des Moines</span>
+        <span class="here__home">Home with my wife, Lilo, Kiya, Leroy and Irma.</span>
+      </span>
+    </span></span></button>.
+    I also take on projects of my own as <a class="wchip sq djd-chip" href="/hire/"><Gear size={15} id="helloGear" /> Derek J Design<span class="pop"><span class="djd sq">
+      <span class:list={['djd__status', !availability.open && 'is-closed']}><span class="djd__light"><i></i>{availability.open ? 'Open for work' : 'Booked up'}</span><b data-avail={availability.open ? 'big' : undefined}>{availability.open ? (availability.from === 'now' ? 'Right now' : `From ${availabilityWhen}`) : 'For now'}</b></span>
+      <span class="djd__caps">{SERVICES.map((sv) => <span>{sv.name}</span>)}</span>
+    </span></span></a>.
+    Here I write about {TOPICS.map((t, i) => (
+      <Fragment>
+        <button class="wchip sq topic" data-tag={t.key} data-label={t.label} data-tags={t.tags.join(' ')} aria-pressed="false">{t.label}{pagesFor[t.key].pages.length > 0 && (
+          <span class="pop" aria-hidden="true"><span class="leaves">{pagesFor[t.key].pages.map((pg) => (
+            <span class="leaf sq"><small>{pg.date}</small><b>{pg.title}</b></span>
+          ))}</span></span>
+        )}</button>{i < last - 1 ? ', ' : i === last - 1 ? ' and ' : '.'}
+      </Fragment>
+    ))}
+  </p>
+</header>

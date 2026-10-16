@@ -18,7 +18,7 @@ export async function GET(context) {
 
   return rss({
     title: 'Derek Castelli',
-    description: 'Essays, notes, and links on faith, technology, and agentic design by Derek Castelli.',
+    description: 'Posts, notes, and links on faith, technology, and agentic design by Derek Castelli.',
     site: context.site,
     items: posts.map((post) => {
       const { type } = post.data;

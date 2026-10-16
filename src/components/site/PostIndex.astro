@@ -1,0 +1,33 @@
+---
+/**
+ * The writing, by year. Hovering a row shows a small preview in the margin (client/peek.ts):
+ * a picture of what the essay is about, or one sentence from inside it.
+ * The topic chips above filter it (client/chips.ts).
+ */
+import PostRow from './PostRow.astro';
+import { getPublishedPosts, type Post } from '../../lib/posts';
+import { postRows } from '../../lib/postRows';
+
+interface Props {
+  /** Which posts to list; every published post when unset (the home page). */
+  posts?: Post[];
+  /** How many years show before "All posts". */
+  show?: number;
+}
+const { show = 3 } = Astro.props;
+const rows = await postRows(Astro.props.posts ?? await getPublishedPosts());
+const years = [...new Set(rows.map((r) => r.year))];
+---
+<section class="writing" id="writing" data-bar-label="Writing">
+  <div class="topic-note" id="topicNote" hidden></div>
+  <div class="list" id="list">
+    {years.map((y, n) => (
+      <section class="list__year" hidden={n >= show} data-older={n >= show ? '' : undefined}>
+        <h2>{y}</h2>
+        {rows.filter((r) => r.year === y).map((r) => <PostRow row={r} />)}
+      </section>
+    ))}
+    {years.length > show && <div class="more-rows"><button class="btn" data-show-older>All {rows.length} posts, back to {years[years.length - 1]}</button></div>}
+  </div>
+</section>
+<div class="peek sq" id="peek" aria-hidden="true"></div>

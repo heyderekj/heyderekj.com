@@ -1,8 +1,8 @@
 ---
-import Base from '../../layouts/Base.astro';
-import ApplicationToc from '../../components/ApplicationToc.astro';
-import TagChips from '../../components/TagChips.astro';
-import PostFooter from '../../components/PostFooter.astro';
+import Site from '../../layouts/Site.astro';
+import Signature from '../../components/Signature.astro';
+import KeepReading from '../../components/site/KeepReading.astro';
+import Icon from '../../components/Icon.astro';
 import Callout from '../../components/post/Callout.astro';
 import { postComponents } from '../../components/post';
 import { schemaPersonId } from '../../lib/schemaIds';
@@ -17,6 +17,9 @@ import {
   type Post,
 } from '../../lib/posts';
 import { getRevisions } from '../../lib/revisions';
+import { figuresIn } from '../../lib/figures';
+import { readingMinutes } from '../../lib/pullquote';
+import { paraNotesFor } from '../../lib/paraNotes';
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
@@ -31,7 +34,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { Content, headings } = await post.render();
+const { Content } = await post.render();
 const d = post.data;
 const all = await getPublishedPosts();
 const revisions = getRevisions(post);
@@ -41,14 +44,19 @@ const superseding = d.supersededBy ? all.find((p) => p.slug === d.supersededBy) 
 
 const title = postTitle(post);
 const hasTitle = Boolean(d.title?.trim());
-const sections = headings.filter((h) => h.depth === 2);
-const showToc = d.toc ?? (d.type === 'essay' && sections.length >= 4);
+const figures = figuresIn(post.body);
+const mins = readingMinutes(post);
+// Paragraphs changed by a counted revision, with their earlier wording, for the margin notes
+const revNotes = d.type === 'essay' ? paraNotesFor(`src/content/posts/${post.id}`, d.date, revisions.revisions.map((x) => x.sha).filter((s): s is string => Boolean(s))) : [];
+const barLink = (p?: Post) => (p ? { href: postHref(p), title: postTitle(p) } : undefined);
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
 const defaultDesc =
-  'Agentic design engineer, still making websites full-time. Writing on faith and technology.';
+  'Agentic design engineer, still making sites full-time. Writing on faith and technology.';
 const postDescription = d.description ?? defaultDesc;
 const postUrl = new URL(postHref(post), `${siteOrigin}/`).toString();
+/** Its share card, drawn at build time (pages/og/[...slug].png.ts) */
+const ogImage = `/og/posts/${post.slug}.png`;
 const published = d.date.toISOString();
 const modified = revisions.updated?.toISOString();
 const postJsonLd = {
@@ -63,13 +71,14 @@ const postJsonLd = {
   publisher: { '@type': 'Person', '@id': schemaPersonId(siteOrigin), name: 'Derek Castelli' },
   ...(d.type === 'link' && d.link ? { isBasedOn: d.link } : {}),
   ...(d.tags.length ? { keywords: d.tags.join(', ') } : {}),
+  image: new URL(ogImage, `${siteOrigin}/`).toString(),
 };
 
 const fmtDate = (date: Date) =>
   date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 ---
-<Base
+<Site
   title={`${title} — Derek Castelli`}
   description={postDescription}
   ogType="article"
@@ -77,53 +86,37 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
   articleModifiedTime={modified}
   jsonLd={postJsonLd}
   canonical={postUrl}
+  ogImage={ogImage}
+  bar={{ kind: 'essay', title, figures, newer: barLink(newer), older: barLink(older) }}
 >
-  <article class={`prose post post--${d.type}`}>
-    {showToc && (
-      <ApplicationToc items={sections.map((h) => ({ id: h.slug, label: h.text }))} />
-    )}
-
-    <header class="post-header">
-      {d.type === 'link' && d.link ? (
-        <h1 class="post-title post-title--link">
-          <a href={d.link} class="post-link-out" rel="noopener">
-            {title}<span class="post-link-out__arrow" aria-hidden="true">↗</span>
-          </a>
-        </h1>
-      ) : d.type === 'note' && !hasTitle ? (
-        <h1 class="visually-hidden">{title}</h1>
-      ) : (
-        <h1 class="post-title">{title}</h1>
+  <article class={`essay post post--${d.type}`} data-bar-progress data-select>
+    <div class="essay__meta">
+      {d.type !== 'essay' && <a class="post-kind" href={typeHref(d.type)}>{TYPE_LABELS[d.type].one}</a>}
+      <time datetime={published}>{fmtDate(d.date)}</time>
+      {d.type === 'essay' && <span>· {mins} min read</span>}
+      {d.type === 'link' && d.link && (
+        <span class="post-link-host">
+          · {host(d.link)}
+          {d.via && (
+            <> · via <a href={d.via.url} rel="noopener">{d.via.name}</a></>
+          )}
+        </span>
       )}
+      {figures.length > 0 && <span class="badge"><Icon name="figure" /> {figures.length} {figures.length === 1 ? 'figure' : 'figures'}</span>}
+    </div>
 
-      <div class="meta post-meta">
-        {d.type !== 'essay' && (
-          <a class="post-kind" href={typeHref(d.type)}>{TYPE_LABELS[d.type].one}</a>
-        )}
-        <time datetime={published}>{fmtDate(d.date)}</time>
-        {d.status === 'working' ? (
-          <a class="post-state" data-status="working" href="#revisions" title="See how it's changed">Still being written</a>
-        ) : d.status === 'outdated' ? (
-          <a class="post-state" data-status="outdated" href="#revisions" title="See how it's changed">May be out of date</a>
-        ) : revisions.updated && (
-          <a class="post-state" href="#revisions" title="See how it's changed">
-            Updated <time datetime={revisions.updated.toISOString()}>{fmtDate(revisions.updated)}</time>
-          </a>
-        )}
-        {d.type === 'link' && d.link && (
-          <span class="post-link-host">
-            {host(d.link)}
-            {d.via && (
-              <> · via <a href={d.via.url} rel="noopener">{d.via.name}</a></>
-            )}
-          </span>
-        )}
-        {d.type !== 'essay' && (
-          <a class="post-permalink" href={postHref(post)} title="Permanent link" aria-label="Permanent link">★</a>
-        )}
-      </div>
-      <TagChips tags={d.tags} />
-    </header>
+    {d.type === 'link' && d.link ? (
+      <h1 class="post-title--link">
+        <a href={d.link} class="post-link-out" rel="noopener">
+          {title}<span class="post-link-out__arrow" aria-hidden="true">↗</span>
+        </a>
+      </h1>
+    ) : d.type === 'note' && !hasTitle ? (
+      <h1 class="visually-hidden">{title}</h1>
+    ) : (
+      <h1>{title}</h1>
+    )}
+    {d.type === 'essay' && d.description && <p class="lede">{d.description}</p>}
 
     {d.draft && (
       <Callout kind="note" title="Draft preview">
@@ -146,10 +139,15 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
       <Callout kind="audience"><p>{d.audience}</p></Callout>
     )}
 
-    <div class="post-content">
+    <div class="prose post-content">
       <Content components={postComponents} />
     </div>
 
-    <PostFooter post={post} revisions={revisions} related={related} newer={newer} older={older} />
+    {d.type === 'essay' && <div class="essay__sign"><Signature /></div>}
+    <KeepReading posts={related} tags={d.tags} />
   </article>
-</Base>
+  <div class="selbar" id="selbar" hidden></div>
+  {revNotes.length > 0 && <script type="application/json" id="revNotes" set:html={JSON.stringify(revNotes).replace(/</g, '\\u003c')} />}
+  <script src="../../client/select-menu.ts"></script>
+  <script src="../../client/rev-notes.ts"></script>
+</Site>

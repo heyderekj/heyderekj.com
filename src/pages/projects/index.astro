@@ -1,83 +1,131 @@
 ---
-import Base from '../../layouts/Base.astro';
-import PageTitle from '../../components/PageTitle.astro';
-import FeaturedProjectGrid from '../../components/FeaturedProjectGrid.astro';
-import ProjectRows from '../../components/ProjectRows.astro';
-import ProjectArchive from '../../components/ProjectArchive.astro';
-import { getProjectsByTier, TIER_LABELS } from '../../lib/projectTiers';
+/**
+ * Projects: what I'm building now (the Testament Made apps), then every side project since 2008
+ * set as a periodic table: one row per year, newest first, one element per project. Open an element to read
+ * what it was; pick a family to light it up (client/elements.ts).
+ */
+import { getCollection } from 'astro:content';
+import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/site/PageHead.astro';
+import Icon from '../../components/Icon.astro';
+import { shot, TM_TILES } from '../../lib/deck';
 
-const { focus, building, paused, archive } = await getProjectsByTier();
+const all = (await getCollection('projects')).filter((p) => !p.data.draft);
+const bySlug = Object.fromEntries(all.map((p) => [p.slug, p]));
+
+// ---- Now: the Testament Made apps, in the mark's order
+const apps = TM_TILES.flatMap(([slug, c]) => {
+  const p = bySlug[slug];
+  return p ? [{ slug, c, name: p.data.name, tagline: p.data.tagline, href: p.data.url ?? 'https://testamentmade.com/', soon: !p.data.url, icon: p.data.icon ? shot(p.data.icon, 160) : '' }] : [];
+});
+
+// ---- The archive, as elements
+const FAMILIES = [
+  { key: 'blog', label: 'Blogs', match: ['Blog'] },
+  { key: 'app', label: 'Apps', match: ['App'] },
+  { key: 'shop', label: 'Shops', match: ['Ecommerce Shop', 'Children Toys & Education'] },
+  { key: 'media', label: 'Networks', match: ['Network', 'Aggregate', 'Podcast Network'] },
+  { key: 'other', label: 'Everything else', match: [] as string[] },
+] as const;
+type Family = (typeof FAMILIES)[number]['key'];
+const familyOf = (cat?: string): Family => FAMILIES.find((f) => cat && (f.match as readonly string[]).includes(cat))?.key ?? 'other';
+const KIND: Record<string, string> = { 'Ecommerce Shop': 'Shop', 'Children Toys & Education': 'Brand', 'Podcast Network': 'Podcasts', Aggregate: 'Aggregator' };
+
+const words = (name: string) => name.replace(/[^A-Za-z0-9 ]/g, ' ').replace(/([a-z])([A-Z])/g, '$1 $2').split(/\s+/).filter((w) => w && !/^(in|and|me)$/i.test(w));
+const taken = new Set<string>();
+const symbolOf = (name: string) => {
+  const w = words(name);
+  const first = w[0][0].toUpperCase();
+  const tries = [w[1]?.[0], ...w.join('').slice(1)].filter(Boolean).map((l) => first + l!.toLowerCase());
+  const sym = tries.find((s) => !taken.has(s)) ?? first;
+  taken.add(sym);
+  return sym;
+};
+
+const archive = all
+  .filter((p) => p.data.status === 'retired')
+  .map((p) => ({ p, start: p.data.started ?? new Date(Date.UTC(p.data.year ?? 2000, 0, 1)) }))
+  .sort((a, b) => +a.start - +b.start)
+  .map(({ p, start }, i) => ({
+    slug: p.slug,
+    no: i + 1,
+    name: p.data.name,
+    year: start.getUTCFullYear(),
+    sym: symbolOf(p.data.name),
+    family: familyOf(p.data.category),
+    kind: KIND[p.data.category ?? ''] ?? p.data.category ?? 'Idea',
+    about: p.body.replace(/^#+ .*$/gm, '').trim(),
+    fact: p.data.funFact,
+  }));
+
+const first = archive[0].year, last = archive[archive.length - 1].year;
+const years = Array.from({ length: last - first + 1 }, (_, i) => first + i).map((y) => ({ y, items: archive.filter((a) => a.year === y).reverse() })).reverse();
+const families = FAMILIES.map((f) => ({ ...f, n: archive.filter((a) => a.family === f.key).length })).filter((f) => f.n);
 ---
-<Base title="Projects — Derek Castelli" description="Apps and sites built by Derek Castelli.">
-  <PageTitle path="/projects" />
-  <p style="color: var(--fg-soft); max-width: var(--max-prose);">
-    Apps and experiments—design, code, and AI. Most of my time goes to the first two.
-  </p>
+<Site
+  title="Projects — Derek Castelli"
+  description="The apps I'm building at Testament Made, and every side project since 2008."
+  bar={{ kind: 'page', title: 'Projects' }}
+>
+  <main class="home">
+    <PageHead title="Projects" meta={`Projects · ${all.length} since ${first}`}>
+      <Fragment slot="lede">Apps, blogs, shops and side quests. Most of them didn't last, and every one taught me something.</Fragment>
+    </PageHead>
 
-  {focus.length > 0 && (
-    <>
-      <h2 class="projects-section-title" id="focus">{TIER_LABELS.focus}</h2>
-      <p class="projects-section-lede">Where most of my time goes right now.</p>
-      <FeaturedProjectGrid projects={focus} />
-    </>
-  )}
+    <section class="tmnow sq" aria-labelledby="tmnow-h">
+      <div class="tmnow__head">
+        <span class="tmnow__mark" aria-hidden="true">{apps.map((a) => <i style={`--c:${a.c}`} data-for={a.slug}></i>)}</span>
+        <div>
+          <h2 id="tmnow-h" data-bar-section="Now">Now at Testament Made</h2>
+          <p>The apps I'm building today live under one roof.</p>
+        </div>
+        <a class="tmnow__out" href="https://testamentmade.com/" target="_blank" rel="noopener">testamentmade.com <Icon name="arrow-up-right" /></a>
+      </div>
+      <ul class="tmnow__apps">
+        {apps.map((a) => (
+          <li>
+            <a href={a.href} target="_blank" rel="noopener" style={`--c:${a.c}`} data-app={a.slug}>
+              <img class="sq" src={a.icon} alt="" width="40" height="40" loading="lazy" />
+              <span><b>{a.name}{a.soon && <em class="badge">Coming</em>}</b><small>{a.tagline}</small></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
 
-  {building.length > 0 && (
-    <>
-      <h2 class="projects-section-title" id="building">{TIER_LABELS.building}</h2>
-      <p class="projects-section-lede">Live, shipping, and still getting attention.</p>
-      <FeaturedProjectGrid projects={building} />
-    </>
-  )}
+    <h2 class="h" id="archive" data-bar-section="The archive">The archive <span>{archive.length}</span></h2>
+    <div class="work-chips pt-fams" role="group" aria-label="Highlight a family">
+      <button type="button" class="wchip sq is-current" data-fam="" aria-pressed="true">All</button>
+      {families.map((f) => <button type="button" class="wchip sq" data-fam={f.key} aria-pressed="false"><i class={`pt-dot pt--${f.key}`}></i>{f.label} <span>{f.n}</span></button>)}
+    </div>
 
-  {paused.length > 0 && (
-    <>
-      <h2 class="projects-section-title" id="more">{TIER_LABELS.more}</h2>
-      <p class="projects-section-lede">Shipped, and not where my focus is right now.</p>
-      <ProjectRows projects={paused} />
-    </>
-  )}
-
-  {archive.length > 0 && (
-    <>
-      <h2 class="projects-section-title" id="archive">{TIER_LABELS.archive}</h2>
-      <p class="projects-section-lede">
-        {archive.length} earlier projects, blogs, and shops—going back to {archive[archive.length - 1].data.started?.getUTCFullYear()}.
-      </p>
-      <ProjectArchive projects={archive} />
-    </>
-  )}
-</Base>
-
-<!-- Old section anchors (Front Burner era) still land somewhere sensible. -->
-<script is:inline>
-  (function () {
-    var map = { 'front-burner': 'focus', simmering: 'building', 'back-burner': 'more', retired: 'archive' };
-    var h = location.hash.slice(1);
-    if (map[h]) {
-      history.replaceState(null, '', '#' + map[h]);
-      var el = document.getElementById(map[h]);
-      if (el) el.scrollIntoView();
-    }
-  })();
-</script>
-
-<style>
-  .projects-section-title {
-    font-size: var(--size-h2);
-    font-weight: 600;
-    margin-top: var(--space-6);
-    margin-bottom: var(--space-1);
-    scroll-margin-top: var(--space-3);
-  }
-
-  .projects-section-title:first-of-type {
-    margin-top: var(--space-5);
-  }
-
-  .projects-section-lede {
-    margin: 0 0 var(--space-3);
-    font-size: var(--size-meta);
-    color: var(--fg-soft);
-  }
-</style>
+    <div class="pt" data-fam="">
+      {years.map(({ y, items }) => items.length ? (
+        <div class="pt__period">
+          <span class="pt__year">{y}</span>
+          <div class="pt__row">
+            {items.map((a) => (
+              <button type="button" class={`pt__el sq pt--${a.family}`} data-family={a.family} aria-expanded="false" aria-controls={`pt-${a.slug}`} style={`--d:${archive.length + 1 - a.no}`}>
+                <span class="pt__no">{a.no}</span>
+                <span class="pt__sym" aria-hidden="true">{a.sym}</span>
+                <span class="pt__name">{a.name}</span>
+                <span class="pt__kind">{a.kind}</span>
+                {a.fact && <span class="pt__fact" title="Has a fun fact"><Icon name="bolt" loop={false} /></span>}
+              </button>
+            ))}
+          </div>
+          {items.map((a) => (
+            <div class="pt__note" id={`pt-${a.slug}`} hidden>
+              <b>{a.name}</b> <span>{a.year} · {a.kind}</span>
+              <p>{a.about}</p>
+              {a.fact && <p class="pt__funfact"><em><Icon name="bolt" loop={false} /> Fun fact</em> {a.fact}</p>}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="pt__period is-quiet"><span class="pt__year">{y}</span><span class="pt__gap" aria-hidden="true"></span></div>
+      ))}
+    </div>
+  </main>
+  <script src="../../client/elements.ts"></script>
+</Site>

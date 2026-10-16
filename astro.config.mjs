@@ -13,6 +13,8 @@ export default defineConfig({
     '/people/': '/library/',
   },
   integrations: [mdx()],
+  // The site's own bar sits bottom-center, where Astro's dev toolbar would cover it
+  devToolbar: { enabled: false },
   build: {
     format: 'directory',
   },

@@ -1,21 +1,151 @@
 ---
-import Base from '../layouts/Base.astro';
-import PageTitle from '../components/PageTitle.astro';
+/**
+ * Not found, as a chat with me: I say what I couldn't find, offer the closest pages, and answer
+ * starter prompts, follow-ups or anything typed (it searches the site; / opens the shortcuts). "Leave a note"
+ * really sends one. Runs in client/lost-chat.ts; without JavaScript, plain links. And "Shall we play a game?"
+ * turns the 404's dots into Connect Four against one of the animals (client/four.ts).
+ */
+import Site from '../layouts/Site.astro';
+import Icon from '../components/Icon.astro';
+import { imgSrc } from '../lib/img';
+import '../styles/lost.css';
+
+// Where to start, like an assistant's empty state (the reply each one sends is `ask`)
+const PROMPTS = [
+  { icon: 'writing', q: 'What have you written?', d: 'The newest posts', ask: 'Latest writing' },
+  { icon: 'work', q: 'What have you built?', d: 'Sites, solo and with studios', ask: 'Work' },
+  { icon: 'projects', q: 'Show me your apps', d: 'And side projects', ask: 'Projects' },
+  { icon: 'about', q: 'Who are you?', d: 'The short story', ask: 'About' },
+  { icon: 'controller', q: 'Shall we play a game?', d: 'Connect Four with the animals', ask: 'Play a game' },
+  { icon: 'eye', q: 'Any secrets?', d: 'The easter egg cheat sheet', ask: 'Secrets' },
+  { icon: 'mail', q: 'Leave you a note', d: 'Straight to my inbox', ask: 'Leave a note' },
+] as const;
 
 const siteUrl = (Astro.site?.toString() ?? 'https://heyderekj.com').replace(/\/$/, '');
 const canonical = `${siteUrl}/404/`;
-const title = 'Page not found — Derek Castelli';
-const description = 'This URL does not exist on heyderekj.com.';
+const photo = imgSrc('/assets/about/derek-photo.jpeg', 120);
+// The layout pickers: each a plain sketch of its card, like an empty state: soft blocks for the words,
+// a rounded block for the board, circles for the two of you. currentColor, so they take the tile's ink.
+const mini = {
+  classic: `<svg viewBox="0 0 30 38" aria-hidden="true"><rect x="4" y="5" width="11" height="2" rx="1" opacity=".5"/><rect x="4" y="9" width="17" height="3" rx="1.5"/><rect x="4" y="15" width="22" height="13" rx="3" opacity=".45"/><circle cx="7" cy="33" r="2.5" opacity=".7"/><circle cx="23" cy="33" r="2.5" opacity=".7"/></svg>`,
+  poster: `<svg viewBox="0 0 30 38" aria-hidden="true"><rect x="9.5" y="4" width="11" height="2" rx="1" opacity=".5"/><rect x="3" y="8.5" width="24" height="19" rx="3" opacity=".45"/><rect x="7" y="30" width="16" height="3" rx="1.5"/></svg>`,
+  faceoff: `<svg viewBox="0 0 30 38" aria-hidden="true"><rect x="9.5" y="4" width="11" height="2" rx="1" opacity=".5"/><circle cx="9" cy="12.5" r="4.5" opacity=".7"/><circle cx="21" cy="12.5" r="4.5" opacity=".7"/><rect x="7" y="20" width="16" height="3" rx="1.5"/><rect x="9" y="25.5" width="12" height="9" rx="2.5" opacity=".45"/></svg>`,
+};
+
+// "404" lit up on the dot grid: a 5×7 dot font, one column of space between digits
+const GLYPHS: Record<string, string[]> = {
+  '4': ['10010', '10010', '10010', '11111', '00010', '00010', '00010'],
+  '0': ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
+};
+const rows = Array.from({ length: 7 }, (_, r) => ['4', '0', '4'].map((d) => GLYPHS[d][r]).join('0'));
+const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1', d: c + r })));
 ---
-<Base title={title} description={description} canonical={canonical} noindex includeAnalytics={false}>
-  <article class="prose">
-    <PageTitle path="/404" />
-    <p style="color: var(--fg-soft);">
-      This page isn’t here—maybe a broken link, a typo, or an old bookmark. Head back home or
-      use the nav to find something that is.
-    </p>
-    <p>
-      <a href="/">Back to the homepage</a>
-    </p>
-  </article>
-</Base>
+<Site title="Page not found — Derek Castelli" description="This URL does not exist on heyderekj.com." canonical={canonical} noindex includeAnalytics={false} bar={{ kind: 'page', title: 'Not found' }}>
+  <main class="home">
+    <header class="lost-head" style={`--cols:${rows[0].length}`}>
+      <h1 class="visually-hidden">Page not found</h1>
+      <div class="lost-404" aria-hidden="true">
+        {dots.map((x) => <i class={x.on ? 'on' : undefined} style={`--d:${x.d}`}></i>)}
+      </div>
+      <section class="four" aria-label="Connect Four" hidden>
+        <div class="four__board" role="group" aria-label="Board: pick a column"></div>
+        <template id="fourPaw"><Icon name="paw" loop={false} /></template>
+        <div class="four__bar">
+          <div class="four__say">
+            <button type="button" class="four__who sq" aria-haspopup="dialog" aria-expanded="false" aria-controls="fourDial" title="Who you’re playing, and settings"><i aria-hidden="true"><Icon name="chevron-down" loop={false} /></i></button>
+            <span class="four__text" aria-live="polite"><b class="four__name"></b><span class="four__line"></span></span>
+          </div>
+          <p class="four__tally"><span class="four__stats sq"><span title="Level"><small>Lvl</small><b data-four="level">1</b></span><span title="Points"><b data-four="score">0</b><small>pts</small></span><span title="Your best"><Icon name="star-solid" loop={false} /><b data-four="best">0</b></span></span><button type="button" class="four__restart" data-four-restart aria-label="Start over" title="Start over"><Icon name="refresh" /></button><button type="button" class="four__quit" data-four-quit title="Quit (esc)" aria-label="Quit"><Icon name="close" loop={false} /></button></p>
+          <div class="dial four__dial" id="fourDial" role="dialog" aria-label="Who you’re playing, and settings" hidden>
+            <div class="dial__head"><b>Playing</b></div>
+            <div class="four__foes" role="group" aria-label="Pick who you play">
+              <button type="button" class="four__any" data-foe-random aria-pressed="true"><i class="sq" aria-hidden="true"><Icon name="refresh" loop={false} /></i><span>Random<small>A different one each game</small></span></button>
+            </div>
+            <div class="dial__head dial__head--gap"><b>Settings</b></div>
+            <label class="dial__row dial__switch"><span>Sound</span><input type="checkbox" data-four-set="sound" /><i aria-hidden="true"></i></label>
+            <label class="dial__row dial__switch"><span>Less motion</span><input type="checkbox" data-four-set="calm" /><i aria-hidden="true"></i></label>
+          </div>
+        </div>
+        <div class="four__controls">
+          <button type="button" class="is-primary" data-four-next hidden>Next level</button>
+          <button type="button" data-four-stop hidden>Stop here</button>
+          <button type="button" class="is-primary" data-four-card hidden>Make a card</button>
+          <button type="button" data-four-again hidden>Play again</button>
+        </div>
+        <div class="four-card" role="dialog" aria-label="Make a card" hidden>
+          <div class="four-card__preview">
+            <canvas width="1080" height="1350" aria-label="Your card"></canvas>
+            <video muted loop playsinline aria-label="Your clip" hidden></video>
+            <span class="four-card__rec" aria-hidden="true"><i></i>Rec</span>
+            <span class="four-card__bar" aria-hidden="true"></span>
+          </div>
+          <div class="four-card__tools">
+            <div class="four-card__head"><b>Make it yours</b><button type="button" data-card-close>Done</button></div>
+            <!-- The look: which layout (a sketch of each) and which colour (a swatch of each), side by side -->
+            <div class="four-card__look">
+              <div class="four-card__layouts" role="radiogroup" aria-label="Layout">
+                <button type="button" role="radio" aria-checked="true" data-layout="classic" title="Classic"><Fragment set:html={mini.classic} /><span class="visually-hidden">Classic</span></button>
+                <button type="button" role="radio" aria-checked="false" data-layout="poster" title="Poster"><Fragment set:html={mini.poster} /><span class="visually-hidden">Poster</span></button>
+                <button type="button" role="radio" aria-checked="false" data-layout="faceoff" title="Face-off"><Fragment set:html={mini.faceoff} /><span class="visually-hidden">Face-off</span></button>
+              </div>
+              <div class="four-card__colors" role="radiogroup" aria-label="Colour">
+                <button type="button" role="radio" aria-checked="true" data-design="paper" title="Paper" style="--sw:#faf9f7"><span class="visually-hidden">Paper</span></button>
+                <button type="button" role="radio" aria-checked="false" data-design="arcade" title="Arcade" style="--sw:#0d0c0b"><span class="visually-hidden">Arcade</span></button>
+              </div>
+            </div>
+            <!-- Play as your own pet: a photo and a name, kept on your device -->
+            <div class="four-card__pet">
+              <label class="four-card__photo" title="Add your pet’s photo">
+                <input type="file" accept="image/*" class="visually-hidden" data-pet-file />
+                <Icon name="paw" loop={false} />
+                <span class="visually-hidden">Add a photo of your pet</span>
+              </label>
+              <input type="text" maxlength="24" placeholder="Play as your pet" aria-label="Your pet’s name" autocomplete="off" data-pet-name />
+              <button type="button" class="four-card__unpet" data-pet-clear title="Remove photo" hidden><Icon name="close" loop={false} /><span class="visually-hidden">Remove photo</span></button>
+            </div>
+            <div class="four-card__as" role="radiogroup" aria-label="Share it as">
+              <button type="button" role="radio" aria-checked="true" data-as="image">Image</button>
+              <button type="button" role="radio" aria-checked="false" data-as="clip"><Icon name="clapper" />Clip<small data-clip-length></small></button>
+            </div>
+            <div class="four-card__actions">
+              <button type="button" class="sq" data-card-copy title="Copy"><Icon name="copy" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span class="visually-hidden">Copy</span></button>
+              <button type="button" class="sq" data-card-save title="Save"><Icon name="file-down" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span class="visually-hidden">Save</span></button>
+              <button type="button" class="sq is-primary" data-card-share title="Share" hidden><Icon name="arrow-up-right" class="i-go" /><Icon name="check" loop={false} class="i-done" /><span class="visually-hidden">Share</span></button>
+              <i class="four-card__sep" aria-hidden="true"></i>
+              <button type="button" class="sq" data-post="x" aria-label="Post on X" title="X"><Icon name="x" /></button>
+              <button type="button" class="sq" data-post="instagram" aria-label="Post on Instagram" title="Instagram"><Icon name="instagram" /></button>
+              <button type="button" class="sq" data-post="facebook" aria-label="Post on Facebook" title="Facebook"><Icon name="facebook" /></button>
+              <button type="button" class="sq" data-post="text" aria-label="Send as a text" title="Text"><Icon name="message" /></button>
+            </div>
+            <small class="four-card__status" aria-live="polite"></small>
+          </div>
+        </div>
+      </section>
+      <p class="lost-head__line">Nothing lives at <code id="lostPath">this address</code></p>
+    </header>
+    <section class="lost sq" aria-label="Chat with Derek about the missing page" data-photo={photo}>
+      <header class="lost__top">
+        <img class="sq" src={photo} alt="" width="36" height="36" />
+        <span><b>Derek</b><small><i></i> Usually replies right away</small></span>
+      </header>
+      <div class="lost__thread" id="lostThread" role="log" aria-live="polite">
+        <noscript>
+          <p class="lost__msg"><span class="lost__bubble">I couldn’t find that page. Try <a href="/">home</a>, <a href="/work/">work</a>, <a href="/projects/">projects</a> or <a href="/about/">about</a>.</span></p>
+        </noscript>
+      </div>
+      <div class="lost__prompts" id="lostPrompts" aria-label="Suggestions" hidden>
+        {PROMPTS.map((p) => (
+          <button type="button" class="lost__prompt sq" data-ask={p.ask}><Icon name={p.icon} loop={false} /><b>{p.q}</b><small>{p.d}</small></button>
+        ))}
+      </div>
+      <form class="lost__input" id="lostForm" autocomplete="off">
+        <ul class="lost__slash" id="lostSlash" role="listbox" aria-label="Shortcuts" hidden></ul>
+        <input id="lostText" name="q" type="text" placeholder="Message, or / for shortcuts" aria-label="Message" maxlength="2000" role="combobox" aria-controls="lostSlash" aria-expanded="false" aria-autocomplete="list" />
+        <button type="submit" aria-label="Send"><svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg></button>
+      </form>
+    </section>
+    <p class="lost-play"><button type="button" class="lost-head__play" data-four-play><Icon name="controller" loop={false} /> Shall we play a game?</button></p>
+  </main>
+  <script src="../client/lost-chat.ts"></script>
+  <script src="../client/four.ts"></script>
+</Site>

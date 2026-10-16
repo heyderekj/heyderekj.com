@@ -11,7 +11,8 @@
  * Also: Figma (etc.) `.pembed` embeds scroll with the page until clicked.
  */
 
-const SKIP = '.zoom-trigger, .ms, .zoomable, [data-no-zoom], [data-fig-init]';
+// Also leave the write-ups' own figure deck alone (its browser frame and page thumbnails)
+const SKIP = '.zoom-trigger, .ms, .zoomable, [data-no-zoom], [data-fig-init], .fig, .browser, .pages';
 
 function triggerFor(img: HTMLImageElement) {
   const btn = document.createElement('button');

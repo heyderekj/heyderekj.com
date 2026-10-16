@@ -7,13 +7,13 @@
  *
  *   node scripts/library-art/drawings.mjs
  *
- * Colors work on light and dark (transparent background, mid-gray grid, accent strokes).
+ * Transparent background, mid-gray grid, ink strokes (site.css inverts them on dark paper).
  */
 import fs from 'node:fs';
 import path from 'node:path';
 
 const OUT = path.join(process.cwd(), 'public/images/library');
-const ACCENT = '#ea580c';
+const ACCENT = '#3d3a35'; // ink, to match the site; site.css flips the drawings for dark paper
 const GRID = 'rgba(128,128,128,0.16)';
 const GUIDE = 'rgba(128,128,128,0.55)';
 

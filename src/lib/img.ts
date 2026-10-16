@@ -6,7 +6,7 @@
  * `/cdn-cgi/image/width=…,format=auto/…` with a srcset so the browser fetches a
  * variant sized for its slot (AVIF/WebP negotiated from the Accept header).
  * Needs Image Transformations enabled on the zone; not available on *.pages.dev.
- * Locally the raw path is returned untouched.
+ * Without the CDN, it points at the nearest WebP copy built by scripts/image-variants.mjs.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -53,9 +53,26 @@ export function imgDims(p: string): { width: number; height: number } | undefine
   return dims;
 }
 
-/** Single sized URL (CDN) or the raw path (local / non-raster / remote). */
+/** Built-time WebP copies (scripts/image-variants.mjs): public/_v/<path>-<width>.webp */
+const VARIANTS = [480, 960, 1600];
+const variantCache = new Map<string, string>();
+function variantOf(p: string, w: number): string {
+  const key = `${p}@${w}`;
+  if (variantCache.has(key)) return variantCache.get(key)!;
+  const want = VARIANTS.find((v) => v >= w);
+  let out = p;
+  if (want) {
+    const rel = `/_v${decodeURI(p).replace(/\.[^.]+$/, '')}-${want}.webp`;
+    if (fs.existsSync(path.join(process.cwd(), 'public', rel))) out = encodeURI(rel);
+  }
+  variantCache.set(key, out);
+  return out;
+}
+
+/** Single sized URL: the CDN's when it's on, else the nearest built WebP copy, else the raw path. */
 export function imgSrc(p: string, w: number): string {
-  if (!CDN || !isTransformable(p)) return p;
+  if (!isTransformable(p)) return p;
+  if (!CDN) return variantOf(p, w);
   const max = imgDims(p)?.width;
   const width = max ? Math.min(w, max) : w;
   return `/cdn-cgi/image/width=${width},format=auto,quality=80${p}`;

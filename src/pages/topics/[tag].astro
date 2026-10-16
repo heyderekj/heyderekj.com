@@ -1,7 +1,7 @@
 ---
-import Base from '../../layouts/Base.astro';
-import PageTitle from '../../components/PageTitle.astro';
-import PostList from '../../components/PostList.astro';
+import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/site/PageHead.astro';
+import PostIndex from '../../components/site/PostIndex.astro';
 import { getPublishedPosts, tagCounts, type Post } from '../../lib/posts';
 import { topicLabel, topics } from '../../data/topics';
 
@@ -26,12 +26,10 @@ const { tag, entries } = Astro.props;
 const label = topicLabel(tag);
 const description = topics[tag]?.description;
 ---
-<Base title={`${label} — Derek Castelli`} description={description ?? `Posts about ${label}.`}>
-  <PageTitle path={`/topics/${tag}`} />
-  <p style="color: var(--fg-soft);">
-    {description ?? `Posts about ${label}.`}{' '}
-    <a href="/topics/">All topics</a>
-  </p>
-
-  <PostList entries={entries} showYearHeaders={true} />
-</Base>
+<Site bar={{ kind: 'page', title: label }} title={`${label} — Derek Castelli`} description={description ?? `Posts about ${label}.`}>
+  <main class="home">
+    <PageHead title={label} meta={`Topic · ${entries.length} ${entries.length === 1 ? 'post' : 'posts'}`}><Fragment slot="lede">{description ?? `Posts about ${label}.`} <a href="/topics/">All topics</a></Fragment></PageHead>
+    <PostIndex posts={entries} show={Infinity} />
+  </main>
+  <script src="../../client/peek.ts"></script>
+</Site>

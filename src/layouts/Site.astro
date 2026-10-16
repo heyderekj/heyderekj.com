@@ -1,0 +1,68 @@
+---
+/**
+ * The writing-first layout (2026 redesign): one centered reading column on dot-grid paper.
+ * No header or footer chrome; the bottom bar (components/Bar.astro) is the only navigation.
+ * Legacy stylesheets still load because the MDX post components rely on them.
+ */
+import '../styles/global.css';
+import '../styles/figures.css';
+import '../styles/chips.css';
+import '../styles/tokens.css';
+import '../styles/site.css';
+import Head from '../components/Head.astro';
+import Bar from '../components/Bar.astro';
+import Signature from '../components/Signature.astro';
+import type { Props as HeadProps } from '../components/Head.astro';
+import type { BarContext } from '../lib/bar';
+
+/** `legacy` hosts pages built from the older components in the new reading column. */
+type Props = HeadProps & { bar?: BarContext; legacy?: boolean };
+const { bar, legacy = false, ...head } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <Head {...head} />
+    <script is:inline>
+      // Moving along one canvas (site.css): mark back navigations so the pan reverses, and give a
+      // fresh visit (not a page-to-page transition) a short load-in.
+      (function () {
+        var root = document.documentElement, back = function (a) { return a && a.navigationType === 'traverse' && a.from && a.entry && a.entry.index < a.from.index; };
+        var loadIn = function () { root.classList.add('load-in'); setTimeout(function () { root.classList.remove('load-in'); }, 700); };
+        if ('onpagereveal' in window) {
+          addEventListener('pagereveal', function (e) {
+            if (e.viewTransition) { if (window.navigation && back(navigation.activation)) e.viewTransition.types.add('back'); }
+            else loadIn();
+          });
+          addEventListener('pageswap', function (e) {
+            if (e.viewTransition && e.activation && e.activation.navigationType === 'traverse' && window.navigation && e.activation.entry.index < navigation.currentEntry.index) e.viewTransition.types.add('back');
+          });
+        } else loadIn();
+      })();
+    </script>
+  </head>
+  <body class="site">
+    <!-- The signature, large and faint, writes itself at the top of every page; the title sits over it. Click it to go home (client/sig-egg.ts) -->
+    <div class="wm" aria-hidden="true"><div class="wm__in"><Signature label="" /></div></div>
+    {legacy ? <div class="legacy-col"><main class="main"><slot /></main></div> : <slot />}
+    <Bar context={bar} />
+    <div class="toast" id="toast" role="status"></div>
+    <script src="../client/signature.ts"></script>
+    <script src="../client/sig-egg.ts"></script>
+    <script src="../client/canvas.ts"></script>
+    <script src="../client/plyr-init.ts"></script>
+    <script src="../client/zoom.ts"></script>
+    <script src="../client/figures.ts"></script>
+    <script src="../client/accordion.ts"></script>
+    <script src="../client/copy.ts"></script>
+    <script src="../client/media-prefetch.ts"></script>
+    <script src="../client/icon-morph.ts"></script>
+    <script src="../client/url-chip.ts"></script>
+    <script src="../client/reveal.ts"></script>
+    <script src="../client/easter-egg.ts"></script>
+    <script src="../client/blueprint.ts"></script>
+    <script src="../client/count-in.ts"></script>
+    <script src="../client/console-note.ts"></script>
+    <script src="../client/availability.ts"></script>
+  </body>
+</html>

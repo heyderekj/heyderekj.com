@@ -41,10 +41,40 @@ Everything is imported with `draft: true`. Review, expand, and flip to publish.
 
 ## Fathom Analytics
 
-Site ID is set in `src/layouts/Base.astro` (`data-site` on the Fathom script).
+Site ID is set in `src/components/Head.astro` (`data-site` on the Fathom script).
 
 ## Deploy
 
-Cloudflare is connected to the git repo (build: `npm run build`, output: `dist`, `NODE_VERSION=20`). Redirects live in [public/_redirects](public/_redirects) and headers in [public/_headers](public/_headers). Domain and DNS live in the Cloudflare dashboard. Set `IMAGE_CDN=cloudflare` in the build environment to serve resized images through Cloudflare Image Transformations (custom domain only).
+Cloudflare is connected to the git repo (build: `npm run build`, output: `dist`, `NODE_VERSION=20`). Redirects live in [public/_redirects](public/_redirects) and headers in [public/_headers](public/_headers). Domain and DNS live in the Cloudflare dashboard. Set `IMAGE_CDN=cloudflare` in the build environment to serve resized images through Cloudflare Image Transformations (custom domain only). Without it, the build makes its own smaller WebP copies (480, 960 and 1600px) of the screenshots and photos in `public/_v/` (`scripts/image-variants.mjs`, run before `dev` and `build`; not committed), and pages use the nearest one.
 
 Optional manual deploy: `npx wrangler pages deploy dist` when logged in locally.
+
+### Notes from visitors
+
+Triple-clicking the signature watermark opens a "Leave me a note" card (`src/client/sig-egg.ts`). Notes post to a Pages Function, [functions/api/note.ts](functions/api/note.ts), which emails them to derekj@hey.com. Nothing is stored. One-time setup in the Cloudflare dashboard:
+
+1. **Email Routing** for heyderekj.com: turn it on, and add and verify **derekj@hey.com** as a destination address.
+2. In the Pages project, go to **Settings → Bindings → Add → Send email**. Name it `NOTES_MAIL` and set the destination address to `derekj@hey.com`.
+3. Redeploy.
+
+Until the binding exists, the function answers 503 and the card tells the visitor to email instead. Notes come from `notes@heyderekj.com`.
+
+### Work requests (/hire/)
+
+The [/hire/](src/pages/hire.astro) form builds an estimate as people answer. Prices, payment terms and the availability line all live in [src/data/hire.ts](src/data/hire.ts), and [src/lib/estimate.ts](src/lib/estimate.ts) does the math. Requests post to [functions/api/hire.ts](functions/api/hire.ts), which recalculates the estimate, saves the request to D1 and emails it to derekj@hey.com. The email's Reply-To is the person who sent it, so you can just hit reply. One-time setup:
+
+1. Create the database: `npx wrangler d1 create hdj-hire`
+2. Make the table: `npx wrangler d1 execute hdj-hire --remote --file=migrations/0001_hire.sql`
+3. In the Pages project, go to **Settings → Bindings → Add → D1 database**. Name it `HIRE_DB` and pick `hdj-hire`. The email uses the `NOTES_MAIL` binding from above, so there's nothing more to set up for it.
+4. Redeploy.
+
+To read requests: `npx wrangler d1 execute hdj-hire --remote --command "SELECT created_at, name, email, org, total FROM requests ORDER BY created_at DESC LIMIT 20"`. With only one binding, it still saves or still emails. With neither, the form offers your email address instead.
+
+#### Availability from Notion
+
+The "Open for work" date follows the projects board in Notion (the "Projects" database on the Projects & Tasks page) instead of the line in `src/data/hire.ts`. [functions/api/availability.ts](functions/api/availability.ts) takes the projects that are booked (Staged, In Progress, Under Review: anything but done, Shaping or Proposal Sent), finds the latest end date in "Dates" (one that's run over counts as today), adds a week, and caches the result for an hour. To set it up:
+
+1. Make a Notion token: an internal integration at notion.so/my-integrations with read content only (then, on the Projects & Tasks page, **… → Connections →** add it), or a personal access token.
+2. Save it to the Pages project as a secret: `npx wrangler pages secret put NOTION_TOKEN --project-name heyderekj-com`.
+3. Optional settings beside it: `NOTION_PROJECTS_DB` (another database, or a page holding one), `NOTION_DATE_PROP` / `NOTION_STATUS_PROP` (other column names), `NOTION_NOT_BOOKED` (statuses that don't count), `AVAILABILITY_BUFFER_DAYS` (7 by default).
+4. Redeploy. Until there's a token, the site shows the date from the data file.

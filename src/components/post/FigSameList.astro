@@ -1,0 +1,15 @@
+---
+/**
+ * Packaging Koati, "The same list, twice": Today and the Inbox side by side, showing the same
+ * request in both. Hover one to find its twin; merge them into one Inbox (client/fig-koati.ts).
+ */
+interface Props { n?: number }
+const { n = 2 } = Astro.props;
+---
+<figure class="fig sq" id="fig-twins" data-fig="twins">
+  <div class="fig__head"><span class="fig__no">FIG {n}</span><span class="fig__title">The same list, twice</span><button class="fig__reset" data-reset>Reset</button></div>
+  <div class="fig__stage"><div class="twins" data-twins></div></div>
+  <div class="fig__controls"><button class="btn" data-merge>Merge into one Inbox</button><span class="fig__hint">Hover a request to find its twin.</span></div>
+  <p class="fig__cap">Jenna's message about the recipe cards showed up in both places. Merging keeps one copy and sorts everything by what you do next.</p>
+</figure>
+<script src="../../client/fig-koati.ts"></script>
