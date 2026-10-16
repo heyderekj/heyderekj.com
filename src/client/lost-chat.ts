@@ -104,7 +104,7 @@ if (box && thread && slash && prompts && form && input) {
 
   // ---- The cheat sheet: every easter egg, with the keys, and a Try for the ones that can go off here
   const EGGS: { keys: string; name: string; what: string; tryit?: 'blueprint' | 'konami' | 'play'; href?: string }[] = [
-    { keys: '<kbd>Play</kbd>', name: 'Shall we play a game?', what: 'Connect Four against me, right up top. Then make a card of it to share.', tryit: 'play' },
+    { keys: '<kbd>Play</kbd>', name: 'Shall we play a game?', what: 'Connect Four against Leroy, Lilo, Kiya or Irma, right up top. Then make a card of it to share.', tryit: 'play' },
     { keys: '<kbd>B</kbd>', name: 'Blueprint mode', what: 'The whole site as a cyanotype on graph paper. B again to go back.', tryit: 'blueprint' },
     { keys: '<kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd>', name: 'Orange mode', what: 'My favorite color, with a fanfare.', tryit: 'konami' },
     { keys: '<kbd>Click ×3</kbd>', name: 'Leave me a note', what: 'Triple-click my signature at the top of any page. One click goes home.' },
@@ -183,7 +183,7 @@ if (box && thread && slash && prompts && form && input) {
       return say('The first three work right here.');
     }
     if (/^(play|game|play a game|shall we play a game|connect four|connect 4)$/.test(cmd)) {
-      await say('Shall we? Up top. You’re orange, and you go first.');
+      await say('Shall we? One of the animals is waiting up top. You’re orange.');
       return startGame();
     }
     if (/^(note|leave a note|message|contact)$/.test(cmd)) {
@@ -217,7 +217,7 @@ if (box && thread && slash && prompts && form && input) {
   // ---- Slash shortcuts: type / for a little menu above the field (arrows and Enter, or click)
   const SHORTCUTS = [
     ['home', 'Go to the home page'], ['writing', 'What I wrote most recently'], ['work', 'Sites I’ve designed and built'],
-    ['projects', 'Apps and side projects'], ['about', 'My story'], ['play', 'Connect Four against me'], ['secrets', 'Every easter egg on the site'], ['note', 'Leave me a note'], ['clear', 'Start over'], ['help', 'What I can do here'],
+    ['projects', 'Apps and side projects'], ['about', 'My story'], ['play', 'Connect Four with the animals'], ['secrets', 'Every easter egg on the site'], ['note', 'Leave me a note'], ['clear', 'Start over'], ['help', 'What I can do here'],
   ];
   let picks: string[][] = [], at = 0;
   function menu() {

@@ -1,8 +1,9 @@
 /**
  * Easter egg on the 404 (pages/404.astro): "Shall we play a game?" The 404's dots fall away and the
- * grid becomes a Connect Four board, you (orange) against me (ink), with chips rendered in Blender
- * (scripts/four-chips). Win a round and the level goes up and I get sharper; lose once and it's game
- * over, and you can make a card of it to share (client/four-card.ts). I talk while we play.
+ * grid becomes a Connect Four board, with chips rendered in Blender (scripts/four-chips). You're
+ * orange; ink is one of the animals, picked at random each game, each playing (and talking) their own
+ * way. Win a round and the level goes up and they get sharper; lose once and it's game over, and you
+ * can make a card of it to share (client/four-card.ts).
  * Start it with the button, `four:start`, or /play in the chat.
  */
 import { openCard, type Move } from './four-card';
@@ -15,22 +16,80 @@ const grid404 = document.querySelector<HTMLElement>('.lost-404');
 const head = document.querySelector<HTMLElement>('.lost-head');
 if (game && grid404 && head) {
   const $ = <T extends HTMLElement>(s: string) => game.querySelector<T>(s)!;
-  const board = $('.four__board'), say = $('.four__say span'), soundBtn = $<HTMLButtonElement>('[data-four-sound]');
+  const board = $('.four__board'), say = $('.four__line'), soundBtn = $<HTMLButtonElement>('[data-four-sound]');
   const levelEl = $('[data-four="level"]'), scoreEl = $('[data-four="score"]'), bestEl = $('[data-four="best"]');
   const againBtn = $<HTMLButtonElement>('[data-four-again]'), cardBtn = $<HTMLButtonElement>('[data-four-card]');
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
 
-  // ---- What I say
-  const LINES = {
-    start: ['Shall we play a game? You’re orange. You go first.'],
-    level: (l: number) => [`Level ${l}. Okay, I’m paying attention now.`, `Level ${l}. Lilo, Kiya, Leroy and Irma are watching.`, `Level ${l}. I put my headphones on.`, `Level ${l}. No more Mr. Nice Rectangle.`],
-    mine: ['Placing this like a Webflow div.', 'Lilo says go here.', 'Making rectangles. Well, circles.', 'On the downbeat.', 'Kem would call this a strong grid.', 'Cam taught me this one.', 'Ship it.', 'Testing in production.', 'Snapping to the grid.', 'Kiya picked this one.'],
-    block: ['Nice try.', 'Not today.', 'Saw that coming.', 'Blocked, like a bad merge.', 'Rude. Cam does that too.'],
-    youWin: ['Okay, you’re good.', 'Fine. Back to making rectangles.', 'You win. I’m telling Cam.', 'Four in a row. I’ll allow it.'],
-    iWin: ['Gotcha. Right on the downbeat.', 'Four in a row, like a good grid.', 'GG. The dogs are cheering.', 'Got you. Leroy saw it coming.'],
-    draw: ['A strange game. The only winning move is not to play.'],
-  };
+  // ---- Who you're playing: one of the animals, each with their own way of playing and talking
+  type Lines = { start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[] };
+  type Foe = { name: string; tone: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
+  const WARGAMES = 'A strange game. The only winning move is not to play.';
+  const FOES: Foe[] = [
+    { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
+      name: 'Leroy', tone: 'oklch(0.52 0.12 330)', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
+      lines: {
+        start: ['Leroy here. Shall we play a game? Take your time. I will.'],
+        level: (l) => [`Level ${l}. I have all day.`, `Level ${l}. Slow and steady.`, `Level ${l}. I’m not going anywhere.`],
+        mine: ['Hmm. Hmm. Okay, here.', 'Slow and steady.', 'Still thinking. Don’t rush me.', 'I’ll get there.', 'Measure twice. Drop once.', 'Patience.', 'There. Worth the wait.'],
+        block: ['Not so fast.', 'I saw that a while ago.', 'Mm. No.', 'I’ll just sit right here.'],
+        youWin: ['Again. I’m not going anywhere.', 'Fine. Best of a hundred?', 'Noted. Again.'],
+        iWin: ['Told you. Slow and steady.', 'Four in a row. Took a while. Worth it.', 'Patience wins.'],
+        draw: [WARGAMES, 'A draw. I could do this all day.'],
+      },
+    },
+    { // Attentive and smart, but kind: always blocks you, and sometimes won't take the win
+      name: 'Lilo', tone: 'oklch(0.55 0.13 240)', delay: [600, 1000], depth: (l) => Math.min(6, l + 1), slip: (l) => Math.max(0, 0.15 - 0.05 * (l - 1)), spares: 0.4,
+      lines: {
+        start: ['Hi, I’m Lilo! Want to play? You go first.'],
+        level: (l) => [`Level ${l}. We can keep going, if you want.`, `Level ${l}! You’re doing so well.`],
+        mine: ['Is this okay? I’ll go here.', 'I’ll just put this here, gently.', 'Hope that’s alright.', 'Your turn! No rush.', 'This one feels nice.'],
+        block: ['Sorry! I had to block that one.', 'Oh, I saw that. Sorry!', 'Sorry, sorry. My spot.'],
+        spare: ['I could have… never mind. Your turn!', 'Oops. I’ll go over here instead.'],
+        youWin: ['Yay, you won! I’m so happy for you.', 'You did it! That was lovely.'],
+        iWin: ['Oh no, I won. Are you okay?', 'Sorry! I didn’t mean to win.'],
+        draw: ['A draw! Everybody wins.', WARGAMES],
+      },
+    },
+    { // Competitive and smart, but a bully and easily distracted: quick, mouthy, and wanders off
+      name: 'Kiya', tone: 'oklch(0.6 0.16 15)', delay: [250, 520], depth: (l) => Math.min(6, l + 1), slip: () => 0.18,
+      lines: {
+        start: ['Kiya. You’re going down. Go first, it won’t help.'],
+        level: (l) => [`Level ${l}. Now I’m annoyed.`, `Level ${l}. Lucky. Won’t happen again.`],
+        mine: ['Too easy.', 'Watch and learn.', 'Is that all you’ve got?', 'Keep up.', 'Mine. Obviously.', 'Yawn.'],
+        block: ['Nope. Mine.', 'Blocked. Cry about it.', 'Cute try.', 'Not on my board.'],
+        slip: ['Wait, what was I doing? Here.', 'Ooh, something shiny. Anyway.', 'Was that a bird? Whatever, here.'],
+        youWin: ['Rematch. Now.', 'I wasn’t even trying.', 'I got distracted. Doesn’t count.'],
+        iWin: ['Winner! As usual.', 'Too easy. Next.', 'Told you you’d go down.'],
+        draw: ['A draw? Lame.', WARGAMES],
+      },
+    },
+    { // Dumb, but plays hard: barely looks ahead, moves fast and loud, grabs any win
+      name: 'Irma', tone: 'oklch(0.6 0.12 128)', delay: [200, 420], depth: () => 1, slip: (l) => Math.max(0.15, 0.4 - 0.05 * (l - 1)),
+      lines: {
+        start: ['IRMA! LET’S PLAY! You go first!'],
+        level: (l) => [`Level ${l}! More! More!`, `Level ${l}! I’m trying SO hard!`],
+        mine: ['HERE!', 'I’m going HERE!', 'Big move! I think!', 'Is this the good one?', 'As hard as I can!', 'This one! No, this one!'],
+        block: ['Did I just do something?', 'Whoa! I blocked it? I blocked it!'],
+        youWin: ['Again! Again!', 'You win! That was SO fun!'],
+        iWin: ['I WON?! I WON!', 'Four in a row! How?!'],
+        draw: ['Did… anyone win?', WARGAMES],
+      },
+    },
+  ];
+  let foe = FOES[0];
+  const whoEl = $('.four__who');
+  function meet() {
+    let last = ''; try { last = localStorage.getItem('hdj:four:foe') ?? ''; } catch {}
+    const pool = FOES.filter((f) => f.name !== last);
+    foe = pick(pool.length ? pool : FOES);
+    try { localStorage.setItem('hdj:four:foe', foe.name); } catch {}
+    game!.style.setProperty('--foe', foe.tone);
+    whoEl.textContent = foe.name[0]; whoEl.setAttribute('aria-label', foe.name);
+    $('.four__vs').textContent = foe.name;
+  }
+  const LINES = { get start() { return foe.lines.start; }, level: (l: number) => foe.lines.level(l), get mine() { return foe.lines.mine; }, get block() { return foe.lines.block; }, get youWin() { return foe.lines.youWin; }, get iWin() { return foe.lines.iWin; }, get draw() { return foe.lines.draw; } };
   const talk = (t: string) => { say.textContent = t; say.parentElement!.classList.remove('is-new'); void say.offsetWidth; say.parentElement!.classList.add('is-new'); };
 
   // ---- Sound: tiny synth blips (Web Audio, resumed on the first click)
@@ -97,10 +156,16 @@ if (game && grid404 && head) {
     }
     return best;
   }
+  // The animal's move: a slip now and then, sparing you a win (Lilo), or a proper look ahead
+  let mood: 'slip' | 'spare' | '' = '';
   function think(b: Who[], level: number) {
     const moves = ORDER.filter((c) => open(b, c) >= 0);
-    if (Math.random() < Math.max(0, 0.4 - 0.12 * (level - 1))) return pick(moves);
-    const depth = Math.min(6, level + 1);
+    const wins = moves.filter((c) => { const r = open(b, c); b[r * COLS + c] = 2; const w = won(b, 2); b[r * COLS + c] = 0; return Boolean(w); });
+    mood = '';
+    if (wins.length && foe.spares && Math.random() < foe.spares && moves.length > wins.length) { mood = 'spare'; return pick(moves.filter((c) => !wins.includes(c))); }
+    if (wins.length) return wins[0];
+    if (Math.random() < foe.slip(level)) { mood = 'slip'; return pick(moves); }
+    const depth = foe.depth(level);
     let best = moves[0], bestV = -Infinity;
     for (const c of moves) {
       const r = open(b, c); b[r * COLS + c] = 2;
@@ -136,7 +201,7 @@ if (game && grid404 && head) {
   }
   function start() {
     if (playing) return;
-    playing = true; level = 1; score = 0; againBtn.hidden = cardBtn.hidden = true;
+    playing = true; level = 1; score = 0; againBtn.hidden = cardBtn.hidden = true; meet();
     document.documentElement.classList.add('four-on');
     // The 404's lit dots fall away, then the board fills in
     grid404!.querySelectorAll<HTMLElement>('i.on').forEach((d) => { d.style.setProperty('--dx', `${(Math.random() - 0.5) * 80}px`); d.style.setProperty('--rot', `${(Math.random() - 0.5) * 140}deg`); d.style.setProperty('--fd', `${Math.random() * 220}ms`); });
@@ -158,7 +223,7 @@ if (game && grid404 && head) {
     if (full(b)) return roundDraw();
     turn = 'me'; paint();
     game!.classList.add('is-thinking');
-    await new Promise((r) => setTimeout(r, calm ? 150 : 520 + Math.random() * 380));
+    await new Promise((r) => setTimeout(r, calm ? 150 : foe.delay[0] + Math.random() * (foe.delay[1] - foe.delay[0])));
     const threat = ORDER.find((cc) => { const r = open(b, cc); if (r < 0) return false; b[r * COLS + cc] = 1; const w = won(b, 1); b[r * COLS + cc] = 0; return Boolean(w); });
     const mine = think(b, level);
     game!.classList.remove('is-thinking');
@@ -166,7 +231,9 @@ if (game && grid404 && head) {
     place(mine, 2);
     if (won(b, 2)) return gameOver();
     if (full(b)) return roundDraw();
-    if (threat === mine) talk(pick(LINES.block)); else if (Math.random() < 0.55) talk(pick(LINES.mine));
+    if (mood === 'spare' && foe.lines.spare) talk(pick(foe.lines.spare));
+    else if (mood === 'slip' && foe.lines.slip) talk(pick(foe.lines.slip));
+    else if (threat === mine) talk(pick(LINES.block)); else if (Math.random() < 0.6) talk(pick(LINES.mine));
     turn = 'you'; paint();
   }
   const flash = (run: number[] | null) => run?.forEach((i) => cells[i].classList.add('win'));
@@ -186,7 +253,7 @@ if (game && grid404 && head) {
     const record = score > best;
     if (record) { best = score; try { localStorage.setItem('hdj:four:best', String(best)); } catch {} }
     tally();
-    lastGame = { board: [...b], moves: [...moves], run: run ?? [], score, level, wins: level - 1 };
+    lastGame = { board: [...b], moves: [...moves], run: run ?? [], score, level, wins: level - 1, foe: foe.name };
     setTimeout(() => { talk(record ? 'New best! Make a card of it?' : 'Game over. Make a card of it, or go again?'); againBtn.hidden = cardBtn.hidden = false; }, calm ? 300 : 1400);
   }
   let lastGame: Parameters<typeof openCard>[0] | null = null;
@@ -201,7 +268,7 @@ if (game && grid404 && head) {
     if (e.key === 'Escape') { quit(); document.querySelector<HTMLElement>('[data-four-play]')?.focus(); }
   });
   $('[data-four-quit]').addEventListener('click', quit);
-  againBtn.addEventListener('click', () => { againBtn.hidden = cardBtn.hidden = true; level = 1; score = 0; round(); });
+  againBtn.addEventListener('click', () => { againBtn.hidden = cardBtn.hidden = true; level = 1; score = 0; meet(); round(); });
   cardBtn.addEventListener('click', () => { if (lastGame) openCard(lastGame); });
   document.querySelectorAll('[data-four-play]').forEach((btn) => btn.addEventListener('click', start));
   document.addEventListener('four:start', start);

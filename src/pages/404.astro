@@ -3,7 +3,7 @@
  * Not found, as a chat with me: I say what I couldn't find, offer the closest pages, and answer
  * starter prompts, follow-ups or anything typed (it searches the site; / opens the shortcuts). "Leave a note"
  * really sends one. Runs in client/lost-chat.ts; without JavaScript, plain links. And "Shall we play a game?"
- * turns the 404's dots into Connect Four against me, with an arcade high score table (client/four.ts).
+ * turns the 404's dots into Connect Four against one of the animals (client/four.ts).
  */
 import Site from '../layouts/Site.astro';
 import Icon from '../components/Icon.astro';
@@ -15,7 +15,7 @@ const PROMPTS = [
   { icon: 'work', q: 'What have you built?', d: 'Sites, solo and with studios', ask: 'Work' },
   { icon: 'projects', q: 'Show me your apps', d: 'And side projects', ask: 'Projects' },
   { icon: 'about', q: 'Who are you?', d: 'The short story', ask: 'About' },
-  { icon: 'controller', q: 'Shall we play a game?', d: 'Connect Four, against me', ask: 'Play a game' },
+  { icon: 'controller', q: 'Shall we play a game?', d: 'Connect Four with the animals', ask: 'Play a game' },
   { icon: 'spark', q: 'Any secrets?', d: 'The easter egg cheat sheet', ask: 'Secrets' },
   { icon: 'mail', q: 'Leave you a note', d: 'Straight to my inbox', ask: 'Leave a note' },
 ] as const;
@@ -39,11 +39,11 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
       <div class="lost-404" aria-hidden="true" style={`--cols:${rows[0].length}`}>
         {dots.map((x) => <i class={x.on ? 'on' : undefined} style={`--d:${x.d}`}></i>)}
       </div>
-      <section class="four" aria-label="Connect Four against Derek" hidden>
+      <section class="four" aria-label="Connect Four" hidden>
         <div class="four__board" role="group" aria-label="Board: pick a column"></div>
         <div class="four__bar">
-          <p class="four__say" aria-live="polite"><img class="sq" src={photo} alt="" width="22" height="22" /><span></span></p>
-          <p class="four__tally">Level <b data-four="level">1</b> · <b data-four="score">0</b> pts · best <b data-four="best">0</b></p>
+          <p class="four__say" aria-live="polite"><span class="four__who sq" role="img"></span><span class="four__line"></span></p>
+          <p class="four__tally">vs <b class="four__vs"></b> · Level <b data-four="level">1</b> · <b data-four="score">0</b> pts · best <b data-four="best">0</b></p>
         </div>
         <div class="four__controls">
           <button type="button" class="is-primary" data-four-card hidden>Make a card</button>

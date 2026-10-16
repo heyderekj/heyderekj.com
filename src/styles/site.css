@@ -1121,7 +1121,7 @@ body.site .four__col:focus-visible { outline: none; }
 /* What I say, and the score, under the board */
 .four__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; }
 .four__say { display: flex; align-items: center; gap: 8px; margin: 0; min-height: 28px; font-size: 15.5px; color: var(--ink-soft); }
-.four__say img { --r: 7px; width: 22px; height: 22px; object-fit: cover; }
+.four__who { --r: 7px; flex: none; display: grid; place-items: center; width: 24px; height: 24px; font-size: 12.5px; font-weight: 700; color: #fff; background: var(--foe, var(--ink)); }
 .four__say.is-new span { animation: lost-in 260ms var(--ease) both; }
 .four__tally { margin: 0; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .four__tally b { color: var(--ink); font-weight: 600; }

@@ -5,7 +5,7 @@
  * Drawn on a canvas (1080 × 1350); the clip is recorded from it with MediaRecorder.
  */
 export type Move = { c: number; r: number; who: 1 | 2 };
-type Game = { board: number[]; moves: Move[]; run: number[]; score: number; level: number; wins: number };
+type Game = { board: number[]; moves: Move[]; run: number[]; score: number; level: number; wins: number; foe: string };
 type Design = 'paper' | 'blueprint' | 'arcade' | 'orange';
 
 const W = 1080, H = 1350, COLS = 7, ROWS = 6;
@@ -39,7 +39,7 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
   // Heading
   ctx.fillStyle = t.accent; ctx.font = `600 26px ${mono}`; ctx.letterSpacing = '6px'; ctx.fillText('SHALL WE PLAY A GAME?', 90, 132); ctx.letterSpacing = '0px';
   ctx.fillStyle = t.ink; ctx.font = `700 92px ${sans}`;
-  ctx.fillText(g.wins === 1 ? '1 win against Derek' : `${g.wins} wins against Derek`, 86, 236);
+  ctx.fillText(g.wins === 1 ? `1 win against ${g.foe}` : `${g.wins} wins against ${g.foe}`, 86, 236);
   ctx.fillStyle = t.muted; ctx.font = `500 38px ${sans}`;
   ctx.fillText(`Level ${g.level}  ·  ${g.score.toLocaleString()} points`, 90, 296);
 
@@ -57,7 +57,7 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
     if (design !== 'paper' && m.who === 2) { ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.beginPath(); ctx.arc(x + hole / 2, yy + hole / 2, hole / 2 + 2, 0, 7); ctx.fill(); }
     ctx.drawImage(chips[m.who], x, yy, hole, hole);
   });
-  // My winning four, ringed
+  // Their winning four, ringed
   if (flash && upto >= g.moves.length && g.run.length) {
     ctx.strokeStyle = t.accent; ctx.lineWidth = 7;
     g.run.forEach((i) => { const [x, y] = at(i % COLS, Math.floor(i / COLS)); ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, hole / 2 + 7, 0, 7); ctx.stroke(); });
@@ -85,7 +85,7 @@ function easeOutBounce(x: number) { const n = 7.5625, d = 2.75; if (x < 1 / d) r
 async function share(blob: Blob, name: string) {
   const file = new File([blob], name, { type: blob.type });
   if (navigator.canShare?.({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: 'Shall we play a game?', text: 'I played Connect Four against Derek on heyderekj.com' }); return; } catch { /* closed the sheet, or not allowed: fall through */ }
+    try { await navigator.share({ files: [file], title: 'Shall we play a game?', text: `I played Connect Four against ${game?.foe ?? 'the animals'} on heyderekj.com` }); return; } catch { /* closed the sheet, or not allowed: fall through */ }
   }
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
