@@ -2,15 +2,24 @@
 /**
  * The work preview used everywhere: a small browser window around a site's pages.
  * `ticks` lets you flip through pages by moving across it (client/browser.ts);
- * in the deck, a rail beside it does that instead.
+ * in the deck and write-ups, a rail of pages slides out beside it from the toolbar's sidebar button.
  */
 import type { DeckPage } from '../../lib/deck';
 
-interface Props { pages: DeckPage[]; url?: string; ticks?: boolean; eager?: boolean; deck?: boolean }
-const { pages, url = '', ticks = false, eager = false, deck = false } = Astro.props;
+interface Props {
+  pages: DeckPage[]; url?: string; ticks?: boolean; eager?: boolean; deck?: boolean;
+  /** Show a sidebar button in the toolbar that opens the page rail beside it (client/drawer.ts) */
+  drawer?: boolean;
+}
+const { pages, url = '', ticks = false, eager = false, deck = false, drawer = false } = Astro.props;
 ---
 <div class="browser sq" data-n={pages.length}>
-  <div class="browser__bar"><span class="browser__dots"><i></i><i></i><i></i></span><span class="browser__url">{url}</span><span style="width:37px"></span></div>
+  <div class="browser__bar"><span class="browser__dots"><i></i><i></i><i></i></span>{drawer && pages.length > 1 && (
+    <button class="browser__side" data-drawer-toggle data-count={pages.length} aria-expanded="false" aria-label={`Show all ${pages.length} pages`} title="Pages">
+      <svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="1.75" y="2.75" width="12.5" height="10.5" rx="2.5" /><path d="M6 2.75v10.5" /></svg>
+      <span>{pages.length}</span>
+    </button>
+  )}<span class="browser__url">{url}</span><span style={`width:${drawer && pages.length > 1 ? 82 : 37}px`}></span></div>
   <div class="browser__view">
     {pages.map((p, n) => 'mesh' in p
       ? <div class={`mesh${n ? '' : ' is-on'}`} data-page data-mesh={p.mesh} style={`opacity:${n ? 0 : 1}`}><img src={p.icon} alt="" /></div>
@@ -18,3 +27,4 @@ const { pages, url = '', ticks = false, eager = false, deck = false } = Astro.pr
     {ticks && !deck && pages.length > 1 && <div class="browser__ticks">{pages.map((_, n) => <i class={n ? '' : 'is-on'}></i>)}</div>}
   </div>
 </div>
+<script src="../../client/drawer.ts"></script>

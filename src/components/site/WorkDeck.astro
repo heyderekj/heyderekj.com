@@ -20,10 +20,10 @@ const { slides } = await getDeck();
     </span>
   </div>
   <div class="fig__stage">
-    <div class="deck__track" id="deckTrack">
+    <div class="deck__track" id="deckTrack" data-drawer="closed">
       {slides.map((s, i) => (
         <section class:list={['wslide', i === 0 && 'is-on']} data-kind={s.kind} data-title={s.title} data-partner={s.partner ?? ''} aria-label={`${i + 1} of ${slides.length}: ${s.title}`}>
-          <Browser pages={s.pages} url={s.url} deck eager={i === 0} />
+          <Browser pages={s.pages} url={s.url} deck drawer eager={i === 0} />
           {s.pages.length > 1 && (
             <div class="pages" role="group" aria-label={`${s.title} pages`}>
               {s.pages.map((p, n) => (

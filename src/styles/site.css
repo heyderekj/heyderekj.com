@@ -577,3 +577,18 @@ body.site .app-toc { display: none !important; }
   @keyframes tick-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   .tick::before { display: none; }
 }
+
+/* ---------- The page drawer: the rail slides out from the toolbar's sidebar button ---------- */
+.browser__side { display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 7px 0 6px; margin-left: 4px; border-radius: 7px; font-size: 13px; color: var(--muted); }
+.browser__side span { font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.browser__side:hover { background: color-mix(in oklch, var(--ink) 8%, transparent); color: var(--ink); }
+.browser__side[aria-expanded="true"] { background: color-mix(in oklch, var(--ink) 10%, transparent); color: var(--ink); }
+.wslide:has(.pages) { transition: grid-template-columns var(--t-move) var(--ease), column-gap var(--t-move) var(--ease); }
+.wslide:has(.pages) > .pages { transition: opacity var(--t-ui) var(--ease); }
+:is([data-drawer="closed"] > .wslide, .wslide[data-drawer="closed"]):has(.pages) { grid-template-columns: 0px minmax(0, 1fr); column-gap: 0; }
+:is([data-drawer="closed"] > .wslide, .wslide[data-drawer="closed"]) > .pages { opacity: 0; visibility: hidden; }
+/* Opening: the pages come in one by one */
+.is-opening .pages button { animation: deck-rise 420ms var(--ease) both; animation-delay: calc(90ms + var(--n, 0) * 55ms); }
+@media (max-width: 560px) {
+  :is([data-drawer="closed"] > .wslide, .wslide[data-drawer="closed"]) > .pages { display: none; }
+}

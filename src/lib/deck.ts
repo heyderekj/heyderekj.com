@@ -15,6 +15,8 @@ export const TM_TILES: [slug: string, color: string][] = [
 ];
 /** The order apps appear in the deck. */
 const APP_ORDER = ['harvous', 'koati', 'revisemy', 'heres-my-church', 'dinky', 'binky'];
+/** Highlighted work left out of the deck's websites: their apps already show in the apps half. */
+const NOT_IN_DECK = ['revisemy', 'harvouscom'];
 
 export const host = (u?: string | null) => { try { return u ? new URL(u).host.replace(/^www\./, '') : ''; } catch { return ''; } };
 
@@ -54,7 +56,7 @@ function appPages(p: Project): DeckPage[] {
 export async function getDeck() {
   const work = (await getPublishedWork()).sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf());
   const apps = await getApps();
-  const clients = work.filter((w) => w.data.highlight && shotsOf(w).length);
+  const clients = work.filter((w) => w.data.highlight && shotsOf(w).length && !NOT_IN_DECK.includes(w.slug));
   const slides: DeckSlide[] = [
     ...clients.map((w) => ({
       kind: 'client' as const, slug: w.slug, title: w.data.title, partner: w.data.partnership ?? null,

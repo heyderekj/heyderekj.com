@@ -92,8 +92,8 @@ const posterSrc = d.videoPoster ? imgSrc(d.videoPoster, 1280) : undefined;
         <figure class="fig sq">
           <div class="fig__head"><span class="fig__no">FIG 1</span><span class="fig__title">The site</span>{live && <a class="fig__reset" href={live} target="_blank" rel="noopener">Visit ↗</a>}</div>
           <div class="fig__stage">
-            <div class="wslide wslide--solo" data-rail>
-              <Browser pages={pages} url={host(live)} deck eager />
+            <div class="wslide wslide--solo" data-rail data-drawer="closed">
+              <Browser pages={pages} url={host(live)} deck drawer eager />
               {pages.length > 1 && (
                 <div class="pages" role="group" aria-label="Pages">
                   {pages.map((p, n) => <button class="sq" data-page-to={n} aria-current={n === 0 ? 'true' : 'false'} aria-label={`Page ${n + 1}`}><img src={p.src} alt="" loading="lazy" decoding="async" /></button>)}
@@ -101,7 +101,7 @@ const posterSrc = d.videoPoster ? imgSrc(d.videoPoster, 1280) : undefined;
               )}
             </div>
           </div>
-          <p class="fig__cap">{pages.length > 1 ? `${pages.length} pages. Pick one on the rail to look closer.` : 'The home page.'}</p>
+          <p class="fig__cap">{pages.length > 1 ? `${pages.length} pages. Open the sidebar to look through them.` : 'The home page.'}</p>
         </figure>
       )}
 
