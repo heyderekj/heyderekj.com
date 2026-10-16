@@ -168,6 +168,10 @@ mark.hl { background: color-mix(in oklch, var(--hl) 55%, transparent); color: in
 .peek { --r: 14px; position: fixed; z-index: 60; width: 280px; pointer-events: none; opacity: 0; transition: opacity var(--t-ui) var(--ease); box-shadow: var(--shadow-lift); }
 .peek.is-on { opacity: 1; }
 .peek .browser__view { cursor: default; }
+/* An icon or a piece of art: whole, as a small rounded card */
+.peek.is-art { width: 200px; box-shadow: none; }
+.peek__art { --r: 22px; aspect-ratio: 1; overflow: hidden; border-radius: 22px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.peek__art img { display: block; width: 100%; height: 100%; object-fit: cover; }
 @media (hover: none) { .peek { display: none; } }
 .row__meta { font-size: 14px; color: var(--muted); white-space: nowrap; }
 .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 56px; }
