@@ -13,7 +13,7 @@ import { schemaPersonId } from '../../lib/schemaIds';
 import { mdStringToHtml } from '../../lib/mdString';
 import { imgSrc } from '../../lib/img';
 import { getPublishedWork } from '../../lib/work';
-import { host, pageOf, workDate } from '../../lib/deck';
+import { host, shot, workDate } from '../../lib/deck';
 
 export async function getStaticPaths() {
   const items = await getPublishedWork();
@@ -56,7 +56,7 @@ const done = workDate(post);
 const weeks = typeof d.weeksToComplete === 'number' ? `${d.weeksToComplete} week${d.weeksToComplete === 1 ? '' : 's'}` : d.weeksToComplete || '';
 const meta = [d.partnership ? `With ${d.partnership}` : 'Solo', d.workType, `${MON[done.getUTCMonth()]} ${done.getUTCFullYear()}`, weeks].filter(Boolean) as string[];
 
-const pages = await Promise.all([...new Set([d.thumbnail, ...(d.gallery ?? []), d.desktop].filter(Boolean))].map((s) => pageOf(s as string)));
+const pages = [...new Set([d.thumbnail, ...(d.gallery ?? []), d.desktop].filter(Boolean))].map((s) => ({ src: shot(s as string) }));
 const live = d.liveLink ?? d.waybackUrl;
 const sections = ([
   ['What they needed', d.brief],

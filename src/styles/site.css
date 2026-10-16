@@ -742,5 +742,9 @@ html.load-in .bar { animation: deck-fade 360ms var(--ease) 150ms both; }
 .tmnow__apps b .badge { margin-left: 6px; height: 18px; padding: 0 7px; font-size: 10.5px; font-style: normal; vertical-align: 1px; }
 
 /* A screenshot exported in a device frame: show just the screen, filling the window (lib/deck.ts) */
-img.framed { position: absolute; inset: 0 auto auto 0; max-width: none; width: calc(100% / var(--fw)); height: auto; object-fit: fill; transform: translate(calc(var(--fx) * -100%), calc(var(--fy) * -100%)); }
-img.framed--wide { width: auto; height: calc(100% / var(--fh)); }
+/* Sized so the screen covers its box whatever the box's shape (the box is a size container) */
+.browser__view, .pages button { container-type: size; }
+img.framed { --iw: max(100cqw / var(--fw), 100cqh * var(--fr) / var(--fh)); position: absolute; inset: 0 auto auto calc((100cqw - var(--iw) * var(--fw)) / 2); max-width: none; width: var(--iw); height: auto; object-fit: fill; transform: translate(calc(var(--fx) * -100%), calc(var(--fy) * -100%)); }
+/* The window's view grows to fill it when the window is stretched (the deck's grid) */
+.wslide > .browser { display: flex; flex-direction: column; }
+.wslide > .browser > .browser__view { flex: 1 0 auto; }

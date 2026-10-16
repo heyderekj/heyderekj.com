@@ -28,11 +28,12 @@ const DECK_FIRST = ['throne', 'river-valley-church', 'scenery', 'exodus51'];
 export const host = (u?: string | null) => { try { return u ? new URL(u).host.replace(/^www\./, '') : ''; } catch { return ''; } };
 
 /**
- * A page in a preview: a screenshot, or an app icon on its mesh. A screenshot exported inside a
+ * A page in a preview: a screenshot, or an app icon on its mesh. An app screenshot exported inside a
  * device frame (transparent margin, shadow, dark bezel) carries `frame`: the screen's box as
- * fractions of the image, so the preview can show just the site, filling the window.
+ * fractions of the image, so the preview shows just the app, filling the window. (Website shots
+ * keep their frame on purpose.)
  */
-export interface Frame { x: number; y: number; w: number; h: number; wide: boolean }
+export interface Frame { x: number; y: number; w: number; h: number; ratio: number }
 export type DeckPage = { src: string; frame?: Frame } | { mesh: string; icon: string };
 
 const frames = new Map<string, Promise<Frame | undefined>>();
@@ -60,8 +61,7 @@ async function findFrame(src: string): Promise<Frame | undefined> {
     };
     l = skip(l, 1, (n) => [n, cy]); r = skip(r, -1, (n) => [n, cy]);
     t = skip(t, 1, (n) => [cx, n]); b = skip(b, -1, (n) => [cx, n]);
-    const f = { x: l / W, y: t / H, w: (r - l + 1) / W, h: (b - t + 1) / H };
-    return { ...f, wide: (f.w * W) / (f.h * H) > 16 / 10 };
+    return { x: l / W, y: t / H, w: (r - l + 1) / W, h: (b - t + 1) / H, ratio: W / H };
   } catch { return undefined; }
 }
 /** A screenshot page, sized for `w`, with its device frame found (once per image). */
@@ -71,7 +71,7 @@ export function pageOf(src: string, w = 1280): Promise<DeckPage> {
 }
 /** Inline style and class for a framed screenshot's <img>. */
 export const frameAttrs = (p: DeckPage) => 'frame' in p && p.frame
-  ? { class: p.frame.wide ? 'framed framed--wide' : 'framed', style: `--fx:${p.frame.x.toFixed(4)};--fy:${p.frame.y.toFixed(4)};--fw:${p.frame.w.toFixed(4)};--fh:${p.frame.h.toFixed(4)}` }
+  ? { class: 'framed', style: `--fx:${p.frame.x.toFixed(4)};--fy:${p.frame.y.toFixed(4)};--fw:${p.frame.w.toFixed(4)};--fh:${p.frame.h.toFixed(4)};--fr:${p.frame.ratio.toFixed(4)}` }
   : { class: '', style: undefined };
 export interface DeckSlide {
   kind: 'client' | 'app';
@@ -112,14 +112,13 @@ export async function getDeck() {
   const clients = work.filter((w) => w.data.highlight && shotsOf(w).length && !NOT_IN_DECK.includes(w.slug));
   const rank = (slug: string) => { const i = DECK_FIRST.indexOf(slug); return i < 0 ? DECK_FIRST.length : i; };
   clients.sort((a, b) => rank(a.slug) - rank(b.slug));
-  const clientPages = await Promise.all(clients.map((w) => Promise.all(shotsOf(w).map((s) => pageOf(s)))));
   const appPageList = await Promise.all(apps.map(appPages));
   const slides: DeckSlide[] = [
-    ...clients.map((w, i) => ({
+    ...clients.map((w) => ({
       kind: 'client' as const, slug: w.slug, title: w.data.title, partner: w.data.partnership ?? null,
       sub: `${w.data.partnership ? `With ${w.data.partnership}` : 'Solo'} · ${workDate(w).getUTCFullYear()}`,
       url: host(w.data.liveLink ?? w.data.waybackUrl),
-      pages: clientPages[i],
+      pages: shotsOf(w).map((s) => ({ src: shot(s) })),
       link: { href: `/work/${w.slug}/`, label: 'Read the write-up →', external: false },
     })),
     ...apps.map((p, i) => ({
