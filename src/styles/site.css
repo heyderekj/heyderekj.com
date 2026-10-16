@@ -347,6 +347,10 @@ body.site { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .bar a:hover, .bar button:hover { background: color-mix(in oklch, var(--ink) 8%, transparent); }
 .bar__home { width: 40px; height: 36px; display: grid; place-items: center; border-radius: 999px; }
 .bar__home img { --r: 9px; width: 28px; height: 28px; object-fit: cover; display: block; }
+/* The gear turns into place as each page loads (a fifth of a turn twice: a pentagon looks the same every 72°), and a notch on hover */
+.bar__gear { display: block; width: 24px; height: 25px; transform-origin: 49% 50%; animation: gear-load 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both; transition: rotate 420ms cubic-bezier(0.3, 1.4, 0.5, 1); }
+.bar__home:hover .bar__gear, .bar__home:focus-visible .bar__gear { rotate: 72deg; }
+@keyframes gear-load { from { rotate: -144deg; scale: 0.82; } }
 .bar__label { height: 36px; padding: 0 10px 0 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; letter-spacing: -0.005em; min-width: 0; }
 .bar__label span { max-width: min(38vw, 260px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bar__label .icon { font-size: 12px; color: var(--muted); transition: rotate var(--t-move) var(--ease); }
@@ -822,11 +826,11 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 /* Easter egg: the count-in on the bar photo (client/count-in.ts) */
 .bar__home { position: relative; }
 .bar__home[data-beat]::after { content: attr(data-beat); position: absolute; top: -2px; right: 2px; display: grid; place-items: center; min-width: 15px; height: 15px; padding: 0 3px; border-radius: 999px; background: var(--ink); color: var(--paper); font: 700 9.5px/1 var(--font); }
-.bar__home[data-beat] img { animation: beat-tap 160ms var(--ease); }
-.bar__home.is-fill img { animation: beat-fill 220ms var(--ease) 6 alternate; }
+.bar__home[data-beat] :is(img, svg) { animation: beat-tap 160ms var(--ease); }
+.bar__home.is-fill :is(img, svg) { animation: beat-fill 220ms var(--ease) 6 alternate; }
 @keyframes beat-tap { 50% { scale: 0.88; } }
 @keyframes beat-fill { to { scale: 0.92; rotate: -4deg; } }
-@media (prefers-reduced-motion: reduce) { .bar__home img { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .bar__home :is(img, svg) { animation: none !important; transition: none; } }
 
 /* About: the story in short chapters, the year in the margin on wide screens (pages/about.astro) */
 .story { list-style: none; margin: 36px 0 0; padding: 0; display: grid; gap: 22px; }

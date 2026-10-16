@@ -108,7 +108,7 @@ if (box && thread && slash && prompts && form && input) {
     { keys: '<kbd>B</kbd>', name: 'Blueprint mode', what: 'The whole site as a cyanotype on graph paper. B again to go back.', tryit: 'blueprint' },
     { keys: '<kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd>', name: 'Orange mode', what: 'My favorite color, with a fanfare.', tryit: 'konami' },
     { keys: '<kbd>Click ×3</kbd>', name: 'Leave me a note', what: 'Triple-click my signature at the top of any page. One click goes home.' },
-    { keys: '<kbd>Tap ×4</kbd>', name: 'Count me in', what: 'Tap my photo in the bar four times, in time, for a drum fill.' },
+    { keys: '<kbd>Tap ×4</kbd>', name: 'Count me in', what: 'Tap the gear in the bar four times, in time, for a drum fill.' },
     { keys: '<kbd>⌥⌘I</kbd>', name: 'A note in the console', what: 'For whoever opens devtools.' },
   ];
   function sheet() {

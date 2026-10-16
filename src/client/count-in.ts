@@ -7,7 +7,7 @@
 const home = document.querySelector<HTMLAnchorElement>('.bar__home');
 if (home) {
   let taps: number[] = [], goT = 0, clearT = 0, ac: AudioContext | null = null;
-  const img = home.querySelector('img');
+  const img = home.querySelector<SVGElement | HTMLImageElement>('img, svg');
   const beat = (n: number | null) => {
     if (n == null) { delete home.dataset.beat; return; }
     home.dataset.beat = String(n);
