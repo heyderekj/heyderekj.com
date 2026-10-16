@@ -52,7 +52,7 @@ const barLink = (p?: Post) => (p ? { href: postHref(p), title: postTitle(p) } : 
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
 const defaultDesc =
-  'Agentic design engineer, still making websites full-time. Writing on faith and technology.';
+  'Agentic design engineer, still making sites full-time. Writing on faith and technology.';
 const postDescription = d.description ?? defaultDesc;
 const postUrl = new URL(postHref(post), `${siteOrigin}/`).toString();
 const published = d.date.toISOString();

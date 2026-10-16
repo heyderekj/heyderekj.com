@@ -26,7 +26,7 @@ const { Content } = await post.render();
 const d = post.data;
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
-const postDescription = d.description ?? 'Agentic design engineer, still making websites full-time. Writing on faith and technology.';
+const postDescription = d.description ?? 'Agentic design engineer, still making sites full-time. Writing on faith and technology.';
 const postUrl = new URL(`/work/${post.slug}/`, `${siteOrigin}/`).toString();
 const published = d.date.toISOString();
 const industryOrTags = d.industry?.length ? d.industry : d.tags ?? [];

@@ -30,7 +30,7 @@ const pagesFor = Object.fromEntries(TOPICS.map((t) => {
 <header class="hello-head" data-bar-label="Home">
   <Byline />
   <p class="hello">
-    I make websites with <button class="wchip sq" data-act="kem"><Icon name="work" /> Kem Design<span class="pop"><span class="fan">{kem.map((w, i) => <Browser pages={[kemPages[i]]} url={host(w.data.liveLink)} />)}</span></span></button>
+    I make sites with <button class="wchip sq" data-act="kem"><Icon name="work" /> Kem Design<span class="pop"><span class="fan">{kem.map((w, i) => <Browser pages={[kemPages[i]]} url={host(w.data.liveLink)} />)}</span></span></button>
     and apps at <button class="wchip sq" data-act="apps"><span class="tm" aria-hidden="true">{TM_TILES.map(([, c]) => <i style={`--c:${c}`}></i>)}</span>Testament Made<span class="pop"><span class="spread">{TM_TILES.map(([slug, c], i) => (
       <span class="tmapp" style={`--i:${i};--col:${(i % 3) - 1};--row:${Math.floor(i / 3) - 0.5};--c:${c}`}><img src={icons[slug]?.icon ?? ''} alt={icons[slug]?.title ?? ''} /></span>
     ))}</span></span></button>,

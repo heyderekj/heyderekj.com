@@ -9,11 +9,11 @@ const entries = await getPublishedWork();
 ---
 <Site
   title="Work — Derek Castelli"
-  description="Write-ups from the websites I've designed and built, on my own and with studios like Kem Design."
+  description="Write-ups from the sites I've designed and built, on my own and with studios like Kem Design."
   bar={{ kind: 'page', title: 'Work' }}
 >
   <main class="home">
-    <PageHead title="Websites" meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">The sites I've designed and built, on my own and with studios I love working alongside.</Fragment></PageHead>
+    <PageHead title="Sites" meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">The sites I've designed and built, on my own and with studios I love working alongside.</Fragment></PageHead>
     <WorkIndex work={entries} />
 
     <h2 class="h">What people say</h2>

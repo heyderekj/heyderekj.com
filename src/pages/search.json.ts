@@ -18,7 +18,7 @@ export const GET: APIRoute = async () => {
       s: [postTitle(p), p.data.description, ...p.data.tags].filter(Boolean).join(' ').toLowerCase(),
     })),
     ...work.map((w) => ({
-      k: 'Website' as const, t: w.data.title, h: `/work/${w.slug}/`, y: String(workDate(w).getUTCFullYear()),
+      k: 'Site' as const, t: w.data.title, h: `/work/${w.slug}/`, y: String(workDate(w).getUTCFullYear()),
       s: [w.data.title, w.data.description, w.data.partnership, w.data.workType, ...(w.data.industry ?? [])].filter(Boolean).join(' ').toLowerCase(),
     })),
     ...apps.map((p) => ({

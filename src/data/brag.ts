@@ -111,7 +111,7 @@ const barrettJohnsonTestimonial =
 export const bragMeta = {
   title: 'Brag — Derek Castelli',
   description:
-    'Derek Castelli — making websites and apps. Webflow freelancer in Des Moines; native Mac apps and faith-tech on the side.',
+    'Derek Castelli — making sites and apps. Webflow freelancer in Des Moines; native Mac apps and faith-tech on the side.',
 };
 
 /** Hero copy aligned with linkedin.com/in/heyderekj */
@@ -120,7 +120,7 @@ export const bragHero = {
   photoAlt: 'Derek Castelli',
   headline: 'Derek Castelli',
   location: 'Des Moines, Iowa metro',
-  bio: 'Self-taught designer designing brands and making websites for non-profits and startups since 2010. Oh and always a side project or three. Husband to my best friend, home in Des Moines with Lilo, Kiya, Leroy and Irma. And a Christian before all of it.',
+  bio: 'Self-taught designer designing brands and making sites for non-profits and startups since 2010. Oh and always a side project or three. Husband to my best friend, home in Des Moines with Lilo, Kiya, Leroy and Irma. And a Christian before all of it.',
   profileHref: 'https://www.linkedin.com/in/heyderekj',
 };
 
@@ -132,11 +132,11 @@ export type BragRightNowItem = {
 /** Active focus — surfaced above the clippings feed. */
 export const bragRightNow: BragRightNowItem[] = [
   {
-    label: 'Designing & developing websites with Kem Design',
+    label: 'Designing & developing sites with Kem Design',
     href: 'https://kemdesign.co',
   },
   {
-    label: 'Making websites with other various clients',
+    label: 'Making sites with other various clients',
     href: '/work/',
   },
   {
@@ -147,7 +147,7 @@ export const bragRightNow: BragRightNowItem[] = [
 
 /** Skills reflected across the brag feed — two-column checklist below Right now. */
 export const bragSkills: string[] = [
-  'Webflow & website design',
+  'Webflow & site design',
   'UI/UX thinking',
   'Brand & logo design',
   'Working with teams',

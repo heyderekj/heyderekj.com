@@ -59,14 +59,14 @@ export const aboutSections: AboutSection[] = [
     heading: 'Freelancing full-time',
     paragraphs: [
       'Shortly after Easter I started thinking about leaving my design job at the church. Then came June and I had left to start my own business for the first time. Setup an LLC, focused on the connections I did have, and slowly got business.',
-      "Things weren't great, but from June till March I was able to get by. In late March I would work at a local creative agency to focus on making Webflow websites. This would last less than 30 days as my personal life quickly fell apart and needed to regroup.",
+      "Things weren't great, but from June till March I was able to get by. In late March I would work at a local creative agency to focus on making Webflow sites. This would last less than 30 days as my personal life quickly fell apart and needed to regroup.",
     ],
   },
   {
     heading: 'The latest',
     paragraphs: [
       "Fast forward to October 2022 when I was able to go full-time as a freelancer for a different local creative agency (One Branding) focused again on Webflow. They've worked with Yelp and so far I've had the opportunity to work with GoGuardian, IGN, and many others.",
-      "Since moving on from this team I've been blessed and happy working with Kem Design Co. as a Webflow Expert, supporting the team on website builds. Oh, and of course working with my own clients through Testament Made LLC DBA Derek J Design",
+      "Since moving on from this team I've been blessed and happy working with Kem Design Co. as a Webflow Expert, supporting the team on site builds. Oh, and of course working with my own clients through Testament Made LLC DBA Derek J Design",
     ],
   },
   {
@@ -142,13 +142,13 @@ export const aboutExperienceGroups: AboutExpGroup[] = [
         name: 'Testament Made LLC',
         range: 'Jun 2020 — Present',
         description:
-          'Freelance web designer partnering with clients and teams to make websites in Webflow, and making apps on the side.',
+          'Freelance web designer partnering with clients and teams to make sites in Webflow, and making apps on the side.',
         link: { label: 'testamentmade.com', href: 'https://testamentmade.com', icon: 'arrow' },
       },
       {
         name: 'Kem Design Co.',
         range: 'May 2024 — Present',
-        description: 'Webflow Expert assisting the team when it comes to making websites.',
+        description: 'Webflow Expert assisting the team when it comes to making sites.',
         link: { label: 'kemdesign.co', href: 'https://kemdesign.co', icon: 'arrow' },
       },
     ],
@@ -160,13 +160,13 @@ export const aboutExperienceGroups: AboutExpGroup[] = [
         name: 'Jamm Designs',
         range: 'Jan 2025 — May 2026',
         description:
-          'Senior Web Designer (Freelance), designing websites and developing them in Webflow one update at a time.',
+          'Senior Web Designer (Freelance), designing sites and developing them in Webflow one update at a time.',
       },
       {
         name: 'Apollos',
         range: 'Jun 2024 — Sep 2025',
         description:
-          'Partnered with the Apollos web team to design and develop Webflow websites for churches.',
+          'Partnered with the Apollos web team to design and develop Webflow sites for churches.',
       },
       {
         name: 'One Branding',
