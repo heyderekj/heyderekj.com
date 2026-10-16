@@ -165,7 +165,7 @@ export const MORPHS: Partial<Record<Name | 'x' | 'github', Frame[]>> = {
   lego: [{ s: { 1: tr(base('lego', 1), 0, -1.25) }, hold: 60 }, { s: { 2: tr(base('lego', 2), 0, -1.25) }, hold: 60 }],
   bolt: [{ s: { 0: sc(base('bolt', 0), 1.15) }, hold: 100 }],
   // The waves ring out.
-  sound: [{ s: { 1: tr(base('sound', 1), 0.5, 0), 2: tr(base('sound', 2), 0.75, 0) }, hold: 120 }],
+  sound: [{ s: { 1: tr(base('sound', 1), 0.35, 0), 2: tr(base('sound', 2), 0.5, 0) }, hold: 120 }],
   // The flag waves; its checks ride along.
   flag: [...FLAG, ...FLAG],
 

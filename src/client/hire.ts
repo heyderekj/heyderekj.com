@@ -237,7 +237,12 @@ if (form) {
   });
   form.addEventListener('input', (e) => {
     const t = e.target as HTMLInputElement;
-    if (t.type === 'range' && t.dataset.k) { set(t.dataset.k, Number(t.value)); paint(); }
+    if (t.type === 'range' && t.dataset.k) {
+      // A tile for each step, up or down
+      const was = Number(get(t.dataset.k)), now = Number(t.value);
+      if (now !== was) cue('select', { direction: now < was ? 'back' : 'forward' });
+      set(t.dataset.k, now); paint();
+    }
     if (t.type === 'checkbox') cue('toggle', { direction: t.checked ? 'forward' : 'back' });
     if (t.type === 'checkbox' && t.dataset.k) { set(t.dataset.k, t.checked); paint(); }
     else if (t.type === 'checkbox' && t.dataset.also) { toggleService(t.dataset.also as ServiceId, t.checked); paint(); }

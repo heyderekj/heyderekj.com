@@ -13,7 +13,7 @@ if (spots.length) {
     const when = now ? '' : new Date(`${from}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     for (const el of spots) {
       const kind = el.dataset.avail;
-      el.textContent = kind === 'big' ? (now ? 'Right now' : `From ${when}`) : kind === 'small' ? (now ? 'open now' : `from ${when}`) : el.textContent;
+      el.textContent = kind === 'big' ? (now ? 'Right now' : `From ${when}`) : kind === 'small' ? (now ? 'open now' : `from ${when}`) : kind === 'line' ? (now ? 'Open now' : `Open from ${when}`) : el.textContent;
     }
   };
   let cached: { from: string; at: number } | null = null;

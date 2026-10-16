@@ -34,8 +34,13 @@ const nav = [
         {nav.map((n) => (
           <a href={n.href} {...(n.external ? { target: '_blank', rel: 'noopener' } : {})}><Icon name={n.icon} />{n.label}{n.external && <Icon name="arrow-up-right" class="bar__ext" />}</a>
         ))}
-        <a class="bar__hire" href="/hire/"><Icon name="gear" />Work with me<small data-avail={availability.open ? 'small' : undefined}>{availability.open ? (availability.from === 'now' ? 'open now' : `from ${availabilityWhen}`) : 'booked up'}</small></a>
       </div>
+      <!-- Work with me, set apart: what it is, then whether I'm free -->
+      <a class:list={['bar__hire', !availability.open && 'is-closed']} href="/hire/">
+        <span class="bar__hire-mark"><Icon name="gear" /></span>
+        <span class="bar__hire-text"><b>Work with me</b><small><i aria-hidden="true"></i><span data-avail={availability.open ? 'line' : undefined}>{availability.open ? (availability.from === 'now' ? 'Open now' : `Open from ${availabilityWhen}`) : 'Booked up for now'}</span></small></span>
+        <Icon name="arrow-right" class="bar__hire-go" />
+      </a>
       <div class="bar__else">
         <button class="bar__mail" data-copy-email>derekj@hey.com <span>Copy</span></button>
         <a href="https://x.com/heyderekj" target="_blank" rel="noopener" aria-label="X"><Icon name="x" /></a>

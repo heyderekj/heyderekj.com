@@ -17,6 +17,8 @@
  *                         like, plus my board's leads, "Shaping" and "Proposal Sent")
  *   AVAILABILITY_BUFFER_DAYS  days between finishing one project and starting the next (default 7)
  */
+import { nextWorkday } from '../../src/lib/holidays';
+
 interface Env {
   NOTION_TOKEN?: string; NOTION_PROJECTS_DB?: string; NOTION_DATE_PROP?: string; NOTION_STATUS_PROP?: string;
   NOTION_NOT_BOOKED?: string; NOTION_DONE?: string; AVAILABILITY_BUFFER_DAYS?: string;
@@ -60,11 +62,12 @@ async function databaseOf(id: string, headers: Record<string, string>): Promise<
   const blocks = ((await r.json()) as { results: { id: string; type: string; child_database?: { title: string } }[] }).results.filter((b) => b.type === 'child_database');
   return (blocks.find((b) => /^projects$/i.test(b.child_database?.title.trim() ?? '')) ?? blocks[0])?.id ?? null;
 }
-/** Free the day after the buffer; 'now' if that's already past */
+/** Free after the buffer, on the next day I'm working (no weekends, holidays or the Christmas break); 'now' if that's already past */
 export function freeFrom(latest: string, buffer: number, today: string): string {
   if (!latest) return 'now';
   const free = new Date(`${latest}T00:00:00Z`); free.setUTCDate(free.getUTCDate() + buffer);
-  return day(free) > today ? day(free) : 'now';
+  const from = nextWorkday(day(free));
+  return from > today ? from : 'now';
 }
 
 export async function onRequestGet({ request, env, waitUntil }: { request: Request; env: Env; waitUntil(p: Promise<unknown>): void }) {

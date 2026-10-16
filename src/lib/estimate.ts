@@ -4,6 +4,7 @@
  * (client/hire.ts) and the request function (functions/api/hire.ts) all price it the same way;
  * the function recalculates rather than trusting the browser's number.
  */
+import { inBreak, nextWorkday } from './holidays';
 import { BUDGETS, BUDGET_STRETCH, CAPACITY, EXTRAS, PAY_LARGE, PAY_SMALL, PLANS, PRICES, RATE, RETAINER_TERMS, RUSH_DEPOSIT, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 
 export interface Answers {
@@ -172,8 +173,9 @@ const plus = (d: string, days: number) => iso(at(d) + Math.round(days) * DAY);
 /** The Monday on or after; the Friday nearest (phases start on Mondays and wrap up on Fridays) */
 const monday = (d: string) => plus(d, (8 - new Date(at(d)).getUTCDay()) % 7);
 const friday = (d: string) => { const w = new Date(at(d)).getUTCDay(); return plus(d, w === 6 ? -1 : w === 0 ? -2 : 5 - w); };
-/** Christmas to New Year's is off: a phase that runs into it takes a week longer, and nothing starts in it */
-const off = (d: string) => d.slice(5) >= '12-24' || d.slice(5) === '01-01';
+/** Christmas to New Year's is off: a phase that runs into it takes a week longer, and nothing starts in
+ *  it. Other holidays (lib/holidays.ts) move a start or a wrap-up to the next day I'm working. */
+const off = inBreak;
 const pastBreak = (from: string, to: string) => { for (let d = from; d <= to; d = plus(d, 1)) if (off(d)) return true; return false; };
 /** "Sep 1" */
 export const short = (d: string) => new Date(at(d)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
@@ -193,6 +195,7 @@ export function schedule(a: Answers, e: Estimate, free: string, today: string): 
   const ready = { asap: plus(today, 14), soon: [open, plus(today, 21)].sort()[1], flexible: [open, plus(today, 7)].sort()[1] }[a.timeline ?? 'flexible'];
   let start = monday(a.timeline === 'asap' ? [ready, open].sort()[0] : ready);
   while (off(start) || pastBreak(start, plus(start, 4))) start = monday(plus(start, 7));
+  start = nextWorkday(start);
   const hours = (steps: string[]) => e.lines.filter((l) => !l.unit && l.step && steps.includes(l.step)).reduce((t, l) => t + l.price, 0) / RATE;
   const weeks = (h: number) => h / CAPACITY.hoursPerWeek;
   const steps: Schedule['steps'] = [];
@@ -201,7 +204,7 @@ export function schedule(a: Answers, e: Estimate, free: string, today: string): 
     let end = friday(plus(t, w * 7));
     if (pastBreak(t, end)) end = friday(plus(end, 7));
     while (off(end)) end = friday(plus(end, 7));
-    return (t = end);
+    return (t = nextWorkday(end));
   };
 
   const brand = a.logo || a.rebrand, W = weeks(hours(['site', 'logo', 'rebrand', 'ai', 'feedback']));
