@@ -6,7 +6,6 @@
 import { getCollection } from 'astro:content';
 import Site from '../layouts/Site.astro';
 import Byline from '../components/site/Byline.astro';
-import Elsewhere from '../components/site/Elsewhere.astro';
 import Signature from '../components/Signature.astro';
 import Icon from '../components/Icon.astro';
 import { bragClippings, bragEpigraphNote, bragHero, bragMeta, bragRightNow, bragSkills, sortBragFavoritePosts, type BragPreview } from '../data/brag';
@@ -109,7 +108,6 @@ const year = (d?: string) => d ? new Date(d).getUTCFullYear() : '';
     </div>
 
     <div class="essay__sign"><Signature /></div>
-    <Elsewhere linkedin />
   </article>
   <div class="peek sq" id="peek" aria-hidden="true"></div>
   <div class="selbar" id="selbar" hidden></div>

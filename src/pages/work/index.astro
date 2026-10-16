@@ -2,7 +2,6 @@
 import Site from '../../layouts/Site.astro';
 import PageHead from '../../components/site/PageHead.astro';
 import WorkIndex from '../../components/site/WorkIndex.astro';
-import Elsewhere from '../../components/site/Elsewhere.astro';
 import { getPublishedWork } from '../../lib/work';
 import { testimonials } from '../../data/about';
 
@@ -26,7 +25,6 @@ const entries = await getPublishedWork();
         </figure>
       ))}
     </div>
-    <Elsewhere />
   </main>
   <script src="../../client/chips.ts"></script>
 </Site>

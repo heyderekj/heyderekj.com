@@ -3,7 +3,6 @@ import Site from '../layouts/Site.astro';
 import Hello from '../components/site/Hello.astro';
 import WorkDeck from '../components/site/WorkDeck.astro';
 import PostIndex from '../components/site/PostIndex.astro';
-import Elsewhere from '../components/site/Elsewhere.astro';
 import { schemaPersonId, schemaWebsiteId } from '../lib/schemaIds';
 
 const siteOrigin = (Astro.site?.toString() ?? 'https://heyderekj.com/').replace(/\/$/, '');
@@ -34,7 +33,6 @@ const homeJsonLd = [
     <Hello />
     <WorkDeck />
     <PostIndex show={1} />
-    <Elsewhere />
   </main>
   <script src="../client/chips.ts"></script>
   <script src="../client/deck.ts"></script>

@@ -3,7 +3,6 @@ import Site from '../../layouts/Site.astro';
 import PageHead from '../../components/site/PageHead.astro';
 import LibraryChips from '../../components/site/LibraryChips.astro';
 import LibraryList from '../../components/site/LibraryList.astro';
-import Elsewhere from '../../components/site/Elsewhere.astro';
 import { byKind, getLibrary, KINDS, type LibraryKind } from '../../lib/library';
 
 const items = await getLibrary();
@@ -22,7 +21,6 @@ const counts = Object.fromEntries(KINDS.map((k) => [k, byKind(items, k).length])
     {KINDS.filter((k) => counts[k] > 0).map((kind) => (
       <LibraryList kind={kind} items={byKind(items, kind)} limit={kind === 'post' ? 4 : kind === 'tool' ? 8 : 6} />
     ))}
-    <Elsewhere />
   </main>
   <div class="peek sq" id="peek" aria-hidden="true"></div>
   <script src="../../client/peek.ts"></script>

@@ -2,7 +2,6 @@
 import Site from '../layouts/Site.astro';
 import PageHead from '../components/site/PageHead.astro';
 import PostIndex from '../components/site/PostIndex.astro';
-import Elsewhere from '../components/site/Elsewhere.astro';
 import { getPublishedPosts } from '../lib/posts';
 
 const siteUrl = (Astro.site?.toString() ?? 'https://heyderekj.com').replace(/\/$/, '');
@@ -18,7 +17,6 @@ const latest = (await getPublishedPosts()).slice(0, 3);
     </PageHead>
     <h2 class="h h--quiet">The latest writing</h2>
     <PostIndex posts={latest} show={Infinity} />
-    <Elsewhere />
   </main>
   <script src="../client/peek.ts"></script>
   <script src="../client/chips.ts"></script>

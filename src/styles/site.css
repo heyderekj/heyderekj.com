@@ -483,11 +483,6 @@ body.site .app-toc { display: none !important; }
 .page-head .lede a, .essay .lede a { color: var(--ink); text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: 4px; }
 .page-head > :last-child { margin-bottom: 0; }
 
-/* ---------- The end of a page: how to reach me, one quiet line ---------- */
-.endnote { margin-top: 48px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 14px; color: color-mix(in srgb, var(--muted) 70%, transparent); }
-.endnote a { color: var(--muted); text-decoration: none; transition: color var(--t-ui) var(--ease); }
-.endnote a:hover { color: var(--ink); }
-
 /* ---------- The signature as a watermark at the top of every page; the title sits over it ---------- */
 .wm { position: absolute; top: 0; left: 0; right: 0; z-index: -1; pointer-events: none; }
 .wm__in { width: min(var(--read), calc(100% - 32px)); margin: 0 auto; padding-top: 34px; }
