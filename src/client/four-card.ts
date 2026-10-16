@@ -34,8 +34,9 @@ let petPhoto: HTMLCanvasElement | null = null, petName = '';
 const TAGS: Record<string, string> = { Leroy: 'Slow and steady', Lilo: 'Too kind', Kiya: 'The bully', Irma: 'Plays hard' };
 
 // ---- Drawing the card. `upto` and `fall` animate the clip: how many moves are in, and how far the last has dropped.
-// `flash` rings the winning four; as a number (0–1) it's the clip's reveal, ringing them one by one as the rest dim
-function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fall = 1, flash: boolean | number = true) {
+// `flash` rings the winning four; as a number (0–1) it's the clip's reveal, ringing them one by one as the rest dim.
+// `typed` (0–1) types out the heading's prompt and `cursor` shows its block cursor (the clip blinks it)
+function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fall = 1, flash: boolean | number = true, typed = 1, cursor = true) {
   const t = THEMES[design];
   ctx.save(); ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = t.bg; ctx.fillRect(0, 0, W, H);
@@ -46,11 +47,20 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
 
   const sans = 'Figtree, ui-sans-serif, system-ui, sans-serif', mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
   // Heading
-  ctx.fillStyle = t.accent; ctx.font = `600 26px ${mono}`; ctx.letterSpacing = '6px'; ctx.fillText('SHALL WE PLAY A GAME?', 90, 132); ctx.letterSpacing = '0px';
+  // Heading: the WOPR's question at a terminal prompt, in a tinted pill with a block cursor
+  const ask = 'SHALL WE PLAY A GAME?', line = `> ${ask.slice(0, Math.round(ask.length * typed))}`;
+  ctx.font = `700 27px ${mono}`; ctx.letterSpacing = '4px';
+  const pw = ctx.measureText(`> ${ask}`).width + 26 + 44, px = 86, py = 88, ph = 56;
+  ctx.fillStyle = t.accent; ctx.globalAlpha = 0.13; ctx.beginPath(); ctx.roundRect(px, py, pw, ph, 14); ctx.fill();
+  ctx.globalAlpha = 0.4; ctx.strokeStyle = t.accent; ctx.lineWidth = 2; ctx.stroke(); ctx.globalAlpha = 1;
+  ctx.fillText(line, px + 22, py + 38);
+  if (cursor) ctx.fillRect(px + 22 + ctx.measureText(line).width + 4, py + 13, 15, 31);
+  ctx.letterSpacing = '0px';
   ctx.fillStyle = t.ink; ctx.font = `700 92px ${sans}`;
-  ctx.fillText(g.wins === 1 ? `1 win against ${g.foe}` : `${g.wins} wins against ${g.foe}`, 86, 236);
+  // This game: who took it, and in how many moves
+  ctx.fillText(result(g), 86, 236);
   ctx.fillStyle = t.muted; ctx.font = `500 38px ${sans}`;
-  ctx.fillText(`Level ${g.level}  ·  ${g.score.toLocaleString()} points`, 90, 296);
+  ctx.fillText(`In ${myMoves(g)} moves  ·  Level ${g.level}  ·  ${g.score.toLocaleString()} points`, 90, 296);
 
   // The board, as it stood
   const bw = 780, bx = (W - bw) / 2, by = 352, gap = 14, pad = 26, hole = (bw - pad * 2 - gap * (COLS - 1)) / COLS, bh = pad * 2 + hole * ROWS + gap * (ROWS - 1);
@@ -119,11 +129,15 @@ function save(blob: Blob) {
 }
 // What a post says: who won, against whom, and an invitation back to the game
 const PLAY_URL = 'https://heyderekj.com/404';
+// This game's result, for the card's heading and the post
+const myMoves = (g: Game) => g.moves.filter((m) => m.who === 1).length;
+const result = (g: Game) => !g.run.length ? `A draw with ${g.foe}` : g.by === 'you' ? `${petName || 'You'} beat ${g.foe}` : `${g.foe} won this one`;
 function postText() {
   if (!game) return '';
-  const me = petName || 'I', foe = game.foe, n = game.wins;
-  if (game.by === 'you') return `${me} beat ${foe} ${n === 1 ? 'once' : `${n} times`} at Connect Four. Your turn:`;
-  return n ? `${me} won ${n} before ${foe} took one at Connect Four. Your turn:` : `${foe} beat ${petName || 'me'} at Connect Four. Your turn:`;
+  const me = petName || 'I', foe = game.foe;
+  if (!game.run.length) return `${me} drew with ${foe} at Connect Four. Your turn:`;
+  if (game.by === 'you') return `${me} beat ${foe} at Connect Four in ${myMoves(game)} moves. Your turn:`;
+  return `${foe} beat ${petName || 'me'} at Connect Four. Your turn:`;
 }
 async function shareOut(blob: Blob) {
   const file = fileOf(blob);
@@ -135,6 +149,35 @@ const canClip = typeof MediaRecorder !== 'undefined' && 'captureStream' in HTMLC
 // The clip: the last five seconds of the game (up to a dozen chips, the earlier ones already in), then the
 // winning four ringed one by one while everything else dims, and a hold on that
 const REPLAY = 5000, REVEAL = 1200, HOLD = 1500;
+/**
+ * The clip's soundtrack: the same blips the game makes (client/four.ts beep), played into a stream the
+ * recorder takes alongside the picture. A chip sounds as it lands (higher rows lower), and the round ends
+ * on the jingle for whoever won.
+ */
+function sounds() {
+  let ac: AudioContext;
+  try { ac = new AudioContext(); } catch { return null; }
+  const out = ac.createMediaStreamDestination();
+  const blip = (at: number, freqs: number[], step: number, type: OscillatorType, vol: number) => freqs.forEach((f, i) => {
+    const t = at + i * step, o = ac.createOscillator(), gn = ac.createGain();
+    o.type = type; o.frequency.value = f; gn.gain.setValueAtTime(vol, t); gn.gain.exponentialRampToValueAtTime(0.001, t + step * 1.6);
+    o.connect(gn).connect(out); o.start(t); o.stop(t + step * 1.7);
+  });
+  return {
+    track: out.stream.getAudioTracks()[0],
+    async score(g: Game, from: number, per: number, replay: number) {
+      try { await ac.resume(); } catch { return; }
+      const t0 = ac.currentTime;
+      g.moves.slice(from).forEach((m, k) => blip(t0 + ((k + 1) * per) / 1000 - 0.02, [m.who === 1 ? 660 - m.r * 40 : 330 - m.r * 20], 0.05, m.who === 1 ? 'square' : 'triangle', 0.1));
+      if (!g.run.length) return;
+      const end = t0 + replay / 1000 + 0.15;
+      if (g.by === 'you') blip(end, [523, 659, 784, 1047], 0.1, 'square', 0.08);
+      else blip(end, [392, 330, 262, 196], 0.14, 'sawtooth', 0.06);
+    },
+    close() { ac.close().catch(() => {}); },
+  };
+}
+
 const clipPlan = (g: Game) => {
   const n = Math.min(g.moves.length, 12), per = Math.min(700, REPLAY / Math.max(1, n)), from = g.moves.length - n;
   const replay = n * per, reveal = g.run.length ? REVEAL : 0;
@@ -183,15 +226,18 @@ if (root) {
   // Records the replay off the preview canvas, so you watch it being made
   function record() {
     if (recording || !game) return recording;
-    const g = game, type = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'].find((m) => MediaRecorder.isTypeSupported(m)) ?? '';
+    const g = game, type = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find((m) => MediaRecorder.isTypeSupported(m)) ?? '';
     const { from, per, replay, reveal, length } = clipPlan(g);
     root!.classList.add('is-recording'); video.hidden = true; // the Rec badge and bar say what's happening
     recording = (async () => {
-      const stream = preview.captureStream(30), rec = new MediaRecorder(stream, type ? { mimeType: type, videoBitsPerSecond: 5_000_000 } : undefined), parts: Blob[] = [];
+      // The picture from the canvas, and the game's own sounds alongside it, in time with each chip
+      const audio = sounds(), stream = new MediaStream([...preview.captureStream(30).getVideoTracks(), ...(audio?.track ? [audio.track] : [])]);
+      const rec = new MediaRecorder(stream, type ? { mimeType: type, videoBitsPerSecond: 5_000_000 } : undefined), parts: Blob[] = [];
       rec.ondataavailable = (ev) => ev.data.size && parts.push(ev.data);
       const done = new Promise((r) => (rec.onstop = r));
       rec.start();
       const t0 = performance.now();
+      audio?.score(g, from, per, replay);
       let cut = false;
       await new Promise<void>((resolve) => {
         const frame = (now: number) => {
@@ -199,14 +245,15 @@ if (root) {
           if (game !== g || !root!.classList.contains('is-recording')) { cut = true; return resolve(); }
           const t = now - t0;
           root!.style.setProperty('--rec', String(Math.min(1, t / length)));
-          if (t < replay) draw(pctx, g, from + Math.floor(t / per) + 1, (t % per) / per, false);
-          else if (t < length) draw(pctx, g, g.moves.length, 1, reveal ? Math.min(1, (t - replay) / reveal) : true);
+          const typed = Math.min(1, t / 900), cursor = t < 900 || Math.floor(t / 450) % 2 === 0;
+          if (t < replay) draw(pctx, g, from + Math.floor(t / per) + 1, (t % per) / per, false, typed, cursor);
+          else if (t < length) draw(pctx, g, g.moves.length, 1, reveal ? Math.min(1, (t - replay) / reveal) : true, typed, cursor);
           else return resolve();
           requestAnimationFrame(frame);
         };
         requestAnimationFrame(frame);
       });
-      rec.stop(); stream.getTracks().forEach((tr) => tr.stop()); await done;
+      rec.stop(); stream.getTracks().forEach((tr) => tr.stop()); await done; audio?.close();
       root!.classList.remove('is-recording'); root!.style.removeProperty('--rec'); recording = null;
       render();
       if (cut) return null;
