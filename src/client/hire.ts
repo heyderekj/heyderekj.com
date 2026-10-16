@@ -154,6 +154,13 @@ if (form) {
     $('[data-review]', form!).innerHTML = rows.map(([k, v, go]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd>${go ? `<button type="button" data-go="${go}">Edit</button>` : '<span></span>'}</div>`).join('');
   }
   form.addEventListener('click', (e) => { const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]')?.dataset.go; if (go) show(go, -1); });
+  // The floating Get an estimate button shows whenever the estimate itself isn't on screen
+  const float = document.querySelector<HTMLAnchorElement>('[data-float]'), section = document.getElementById('estimate');
+  if (float && section) {
+    new IntersectionObserver(([e]) => { float.toggleAttribute('data-on', !e.isIntersecting); float.tabIndex = e.isIntersecting ? -1 : 0; }).observe(section);
+    float.addEventListener('click', (e) => { e.preventDefault(); section.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' }); });
+  }
+
   // A long estimate scrolls inside the sheet: fades where there's more, and See all goes to the bottom
   const body = P('body'), more = P('more') as HTMLButtonElement;
   function fade() {

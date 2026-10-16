@@ -210,7 +210,7 @@
 @media (prefers-color-scheme: dark) { .prop { --sheet: var(--card); } }
 /* Long estimates scroll inside the sheet: it stops at the screen's height, fades where there's more, and a
    See all pill takes you down. The footer stays put. */
-.prop__body { display: grid; align-content: start; gap: 22px; min-height: 0; padding: 30px 28px 20px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; --ft: 0px; --fb: 0px; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--ft), #000 calc(100% - var(--fb)), transparent); mask-image: linear-gradient(to bottom, transparent, #000 var(--ft), #000 calc(100% - var(--fb)), transparent); }
+.prop__body { display: grid; align-content: start; gap: 22px; min-height: 0; padding: 30px 28px 20px; overflow-y: auto; scrollbar-width: none; --ft: 0px; --fb: 0px; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--ft), #000 calc(100% - var(--fb)), transparent); mask-image: linear-gradient(to bottom, transparent, #000 var(--ft), #000 calc(100% - var(--fb)), transparent); }
 .prop__body::-webkit-scrollbar { display: none; }
 .prop__body[data-top] { --ft: 28px; }
 .prop__body[data-more] { --fb: 72px; }
@@ -267,7 +267,13 @@
 }
 
 .hire-more { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; letter-spacing: 0; color: var(--muted); text-decoration: none; }
-.hire-close { margin: 64px 0 0; font-size: 17px; color: var(--ink-soft); }
+.hire-close { margin: 64px 0 0; font-size: 17px; color: var(--ink-soft); text-align: center; }
+/* Get an estimate, floating above the bar until the estimate itself is on screen */
+.hire-float { --r: 999px; position: fixed; z-index: 45; left: 50%; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px 10px 14px; border-radius: 999px; font: 600 14.5px var(--font); text-decoration: none; color: var(--paper); background: var(--ink); box-shadow: var(--shadow-lift); translate: -50% 12px; opacity: 0; pointer-events: none; transition: opacity 240ms var(--ease), translate 320ms var(--ease); }
+.hire-float .icon { font-size: 16px; }
+.hire-float[data-on] { translate: -50% 0; opacity: 1; pointer-events: auto; }
+.hire-float[data-on]:hover { translate: -50% -2px; }
+@media (prefers-reduced-motion: reduce) { .hire-float { transition: opacity 160ms linear; translate: -50% 0; } }
 .hire-mail { --r: 999px; display: inline-flex; align-items: baseline; gap: 8px; padding: 3px 10px; border-radius: 999px; font: 600 16px var(--font); color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
 .hire-mail small { font-size: 12px; color: var(--muted); }
 
