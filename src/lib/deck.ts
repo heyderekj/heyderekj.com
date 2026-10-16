@@ -17,6 +17,8 @@ export const TM_TILES: [slug: string, color: string][] = [
 const APP_ORDER = ['harvous', 'koati', 'revisemy', 'heres-my-church', 'dinky', 'binky'];
 /** Highlighted work left out of the home deck (ReviseMy and Harvous already show in the apps half). */
 const NOT_IN_DECK = ['revisemy', 'harvouscom', 'david-energy', 'tutorme', 'ai-explorer'];
+/** The websites the deck opens with, in this order; the rest follow newest first. */
+const DECK_FIRST = ['throne', 'river-valley-church', 'scenery', 'exodus51'];
 
 export const host = (u?: string | null) => { try { return u ? new URL(u).host.replace(/^www\./, '') : ''; } catch { return ''; } };
 
@@ -57,6 +59,8 @@ export async function getDeck() {
   const work = (await getPublishedWork()).sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf());
   const apps = await getApps();
   const clients = work.filter((w) => w.data.highlight && shotsOf(w).length && !NOT_IN_DECK.includes(w.slug));
+  const rank = (slug: string) => { const i = DECK_FIRST.indexOf(slug); return i < 0 ? DECK_FIRST.length : i; };
+  clients.sort((a, b) => rank(a.slug) - rank(b.slug));
   const slides: DeckSlide[] = [
     ...clients.map((w) => ({
       kind: 'client' as const, slug: w.slug, title: w.data.title, partner: w.data.partnership ?? null,
