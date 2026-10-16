@@ -2,9 +2,15 @@
  * Plyr for site demo videos (`video[data-plyr]`).
  * Collapsed: muted loop, no chrome. Expanded (zoom): Plyr controls.
  * Owns autoplay for `data-autoplay` — page scripts must not also call play().
+ *
+ * Plyr (and its CSS) loads only on pages that have one of these videos, and each video is set up
+ * as it nears the screen — so a page doesn't download every looping tour at once. Looping videos
+ * pause when they scroll away and pick up again when they're back.
  */
-import Plyr from 'plyr';
-import 'plyr/dist/plyr.css';
+import type Plyr from 'plyr';
+
+let plyrLib: Promise<typeof Plyr> | null = null;
+const loadPlyr = () => (plyrLib ??= Promise.all([import('plyr'), import('plyr/dist/plyr.css')]).then(([m]) => m.default));
 
 const players = new WeakMap<HTMLVideoElement, Plyr>();
 
@@ -40,7 +46,9 @@ function safePlay(player: Plyr) {
   if (p && typeof p.catch === 'function') p.catch(() => {});
 }
 
-function initVideo(video: HTMLVideoElement) {
+async function initVideo(video: HTMLVideoElement) {
+  if (players.has(video)) return;
+  const Plyr = await loadPlyr();
   if (players.has(video)) return;
 
   const prefersReduced = reduceMotion();
@@ -98,8 +106,16 @@ function initVideo(video: HTMLVideoElement) {
   });
 }
 
+// Set up as it comes near; then play and pause the looping ones with what's on screen
+const seen = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => {
+  const video = target as HTMLVideoElement, player = players.get(video);
+  if (isIntersecting && !player) { void initVideo(video); return; }
+  if (!player || !wantsAutoplay(video) || reduceMotion() || document.fullscreenElement) return;
+  if (isIntersecting) safePlay(player); else player.pause();
+}), { rootMargin: '300px 0px' });
+
 function initAll() {
-  document.querySelectorAll<HTMLVideoElement>('video[data-plyr]').forEach(initVideo);
+  document.querySelectorAll<HTMLVideoElement>('video[data-plyr]').forEach((v) => seen.observe(v));
 }
 
 initAll();
