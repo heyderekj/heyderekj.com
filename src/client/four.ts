@@ -487,7 +487,7 @@ if (game && grid404 && head) {
     try { localStorage.setItem(MINE_KEY, JSON.stringify(m)); } catch {}
   }
 
-  // ---- Tap the score: a card that flips between you and everyone, and whoever you're playing has a word
+  // ---- Tap the score: a card over the board with you and everyone, and whoever you're playing has a word
   const sheet = $('#fourSheet'), statsBtn = $<HTMLButtonElement>('.four__stats'), flip = sheet.querySelector<HTMLElement>('.four__flip')!;
   const face = (name: string) => `<i class="sq" style="background:url(/images/four/pet-${name.toLowerCase()}-sm.webp) center / cover no-repeat"></i>`;
   const SAYS: Record<string, (r: Rec) => string> = {
@@ -514,7 +514,6 @@ if (game && grid404 && head) {
     sheet.hidden = false; sheet.classList.remove('is-in'); void sheet.offsetWidth; sheet.classList.add('is-in'); statsBtn.setAttribute('aria-expanded', 'true');
     if (foe.lines.stats) talk(pick(foe.lines.stats));
     fetch('/api/four').then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.stats) { showStats(d.stats); paintSheet(); } }).catch(() => {});
-    requestAnimationFrame(() => sheet.scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' }));
   };
   const closeSheet = () => { if (sheet.hidden) return; sheet.hidden = true; statsBtn.setAttribute('aria-expanded', 'false'); };
   // Three quick taps on your best (the star): the WOPR wakes up
