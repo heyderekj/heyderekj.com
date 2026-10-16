@@ -133,7 +133,8 @@ if (form) {
     P('totals').innerHTML = `<li><b>Total</b><em>${money(e.total)}</em></li>${e.monthly ? `<li><b>Total Ongoing</b><em>${money(e.monthly)}/mo</em></li>` : ''}`;
     P('total-wrap').hidden = !e.total;
     P('pay').innerHTML = e.payments.map((p) => `<li>${esc(p.when)} <em>${p.pct}% (${money(p.amount)})</em> ${esc(p.after)}</li>`).join('');
-    P('pay-wrap').hidden = !e.payments.length;
+    P('terms').textContent = e.terms;
+    P('pay-wrap').hidden = !e.payments.length && !e.monthly;
     $('[data-p="sum"]', sum).textContent = money(e.total) + (e.monthly ? ` + ${money(e.monthly)}/mo` : '');
     showSum();
   }

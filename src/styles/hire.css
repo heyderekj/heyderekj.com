@@ -236,6 +236,8 @@
 .prop.is-final .prop__edit { display: none; }
 .prop__lines--totals b { font-weight: 600; }
 .prop__pay { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; color: var(--ink-soft); }
+.prop__terms { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+.prop__terms:empty { display: none; }
 .prop__pay em { font-style: normal; font-weight: 600; color: var(--money); }
 .prop__foot { position: absolute; inset: auto 0 0 0; height: 84px; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 22px 18px; }
 .prop__gear { position: absolute; left: -92px; bottom: -164px; width: 240px; height: 251px; rotate: -18deg; fill: color-mix(in oklch, var(--you) 5%, transparent); stroke: var(--you); stroke-width: 1.6; vector-effect: non-scaling-stroke; pointer-events: none; }

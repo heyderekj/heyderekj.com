@@ -4,7 +4,7 @@
  * (client/hire.ts) and the request function (functions/api/hire.ts) all price it the same way;
  * the function recalculates rather than trusting the browser's number.
  */
-import { EXTRAS, PAYMENT, PRICES, RATE, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
+import { EXTRAS, PAY_LARGE, PAY_SMALL, PLANS, PRICES, RATE, RETAINER_TERMS, RUSH_DEPOSIT, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 
 export interface Answers {
   services: ServiceId[];
@@ -21,7 +21,8 @@ export interface Answers {
 
 /** step: the form screen where this line's answers live, so the proposal can open it */
 export interface Line { title: string; desc: string; price: number; unit?: '/hr' | '/mo'; step?: string }
-export interface Estimate { lines: Line[]; total: number; monthly: number; payments: { when: string; pct: number; amount: number; after: string }[] }
+/** plan: which of PLANS it's paid by; terms: why, in a sentence or two, for the proposal */
+export interface Estimate { lines: Line[]; total: number; monthly: number; plan: string; terms: string; payments: { when: string; pct: number; amount: number; after: string }[] }
 
 export const DEFAULTS = {
   site: { kind: 'new', pages: 5, cms: false, scope: 'both', platform: 'webflow' },
@@ -103,12 +104,30 @@ export function estimate(a: Answers): Estimate {
   }
   const total = lines.filter((l) => !l.unit).reduce((t, l) => t + l.price, 0);
   const monthly = lines.filter((l) => l.unit === '/mo').reduce((t, l) => t + l.price, 0);
-  const plan = PAYMENT.find((p) => total < p.under)!.steps;
+  const plan = payPlan(a, lines, total), steps = PLANS[plan].steps.map((x) => ({ ...x }));
+  // Starting right away moves some of the second payment into the deposit
+  const asap = a.timeline === 'asap' && steps.length > 1 && steps[0].pct < RUSH_DEPOSIT.upTo;
+  if (asap) { const d = Math.min(RUSH_DEPOSIT.add, RUSH_DEPOSIT.upTo - steps[0].pct, steps[1].pct - 10); steps[0].pct += d; steps[1].pct -= d; }
   let left = total;
-  const payments = plan.map((p, i) => {
-    const amount = i === plan.length - 1 ? left : Math.round((total * p.pct) / 100);
+  const payments = steps.map((p, i) => {
+    const amount = i === steps.length - 1 ? left : Math.round((total * p.pct) / 100);
     left -= amount;
     return { when: p.when, pct: p.pct, amount, after: p.after };
   });
-  return { lines, total, monthly, payments: total ? payments : [] };
+  const terms = [total ? PLANS[plan].why : '', total && asap ? RUSH_DEPOSIT.why : '', monthly ? RETAINER_TERMS : ''].filter(Boolean).join(' ');
+  return { lines, total, monthly, plan, terms, payments: total ? payments : [] };
+}
+
+/** Which way it gets paid: by the kind of work leading it, how it's scoped, and how big it is */
+export function payPlan(a: Answers, lines: Line[], total: number): string {
+  const work = a.services.filter((s) => s !== 'feedback');
+  if (!work.length) return total < PAY_SMALL ? 'full' : 'halves';
+  if (total < PAY_SMALL) return 'halves';
+  const brand = a.logo || a.rebrand;
+  if (a.site && brand) return 'brandSite';
+  if (a.site) return a.site.scope === 'design' ? 'siteDesign' : a.site.scope === 'build' ? 'siteBuild' : total >= PAY_LARGE ? 'siteLarge' : 'site';
+  // AI and brand work together: paid the way the bigger part is
+  const sum = (steps: string[]) => lines.filter((l) => l.step && steps.includes(l.step)).reduce((t, l) => t + l.price, 0);
+  if (a.ai && (!brand || sum(['ai']) >= sum(['logo', 'rebrand']))) return a.ai.size === 'large' ? 'aiLarge' : 'ai';
+  return 'brand';
 }

@@ -77,6 +77,7 @@ export async function onRequestPost({ request, env }: { request: Request; env: E
       est.total ? `Total: ${money(est.total)}` : '',
       est.monthly ? `Ongoing: ${money(est.monthly)}/mo` : '',
       ...est.payments.map((p) => `${p.when} ${p.pct}% (${money(p.amount)}) ${p.after}`),
+      est.terms && `Payment plan: ${est.plan}. ${est.terms}`,
       '',
       `Answers: ${JSON.stringify(answers)}`,
       saved ? `Saved as ${id}` : 'Not saved to D1 (binding missing or the insert failed)',

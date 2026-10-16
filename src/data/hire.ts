@@ -29,12 +29,32 @@ export const PRICES = {
   retainer: { monthly: 500, hours: 5 },
 } as const;
 
-/** How payment splits, by the size of the project: the first tier it's under. Every proposal spells this out. */
-export const PAYMENT: { under: number; steps: { pct: number; when: string; after: string }[] }[] = [
-  { under: 1500, steps: [{ pct: 50, when: 'To start', after: 'is required upfront' }, { pct: 50, when: 'On delivery, the remaining', after: 'is due' }] },
-  { under: 10000, steps: [{ pct: 40, when: 'To start', after: 'is required upfront' }, { pct: 40, when: 'Then at design approval', after: 'is due' }, { pct: 20, when: 'To launch, the remaining', after: 'is due' }] },
-  { under: Infinity, steps: [{ pct: 30, when: 'To start', after: 'is required upfront' }, { pct: 30, when: 'Then at design approval', after: 'is due' }, { pct: 30, when: 'At build review', after: 'is due' }, { pct: 10, when: 'To launch, the remaining', after: 'is due' }] },
-];
+/**
+ * How a project gets paid, picked from what it is, never by the client: each payment lands where the work
+ * changes hands. The estimate says which plan and why (lib/estimate.ts, payPlan()).
+ */
+type Step = { pct: number; when: string; after: string };
+const start = (pct: number): Step => ({ pct, when: 'To start', after: 'is required upfront' });
+export const PLANS: Record<string, { why: string; steps: Step[] }> = {
+  // Feedback on its own
+  full: { why: 'It’s a short piece of work, so it’s paid when you book it.', steps: [{ pct: 100, when: 'To book it', after: 'is due' }] },
+  // Anything small, whatever the kind
+  halves: { why: 'A smaller project: half to start, half when it’s done.', steps: [start(50), { pct: 50, when: 'On delivery, the remaining', after: 'is due' }] },
+  brand: { why: 'Brand work is paid as it moves: when we start, when you pick a direction, and with the final files.', steps: [start(40), { pct: 40, when: 'When you pick a direction', after: 'is due' }, { pct: 20, when: 'With the final files, the remaining', after: 'is due' }] },
+  site: { why: 'Paid in three parts, at the points where the work changes hands.', steps: [start(40), { pct: 40, when: 'Then at design approval', after: 'is due' }, { pct: 20, when: 'To launch, the remaining', after: 'is due' }] },
+  siteLarge: { why: 'A bigger build, so it’s split into four smaller payments.', steps: [start(30), { pct: 30, when: 'Then at design approval', after: 'is due' }, { pct: 30, when: 'At build review', after: 'is due' }, { pct: 10, when: 'To launch, the remaining', after: 'is due' }] },
+  siteDesign: { why: 'Design only: half to start, half when the designs are handed off.', steps: [start(50), { pct: 50, when: 'At design handoff, the remaining', after: 'is due' }] },
+  siteBuild: { why: 'Built from your designs: half to start, half at launch.', steps: [start(50), { pct: 50, when: 'To launch, the remaining', after: 'is due' }] },
+  brandSite: { why: 'The brand comes first, then the site, and each is paid as it’s approved.', steps: [start(30), { pct: 30, when: 'When the brand is approved', after: 'is due' }, { pct: 30, when: 'Then at site design approval', after: 'is due' }, { pct: 10, when: 'To launch, the remaining', after: 'is due' }] },
+  ai: { why: 'Paid as it becomes real: to start, when you can use a first version, and at handoff.', steps: [start(40), { pct: 40, when: 'When the first version works for you', after: 'is due' }, { pct: 20, when: 'At handoff, the remaining', after: 'is due' }] },
+  aiLarge: { why: 'A bigger build, paid as it becomes real, in four parts.', steps: [start(30), { pct: 30, when: 'When the first version works for you', after: 'is due' }, { pct: 30, when: 'After we’ve tested it together', after: 'is due' }, { pct: 10, when: 'At handoff, the remaining', after: 'is due' }] },
+};
+/** Under this, any project is paid in halves; at this and up, a site is paid in four parts */
+export const PAY_SMALL = 1500, PAY_LARGE = 10000;
+/** Starting right away takes a bigger deposit (up to half) to hold the time */
+export const RUSH_DEPOSIT = { add: 10, upTo: 50, why: 'Starting right away takes a larger deposit to hold the time.' };
+/** The retainer, after the project */
+export const RETAINER_TERMS = 'The retainer is billed at the start of each month, beginning the month after launch.';
 
 /** When it starts. Starting right away means moving other work around, so it costs a little more. */
 export const TIMELINE = {
