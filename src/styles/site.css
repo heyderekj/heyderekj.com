@@ -990,7 +990,7 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .dial__pill.is-current span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
 
 /* 404: a chat with me (pages/404.astro, client/lost-chat.ts) */
-.lost { --r: 24px; --me: var(--tint); --you: #ea580c; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; height: min(640px, calc(100svh - 260px)); min-height: 440px; margin-top: 8px; overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.lost { --r: 24px; --me: var(--tint); --you: #ea580c; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: min(640px, calc(100svh - 260px)); min-height: 440px; margin-top: 8px; overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
 .lost__top { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--hair); background: color-mix(in oklch, var(--card) 80%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .lost__top img { --r: 10px; width: 36px; height: 36px; object-fit: cover; }
 .lost__top span { display: grid; line-height: 1.25; }
@@ -1025,15 +1025,20 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 @keyframes lost-dot { 0%, 60%, 100% { translate: 0 0; opacity: 0.5; } 30% { translate: 0 -3px; opacity: 1; } }
 @keyframes lost-in { from { opacity: 0; translate: 0 6px; scale: 0.98; } }
 /* Quick replies and the message field */
-.lost__chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 8px 14px 2px; }
-.lost__chips:empty { display: none; }
-.lost__chips button { flex: none; padding: 6px 12px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: var(--you); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--you) 45%, transparent); background: color-mix(in oklch, var(--you) 6%, var(--card)); transition: background var(--t-ui) var(--ease); }
-.lost__chips button:hover { background: color-mix(in oklch, var(--you) 14%, var(--card)); }
-.lost__input { display: flex; align-items: center; gap: 8px; margin: 8px 12px 12px; padding: 4px 4px 4px 14px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--hair); background: var(--paper); }
+.lost__input { position: relative; display: flex; align-items: center; gap: 8px; margin: 6px 12px 12px; padding: 4px 4px 4px 14px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--hair); background: var(--paper); }
 .lost__input input { flex: 1; min-width: 0; height: 34px; border: 0; outline: 0; background: none; font: 15px var(--font); color: var(--ink); }
 .lost__input button { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; color: #fff; background: var(--you); font-size: 14px; transition: opacity var(--t-ui) var(--ease), scale var(--t-ui) var(--ease); }
 .lost__input:has(input:placeholder-shown) button { opacity: 0.35; scale: 0.9; }
-.lost__input:focus-within { box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--you) 60%, transparent); }
-.lost.is-noting .lost__input { box-shadow: inset 0 0 0 1.5px var(--you); }
+.lost__input:focus-within { box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--ink) 28%, transparent); }
+.lost.is-noting .lost__input { box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--you) 55%, transparent); }
 @media (prefers-reduced-motion: reduce) { .lost__msg, .lost__links { animation: none; } .lost__typing .lost__bubble i { animation: none; } }
 body.site .lost__input input:focus-visible { outline: none; } /* the field shows focus with its ring */
+/* Suggested replies: drafts in the visitor's colour, right-aligned under my last message */
+.lost__suggest { align-self: flex-end; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 88%; margin-top: 8px; animation: lost-in 320ms var(--ease) 120ms both; }
+.lost__suggest button { padding: 7px 13px; border-radius: 18px 18px 6px 18px; font-size: 14px; font-weight: 500; color: var(--you); background: color-mix(in oklch, var(--you) 7%, var(--card)); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--you) 22%, transparent); transition: background var(--t-ui) var(--ease), color var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.lost__suggest button:hover { color: #fff; background: var(--you); box-shadow: none; translate: 0 -1px; }
+/* The slash menu above the field */
+.lost__slash { --r: 14px; position: absolute; left: 0; right: 0; bottom: calc(100% + 8px); z-index: 3; margin: 0; padding: 6px; list-style: none; border-radius: 16px; background: var(--glass); -webkit-backdrop-filter: blur(16px) saturate(150%); backdrop-filter: blur(16px) saturate(150%); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); animation: lost-in 180ms var(--ease) both; }
+.lost__slash li { display: flex; align-items: baseline; gap: 10px; padding: 7px 10px; border-radius: 10px; cursor: pointer; font-size: 14px; color: var(--muted); }
+.lost__slash li code { min-width: 76px; font: 600 13px/1.4 ui-monospace, SFMono-Regular, monospace; color: var(--ink); }
+.lost__slash li[aria-selected="true"], .lost__slash li:hover { background: color-mix(in oklch, var(--ink) 7%, transparent); color: var(--ink); }

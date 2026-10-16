@@ -1,7 +1,7 @@
 ---
 /**
  * Not found, as a chat with me: I say what I couldn't find, offer the closest pages, and answer
- * quick replies or anything typed (it searches the site; /help lists commands). "Leave a note"
+ * suggested replies or anything typed (it searches the site; / opens the shortcuts). "Leave a note"
  * really sends one. Runs in client/lost-chat.ts; without JavaScript, plain links.
  */
 import Site from '../layouts/Site.astro';
@@ -25,9 +25,9 @@ const photo = imgSrc('/assets/about/derek-photo.jpeg', 120);
           <p class="lost__msg"><span class="lost__bubble">I couldn’t find that page. Try <a href="/">home</a>, <a href="/work/">work</a>, <a href="/projects/">projects</a> or <a href="/about/">about</a>.</span></p>
         </noscript>
       </div>
-      <div class="lost__chips" id="lostChips" aria-label="Quick replies"></div>
       <form class="lost__input" id="lostForm" autocomplete="off">
-        <input id="lostText" name="q" type="text" placeholder="Type to search, or /help" aria-label="Message" maxlength="2000" />
+        <ul class="lost__slash" id="lostSlash" role="listbox" aria-label="Shortcuts" hidden></ul>
+        <input id="lostText" name="q" type="text" placeholder="Message, or / for shortcuts" aria-label="Message" maxlength="2000" role="combobox" aria-controls="lostSlash" aria-expanded="false" aria-autocomplete="list" />
         <button type="submit" aria-label="Send"><svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" /></svg></button>
       </form>
     </section>
