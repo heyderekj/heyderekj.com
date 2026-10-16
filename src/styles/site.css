@@ -1157,9 +1157,14 @@ body.site .four__col:focus-visible { outline: none; }
 .four__foes button i { --r: 7px; flex: none; width: 26px; height: 26px; filter: grayscale(1); opacity: 0.7; transition: filter var(--t-ui) var(--ease), opacity var(--t-ui) var(--ease); }
 .four__foes button:hover i { filter: none; opacity: 1; }
 .four__foes button[aria-pressed="true"] { color: var(--ink); font-weight: 600; background: var(--card); box-shadow: 0 0 0 1px var(--hair), 0 1px 2px rgb(0 0 0 / 0.06); }
-.four__foes button[aria-pressed="true"] i { filter: none; opacity: 1; box-shadow: 0 0 0 1.5px var(--card), 0 0 0 3px var(--tone); }
+.four__foes button[aria-pressed="true"] i, .four__foes button.is-up i { filter: none; opacity: 1; box-shadow: 0 0 0 1.5px var(--card), 0 0 0 3px var(--tone); }
+/* Random: a choice like the animals, across the top */
+.four__any { grid-column: 1 / -1; }
+.four__foes .four__any i { display: grid; place-items: center; font-size: 14px; color: var(--ink-soft); background: color-mix(in oklch, var(--ink) 7%, transparent); filter: none; opacity: 1; }
+.four__foes .four__any[aria-pressed="true"] i { color: #fff; background: var(--you); box-shadow: none; }
+.four__any span { display: grid; text-align: left; line-height: 1.25; }
+.four__any small { font-size: 11.5px; font-weight: 400; color: var(--muted); }
 .four[data-turn="me"] .four__foes button, .four[data-turn="me"] [data-foe-random] { pointer-events: none; opacity: 0.6; }
-.dial__reset[aria-pressed="true"] { color: var(--ink); background: color-mix(in oklch, var(--ink) 7%, transparent); }
 /* Quit sits at the end of the score line */
 .four__tally button { margin-left: 10px; vertical-align: middle; display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease); }
 .four__tally button:hover { color: var(--ink); }

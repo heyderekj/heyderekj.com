@@ -49,12 +49,13 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
           </div>
           <p class="four__tally">Level <b data-four="level">1</b> · <b data-four="score">0</b> pts · best <b data-four="best">0</b><button type="button" data-four-quit>Quit <kbd>esc</kbd></button></p>
           <div class="dial four__dial" id="fourDial" role="dialog" aria-label="Who you’re playing, and settings" hidden>
-            <div class="dial__head"><b>Playing</b><button type="button" class="dial__reset" data-foe-random aria-pressed="true">Random</button></div>
-            <div class="four__foes" role="group" aria-label="Pick who you play"></div>
+            <div class="dial__head"><b>Playing</b></div>
+            <div class="four__foes" role="group" aria-label="Pick who you play">
+              <button type="button" class="four__any" data-foe-random aria-pressed="true"><i class="sq" aria-hidden="true"><Icon name="refresh" loop={false} /></i><span>Random<small>A different one each game</small></span></button>
+            </div>
             <div class="dial__head dial__head--gap"><b>Settings</b></div>
             <label class="dial__row dial__switch"><span>Sound</span><input type="checkbox" data-four-set="sound" /><i aria-hidden="true"></i></label>
             <label class="dial__row dial__switch"><span>Show where it lands</span><input type="checkbox" data-four-set="hints" /><i aria-hidden="true"></i></label>
-            <label class="dial__row dial__switch"><span>Quick turns</span><input type="checkbox" data-four-set="quick" /><i aria-hidden="true"></i></label>
             <label class="dial__row dial__switch"><span>Less motion</span><input type="checkbox" data-four-set="calm" /><i aria-hidden="true"></i></label>
           </div>
         </div>

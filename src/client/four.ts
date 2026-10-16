@@ -20,9 +20,9 @@ if (game && grid404 && head) {
   const levelEl = $('[data-four="level"]'), scoreEl = $('[data-four="score"]'), bestEl = $('[data-four="best"]');
   const againBtn = $<HTMLButtonElement>('[data-four-again]'), cardBtn = $<HTMLButtonElement>('[data-four-card]');
   const nextBtn = $<HTMLButtonElement>('[data-four-next]'), stopBtn = $<HTMLButtonElement>('[data-four-stop]');
-  // Settings, from the dial under their face: sound, the ghost chip, quick turns, less motion (kept in this browser)
+  // Settings, from the dial under their face: sound, the ghost chip, less motion (kept in this browser)
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const prefs = { sound: true, hints: true, quick: false, calm: false };
+  const prefs = { sound: true, hints: true, calm: false };
   try { Object.assign(prefs, JSON.parse(localStorage.getItem('hdj:four:set') || '{}')); if (localStorage.getItem('hdj:four:sound') === 'off') prefs.sound = false; } catch {}
   let calm = reduce || prefs.calm;
   const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
@@ -30,13 +30,13 @@ if (game && grid404 && head) {
   // ---- Who you're playing: one of the animals, each with their own way of playing and talking
   type Lines = { stop: string[]; start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[] };
   type Foe = { name: string; kind: 'cat' | 'dog'; tone: string; toneInk?: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
-  const WARGAMES = 'A strange game. The only winning move is not to play.';
+  const WARGAMES = 'The only winning move is not to play.';
   const FOES: Foe[] = [
     { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
       name: 'Leroy', kind: 'cat', tone: 'oklch(0.56 0.19 18)', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
       lines: {
         stop: ['Leaving? I’ll be right here.', 'Smart. Quit while you’re ahead.'],
-        start: ['Leroy here. Shall we play a game? Take your time. I will.'],
+        start: ['Shall we play? Take your time. I will.'],
         level: (l) => [`Level ${l}. I have all day.`, `Level ${l}. Slow and steady.`, `Level ${l}. I’m not going anywhere.`],
         mine: ['Hmm. Hmm. Okay, here.', 'Slow and steady.', 'Still thinking. Don’t rush me.', 'I’ll get there.', 'Measure twice. Drop once.', 'Patience.', 'There. Worth the wait.'],
         block: ['Not so fast.', 'I saw that a while ago.', 'Mm. No.', 'I’ll just sit right here.'],
@@ -56,14 +56,14 @@ if (game && grid404 && head) {
         spare: ['I could have… never mind. Your turn!', 'Oops. I’ll go over here instead.'],
         youWin: ['Yay, you won! I’m so happy for you.', 'You did it! That was lovely.'],
         iWin: ['Oh no, I won. Are you okay?', 'Sorry! I didn’t mean to win.'],
-        draw: ['A cat’s game? Should we tell Leroy and Irma?', 'A tie! Leroy and Irma would love this.', WARGAMES],
+        draw: ['A cat’s game? Leroy will be smug.', 'A tie! Leroy and Irma would love this.', WARGAMES],
       },
     },
     { // Competitive and smart, but a bully and easily distracted: quick, mouthy, and wanders off
       name: 'Kiya', kind: 'dog', tone: 'oklch(0.62 0.11 195)', delay: [250, 520], depth: (l) => Math.min(6, l + 1), slip: () => 0.18,
       lines: {
         stop: ['Scared? Thought so.', 'Running away? Classic.'],
-        start: ['Kiya. You’re going down. Go first, it won’t help.'],
+        start: ['You’re going down. Go first.'],
         level: (l) => [`Level ${l}. Now I’m annoyed.`, `Level ${l}. Lucky. Won’t happen again.`],
         mine: ['Too easy.', 'Watch and learn.', 'Is that all you’ve got?', 'Keep up.', 'Mine. Obviously.', 'Yawn.'],
         block: ['Nope. Mine.', 'Blocked. Cry about it.', 'Cute try.', 'Not on my board.'],
@@ -91,8 +91,13 @@ if (game && grid404 && head) {
   const whoEl = $('.four__who');
   // Who you play: picked at random each game (never the last one twice), unless you pick someone from the faces
   const foesEl = $('.four__foes');
-  foesEl.innerHTML = FOES.map((f) => `<button type="button" data-foe="${f.name}" aria-pressed="false" style="--tone:${f.tone}"><i class="sq" style="background:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp) center / cover no-repeat"></i>${f.name}</button>`).join('');
+  foesEl.insertAdjacentHTML('beforeend', FOES.map((f) => `<button type="button" data-foe="${f.name}" aria-pressed="false" style="--tone:${f.tone}"><i class="sq" style="background:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp) center / cover no-repeat"></i>${f.name}</button>`).join(''));
   const randomBtn = $<HTMLButtonElement>('[data-foe-random]');
+  // Picked: that animal; random: Random, with whoever came up ringed
+  function markFoes() {
+    foesEl.querySelectorAll<HTMLElement>('[data-foe]').forEach((x) => { x.setAttribute('aria-pressed', String(x.dataset.foe === chosen)); x.classList.toggle('is-up', x.dataset.foe === foe.name); });
+    randomBtn.setAttribute('aria-pressed', String(!chosen));
+  }
   let chosen = '';
   function meet(name = chosen) {
     let last = ''; try { last = localStorage.getItem('hdj:four:foe') ?? ''; } catch {}
@@ -103,8 +108,7 @@ if (game && grid404 && head) {
     game!.style.setProperty('--foe-chip', `url(/images/four/chip-${foe.name.toLowerCase()}.webp)`); // their chip, in their colour
     whoEl.style.background = `url(/images/four/pet-${foe.name.toLowerCase()}-sm.webp) center / cover no-repeat`; whoEl.setAttribute('aria-label', foe.name); // their face, ringed in their colour
     $('.four__name').textContent = foe.name;
-    foesEl.querySelectorAll<HTMLElement>('[data-foe]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.foe === foe.name)));
-    randomBtn.setAttribute('aria-pressed', String(!chosen));
+    markFoes();
   }
   const LINES = { get start() { return foe.lines.start; }, level: (l: number) => foe.lines.level(l), get mine() { return foe.lines.mine; }, get block() { return foe.lines.block; }, get youWin() { return foe.lines.youWin; }, get iWin() { return foe.lines.iWin; }, get draw() { return foe.lines.draw; } };
   const sayEl = say.closest<HTMLElement>('.four__say')!;
@@ -265,7 +269,7 @@ if (game && grid404 && head) {
     if (full(b)) return roundDraw();
     turn = 'me'; paint();
     game!.classList.add('is-thinking');
-    await new Promise((r) => setTimeout(r, calm ? 150 : (foe.delay[0] + Math.random() * (foe.delay[1] - foe.delay[0])) * (prefs.quick ? 0.3 : 1)));
+    await new Promise((r) => setTimeout(r, calm ? 150 : (foe.delay[0] + Math.random() * (foe.delay[1] - foe.delay[0]))));
     const threat = ORDER.find((cc) => { const r = open(b, cc); if (r < 0) return false; b[r * COLS + cc] = 1; const w = won(b, 1); b[r * COLS + cc] = 0; return Boolean(w); });
     const mine = think(b, level);
     game!.classList.remove('is-thinking');
@@ -300,7 +304,7 @@ if (game && grid404 && head) {
     tally();
     lastGame = { board: [...b], moves: [...moves], run, by, score, level: by === 'you' ? level - 1 : level, wins: level - 1, foe: foe.name, foeTone: foe.tone };
     const id = runId;
-    setTimeout(() => { if (id !== runId) return; if (by === 'them') talk(record ? 'New best! Make a card of it?' : 'Game over. Make a card of it, or go again?'); againBtn.hidden = cardBtn.hidden = false; }, calm ? 300 : by === 'you' ? 600 : 1400); // stopping keeps their parting line
+    setTimeout(() => { if (id !== runId) return; if (by === 'them') talk(record ? 'New best! Make a card of it?' : 'Game over. Make a card, or go again?'); againBtn.hidden = cardBtn.hidden = false; }, calm ? 300 : by === 'you' ? 600 : 1400); // stopping keeps their parting line
   }
   // A draw is a cat's game: a stamp, and paw prints across the board in their colour.
   // The cats (Leroy, Irma) are thrilled; the dogs (Lilo, Kiya) are not.
@@ -352,7 +356,7 @@ if (game && grid404 && head) {
   foesEl.addEventListener('click', (e) => {
     const name = (e.target as HTMLElement).closest<HTMLElement>('[data-foe]')?.dataset.foe;
     if (!name || turn === 'me') return; // not mid-move
-    const same = name === foe.name; chosen = name; randomBtn.setAttribute('aria-pressed', 'false');
+    const same = name === foe.name; chosen = name; markFoes();
     closeDial(); if (same) return;
     beep([523, 659], 0.06); rematch(); cols[aim].focus({ preventScroll: true });
   });
