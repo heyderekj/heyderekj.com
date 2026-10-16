@@ -351,6 +351,7 @@ body.site { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .bar__label span { max-width: min(38vw, 260px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bar__label .icon { font-size: 12px; color: var(--muted); transition: rotate var(--t-move) var(--ease); }
 .bar.is-menu .bar__label .icon { rotate: 180deg; }
+.bar.is-menu .bar__label { flex: 1; } /* open, the row spans the menu: the label takes the room, search sits at the far end */
 .bar__steps { display: inline-flex; }
 .bar__btn { width: 34px; height: 36px; border-radius: 999px; display: grid; place-items: center; font-size: 14px; }
 .bar__btn.is-off { opacity: 0.3; }
@@ -377,7 +378,7 @@ body.site { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .bar__t mark { background: color-mix(in oklch, var(--hl) 50%, transparent); color: inherit; border-radius: 3px; }
 .bar__y { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .bar__none { padding: 12px; font-size: 14px; color: var(--muted); }
-.bar__menu { width: min(380px, calc(100vw - 24px)); padding: 12px; display: grid; gap: 14px; }
+.bar__menu { width: min(304px, calc(100vw - 24px)); padding: 10px; display: grid; gap: 14px; }
 .bar__lbl { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
 .bar__lbl--pad { padding: 6px 10px 0; margin: 0; }
 .bar__group { display: grid; }
@@ -392,8 +393,8 @@ body.site { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .bar__fig b { font-size: 10.5px; letter-spacing: 0.07em; color: var(--muted); }
 .bar__hls { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
 .bar__else { display: flex; align-items: center; gap: 2px; padding-top: 10px; border-top: 1px solid var(--hair); }
-.bar__else a { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 999px; }
-.bar__mail { margin-right: auto; height: 34px; padding: 0 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
+.bar__else a { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 999px; }
+.bar__mail { margin-right: auto; height: 34px; padding: 0 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
 .bar__mail span { font-size: 12px; font-weight: 600; color: var(--muted); }
 /* The toast sits just above the bar */
 body.site .toast { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
@@ -938,6 +939,10 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .work-list .list__year > .row { transition: background var(--t-ui) var(--ease); }
 /* Not grouped: one run of rows, no year headings */
 .work-list.is-flat { gap: 2px; }
+/* The posts list, flattened by its dial (client/post-dial.ts) */
+.post-list.is-flat { gap: 2px; }
+.post-list.is-flat .list__year { display: contents; }
+.post-list.is-flat .list__year h2 { display: none; }
 .work-list.is-flat .list__year { display: contents; }
 .work-list.is-flat .list__year h2 { display: none; }
 /* Grid: the site first, big, then its name */

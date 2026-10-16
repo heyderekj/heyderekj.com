@@ -18,4 +18,4 @@ export const TOPICS: { key: string; label: string; tags: string[] }[] = [
 ];
 
 /** One searchable thing: an essay, a write-up or an app. Short keys keep /search.json small. */
-export interface SearchItem { k: 'Post' | 'Note' | 'Link' | 'Site' | 'App'; t: string; h: string; y: string; x?: 1; s: string }
+export interface SearchItem { k: 'Post' | 'Note' | 'Link' | 'Site' | 'App' | 'Game'; t: string; h: string; y: string; x?: 1; s: string }

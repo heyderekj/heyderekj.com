@@ -380,6 +380,8 @@ if (game && grid404 && head) {
   cardBtn.addEventListener('click', () => { if (lastGame) openCard(lastGame); });
   document.querySelectorAll('[data-four-play]').forEach((btn) => btn.addEventListener('click', start));
   document.addEventListener('four:start', start);
+  // Sent here to play (the "joshua" egg, or the search result): start once the page has settled
+  if (location.hash === '#play') { history.replaceState(null, '', location.pathname + location.search); setTimeout(start, calm ? 100 : 700); }
   // While I think, a few WOPR lights blink in the empty holes
   setInterval(() => {
     if (!game.classList.contains('is-thinking')) return;

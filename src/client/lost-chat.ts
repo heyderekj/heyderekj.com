@@ -104,7 +104,7 @@ if (box && thread && slash && prompts && form && input) {
 
   // ---- The cheat sheet: every easter egg, with the keys, and a Try for the ones that can go off here
   const EGGS: { keys: string; name: string; what: string; tryit?: 'blueprint' | 'konami' | 'play'; href?: string }[] = [
-    { keys: '<kbd>Play</kbd>', name: 'Shall we play a game?', what: 'Connect Four against Leroy, Lilo, Kiya or Irma, right up top. Then make a card of it to share.', tryit: 'play' },
+    { keys: '<kbd>Play</kbd>', name: 'Shall we play a game?', what: 'Connect Four against Leroy, Lilo, Kiya or Irma, right up top. Then make a card of it to share. From any other page, type joshua.', tryit: 'play' },
     { keys: '<kbd>B</kbd>', name: 'Blueprint mode', what: 'The whole site as a cyanotype on graph paper. B again to go back.', tryit: 'blueprint' },
     { keys: '<kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd>', name: 'Orange mode', what: 'My favorite color, with a fanfare.', tryit: 'konami' },
     { keys: '<kbd>Click ×3</kbd>', name: 'Leave me a note', what: 'Triple-click my signature at the top of any page. One click goes home.' },

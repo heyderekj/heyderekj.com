@@ -3,7 +3,7 @@
 import Site from '../../layouts/Site.astro';
 import PageHead from './PageHead.astro';
 import PostIndex from './PostIndex.astro';
-import { getPublishedPosts, TYPE_LABELS, typeHref, type PostType } from '../../lib/posts';
+import { getPublishedPosts, tagCounts, topicHref, TYPE_LABELS, typeHref, type PostType } from '../../lib/posts';
 
 const INTROS: Record<PostType, string> = {
   essay: 'Long-form writing with an argument. Each one carries a status and revision number, and changes over time.',
@@ -21,17 +21,40 @@ const entries = all.filter((p) => p.data.type === type);
 const counts = { essay: 0, note: 0, link: 0 } as Record<PostType, number>;
 for (const p of all) counts[p.data.type]++;
 const label = TYPE_LABELS[type];
+const topics = tagCounts(entries).slice(0, 10);
+const types = (Object.keys(TYPE_LABELS) as PostType[]).filter((k) => counts[k]);
 ---
 <Site bar={{ kind: 'page', title: label.many }} title={`${label.many} — Derek Castelli`} description={INTROS[type]}>
   <main class="home">
     <PageHead title={label.many} meta={`Writing · ${entries.length}`}><Fragment slot="lede">{INTROS[type]}</Fragment></PageHead>
-    <div class="work-chips">
-      <a class="wchip sq" href="/#writing">All <span>{all.length}</span></a>
-      {(Object.keys(TYPE_LABELS) as PostType[]).filter((k) => counts[k]).map((k) => (
-        <a class:list={['wchip sq', k === type && 'is-current']} href={typeHref(k)} aria-current={k === type ? 'page' : undefined}>{TYPE_LABELS[k].many} <span>{counts[k]}</span></a>
-      ))}
+    <!-- Like the work page: one button opens a dial with topics (and kinds, once there's more than one) and view settings (client/post-dial.ts) -->
+    <div class="work-tools">
+      <button type="button" class="work-tools__btn sq" data-pdial-toggle aria-expanded="false" aria-haspopup="dialog" aria-label={`Filter and view: ${label.many}`}>
+        <svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M2.5 5h4.25M11.25 5h2.25M2.5 11h2.25M9.25 11h4.25" /><circle cx="9" cy="5" r="1.9" /><circle cx="7" cy="11" r="1.9" /></svg>
+        <b>All {label.many.toLowerCase()}</b><span>{entries.length}</span>
+        <svg class="work-tools__chev" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6.25l4 4 4-4" /></svg>
+      </button>
+      <div class="dial work-dial post-dial" role="dialog" aria-label="Filter and view these posts" hidden>
+        {types.length > 1 && <>
+          <div class="dial__head"><b>Kind</b></div>
+          <nav class="dial__pills" aria-label="Kind">
+            {types.map((k) => <a class:list={['dial__pill', k === type && 'is-current']} href={typeHref(k)} aria-current={k === type ? 'page' : undefined}>{TYPE_LABELS[k].many} <span>{counts[k]}</span></a>)}
+          </nav>
+        </>}
+        <div class:list={['dial__head', types.length > 1 && 'dial__head--gap']}><b>Topic</b></div>
+        <nav class="dial__pills" aria-label="Topics">
+          <a class="dial__pill is-current" href={typeHref(type)} aria-current="page">All <span>{entries.length}</span></a>
+          {topics.map((t) => <a class="dial__pill" href={topicHref(t.tag)}>{t.tag} <span>{t.count}</span></a>)}
+          <a class="dial__pill" href="/topics/">More…</a>
+        </nav>
+        <div class="dial__head dial__head--gap"><b>View</b><button type="button" class="dial__reset" data-pdial-reset>Reset</button></div>
+        <div class="dial__row"><span>Sort</span><div class="dial__seg" role="radiogroup" aria-label="Sort"><button type="button" role="radio" data-set="sort:new">Newest</button><button type="button" role="radio" data-set="sort:old">Oldest</button><button type="button" role="radio" data-set="sort:az">A–Z</button></div></div>
+        <div class="dial__row"><span>Length</span><div class="dial__seg" role="radiogroup" aria-label="Length"><button type="button" role="radio" data-set="len:any">Any</button><button type="button" role="radio" data-set="len:quick">1 min</button><button type="button" role="radio" data-set="len:long">Longer</button></div></div>
+        <label class="dial__row dial__switch"><span>Group by year</span><input type="checkbox" data-switch="group" /><i aria-hidden="true"></i></label>
+      </div>
     </div>
     <PostIndex posts={entries} show={Infinity} />
   </main>
   <script src="../../client/peek.ts"></script>
+  <script src="../../client/post-dial.ts"></script>
 </Site>

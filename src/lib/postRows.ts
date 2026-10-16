@@ -7,7 +7,7 @@ import { peekFor, readingMinutes, type Peek, type Subject } from './pullquote';
 import { getDeck, host, shot, shotsOf } from './deck';
 import { figuresIn } from './figures';
 
-export interface PostRow { href: string; title: string; year: number; date: string; tags: string; figures: number; peek: Peek; mins: number }
+export interface PostRow { href: string; title: string; year: number; at: number; date: string; tags: string; figures: number; peek: Peek; mins: number }
 
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 let subjects: Promise<Subject[]> | null = null;
@@ -23,7 +23,7 @@ function getSubjects(): Promise<Subject[]> {
 export async function postRows(posts: Post[]): Promise<PostRow[]> {
   const subs = await getSubjects();
   return posts.map((p) => ({
-    href: postHref(p), title: postTitle(p), year: p.data.date.getUTCFullYear(),
+    href: postHref(p), title: postTitle(p), year: p.data.date.getUTCFullYear(), at: p.data.date.valueOf(),
     date: `${MON[p.data.date.getUTCMonth()]} ${p.data.date.getUTCDate()}`,
     tags: p.data.tags.join(' '),
     figures: figuresIn(p.body).length,

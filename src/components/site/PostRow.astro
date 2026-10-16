@@ -6,7 +6,7 @@ import type { PostRow } from '../../lib/postRows';
 interface Props { row: PostRow; date?: string }
 const { row: r, date = r.date } = Astro.props;
 ---
-<a class="row sq" href={r.href} data-tags={r.tags} data-peek-img={r.peek.img ?? undefined} data-peek-url={r.peek.url || undefined} data-peek-quote={!r.peek.img && r.peek.quote ? r.peek.quote : undefined} data-mins={r.mins}>
+<a class="row sq" href={r.href} data-at={r.at} data-title={r.title} data-tags={r.tags} data-peek-img={r.peek.img ?? undefined} data-peek-url={r.peek.url || undefined} data-peek-quote={!r.peek.img && r.peek.quote ? r.peek.quote : undefined} data-mins={r.mins}>
   <span class="row__title">{r.title}{r.figures > 0 && <span class="badge"><Icon name="spark" /> {r.figures} {r.figures === 1 ? 'figure' : 'figures'}</span>}</span>
   <span class="row__date">{date}</span>
 </a>

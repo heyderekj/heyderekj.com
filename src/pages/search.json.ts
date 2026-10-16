@@ -25,6 +25,8 @@ export const GET: APIRoute = async () => {
       k: 'App' as const, t: p.data.name, h: p.data.url || 'https://testamentmade.com', y: String(p.data.year ?? ''), x: 1 as const,
       s: [p.data.name, p.data.tagline, p.data.summary].filter(Boolean).join(' ').toLowerCase(),
     })),
+    // Hidden until you search for it: the 404's Connect Four
+    { k: 'Game' as const, t: 'Shall we play a game?', h: '/404#play', y: '', s: 'shall we play a game connect four play game games wopr joshua wargames leroy lilo kiya irma animals pets cats dogs' },
   ];
   return new Response(JSON.stringify(items), { headers: { 'Content-Type': 'application/json' } });
 };

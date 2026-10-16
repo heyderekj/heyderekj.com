@@ -1,3 +1,5 @@
+import { toast } from './toast';
+
 const KONAMI: string[] = [
   'ArrowUp', 'ArrowUp',
   'ArrowDown', 'ArrowDown',
@@ -104,4 +106,19 @@ document.addEventListener('keydown', (e: KeyboardEvent) => {
   } else {
     konamiIndex = e.key === KONAMI[0] ? 1 : 0;
   }
+});
+
+// Type "joshua" on any page (the WOPR's password, in WarGames) and you're greeted, then taken to the 404's game
+const JOSHUA = 'joshua';
+let typed = '';
+document.addEventListener('keydown', (e: KeyboardEvent) => {
+  const t = e.target;
+  if (e.metaKey || e.ctrlKey || e.altKey || (t instanceof Element && t.closest('input, textarea, select, [contenteditable]'))) return;
+  if (e.key.length !== 1) return;
+  typed = (typed + e.key.toLowerCase()).slice(-JOSHUA.length);
+  if (typed !== JOSHUA) return;
+  typed = '';
+  toast('Greetings, Professor Falken. Shall we play a game?');
+  if (document.querySelector('.four')) { setTimeout(() => document.dispatchEvent(new Event('four:start')), 900); return; }
+  setTimeout(() => location.assign('/404#play'), 1400);
 });
