@@ -262,6 +262,12 @@ export const GLYPHS = {
     { d: 'M9 6V4.25C9 3.7 9.2 3.5 9.75 3.5H11.25C11.8 3.5 12 3.7 12 4.25V6' },
   ],
   bolt: [{ d: 'M9 1.75L3.75 9H8L7 14.25L12.25 7H8Z' }],
+  // Sound: a speaker and two waves (the waves go when it's off, site.css .bar__sound).
+  sound: [
+    { d: 'M2.25 6.25C2.25 5.7 2.7 5.25 3.25 5.25H5L8.25 2.75V13.25L5 10.75H3.25C2.7 10.75 2.25 10.3 2.25 9.75Z' },
+    { d: 'M10.5 6C11.4 6.9 11.4 9.1 10.5 10' },
+    { d: 'M12.5 4.25C14.35 6.1 14.35 9.9 12.5 11.75' },
+  ],
   // F1: a chequered flag on its pole.
   flag: [
     { d: 'M3 14.25V2.25' },

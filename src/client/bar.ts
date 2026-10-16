@@ -7,6 +7,7 @@
  */
 import { calm, copyText, EASE, toast } from './toast';
 import type { SearchItem } from '../lib/bar';
+import { cue } from './sound';
 
 const bar = document.getElementById('bar');
 if (bar) {
@@ -19,6 +20,7 @@ if (bar) {
 
   function setState(next: State) {
     if (next === state) return;
+    cue(next === 'rest' ? 'close' : 'open');
     const before = bar!.getBoundingClientRect();
     state = next;
     bar!.classList.toggle('is-search', next === 'search');

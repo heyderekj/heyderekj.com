@@ -14,10 +14,11 @@ import Icon from './Icon.astro';
 </dialog>
 
 <script>
+  import { cue } from '../client/sound';
   const box = document.querySelector<HTMLDialogElement>('[data-clip-box]');
   const frame = box?.querySelector<HTMLElement>('[data-clip-frame]');
 
-  box?.addEventListener('close', () => frame?.replaceChildren());
+  box?.addEventListener('close', () => { frame?.replaceChildren(); cue('close', { emphasis: 'normal' }); });
   box?.addEventListener('click', (e) => {
     // The backdrop is the dialog itself; its contents are the frame and button.
     if (e.target === box || (e.target as Element).closest('[data-clip-close]')) box.close();
@@ -33,7 +34,7 @@ import Icon from './Icon.astro';
     iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
     iframe.allowFullscreen = true;
     frame.replaceChildren(iframe);
-    box.showModal();
+    box.showModal(); cue('open', { emphasis: 'normal' });
   });
 </script>
 

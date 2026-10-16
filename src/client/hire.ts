@@ -7,6 +7,7 @@
 import { budgetGap, retainerFor, clean, DEFAULTS, estimate, extraPrice, money, patched, schedule, short, type Answers, type Gap } from '../lib/estimate';
 import { EXTRAS, PRICES, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 import { copyText, toast } from './toast';
+import { cue } from './sound';
 
 const form = document.querySelector<HTMLFormElement>('#hireForm');
 if (form) {
@@ -67,7 +68,7 @@ if (form) {
     const first = $$<HTMLElement>('.est__screen.is-on input:not([type=checkbox]):not([type=range]):not(.hire-hp)', form!)[0];
     if (first && name === 'you') first.focus({ preventScroll: true });
   }
-  const say = (t: string, bad = false) => { hint.textContent = t; hint.classList.toggle('is-bad', bad); };
+  const say = (t: string, bad = false) => { hint.textContent = t; hint.classList.toggle('is-bad', bad); if (bad) cue('error'); };
 
   function next() {
     if (at === 'services' && !draft.services.length && !draft.unsure) return say('Pick at least one, or “Not sure yet”.', true);
@@ -78,10 +79,11 @@ if (form) {
       if (bad.length) { bad[0].focus(); return say(bad.includes(name) ? 'Your name, and an email to reply to.' : 'That email doesn’t look quite right.', true); }
     }
     if (at === 'review') return send();
+    cue('navigate');
     const f = flow(); show(f[Math.min(f.length - 1, f.indexOf(at) + 1)], 1);
     if (innerWidth <= 900) app.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' });
   }
-  const back = () => { const f = flow(); show(f[Math.max(0, f.indexOf(at) - 1)], -1); };
+  const back = () => { cue('navigate', { direction: 'back' }); const f = flow(); show(f[Math.max(0, f.indexOf(at) - 1)], -1); };
   nextBtn.addEventListener('click', next);
   backBtn.addEventListener('click', back);
   form.addEventListener('keydown', (e) => {
@@ -105,7 +107,7 @@ if (form) {
   form.addEventListener('click', (e) => {
     const n = (e.target as HTMLElement).closest<HTMLElement>('[data-idea]')?.dataset.idea;
     if (n === undefined || !gap) return;
-    Object.assign(draft, patched(draft, gap.ideas[Number(n)].patch));
+    Object.assign(draft, patched(draft, gap.ideas[Number(n)].patch)); cue('select');
     paint(); toast('Estimate updated');
   });
 
@@ -195,7 +197,7 @@ if (form) {
   const float = document.querySelector<HTMLAnchorElement>('[data-float]'), section = document.getElementById('estimate');
   if (float && section) {
     new IntersectionObserver(([e]) => { float.toggleAttribute('data-on', !e.isIntersecting); float.tabIndex = e.isIntersecting ? -1 : 0; }).observe(section);
-    float.addEventListener('click', (e) => { e.preventDefault(); section.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' }); });
+    float.addEventListener('click', (e) => { e.preventDefault(); cue('navigate'); section.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' }); });
   }
 
   // A long estimate scrolls inside the sheet: fades where there's more, and See all goes to the bottom
@@ -211,7 +213,8 @@ if (form) {
   prop.addEventListener('click', (e) => {
     const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]')?.dataset.go;
     if (!go || at === 'sent' || go === at) return;
-    const f = flow(); show(go, f.indexOf(go) < f.indexOf(at) ? -1 : 1);
+    const f = flow(), dir = f.indexOf(go) < f.indexOf(at) ? -1 : 1;
+    cue('navigate', { direction: dir < 0 ? 'back' : 'forward' }); show(go, dir);
     form!.scrollIntoView({ block: 'nearest', behavior: calm() ? 'auto' : 'smooth' });
   });
 
@@ -228,14 +231,15 @@ if (form) {
   form.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
     const pick = t.closest<HTMLButtonElement>('[data-service]');
-    if (pick) { toggleService(pick.dataset.service as ServiceId | 'unsure'); say(''); paint(); return; }
+    if (pick) { toggleService(pick.dataset.service as ServiceId | 'unsure'); cue('toggle', { direction: pick.getAttribute('aria-pressed') === 'true' ? 'back' : 'forward' }); say(''); paint(); return; }
     const opt = t.closest<HTMLButtonElement>('[data-k]:not(input) [data-v]');
-    if (opt) { set(opt.closest<HTMLElement>('[data-k]')!.dataset.k!, opt.dataset.v); paint(); }
+    if (opt) { set(opt.closest<HTMLElement>('[data-k]')!.dataset.k!, opt.dataset.v); cue('select'); paint(); }
   });
   form.addEventListener('input', (e) => {
     const t = e.target as HTMLInputElement;
     if (t.type === 'range' && t.dataset.k) { set(t.dataset.k, Number(t.value)); paint(); }
-    else if (t.type === 'checkbox' && t.dataset.k) { set(t.dataset.k, t.checked); paint(); }
+    if (t.type === 'checkbox') cue('toggle', { direction: t.checked ? 'forward' : 'back' });
+    if (t.type === 'checkbox' && t.dataset.k) { set(t.dataset.k, t.checked); paint(); }
     else if (t.type === 'checkbox' && t.dataset.also) { toggleService(t.dataset.also as ServiceId, t.checked); paint(); }
     else if (t.type === 'checkbox' && t.dataset.extra) { const id = t.dataset.extra; draft.extras = t.checked ? [...new Set([...(draft.extras ?? []), id])] : (draft.extras ?? []).filter((x) => x !== id); paint(); }
     else if (t.name === 'org' || t.name === 'name') paintProposal();
@@ -263,9 +267,9 @@ if (form) {
       if (!r.ok) throw new Error(String(r.status));
       try { localStorage.removeItem('hdj:hire'); } catch {}
       $('[data-thanks]', form!).textContent = field('name').split(/\s+/)[0] || 'friend';
-      show('sent'); showSum(); sign();
+      cue('success', { emphasis: 'normal' }); show('sent'); showSum(); sign();
     } catch {
-      say('');
+      say(''); cue('error', { emphasis: 'normal' });
       hint.innerHTML = 'That didn’t send. Email me at <a href="mailto:derekj@hey.com">derekj@hey.com</a> and I’ll take it from there.';
       hint.classList.add('is-bad');
     } finally { nextBtn.disabled = false; }
@@ -292,7 +296,7 @@ if (form) {
     const index = () => Math.round(track.scrollLeft / step());
     const go = (i: number) => track.scrollTo({ left: ((i + cards.length) % cards.length) * step(), behavior: calm() ? 'auto' : 'smooth' });
     track.addEventListener('scroll', () => dots.forEach((d, n) => d.classList.toggle('is-on', n === index())), { passive: true });
-    $$<HTMLButtonElement>('[data-said]', said).forEach((b) => b.addEventListener('click', () => go(index() + Number(b.dataset.said))));
+    $$<HTMLButtonElement>('[data-said]', said).forEach((b) => b.addEventListener('click', () => { cue('navigate', { direction: Number(b.dataset.said) < 0 ? 'back' : 'forward' }); go(index() + Number(b.dataset.said)); }));
     let held = false;
     said.addEventListener('pointerenter', () => (held = true)); said.addEventListener('pointerleave', () => (held = false));
     said.addEventListener('focusin', () => (held = true)); said.addEventListener('focusout', () => (held = false));
