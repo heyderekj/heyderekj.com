@@ -1,8 +1,8 @@
 /**
  * The work deck (components/site/WorkDeck.astro). Projects stack in one place: the one leaving fades,
  * the one arriving comes in staggered (its preview, then its pages, then the caption; see site.css).
- * Autoplay moves between projects every 7s, shown by a ring filling around the pause button; it holds
- * while you're hovering or have just used it, and stops when the deck is off screen. Each project's
+ * Autoplay moves between projects every 7s, shown by the current tick on the spine filling; it holds
+ * while you're hovering or have just used it, and stops when the deck is off screen. Any tick jumps. Each project's
  * pages are on a rail you browse yourself. Swipe sideways on touch to change project.
  * Other scripts can move it with `deck:go` (detail: 'kem' | 'apps' | an index).
  */
@@ -13,8 +13,8 @@ const track = document.getElementById('deckTrack');
 if (fig && track) {
   const slides = [...track.querySelectorAll<HTMLElement>('.wslide')];
   const total = slides.length;
-  const $ = (id: string) => document.getElementById(id)!;
-  const bar = $('deckBar') as unknown as SVGCircleElement, play = $('deckPlay');
+  const ticks = fig.querySelector<HTMLElement>('.deck__ticks')!;
+  const tickBtns = [...ticks.querySelectorAll<HTMLButtonElement>('.tick')];
   let cur = 0, inView = false;
 
   function goSlide(n: number) {
@@ -42,7 +42,7 @@ if (fig && track) {
   });
 
   function update() {
-    $('deckCount').textContent = `${cur + 1} / ${total}`;
+    tickBtns.forEach((b, i) => { b.classList.toggle('is-on', i === cur); b.setAttribute('aria-selected', String(i === cur)); });
     slides.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== cur)));
     restart();
     if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[cur].dataset.title}` }));
@@ -50,21 +50,20 @@ if (fig && track) {
 
   // Autoplay
   const DWELL = 7000;
-  let playing = !calm(), hovering = false, held = false, holdT = 0;
-  bar.style.setProperty('--dur', `${DWELL}ms`);
-  function restart() { bar.classList.remove('is-run'); bar.getBoundingClientRect(); if (playing) bar.classList.add('is-run'); sync(); }
-  function sync() { bar.classList.toggle('is-paused', !playing || hovering || held || !inView); }
+  const playing = !calm();
+  let hovering = false, held = false, holdT = 0;
+  ticks.style.setProperty('--dur', `${DWELL}ms`);
+  function restart() { ticks.classList.remove('is-run'); ticks.getBoundingClientRect(); if (playing) ticks.classList.add('is-run'); sync(); }
+  function sync() { ticks.classList.toggle('is-paused', !playing || hovering || held || !inView); }
   function hold() { held = true; sync(); clearTimeout(holdT); holdT = window.setTimeout(() => { held = false; sync(); }, 12000); }
-  bar.addEventListener('animationend', () => goSlide(cur + 1));
+  ticks.addEventListener('animationend', (e) => { if (e.animationName === 'tick-fill') goSlide(cur + 1); });
+  tickBtns.forEach((b, i) => b.addEventListener('click', () => { goSlide(i); hold(); }));
   fig.addEventListener('pointerenter', () => { hovering = true; sync(); });
   fig.addEventListener('pointerleave', () => { hovering = false; sync(); });
   new IntersectionObserver(([e]) => {
     inView = e.isIntersecting; sync();
     if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[cur].dataset.title}` }));
   }, { threshold: 0.4 }).observe(fig);
-  play.addEventListener('click', () => { playing = !playing; play.setAttribute('aria-pressed', String(playing)); play.setAttribute('aria-label', playing ? 'Pause' : 'Play'); restart(); });
-  $('deckPrev').addEventListener('click', () => { goSlide(cur - 1); hold(); });
-  $('deckNext').addEventListener('click', () => { goSlide(cur + 1); hold(); });
   fig.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); goSlide(cur + 1); hold(); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); goSlide(cur - 1); hold(); }
@@ -86,6 +85,5 @@ if (fig && track) {
     fig.scrollIntoView({ block: 'center', behavior: calm() ? 'auto' : 'smooth' });
   });
 
-  if (calm()) play.setAttribute('aria-pressed', 'false');
   update();
 }

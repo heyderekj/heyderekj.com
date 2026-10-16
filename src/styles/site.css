@@ -227,11 +227,6 @@ mark.hl { background: color-mix(in oklch, var(--hl) 55%, transparent); color: in
 .wslide__cap a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .browser__view .mesh { position: absolute; inset: 0; }
 .browser__view .mesh img { position: relative; width: 22%; max-width: 128px; opacity: 1; inset: auto; height: auto; }
-.deck__nav { margin-left: auto; display: flex; align-items: center; gap: 0; }
-.deck__nav output { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 40px; text-align: center; }
-.deck__nav button { width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; font-size: 15px; }
-.deck__nav button:hover { background: color-mix(in oklch, var(--ink) 8%, transparent); }
-.deck__nav button:disabled { opacity: 0.3; cursor: default; background: none; }
 
 
 .qcard { --r: 14px; display: grid; gap: 10px; padding: 18px 20px 16px; background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
@@ -305,16 +300,6 @@ button.wchip { font: inherit; }
 
 /* Deck: autoplay moves between projects; each project's pages sit on a rail you browse yourself */
 #fig-deck .fig__head { position: relative; padding: 7px 8px 7px 16px; gap: 8px; }
-#deckPlay { position: relative; }
-#deckPlay .icon { width: 11px; height: 11px; }
-.deck__ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); pointer-events: none; }
-.deck__ring circle { fill: none; stroke: color-mix(in oklch, var(--ink) 28%, transparent); stroke-width: 1.25; stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round; }
-.deck__ring circle.is-run { animation: deck-run var(--dur, 7s) linear forwards; }
-.deck__ring circle.is-paused { animation-play-state: paused; }
-@keyframes deck-run { to { stroke-dashoffset: 0; } }
-#deckPlay .i-play { display: none; }
-#deckPlay[aria-pressed="false"] .i-play { display: block; }
-#deckPlay[aria-pressed="false"] .i-pause { display: none; }
 .wslide .browser__ticks { display: none; }
 .wslide .browser__view { cursor: default; }
 .pages { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 3px; }
@@ -561,7 +546,34 @@ body.site .app-toc { display: none !important; }
   #fig-deck .fig__head { flex-direction: column; align-items: center; justify-content: flex-start; gap: 14px; padding: 18px 0 12px; border-bottom: 0; border-right: 1px solid var(--hair); }
   #fig-deck .fig__no { writing-mode: vertical-rl; white-space: nowrap; }
   #fig-deck .fig__no { letter-spacing: 0.12em; }
-  #fig-deck .deck__nav { margin: auto 0 0; flex-direction: column; gap: 2px; }
-  #fig-deck .deck__nav output { min-width: 0; padding: 6px 0; writing-mode: vertical-rl; }
-  #fig-deck #deckPrev .icon, #fig-deck #deckNext .icon { rotate: 90deg; }
+}
+
+/* ---------- Deck ticks: one per project down the spine; the current one fills as autoplay runs ---------- */
+.deck__ticks { --w: 4px; --h: 4px; --on: 24px; display: flex; flex-direction: column; align-items: center; margin-top: auto; }
+.tick { position: relative; display: grid; place-items: center; width: 26px; height: 11px; transition: height var(--t-move) var(--ease); }
+.tick.tick--gap { margin-top: 10px; }
+.tick i { position: relative; display: block; width: var(--w); height: var(--h); border-radius: 3px; overflow: hidden; background: color-mix(in oklch, var(--ink) 26%, transparent); transition: height var(--t-move) var(--ease), background var(--t-ui) var(--ease); }
+.tick:hover i { background: color-mix(in oklch, var(--ink) 55%, transparent); }
+.tick.is-on { height: calc(var(--on) + 7px); }
+.tick.is-on i { height: var(--on); background: color-mix(in oklch, var(--ink) 18%, transparent); }
+.tick i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleY(0); transform-origin: top; }
+.tick.is-on i::after { transform: none; }
+.deck__ticks.is-run .tick.is-on i::after { animation: tick-fill var(--dur, 7s) linear both; }
+.deck__ticks.is-paused .tick.is-on i::after { animation-play-state: paused; }
+@keyframes tick-fill { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+/* Hover a tick to see which project it is */
+.tick::before { content: attr(data-name); position: absolute; left: calc(100% + 6px); top: 50%; translate: 0 -50%; padding: 4px 9px; border-radius: 8px; white-space: nowrap; font-size: 12px; font-weight: 600; color: var(--ink); background: var(--glass); box-shadow: 0 0 0 1px var(--hair), var(--shadow); opacity: 0; pointer-events: none; transition: opacity var(--t-ui) var(--ease); z-index: 5; }
+.tick:hover::before, .tick:focus-visible::before { opacity: 1; }
+/* On phones the head runs across the top, so the ticks run across too */
+@media (max-width: 560px) {
+  .deck__ticks { flex-direction: row; margin: 0 0 0 auto; }
+  .tick { width: 9px; height: 26px; transition-property: width; }
+  .tick.tick--gap { margin: 0 0 0 8px; }
+  .tick i { width: var(--h); height: var(--w); transition-property: width, background; }
+  .tick.is-on { width: calc(var(--on) + 6px); height: 26px; }
+  .tick.is-on i { width: var(--on); height: var(--w); }
+  .tick i::after { transform: scaleX(0); transform-origin: left; }
+  .tick.is-on i::after { transform: none; }
+  @keyframes tick-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .tick::before { display: none; }
 }

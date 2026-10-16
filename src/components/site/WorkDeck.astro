@@ -2,9 +2,9 @@
 /**
  * "From websites to apps": one project per slide, a big preview with its pages on a rail beside it.
  * Projects stack in place and change with a staggered entrance; autoplay moves between them,
- * and the rail is yours to browse (client/deck.ts). The header runs down the side as a spine.
+ * and the rail is yours to browse (client/deck.ts). The header runs down the side as a spine, with
+ * one tick per project: the current one fills as autoplay runs, and any tick jumps to its project.
  */
-import Icon from '../Icon.astro';
 import Browser from './Browser.astro';
 import { getDeck } from '../../lib/deck';
 
@@ -13,15 +13,10 @@ const { slides } = await getDeck();
 <figure class="fig sq" id="fig-deck" data-bar-label="Work" tabindex="-1" aria-label="Work, from websites to apps">
   <div class="fig__head">
     <span class="fig__no">WORK</span>
-    <span class="deck__nav">
-      <button id="deckPlay" aria-label="Pause" aria-pressed="true">
-        <svg class="deck__ring" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11.5" pathLength="100" id="deckBar" /></svg>
-        <svg class="icon i-pause" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><rect x="4" y="3.5" width="2.6" height="9" rx="1" /><rect x="9.4" y="3.5" width="2.6" height="9" rx="1" /></svg>
-        <svg class="icon i-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5.2 3.6c0-.7.8-1.1 1.4-.7l6 4.4c.5.4.5 1.1 0 1.4l-6 4.4c-.6.4-1.4 0-1.4-.7z" /></svg>
-      </button>
-      <button id="deckPrev" aria-label="Previous project"><Icon name="chevron-left" /></button>
-      <output id="deckCount">1 / {slides.length}</output>
-      <button id="deckNext" aria-label="Next project"><Icon name="chevron-right" /></button>
+    <span class="deck__ticks" role="tablist" aria-label="Projects">
+      {slides.map((s, i) => (
+        <button class:list={['tick', i === 0 && 'is-on', i > 0 && s.kind !== slides[i - 1].kind && 'tick--gap']} role="tab" data-to={i} data-name={s.title} aria-label={s.title} aria-selected={i === 0 ? 'true' : 'false'}><i></i></button>
+      ))}
     </span>
   </div>
   <div class="fig__stage">
