@@ -10,7 +10,8 @@ const $ = (s) => document.querySelector(s);
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const DSM = () => { if (window.__dsmHour != null) return window.__dsmHour; const [h, m] = new Date().toLocaleTimeString('en-GB', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', hour12: false }).split(':').map(Number); return h + m / 60; };
 function tickTime() { const el = $('#dsmTime'); if (el) el.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' }).toLowerCase(); routine(); }
-// Easter egg: at the times I'm usually somewhere, Des Moines time, the card says where
+// Easter egg: at the times I'm usually somewhere, Des Moines time, the card says where;
+// otherwise it's work hours at home on weekdays, or the line about home
 const ROUTINE = [
   { day: 'Sun', from: 10, to: 12.5, text: 'Probably at church right now.' },
   { day: 'Tue', from: 11, to: 11.5, text: 'In my weekly team sync with Kem Design.' },
@@ -20,7 +21,8 @@ let homeLine = null;
 function routine() {
   const el = $('.here__home'); if (!el) return; homeLine ??= el.textContent;
   const day = new Date().toLocaleDateString('en-US', { timeZone: 'America/Chicago', weekday: 'short' }), h = DSM();
-  el.textContent = ROUTINE.find((r) => r.day === day && h >= r.from && h < r.to)?.text ?? homeLine;
+  const work = !['Sat', 'Sun'].includes(day) && h >= 9 && h < 17; // weekdays, 9 to 5
+  el.textContent = ROUTINE.find((r) => r.day === day && h >= r.from && h < r.to)?.text ?? (work ? 'Working from home, making rectangles with Lilo, Kiya, Leroy and Irma.' : homeLine);
 }
 // Sky colours through the day: [hour, top, middle, horizon, star amount, light colour]
 const SKY = [
