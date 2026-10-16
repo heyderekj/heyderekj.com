@@ -10,10 +10,9 @@ import { getDeck } from '../../lib/deck';
 
 const { slides } = await getDeck();
 ---
-<figure class="fig sq" id="fig-deck" data-bar-label="Work" tabindex="-1">
+<figure class="fig sq" id="fig-deck" data-bar-label="Work" tabindex="-1" aria-label="Work, from websites to apps">
   <div class="fig__head">
     <span class="fig__no">WORK</span>
-    <span class="fig__title deck__title" role="group" aria-label="Jump to">From <button data-jump="client" aria-pressed="true">websites</button> to <button data-jump="app" aria-pressed="false">apps</button></span>
     <span class="deck__nav">
       <button id="deckPlay" aria-label="Pause" aria-pressed="true">
         <svg class="deck__ring" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11.5" pathLength="100" id="deckBar" /></svg>

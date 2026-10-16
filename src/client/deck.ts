@@ -43,8 +43,6 @@ if (fig && track) {
 
   function update() {
     $('deckCount').textContent = `${cur + 1} / ${total}`;
-    const kind = slides[cur].dataset.kind;
-    fig!.querySelectorAll('[data-jump]').forEach((b) => b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.jump === kind)));
     slides.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== cur)));
     restart();
     if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[cur].dataset.title}` }));
@@ -67,7 +65,6 @@ if (fig && track) {
   play.addEventListener('click', () => { playing = !playing; play.setAttribute('aria-pressed', String(playing)); play.setAttribute('aria-label', playing ? 'Pause' : 'Play'); restart(); });
   $('deckPrev').addEventListener('click', () => { goSlide(cur - 1); hold(); });
   $('deckNext').addEventListener('click', () => { goSlide(cur + 1); hold(); });
-  fig.querySelectorAll<HTMLElement>('[data-jump]').forEach((b) => b.addEventListener('click', () => { goSlide(slides.findIndex((s) => s.dataset.kind === b.dataset.jump)); hold(); }));
   fig.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); goSlide(cur + 1); hold(); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); goSlide(cur - 1); hold(); }

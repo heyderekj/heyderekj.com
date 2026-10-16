@@ -232,9 +232,6 @@ mark.hl { background: color-mix(in oklch, var(--hl) 55%, transparent); color: in
 .deck__nav button { width: 26px; height: 26px; border-radius: 999px; display: grid; place-items: center; font-size: 15px; }
 .deck__nav button:hover { background: color-mix(in oklch, var(--ink) 8%, transparent); }
 .deck__nav button:disabled { opacity: 0.3; cursor: default; background: none; }
-.deck__title button { font: inherit; color: var(--muted); padding: 0; text-decoration: underline 1px transparent; text-underline-offset: 3px; transition: color var(--t-ui) var(--ease), text-decoration-color var(--t-ui) var(--ease); }
-.deck__title button:hover { text-decoration-color: currentColor; }
-.deck__title button[aria-pressed="true"] { color: var(--ink); }
 
 
 .qcard { --r: 14px; display: grid; gap: 10px; padding: 18px 20px 16px; background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
@@ -308,7 +305,6 @@ button.wchip { font: inherit; }
 
 /* Deck: autoplay moves between projects; each project's pages sit on a rail you browse yourself */
 #fig-deck .fig__head { position: relative; padding: 7px 8px 7px 16px; gap: 8px; }
-#fig-deck .fig__title { font-size: 13.5px; }
 #deckPlay { position: relative; }
 #deckPlay .icon { width: 11px; height: 11px; }
 .deck__ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); pointer-events: none; }
@@ -563,7 +559,7 @@ body.site .app-toc { display: none !important; }
 @media (min-width: 561px) {
   #fig-deck { display: grid; grid-template-columns: 46px minmax(0, 1fr); }
   #fig-deck .fig__head { flex-direction: column; align-items: center; justify-content: flex-start; gap: 14px; padding: 18px 0 12px; border-bottom: 0; border-right: 1px solid var(--hair); }
-  #fig-deck .fig__no, #fig-deck .deck__title { writing-mode: vertical-rl; white-space: nowrap; }
+  #fig-deck .fig__no { writing-mode: vertical-rl; white-space: nowrap; }
   #fig-deck .fig__no { letter-spacing: 0.12em; }
   #fig-deck .deck__nav { margin: auto 0 0; flex-direction: column; gap: 2px; }
   #fig-deck .deck__nav output { min-width: 0; padding: 6px 0; writing-mode: vertical-rl; }
