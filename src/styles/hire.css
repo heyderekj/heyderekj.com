@@ -187,7 +187,8 @@
 .hire-extra input { width: 18px; height: 18px; margin: 0; accent-color: var(--ink); }
 .hire-extra b { display: block; font-size: 14px; font-weight: 600; }
 .hire-extra small { font-size: 12.5px; color: var(--muted); }
-.hire-extra em { font-style: normal; font-size: 13.5px; font-weight: 600; color: var(--money); font-variant-numeric: tabular-nums; }
+.hire-extra em { display: grid; justify-items: end; font-style: normal; font-size: 13.5px; font-weight: 600; color: var(--money); font-variant-numeric: tabular-nums; }
+.hire-extra em small { font-size: 11.5px; font-weight: 500; color: var(--muted); white-space: nowrap; }
 .hire-extra:has(input:checked) { box-shadow: inset 0 0 0 1.5px var(--ink); background: var(--card); }
 
 .hire-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }

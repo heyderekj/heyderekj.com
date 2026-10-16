@@ -4,7 +4,7 @@
  * priced by lib/estimate.ts (the same code the request function uses). Sends to /api/hire, then a
  * signed note from me. Answers are kept in this browser until they're sent.
  */
-import { clean, DEFAULTS, estimate, money, schedule, short, type Answers } from '../lib/estimate';
+import { clean, DEFAULTS, estimate, extraPrice, money, schedule, short, type Answers } from '../lib/estimate';
 import { EXTRAS, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 import { copyText, toast } from './toast';
 
@@ -91,6 +91,9 @@ if (form) {
 
   // ---- Painting the controls from the draft
   function paintForm() {
+    // Per-page extras follow the page count
+    const now = clean(draft);
+    for (const x of EXTRAS.filter((e) => e.perPage)) $$(`[data-extra-price="${x.id}"]`, form!).forEach((em) => { em.innerHTML = `+${money(extraPrice(x, now))}<small>$${x.price} × ${now.site?.pages ?? DEFAULTS.site.pages} pages</small>`; });
     $$<HTMLButtonElement>('[data-service]', form!).forEach((b) => {
       const id = b.dataset.service as ServiceId | 'unsure';
       b.setAttribute('aria-pressed', String(id === 'unsure' ? draft.unsure : draft.services.includes(id)));

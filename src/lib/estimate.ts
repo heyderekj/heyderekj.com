@@ -59,6 +59,11 @@ export function clean(raw: unknown): Answers {
   return a;
 }
 
+/** Pages an extra is priced on: the site's, as picked */
+const extraPages = (a: Answers) => a.site?.pages ?? DEFAULTS.site.pages;
+/** An extra's price for these answers: flat, or per page of the site */
+export const extraPrice = (x: (typeof EXTRAS)[number], a: Answers) => (x.perPage ? x.price * extraPages(a) : x.price);
+
 export function estimate(a: Answers): Estimate {
   const lines: Line[] = [];
   if (a.site) {
@@ -92,7 +97,7 @@ export function estimate(a: Answers): Estimate {
     lines.push({ title: { workflow: 'AI workflow', tool: 'AI tool', prototype: 'App prototype' }[a.ai.kind], desc: `${kind}, ${a.ai.size} in scope (about ${hrs} hours).${a.ai.size === 'large' ? ' Large ones get scoped together before a final number.' : ''}`, price: PRICES.ai[a.ai.size], step: 'ai' });
   }
   // Extras, under the service they belong to
-  for (const x of EXTRAS) if (a.extras?.includes(x.id)) lines.push({ title: x.name, desc: x.desc, price: x.price, step: x.service });
+  for (const x of EXTRAS) if (a.extras?.includes(x.id)) lines.push({ title: x.name, desc: x.perPage ? `${x.desc} ${extraPages(a)} pages at $${x.price} each.` : x.desc, price: extraPrice(x, a), step: x.service });
   // Starting right away moves other work around
   const rush = TIMELINE[a.timeline ?? 'flexible'].rush, core = lines.reduce((t, l) => t + l.price, 0);
   if (rush && core) lines.push({ title: 'Starting right away', desc: `A ${Math.round(rush * 100)}% rush, for moving other work around to begin within a few weeks.`, price: round50(core * rush), step: 'timing' });

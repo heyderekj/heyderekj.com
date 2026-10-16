@@ -98,8 +98,9 @@ export const EXAMPLES: Record<ServiceId, Example[]> = {
 };
 
 /** Things a project can include beyond the core, by service (drafts: change freely) */
-export const EXTRAS: { id: string; service: ServiceId; name: string; desc: string; price: number }[] = [
-  { id: 'site.copy', service: 'site', name: 'Help with the words', desc: 'Writing or editing the copy with you, page by page.', price: 800 },
+/** `perPage`: the price is for each page of the site (lib/estimate.ts extraPrice) */
+export const EXTRAS: { id: string; service: ServiceId; name: string; desc: string; price: number; perPage?: boolean }[] = [
+  { id: 'site.copy', service: 'site', name: 'Help with the words', desc: 'Writing or editing the copy with you, page by page.', price: 150, perPage: true },
   { id: 'site.move', service: 'site', name: 'Moving your content over', desc: 'Posts, listings or pages from your current site.', price: 400 },
   { id: 'site.seo', service: 'site', name: 'Search and analytics', desc: 'Titles, redirects, a sitemap and analytics, set up.', price: 300 },
   { id: 'logo.kit', service: 'logo', name: 'Social and icon kit', desc: 'Avatars, a favicon and app icons from the new logo.', price: 200 },
