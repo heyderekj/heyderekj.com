@@ -55,6 +55,8 @@ const defaultDesc =
   'Agentic design engineer, still making sites full-time. Writing on faith and technology.';
 const postDescription = d.description ?? defaultDesc;
 const postUrl = new URL(postHref(post), `${siteOrigin}/`).toString();
+/** Its share card, drawn at build time (pages/og/[...slug].png.ts) */
+const ogImage = `/og/posts/${post.slug}.png`;
 const published = d.date.toISOString();
 const modified = revisions.updated?.toISOString();
 const postJsonLd = {
@@ -69,6 +71,7 @@ const postJsonLd = {
   publisher: { '@type': 'Person', '@id': schemaPersonId(siteOrigin), name: 'Derek Castelli' },
   ...(d.type === 'link' && d.link ? { isBasedOn: d.link } : {}),
   ...(d.tags.length ? { keywords: d.tags.join(', ') } : {}),
+  image: new URL(ogImage, `${siteOrigin}/`).toString(),
 };
 
 const fmtDate = (date: Date) =>
@@ -83,6 +86,7 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
   articleModifiedTime={modified}
   jsonLd={postJsonLd}
   canonical={postUrl}
+  ogImage={ogImage}
   bar={{ kind: 'essay', title, figures, newer: barLink(newer), older: barLink(older) }}
 >
   <article class={`essay post post--${d.type}`} data-bar-progress data-select>

@@ -40,10 +40,10 @@ const postJsonLd = {
   author: { '@type': 'Person', '@id': schemaPersonId(siteOrigin), name: 'Derek Castelli' },
   publisher: { '@type': 'Person', '@id': schemaPersonId(siteOrigin), name: 'Derek Castelli' },
   ...(industryOrTags.length ? { keywords: industryOrTags.join(', ') } : {}),
-  ...(d.thumbnail ? { image: new URL(d.thumbnail.replace(/\.webp$/i, '.png'), `${siteOrigin}/`).toString() } : {}),
+  image: new URL(`/og/work/${post.slug}.png`, `${siteOrigin}/`).toString(),
 };
-/** Open Graph wants PNG; site thumbs are often WebP. Prefer the thumbnail's sibling `.png`. */
-const ogImage = d.thumbnail?.startsWith('/') ? d.thumbnail.replace(/\.webp$/i, '.png') : '/derekj-og.png';
+/** Its share card, drawn at build time (pages/og/[...slug].png.ts) */
+const ogImage = `/og/work/${post.slug}.png`;
 
 // Newer and older write-ups, by when the work was done
 const all = (await getPublishedWork()).sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf());
