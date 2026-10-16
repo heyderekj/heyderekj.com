@@ -42,7 +42,7 @@ if (box && thread && slash && prompts && form && input) {
     choices.forEach((el, n) => {
       const letter = String.fromCharCode(65 + n), k = document.createElement('kbd');
       k.className = 'lost__key'; k.textContent = letter; k.setAttribute('aria-hidden', 'true');
-      (el.querySelector('b') ?? el).prepend(k); el.setAttribute('aria-keyshortcuts', letter);
+      el.prepend(k); el.setAttribute('aria-keyshortcuts', letter);
       keyed.set(letter, el);
     });
   }
@@ -79,7 +79,7 @@ if (box && thread && slash && prompts && form && input) {
   // I "type" for a moment before each reply, longer for longer messages
   async function say(html: string, extra?: () => void) {
     if (lastStatus) lastStatus.textContent = 'Read';
-    const t = document.createElement('p'); t.className = 'lost__msg is-me lost__typing';
+    const t = document.createElement('p'); t.className = 'lost__msg is-me lost__typing is-mine';
     t.innerHTML = `<img class="lost__face sq" src="${photo}" alt="" /><span class="lost__bubble" aria-label="Derek is typing"><i></i><i></i><i></i></span>`;
     thread!.append(t); scroll(); box!.classList.add('is-thinking');
     await wait(Math.min(1300, 450 + html.replace(/<[^>]+>/g, '').length * 12));
@@ -212,7 +212,7 @@ if (box && thread && slash && prompts && form && input) {
 
   async function reply(v: string) { await answer(v); if (!noting && prompts!.hidden && !thread!.querySelector('.lost__follow')) offer(); }
   thread.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest('.lost__follow button'); if (b) reply(textOf(b)); });
-  prompts.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('[data-ask]'); if (b) reply(textOf(b.querySelector('b') ?? b) || b.dataset.ask!); });
+  prompts.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('[data-ask]'); if (b) reply(b.querySelector('b')?.textContent?.trim() || b.dataset.ask!); });
 
   // ---- Slash shortcuts: type / for a little menu above the field (arrows and Enter, or click)
   const SHORTCUTS = [

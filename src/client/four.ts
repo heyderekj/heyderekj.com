@@ -1,7 +1,7 @@
 /**
  * Easter egg on the 404 (pages/404.astro): "Shall we play a game?" The 404's dots fall away and the
  * grid becomes a Connect Four board, with chips rendered in Blender (scripts/four-chips). You're
- * orange; ink is one of the animals, picked at random each game, each playing (and talking) their own
+ * orange; the other colour is one of the animals, picked at random each game, each playing (and talking) their own
  * way. Win a round and the level goes up and they get sharper; lose once and it's game over, and you
  * can make a card of it to share (client/four-card.ts).
  * Start it with the button, `four:start`, or /play in the chat.
@@ -86,6 +86,7 @@ if (game && grid404 && head) {
     foe = pick(pool.length ? pool : FOES);
     try { localStorage.setItem('hdj:four:foe', foe.name); } catch {}
     game!.style.setProperty('--foe', foe.tone); game!.style.setProperty('--foe-ink', foe.toneInk ?? '#fff');
+    game!.style.setProperty('--foe-chip', `url(/images/four/chip-${foe.name.toLowerCase()}.webp)`); // their chip, in their colour
     whoEl.textContent = foe.name[0]; whoEl.setAttribute('aria-label', foe.name);
     $('.four__vs').textContent = foe.name;
   }

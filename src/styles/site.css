@@ -1004,19 +1004,20 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .lost__msg.is-you { align-self: flex-end; flex-direction: row-reverse; }
 .lost__msg.is-me:has(+ .lost__msg.is-me) .lost__face { visibility: hidden; } /* my photo only on the last of a run */
 .lost__face { --r: 8px; flex: none; width: 26px; height: 26px; object-fit: cover; }
-.lost__bubble { display: block; padding: 8px 13px; border-radius: 19px; font-size: 15px; line-height: 1.4; text-wrap: pretty; overflow-wrap: anywhere; }
-.is-me .lost__bubble { background: var(--me); color: var(--ink); border-bottom-left-radius: 6px; }
-.is-you .lost__bubble { background: var(--you); color: #fff; border-bottom-right-radius: 6px; }
+.lost__bubble { position: relative; display: block; padding: 8px 13px; border-radius: 18px; font-size: 15px; line-height: 1.4; text-wrap: pretty; overflow-wrap: anywhere; }
+.is-me .lost__bubble { background: var(--me); color: var(--ink); }
+.is-you .lost__bubble { background: var(--you); color: #fff; }
 .lost__bubble code { font: 13px/1.4 ui-monospace, SFMono-Regular, monospace; padding: 1px 5px; border-radius: 6px; background: color-mix(in oklch, var(--ink) 8%, transparent); }
 .lost__bubble a { color: inherit; text-underline-offset: 3px; }
 .lost__status { align-self: flex-end; margin: 2px 4px 6px; font-size: 11px; color: var(--muted); }
 /* Link cards in a reply */
 .lost__links { display: grid; gap: 6px; margin-left: 34px; max-width: min(380px, 80%); animation: lost-in 280ms var(--ease) both; }
-.lost__link { --r: 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 12px; padding: 9px 12px; text-decoration: none; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.lost__link { --r: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 2px 0; padding: 9px 12px; text-decoration: none; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
 .lost__link:hover { box-shadow: 0 0 0 1px var(--hair), var(--shadow); translate: 0 -1px; }
-.lost__link b { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lost__link small { grid-column: 1; font-size: 12px; color: var(--muted); }
-.lost__link .icon { grid-row: 1 / span 2; grid-column: 2; color: var(--muted); }
+.lost__link b { grid-column: 2; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lost__link small { grid-column: 2; font-size: 12px; color: var(--muted); }
+.lost__link .icon { grid-row: 1 / span 2; grid-column: 3; margin-left: 12px; color: var(--muted); }
+.lost__link .lost__key { grid-row: 1 / span 2; grid-column: 1; margin-right: 10px; }
 /* Typing dots */
 @keyframes lost-in { from { opacity: 0; translate: 0 6px; scale: 0.98; } }
 /* Quick replies and the message field */
@@ -1036,9 +1037,11 @@ body.site .lost__input input:focus-visible { outline: none; } /* the field shows
 /* Starter prompts, like an assistant's empty state (pages/404.astro) */
 .lost__prompts { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 6px 16px 2px; scroll-padding-inline: 16px; scroll-snap-type: x proximity; }
 .lost__prompts::-webkit-scrollbar { display: none; }
-.lost__prompt { --r: 12px; flex: 0 0 auto; max-width: 220px; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 8px; row-gap: 0; align-items: center; padding: 7px 12px 7px 10px; text-align: left; scroll-snap-align: start; background: var(--paper); box-shadow: 0 0 0 1px var(--hair); animation: lost-in 320ms var(--ease) both; transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.lost__prompt { --r: 12px; flex: 0 0 auto; max-width: 250px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 8px; row-gap: 0; align-items: center; padding: 7px 12px 7px 10px; text-align: left; scroll-snap-align: start; background: var(--paper); box-shadow: 0 0 0 1px var(--hair); animation: lost-in 320ms var(--ease) both; transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
 .lost__prompt:nth-child(2) { animation-delay: 60ms; } .lost__prompt:nth-child(3) { animation-delay: 120ms; } .lost__prompt:nth-child(4) { animation-delay: 180ms; } .lost__prompt:nth-child(5) { animation-delay: 240ms; }
-.lost__prompt .icon { grid-row: 1 / span 2; font-size: 15px; color: var(--you); }
+.lost__prompt .icon { grid-row: 1 / span 2; grid-column: 1; font-size: 15px; color: var(--you); }
+.lost__prompt b, .lost__prompt small { grid-column: 2; }
+.lost__prompt .lost__key { grid-row: 1 / span 2; grid-column: 3; margin: 0 0 0 2px; }
 .lost__prompt b { font-size: 13px; font-weight: 600; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lost__prompt small { font-size: 11.5px; color: var(--muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lost__prompt:hover { box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow); translate: 0 -1px; }
@@ -1113,11 +1116,11 @@ html.four-on .lost:hover, html.four-on .bar:hover { opacity: 1; filter: none; }
 body.site .four__col:focus-visible { outline: none; }
 .four__col i.you, .four__col i.me { box-shadow: 0 4px 10px -4px rgb(0 0 0 / 0.35); }
 .four__col i.you { background-color: transparent; background-image: url(/images/four/chip-orange.webp); }
-.four__col i.me { background-color: transparent; background-image: url(/images/four/chip-ink.webp); }
+.four__col i.me { background-color: transparent; background-image: var(--foe-chip, url(/images/four/chip-ink.webp)); }
 .four__col i.drop { animation: four-drop 420ms cubic-bezier(0.4, 0, 0.7, 1.35) both; }
 @keyframes four-drop { from { translate: 0 calc(var(--fall) * (-100% - var(--gap))); } }
 .four__col i.win { animation: four-win 700ms ease-in-out infinite alternate; outline: 3px solid currentColor; outline-offset: 3px; }
-.four__col i.you.win { color: var(--you); } .four__col i.me.win { color: var(--ink); }
+.four__col i.you.win { color: var(--you); } .four__col i.me.win { color: var(--foe, var(--ink)); }
 @keyframes four-win { to { scale: 0.88; } }
 .four__col i.wopr { background-color: color-mix(in srgb, var(--you) 45%, transparent); }
 /* What I say, and the score, under the board */
@@ -1155,16 +1158,20 @@ body.site .four__col:focus-visible { outline: none; }
 .lost__key { display: inline-grid; place-items: center; flex: none; min-width: 18px; height: 18px; margin-right: 7px; padding: 0 4px; border-radius: 5px; vertical-align: 1px; font: 600 10.5px var(--font); color: var(--muted); background: var(--card); box-shadow: inset 0 -1px 0 var(--hair), 0 0 0 1px var(--hair); }
 .lost__follow button .lost__key { margin-right: 0; }
 .lost__egg :is(button, a) .lost__key { color: var(--ink); margin-right: 5px; }
-/* Typing bubbles, as on Koati: three grey dots in a soft bubble with a tail, springing in.
-   Mine on the left while I write; yours on the right while you type (client/lost-chat.ts). */
-.lost__typing .lost__bubble { position: relative; display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.75rem 0.85rem; border-radius: 1.1rem; background: linear-gradient(rgb(247 247 248), rgb(234 234 237)); box-shadow: 0 0 0 1px rgb(217 217 221 / 0.7), 0 6px 16px -8px rgb(22 21 19 / 0.3); transform-origin: 0.6rem 100%; animation: lost-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-.lost__typing .lost__bubble::after { content: ''; position: absolute; bottom: 0; left: -0.2rem; width: 0.9rem; height: 0.9rem; clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%); background: radial-gradient(circle at 0 0, transparent 0.62rem, rgb(234 234 237) 0.64rem); border-bottom-right-radius: 0.5rem; }
+/* Tails, like Messages: the last bubble of each run curls into a tail on its side (the bubble's colour,
+   cut away with the chat's own card colour). Typing bubbles always have one. */
+.lost__msg.is-me:not(:has(+ .lost__msg.is-me)) .lost__bubble::before, .lost__typing.is-mine .lost__bubble::before { content: ''; position: absolute; bottom: 0; left: -7px; width: 20px; height: 20px; background: var(--me); border-bottom-right-radius: 16px 14px; }
+.lost__msg.is-me:not(:has(+ .lost__msg.is-me)) .lost__bubble::after, .lost__typing.is-mine .lost__bubble::after { content: ''; position: absolute; bottom: 0; left: -10px; width: 10px; height: 20px; background: var(--card); border-bottom-right-radius: 10px; }
+.lost__msg.is-you:not(:has(+ .lost__msg.is-you)) .lost__bubble::before, .lost__typing.is-yours .lost__bubble::before { content: ''; position: absolute; bottom: 0; right: -7px; width: 20px; height: 20px; background: var(--you); border-bottom-left-radius: 16px 14px; }
+.lost__msg.is-you:not(:has(+ .lost__msg.is-you)) .lost__bubble::after, .lost__typing.is-yours .lost__bubble::after { content: ''; position: absolute; bottom: 0; right: -10px; width: 10px; height: 20px; background: var(--card); border-bottom-left-radius: 10px; }
+.lost__bubble > * { position: relative; z-index: 1; }
+/* Typing bubbles, as on Koati: three dots that lift in turn, springing in. Mine grey, yours orange (client/lost-chat.ts) */
+.lost__typing .lost__bubble { display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.7rem 0.8rem; transform-origin: 0 100%; animation: lost-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 .lost__typing .lost__bubble i { width: 0.4rem; height: 0.4rem; border-radius: 999px; background: rgb(145 145 151); animation: lost-tdot 1s ease-in-out infinite; }
 .lost__typing .lost__bubble i:nth-child(2) { animation-delay: 0.15s; }
 .lost__typing .lost__bubble i:nth-child(3) { animation-delay: 0.3s; }
 @keyframes lost-tdot { 0%, 60%, 100% { opacity: 0.45; translate: 0 0; } 30% { opacity: 1; translate: 0 -0.2rem; } }
 @keyframes lost-pop { from { opacity: 0; scale: 0.4; } }
-.lost__typing.is-yours { align-self: flex-end; margin-top: 4px; }
-.lost__typing.is-yours .lost__bubble { transform-origin: calc(100% - 0.6rem) 100%; }
-.lost__typing.is-yours .lost__bubble::after { left: auto; right: -0.2rem; scale: -1 1; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lost__typing .lost__bubble { background: linear-gradient(#3a3835, #2f2d2a); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08); } :root:not([data-theme="light"]) .lost__typing .lost__bubble::after { background: radial-gradient(circle at 0 0, transparent 0.62rem, #2f2d2a 0.64rem); } }
+.lost__typing.is-yours { align-self: flex-end; margin: 4px 10px 0 0; }
+.lost__typing.is-yours .lost__bubble { background: var(--you); transform-origin: 100% 100%; }
+.lost__typing.is-yours .lost__bubble i { background: rgb(255 255 255 / 0.9); }

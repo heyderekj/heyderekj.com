@@ -1,7 +1,7 @@
 """
 Renders the 404 game's Connect Four chips (src/client/four.ts) in Blender:
   /Applications/Blender.app/Contents/MacOS/Blender -b -P scripts/four-chips/chips.py
-Writes public/images/four/chip-orange.png and chip-ink.png (512px, transparent; the site uses
+Writes public/images/four/chip-<name>.png for orange (you), ink, and each animal (512px, transparent; the site uses
 192px WebP copies of them), a checker seen
 face-on: a glossy plastic disc with a raised rim and two ridges inside, lit from the top left.
 """
@@ -57,7 +57,8 @@ world = bpy.data.worlds.new('w'); scene.world = world; world.use_nodes = True
 world.node_tree.nodes['Background'].inputs['Color'].default_value = (0.6, 0.6, 0.6, 1)
 world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.6
 
-for name, color in (('orange', '#ea580c'), ('ink', '#1c1b19')):
+# You, then the animals you can play (their badge colours, client/four.ts)
+for name, color in (('orange', '#ea580c'), ('ink', '#1c1b19'), ('leroy', '#f2cf3b'), ('irma', '#f9bb92'), ('kiya', '#009a9b'), ('lilo', '#8254c4')):
     bsdf.inputs['Base Color'].default_value = srgb(color)
     scene.render.filepath = os.path.join(OUT, f'chip-{name}.png')
     bpy.ops.render.render(write_still=True)

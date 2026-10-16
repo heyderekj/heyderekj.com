@@ -17,8 +17,9 @@ const THEMES: Record<Design, { bg: string; ink: string; muted: string; board: st
 };
 
 const root = document.querySelector<HTMLElement>('.four-card');
-const chips = { 1: new Image(), 2: new Image() } as Record<1 | 2, HTMLImageElement>;
-chips[1].src = '/images/four/chip-orange.webp'; chips[2].src = '/images/four/chip-ink.webp';
+// Your chip, and each animal's in their colour (loaded once, as needed)
+const chipImages = new Map<string, HTMLImageElement>();
+const chip = (name: string, onload?: () => void) => { let img = chipImages.get(name); if (!img) { img = new Image(); img.src = `/images/four/chip-${name}.webp`; chipImages.set(name, img); } if (onload && !img.complete) img.addEventListener('load', onload, { once: true }); return img; };
 
 let game: Game | null = null, design: Design = 'paper';
 let openCardImpl: (g: Game) => void = () => {};
@@ -54,8 +55,7 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
     const [x, y] = at(m.c, m.r), last = n === shown.length - 1 && fall < 1;
     const yy = last ? by + pad - hole + (y - (by + pad - hole)) * easeOutBounce(fall) : y;
     if (design === 'orange' && m.who === 1) { ctx.fillStyle = 'rgba(255,247,239,0.9)'; ctx.beginPath(); ctx.arc(x + hole / 2, yy + hole / 2, hole / 2 + 3, 0, 7); ctx.fill(); }
-    if (design !== 'paper' && m.who === 2) { ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.beginPath(); ctx.arc(x + hole / 2, yy + hole / 2, hole / 2 + 2, 0, 7); ctx.fill(); }
-    ctx.drawImage(chips[m.who], x, yy, hole, hole);
+    ctx.drawImage(chip(m.who === 1 ? 'orange' : g.foe.toLowerCase()), x, yy, hole, hole);
   });
   // Their winning four, ringed
   if (flash && upto >= g.moves.length && g.run.length) {
@@ -97,7 +97,6 @@ if (root) {
   const pad = root.querySelector<HTMLCanvasElement>('.four-card__pad canvas')!;
   const status = root.querySelector<HTMLElement>('.four-card__status')!;
   const render = () => { if (game) draw(pctx, game); };
-  [chips[1], chips[2]].forEach((img) => img.addEventListener('load', render));
 
   // Designs
   root.querySelectorAll<HTMLButtonElement>('[data-design]').forEach((b) => b.addEventListener('click', () => {
@@ -158,6 +157,7 @@ if (root) {
   // Called by the game when you ask for a card
   openCardImpl = (g) => {
     game = g; root.hidden = false; status.textContent = '';
+    chip('orange', render); chip(g.foe.toLowerCase(), render);
     requestAnimationFrame(() => { sizePad(); render(); root.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); });
   };
 }
