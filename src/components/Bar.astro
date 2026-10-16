@@ -25,7 +25,7 @@ const nav = [
     <div class="bar__menu" id="barMenu" hidden>
       {figures.length > 0 && (
         <div class="bar__group">
-          <span class="bar__lbl">In this essay</span>
+          <span class="bar__lbl">In this post</span>
           <div class="bar__figs">{figures.map((f) => <a class="bar__fig" href={`#${f.id}`}><b>{f.no}</b> {f.title}</a>)}</div>
           <span class="bar__hls" id="barHls" hidden></span>
         </div>
@@ -54,7 +54,7 @@ const nav = [
     )}
     <span class="bar__sep" aria-hidden="true"></span>
     <button class="bar__find" id="barFind" aria-label="Search" aria-keyshortcuts="/"><Icon name="search" loop={false} /><kbd>/</kbd></button>
-    <label class="bar__input"><Icon name="search" loop={false} /><input id="barInput" type="search" placeholder="Find an essay, a site or an app" autocomplete="off" aria-controls="barResults" /><button class="bar__close" id="barClose" aria-label="Close search"><kbd>esc</kbd></button></label>
+    <label class="bar__input"><Icon name="search" loop={false} /><input id="barInput" type="search" placeholder="Find a post, a site or an app" autocomplete="off" aria-controls="barResults" /><button class="bar__close" id="barClose" aria-label="Close search"><kbd>esc</kbd></button></label>
   </div>
   {context.kind === 'essay' && <span class="bar__progress" aria-hidden="true"><i id="barProg"></i></span>}
 </nav>

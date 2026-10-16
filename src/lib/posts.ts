@@ -9,7 +9,7 @@ export type Post = CollectionEntry<'posts'>;
 export type PostType = Post['data']['type'];
 
 export const TYPE_LABELS: Record<PostType, { one: string; many: string; path: string }> = {
-  essay: { one: 'Essay', many: 'Essays', path: 'essays' },
+  essay: { one: 'Post', many: 'Posts', path: 'essays' },
   note: { one: 'Note', many: 'Notes', path: 'notes' },
   link: { one: 'Link', many: 'Links', path: 'links' },
 };

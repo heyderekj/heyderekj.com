@@ -11,7 +11,7 @@ import { imgSrc } from '../lib/img';
 
 // Where to start, like an assistant's empty state (the reply each one sends is `ask`)
 const PROMPTS = [
-  { icon: 'writing', q: 'What have you written?', d: 'The newest essays', ask: 'Latest writing' },
+  { icon: 'writing', q: 'What have you written?', d: 'The newest posts', ask: 'Latest writing' },
   { icon: 'work', q: 'What have you built?', d: 'Sites, solo and with studios', ask: 'Work' },
   { icon: 'projects', q: 'Show me your apps', d: 'And side projects', ask: 'Projects' },
   { icon: 'about', q: 'Who are you?', d: 'The short story', ask: 'About' },
@@ -43,7 +43,7 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
         <div class="four__board" role="group" aria-label="Board: pick a column"></div>
         <template id="fourPaw"><Icon name="paw" loop={false} /></template>
         <div class="four__bar">
-          <p class="four__say" aria-live="polite"><span class="four__who sq" role="img"></span><span class="four__line"></span></p>
+          <p class="four__say" aria-live="polite"><span class="four__who sq" role="img"></span><span class="four__text"><b class="four__name"></b><span class="four__line"></span></span></p>
           <p class="four__tally">Level <b data-four="level">1</b> · <b data-four="score">0</b> pts · best <b data-four="best">0</b></p>
         </div>
         <div class="four__controls">

@@ -1131,9 +1131,12 @@ body.site .four__col:focus-visible { outline: none; }
 .four__col i.wopr { background-color: color-mix(in srgb, var(--you) 45%, transparent); }
 /* What I say, and the score, under the board */
 .four__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; }
-.four__say { display: flex; align-items: center; gap: 8px; margin: 0; min-height: 28px; font-size: 15.5px; color: var(--ink-soft); }
+.four__say { display: flex; align-items: center; gap: 10px; margin: 0; min-height: 34px; font-size: 15.5px; color: var(--ink-soft); }
 .four__who { --r: 9px; flex: none; width: 30px; height: 30px; background: var(--foe, var(--ink)) center / cover no-repeat; box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px var(--foe, var(--ink)); }
-.four__say.is-new span { animation: lost-in 260ms var(--ease) both; }
+.four__say.is-new .four__line { animation: lost-in 260ms var(--ease) both; }
+/* Who's talking, like a name over a message: small, bold, in their colour (darkened so Irma's peach reads) */
+.four__text { display: grid; min-width: 0; line-height: 1.35; }
+.four__name { font-size: 12px; font-weight: 650; letter-spacing: 0.01em; color: color-mix(in oklch, var(--foe, var(--ink)) 70%, var(--ink)); }
 .four__tally { margin: 0; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .four__tally b { color: var(--ink); font-weight: 600; }
 /* The faces you can play: whoever's up in colour with their ring, the rest quiet until you hover */

@@ -166,7 +166,7 @@ if (box && thread && slash && prompts && form && input) {
     if (/^(clear|reset)$/.test(cmd)) { thread!.innerHTML = ''; lastStatus = null; lastAsk = ''; return intro(); }
     if (/^(latest writing|writing|latest|essays|blog|posts)$/.test(cmd)) {
       const all = await load();
-      return say('Here’s what I wrote most recently:', () => links(all.filter((i) => i.k === 'Essay').slice(0, 3).map(card).concat({ t: 'Everything I’ve written', h: '/', sub: 'Home' })));
+      return say('Here’s what I wrote most recently:', () => links(all.filter((i) => i.k === 'Post').slice(0, 3).map(card).concat({ t: 'Everything I’ve written', h: '/', sub: 'Home' })));
     }
     if (/^(work|sites|websites|portfolio)$/.test(cmd)) {
       return say('The sites I’ve designed and built, on my own and with studios:', () => links([{ t: 'Sites', h: '/work/', sub: 'Work' }]));

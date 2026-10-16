@@ -88,14 +88,11 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
     ctx.restore();
     ctx.strokeStyle = ring; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(cx, cy, r + 8, 0, 7); ctx.stroke();
     const tx = align === 'left' ? cx + r + 30 : cx - r - 30, room = W / 2 - 50 - (align === 'left' ? tx : W - tx);
-    ctx.textAlign = align;
-    // The caption as a small mono label over the name, like the heading's; the name big and bold under it
-    ctx.fillStyle = t.muted; ctx.font = `600 19px ${mono}`; ctx.letterSpacing = '3px';
-    ctx.fillText(tag.toUpperCase(), tx + (align === 'right' ? 3 : 0), cy - 22); ctx.letterSpacing = '0px';
-    ctx.fillStyle = t.ink;
-    let size = 52; do { ctx.font = `700 ${size}px ${sans}`; } while (ctx.measureText(name).width > room && (size -= 2) > 28);
+    ctx.textAlign = align; ctx.fillStyle = t.ink;
+    let size = 46; do { ctx.font = `700 ${size}px ${sans}`; } while (ctx.measureText(name).width > room && (size -= 2) > 26);
     let n = name; while (ctx.measureText(n).width > room && n.length > 1) n = n.slice(0, -2) + '…';
-    ctx.fillText(n, tx, cy + 34);
+    ctx.fillText(n, tx, cy + 4);
+    ctx.fillStyle = t.muted; ctx.font = `500 24px ${sans}`; ctx.fillText(tag, tx, cy + 42);
     ctx.textAlign = 'left';
   };
   const mine = design === 'orange' ? t.ink : '#ea580c';

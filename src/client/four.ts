@@ -97,10 +97,12 @@ if (game && grid404 && head) {
     game!.style.setProperty('--foe', foe.tone); game!.style.setProperty('--foe-ink', foe.toneInk ?? '#fff');
     game!.style.setProperty('--foe-chip', `url(/images/four/chip-${foe.name.toLowerCase()}.webp)`); // their chip, in their colour
     whoEl.style.backgroundImage = `url(/images/four/pet-${foe.name.toLowerCase()}-sm.webp)`; whoEl.setAttribute('aria-label', foe.name); // their face, ringed in their colour
+    $('.four__name').textContent = foe.name;
     foesEl.querySelectorAll<HTMLElement>('[data-foe]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.foe === foe.name)));
   }
   const LINES = { get start() { return foe.lines.start; }, level: (l: number) => foe.lines.level(l), get mine() { return foe.lines.mine; }, get block() { return foe.lines.block; }, get youWin() { return foe.lines.youWin; }, get iWin() { return foe.lines.iWin; }, get draw() { return foe.lines.draw; } };
-  const talk = (t: string) => { say.textContent = t; say.parentElement!.classList.remove('is-new'); void say.offsetWidth; say.parentElement!.classList.add('is-new'); };
+  const sayEl = say.closest<HTMLElement>('.four__say')!;
+  const talk = (t: string) => { say.textContent = t; sayEl.classList.remove('is-new'); void say.offsetWidth; sayEl.classList.add('is-new'); };
 
   // ---- Sound: tiny synth blips (Web Audio, resumed on the first click)
   let ac: AudioContext | null = null, sound = true;

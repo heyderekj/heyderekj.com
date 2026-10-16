@@ -60,14 +60,14 @@ if (bar) {
       ? all.filter((x) => words.every((w) => x.s.includes(w)))
         .sort((a, b) => Number(b.t.toLowerCase().includes(q)) - Number(a.t.toLowerCase().includes(q)))
         .slice(0, 8)
-      : all.filter((x) => x.k === 'Essay').slice(0, 5);
+      : all.filter((x) => x.k === 'Post').slice(0, 5);
     sel = 0;
     const mark = (t: string) => {
       let out = esc(t);
       for (const w of words) out = out.replace(new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'ig'), (m) => `<mark>${m}</mark>`);
       return out;
     };
-    results.innerHTML = (q ? '' : '<div class="bar__lbl bar__lbl--pad">Latest essays</div>')
+    results.innerHTML = (q ? '' : '<div class="bar__lbl bar__lbl--pad">Latest posts</div>')
       + (hits.length
         ? hits.map((x, i) => `<a class="bar__hit" role="option" id="hit-${i}" aria-selected="${i === sel}" href="${esc(x.h)}" ${x.x ? 'target="_blank" rel="noopener"' : ''}><span class="bar__kind">${x.k}</span><span class="bar__t">${mark(x.t)}</span><span class="bar__y">${x.y}</span></a>`).join('')
         : `<div class="bar__none">Nothing matches “${esc(input.value.trim())}”.</div>`);
@@ -127,7 +127,7 @@ if (bar) {
   document.addEventListener('bar:label', (e) => { text.textContent = (e as CustomEvent<string>).detail; });
   document.addEventListener('bar:highlights', (e) => {
     const n = (e as CustomEvent<number>).detail, el = document.getElementById('barHls');
-    if (el) { el.hidden = !n; el.textContent = `${n} highlight${n === 1 ? '' : 's'} kept on this essay`; }
+    if (el) { el.hidden = !n; el.textContent = `${n} highlight${n === 1 ? '' : 's'} kept on this post`; }
   });
 
   // ---- Reading progress on an essay
