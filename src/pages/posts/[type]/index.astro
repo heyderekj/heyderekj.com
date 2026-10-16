@@ -32,7 +32,7 @@ const label = TYPE_LABELS[type];
   <main class="home">
     <PageHead title={label.many} meta={`Writing · ${entries.length}`}><Fragment slot="lede">{INTROS[type]}</Fragment></PageHead>
     <div class="work-chips">
-      <a class="wchip sq" href="/#writing">Everything <span>{all.length}</span></a>
+      <a class="wchip sq" href="/#writing">All <span>{all.length}</span></a>
       {(Object.keys(TYPE_LABELS) as PostType[]).filter((k) => counts[k]).map((k) => (
         <a class:list={['wchip sq', k === type && 'is-current']} href={typeHref(k)} aria-current={k === type ? 'page' : undefined}>{TYPE_LABELS[k].many} <span>{counts[k]}</span></a>
       ))}

@@ -21,12 +21,12 @@ const rows = [...work].sort((a, b) => workDate(b).valueOf() - workDate(a).valueO
 });
 const years = [...new Set(rows.map((r) => r.year))];
 ---
-<div class="work-chips">
-  <a class:list={['wchip sq', !active && 'is-current']} href="/work/" aria-current={!active ? 'page' : undefined}>Everything <span>{all.length}</span></a>
+<nav class="work-chips" aria-label="Filter by studio">
+  <a class:list={['wchip sq', !active && 'is-current']} href="/work/" aria-current={!active ? 'page' : undefined}>All <span>{all.length}</span></a>
   {partners.map((p) => (
-    <a class:list={['wchip sq', active === p.slug && 'is-current']} href={partnerHref(p.name)} aria-current={active === p.slug ? 'page' : undefined}>With {p.name} <span>{p.count}</span></a>
+    <a class:list={['wchip sq', active === p.slug && 'is-current']} href={partnerHref(p.name)} aria-current={active === p.slug ? 'page' : undefined}>{p.name} <span>{p.count}</span></a>
   ))}
-</div>
+</nav>
 <div class="list">
   {years.map((y) => (
     <section class="list__year">

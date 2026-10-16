@@ -6,7 +6,7 @@ interface Props { counts: Record<LibraryKind, number>; total: number; active?: L
 const { counts, total, active } = Astro.props;
 ---
 <div class="work-chips">
-  <a class:list={['wchip sq', !active && 'is-current']} href="/library/" aria-current={!active ? 'page' : undefined}>Everything <span>{total}</span></a>
+  <a class:list={['wchip sq', !active && 'is-current']} href="/library/" aria-current={!active ? 'page' : undefined}>All <span>{total}</span></a>
   {KINDS.filter((k) => counts[k]).map((k) => (
     <a class:list={['wchip sq', active === k && 'is-current']} href={kindHref(k)} aria-current={active === k ? 'page' : undefined}>{KIND_META[k].many} <span>{counts[k]}</span></a>
   ))}
