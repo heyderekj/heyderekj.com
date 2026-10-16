@@ -86,7 +86,7 @@ export function estimate(a: Answers): Estimate {
     const n = Number(a.rebrand.sprints), core = a.rebrand.has === 'keepLogo' ? 'type, color and a short guide around the logo you have' : 'a logo, type, color and a short guide';
     lines.push({
       title: `Brand sprint${n > 1 ? 's' : ''} × ${n}`,
-      desc: `A week each. The first gets ${core}, like CrowdHealth’s.${n > 1 ? ' The second puts it to work: templates, social and a fuller guide.' : ''}${n > 2 ? ' The third leaves room for more directions and more of it in use.' : ''}`,
+      desc: `A week each. The first gets ${core}.${n > 1 ? ' The second puts it to work: templates, social and a fuller guide.' : ''}${n > 2 ? ' The third leaves room for more directions and more of it in use.' : ''}`,
       price: n * PRICES.rebrand.sprint, step: 'rebrand',
     });
   }

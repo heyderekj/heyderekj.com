@@ -39,7 +39,7 @@ export const PRICES = {
   logo: { new: { wordmark: 400, mark: 600, both: 800 }, refresh: 250 },
   /**
    * Rebrands are brand sprints: a week of my freelance hours (20 × $100) on the brand. One sprint is the
-   * core identity: logo, type, color and a short guide, like CrowdHealth, which took a few days. More
+   * core identity: logo, type, color and a short guide (my CrowdHealth concept took a few days). More
    * sprints put it to work (templates, social, a fuller guide) and leave room for more directions.
    */
   rebrand: { sprint: 2000 },
