@@ -217,7 +217,9 @@ body.site .four__col:focus-visible { outline: none; }
 /* The card maker (client/four-card.ts) */
 .four-card { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr); gap: 22px; align-items: start; padding: 16px; border-radius: 24px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); color: var(--ink); animation: lost-in 320ms var(--ease) both; }
 .four-card__preview canvas { display: block; width: 100%; height: auto; border-radius: 14px; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
-.four-card__tools { display: grid; gap: 14px; align-content: start; }
+/* The tools sit in the middle of the card's height, Done stays up in the corner */
+.four-card__tools { position: relative; align-self: stretch; display: grid; gap: 14px; align-content: center; }
+.four-card__head button { position: absolute; top: 0; right: 0; }
 /* The look on one row: a segmented control of layout sketches, then the colour swatches. Every target is
    44px or more, for thumbs */
 .four-card__look { display: flex; align-items: center; gap: 12px; }
