@@ -1,5 +1,5 @@
 /**
- * Prebuild: the apps live at testamentmade.com now, so every old /projects/ URL redirects there —
+ * Prebuild: the apps live at testamentmade.com now, so every old /projects/<slug>/ URL redirects there —
  * to the app's own site when it has one. Rewrites the block between the markers in
  * public/_redirects from src/content/projects/*.md, so new projects are covered automatically.
  */
@@ -21,14 +21,15 @@ for (const f of fs.readdirSync(dir).filter((f) => /\.mdx?$/.test(f)).sort()) {
   const to = field(fm, 'url') || HOME;
   lines.push(`/projects/${slug} ${to} 301`, `/projects/${slug}/* ${to} 301`);
 }
-lines.push(`/projects ${HOME} 301`, `/projects/* ${HOME} 301`);
+// /projects/ itself is a page again (src/pages/projects/index.astro)
 
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const block = [START, ...lines, END].join('\n');
 let text = fs.readFileSync(file, 'utf8');
 // Older per-project redirects pointed at the retired /projects/ archive
 text = text.split('\n').filter((l) => !/^\/projects\/\S+ \/projects\/#archive 301$/.test(l)).join('\n');
 text = text.includes(START)
-  ? text.replace(new RegExp(`${START}[\\s\\S]*?${END}`), block)
+  ? text.replace(new RegExp(`${esc(START)}[\\s\\S]*?${esc(END)}`), () => block)
   : `${text.trimEnd()}\n${block}\n`;
 fs.writeFileSync(file, text);
-console.log(`[redirects] ${lines.length / 2 - 1} projects → testamentmade.com`);
+console.log(`[redirects] ${lines.length / 2} projects → testamentmade.com`);

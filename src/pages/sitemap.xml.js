@@ -16,6 +16,7 @@ export async function GET(context) {
     '/topics/',
     ...topicPaths,
     '/work/',
+    '/projects/',
     ...partnersOf(work).map((p) => partnerHref(p.name)),
     '/about/',
     '/colophon/',

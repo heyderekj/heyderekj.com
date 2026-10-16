@@ -670,3 +670,72 @@ html.load-in .bar { animation: deck-fade 360ms var(--ease) 150ms both; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
   html.load-in :is(main.home, article.essay, .legacy-col > .main) > *, html.load-in .bar { animation: none !important; }
 }
+
+/* ---------- Projects: Testament Made now, then the periodic table ---------- */
+.tmnow { --r: 20px; margin-top: 40px; padding: 20px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.tmnow__head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px; }
+.tmnow__head h2 { margin: 0; font-size: 17px; line-height: 1.25; font-weight: 700; letter-spacing: -0.015em; }
+.tmnow__head p { margin: 2px 0 0; font-size: 14px; color: var(--muted); }
+.tmnow__mark { display: grid; grid-template-columns: repeat(3, 12px); gap: 4px; }
+.tmnow__mark i { width: 12px; height: 12px; border-radius: 30%; background: var(--c); transition: opacity var(--t-ui) var(--ease), scale var(--t-ui) var(--ease); }
+.tmnow__mark.is-pointing i:not(.is-on) { opacity: 0.22; }
+.tmnow__mark i.is-on { scale: 1.25; }
+.tmnow__out { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); text-decoration: none; white-space: nowrap; transition: color var(--t-ui) var(--ease); }
+.tmnow__out:hover { color: var(--ink); }
+.tmnow__apps { list-style: none; margin: 18px -8px -8px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
+.tmnow__apps a { --r: 12px; display: flex; align-items: center; gap: 11px; padding: 8px; border-radius: var(--r); text-decoration: none; transition: background var(--t-ui) var(--ease); }
+@supports (corner-shape: squircle) { .tmnow__apps a { corner-shape: squircle; border-radius: calc(var(--r) * 1.7); } }
+.tmnow__apps a:hover, .tmnow__apps a:focus-visible { background: color-mix(in oklch, var(--c) 10%, transparent); }
+.tmnow__apps img { --r: 10px; flex: none; width: 40px; height: 40px; box-shadow: 0 0 0 0.5px var(--hair); transition: transform var(--t-ui) var(--ease); }
+.tmnow__apps a:hover img { transform: rotate(-4deg) scale(1.06); }
+.tmnow__apps span { min-width: 0; display: grid; }
+.tmnow__apps b { font-size: 14.5px; font-weight: 600; }
+.tmnow__apps small { font-size: 12.5px; line-height: 1.35; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.pt-fams { margin-top: 4px; }
+.pt-dot { width: 7px; height: 7px; border-radius: 30%; background: var(--fam); margin-right: 3px; }
+.pt--blog { --fam: oklch(0.72 0.13 70); }
+.pt--app { --fam: oklch(0.62 0.15 255); }
+.pt--shop { --fam: oklch(0.64 0.15 0); }
+.pt--media { --fam: oklch(0.64 0.12 160); }
+.pt--other { --fam: oklch(0.6 0.13 300); }
+
+.pt { margin-top: 28px; display: grid; gap: 8px; }
+.pt__period { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 8px 10px; align-items: start; }
+.pt__year { padding-top: 8px; font-size: 12px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pt__row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.pt__period.is-quiet { align-items: center; }
+.pt__period.is-quiet .pt__year { padding: 0; color: color-mix(in srgb, var(--muted) 45%, transparent); font-weight: 500; }
+.pt__gap { height: 1px; background: repeating-linear-gradient(90deg, var(--hair) 0 4px, transparent 4px 8px); }
+
+.pt__el { --r: 12px; position: relative; aspect-ratio: 5 / 4; display: grid; grid-template-rows: auto 1fr auto auto; padding: 9px 10px 10px; text-align: left; font: inherit; color: var(--ink); cursor: pointer; background: color-mix(in oklch, var(--fam) 13%, var(--card)); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--fam) 24%, transparent); transition: transform var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease), opacity 260ms var(--ease), filter 260ms var(--ease); animation: pt-in 520ms var(--ease) both; animation-delay: calc(var(--d) * 22ms); }
+.pt__el:hover { transform: translateY(-2px); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--fam) 40%, transparent), var(--shadow); }
+.pt__el[aria-expanded=true] { transform: translateY(-2px); box-shadow: inset 0 0 0 2px var(--fam), var(--shadow-lift); }
+.pt__no { font-size: 11px; font-weight: 600; color: color-mix(in oklch, var(--fam) 55%, var(--ink)); font-variant-numeric: tabular-nums; }
+.pt__sym { align-self: center; font-size: clamp(24px, 6vw, 38px); line-height: 1; font-weight: 700; letter-spacing: -0.04em; color: color-mix(in oklch, var(--fam) 45%, var(--ink)); transition: scale var(--t-ui) var(--ease); transform-origin: left center; }
+.pt__el:hover .pt__sym, .pt__el[aria-expanded=true] .pt__sym { scale: 1.06; }
+.pt__name { font-size: 12.5px; font-weight: 600; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pt__kind { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@keyframes pt-in { from { opacity: 0; translate: 0 8px; scale: 0.96; } }
+
+.pt[data-fam=blog] .pt__el:not(.pt--blog), .pt[data-fam=app] .pt__el:not(.pt--app), .pt[data-fam=shop] .pt__el:not(.pt--shop), .pt[data-fam=media] .pt__el:not(.pt--media), .pt[data-fam=other] .pt__el:not(.pt--other) { opacity: 0.25; filter: grayscale(1); }
+
+.pt__note { grid-column: 2; --r: 12px; padding: 12px 14px; border-radius: var(--r); background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); font-size: 14px; animation: deck-rise 260ms var(--ease) both; }
+@supports (corner-shape: squircle) { .pt__note { corner-shape: squircle; border-radius: calc(var(--r) * 1.7); } }
+.pt__note b { font-weight: 600; }
+.pt__note span { color: var(--muted); font-size: 12.5px; margin-left: 4px; }
+.pt__note p { margin: 4px 0 0; line-height: 1.55; color: var(--ink-soft); text-wrap: pretty; }
+
+@media (max-width: 560px) {
+  .tmnow { padding: 16px; }
+  .tmnow__head { grid-template-columns: auto minmax(0, 1fr); }
+  .tmnow__out { grid-column: 1 / -1; }
+  .tmnow__apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tmnow__apps small { display: none; }
+  .pt__period { grid-template-columns: 34px minmax(0, 1fr); gap: 6px; }
+  .pt__row { gap: 6px; }
+  .pt__el { padding: 7px; aspect-ratio: 1; }
+  .pt__name, .pt__kind { display: none; }
+  .pt__el { grid-template-rows: auto 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .pt__el, .pt__note { animation: none; } }
