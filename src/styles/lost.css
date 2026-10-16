@@ -339,9 +339,9 @@ html.four-locked .lost-head__line { opacity: 0.45; }
    the record under it), then the two settings side by side */
 .four__foes { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
 .four__foes .four__any { grid-column: auto; }
-.four__foes button { flex-direction: column; gap: 6px; padding: 8px 4px 10px; text-align: center; }
+.four__foes button { flex-direction: column; gap: 4px; padding: 6px 4px 7px; font-size: 13.5px; text-align: center; }
 .four__foes button > span { justify-items: center; text-align: center; }
-.four__foes button i { width: min(60px, 100%); height: auto; aspect-ratio: 1; --r: 14px; }
-.four__foes .four__any i { font-size: 20px; }
+.four__foes button i { width: min(44px, 100%); height: auto; aspect-ratio: 1; --r: 11px; }
+.four__foes .four__any i { font-size: 17px; }
 .four__any small { display: none; }
 .four__sets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
