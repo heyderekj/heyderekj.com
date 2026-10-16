@@ -51,7 +51,7 @@ if (game && grid404 && head) {
     { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
       name: 'Leroy', kind: 'cat', tone: 'oklch(0.56 0.19 18)', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
       lines: {
-        idle: ['I’m already thinking my next move.'], // when you've been thinking a while
+        idle: ['I already have my next move.'], // when you've been thinking a while
         stop: ['Leaving? I’ll be right here.', 'Smart. Quit while you’re ahead.'],
         start: ['Shall we play? Take your time. I will.'],
         level: (l) => [`Level ${l}. I have all day.`, `Level ${l}. Slow and steady.`, `Level ${l}. I’m not going anywhere.`],
