@@ -97,12 +97,14 @@ export async function getApps(): Promise<Project[]> {
   return APP_ORDER.map((slug) => all.find((p) => p.slug === slug)).filter((p): p is Project => Boolean(p));
 }
 
-/** An app is one page: three of its screenshot cards collaged on its mesh, with its icon. */
+/** An app opens on a cover (three of its screenshot cards collaged on its mesh, with its icon),
+ *  then each shot on its own, to look closer. */
 async function appPages(p: Project): Promise<DeckPage[]> {
   const d = p.data;
-  const imgs = [d.image, d.hero, ...(d.media ?? []).filter((m) => m.type === 'image').map((m) => m.src)]
-    .filter((s): s is string => Boolean(s));
-  return [{ mesh: p.slug, icon: d.icon ? shot(d.icon, 320) : '', collage: [...new Set(imgs)].slice(0, 3).map((s) => shot(s, 960)) }];
+  const imgs = [...new Set([d.image, d.hero, ...(d.media ?? []).filter((m) => m.type === 'image').map((m) => m.src)]
+    .filter((s): s is string => Boolean(s)))].slice(0, 6);
+  const cover = { mesh: p.slug, icon: d.icon ? shot(d.icon, 320) : '', collage: imgs.slice(0, 3).map((s) => shot(s, 960)) };
+  return [cover, ...imgs.map((s) => ({ mesh: p.slug, icon: '', collage: [shot(s, 1600)] }))];
 }
 
 export async function getDeck() {

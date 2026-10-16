@@ -819,3 +819,8 @@ img.framed { --iw: max(100cqw / var(--fw), 100cqh * var(--fr) / var(--fh)); posi
 .dial__seg button { font: 500 12px var(--font); color: var(--muted); padding: 4px 9px; border-radius: 7px; transition: background var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
 .dial__seg button.is-on { color: var(--ink); background: var(--card); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 0 0 0.5px var(--hair); }
 @media (prefers-reduced-motion: reduce) { .dial.is-in { animation: none; } }
+/* An app's single shot, to look closer: centred, as large as fits, straight */
+.browser__view .collage[data-count="1"] .collage__card:nth-child(1) { width: auto; height: auto; max-width: 92cqw; max-height: 92cqh; left: 50%; top: 50%; translate: -50% -50%; transform: none; }
+.deck__track > .wslide .collage[data-count="1"] .collage__card:nth-child(1) { animation: collage-in-one 420ms var(--ease) both; }
+@keyframes collage-in-one { from { opacity: 0; scale: 0.97; } }
+.pages .mesh img.pages__card { width: 84%; height: 84%; aspect-ratio: auto; border-radius: 0; object-fit: contain; }

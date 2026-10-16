@@ -28,7 +28,7 @@ const { slides } = await getDeck();
             <div class="pages" role="group" aria-label={`${s.title} pages`}>
               {s.pages.map((p, n) => (
                 <button class="sq" data-page-to={n} aria-current={n === 0 ? 'true' : 'false'} aria-label={`Page ${n + 1}`} style={`--n:${n}`}>
-                  {'mesh' in p ? <span class="mesh" data-mesh={p.mesh}><img src={p.icon} alt="" /></span> : <img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" />}
+                  {'mesh' in p ? <span class="mesh" data-mesh={p.mesh}>{p.icon ? <img src={p.icon} alt="" /> : <img class="pages__card" src={p.collage?.[0]} alt="" loading="lazy" decoding="async" />}</span> : <img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" />}
                 </button>
               ))}
             </div>
