@@ -45,7 +45,7 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
   ctx.fillText(`Level ${g.level}  ·  ${g.score.toLocaleString()} points`, 90, 296);
 
   // The board, as it stood
-  const bx = 90, by = 352, bw = W - 180, gap = 14, pad = 26, hole = (bw - pad * 2 - gap * (COLS - 1)) / COLS, bh = pad * 2 + hole * ROWS + gap * (ROWS - 1);
+  const bw = 780, bx = (W - bw) / 2, by = 352, gap = 14, pad = 26, hole = (bw - pad * 2 - gap * (COLS - 1)) / COLS, bh = pad * 2 + hole * ROWS + gap * (ROWS - 1);
   ctx.fillStyle = t.board; ctx.strokeStyle = t.edge; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 42); ctx.fill(); ctx.stroke();
   const at = (c: number, r: number) => [bx + pad + c * (hole + gap), by + pad + r * (hole + gap)] as const;
@@ -64,7 +64,7 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
   }
 
   // Your signature, on a line under the board
-  const sw = 560, sh = 150, sx = (W - sw) / 2, sy = by + bh + 70;
+  const sw = 560, sh = 120, sx = (W - sw) / 2, sy = by + bh + 34; // leaves room for the footer
   ctx.strokeStyle = t.edge; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(sx, sy + sh); ctx.lineTo(sx + sw, sy + sh); ctx.stroke();
   ctx.fillStyle = t.muted; ctx.font = `500 24px ${sans}`; ctx.textAlign = 'center';
