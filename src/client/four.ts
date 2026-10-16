@@ -96,7 +96,15 @@ if (game && grid404 && head) {
   const whoEl = $('.four__who');
   // Who you play: picked at random each game (never the last one twice), unless you pick someone from the faces
   const foesEl = $('.four__foes');
-  foesEl.insertAdjacentHTML('beforeend', FOES.map((f) => `<button type="button" data-foe="${f.name}" aria-pressed="false" style="--tone:${f.tone}"><i class="sq" style="background:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp) center / cover no-repeat"></i>${f.name}</button>`).join(''));
+  foesEl.insertAdjacentHTML('beforeend', FOES.map((f) => `<button type="button" data-foe="${f.name}" aria-pressed="false" style="--tone:${f.tone}"><i class="sq" style="background:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp) center / cover no-repeat"></i><span>${f.name}<small data-stat="${f.name}"></small></span></button>`).join(''));
+  // Each pet's record against everyone who's played (functions/api/four.ts), under their name in the picker
+  type Rec = { wins: number; losses: number; draws: number };
+  const showStats = (stats: Record<string, Rec>) => foesEl.querySelectorAll<HTMLElement>('[data-stat]').forEach((el) => {
+    const r = stats[el.dataset.stat!]; if (!r) return;
+    el.textContent = `Won ${r.wins} · Lost ${r.losses}`;
+    el.title = `${el.dataset.stat} against everyone: ${r.wins} wins, ${r.losses} losses, ${r.draws} draws`;
+  });
+  fetch('/api/four').then((r) => (r.ok ? r.json() : null)).then((d) => d?.stats && showStats(d.stats)).catch(() => {});
   const randomBtn = $<HTMLButtonElement>('[data-foe-random]');
   // Picked: that animal; random: Random, with whoever came up ringed
   function markFoes() {
@@ -224,7 +232,25 @@ if (game && grid404 && head) {
     b = Array(COLS * ROWS).fill(0); moves = []; turn = 'you'; idleAt = Date.now() + IDLE;
     cells.forEach((el) => el.classList.remove('drop', 'win'));
     paint(); tally(); talk(line ?? pick(LINES.start));
+    lock(true);
   }
+  // While a round is on, the page holds still: no scrolling away by accident (wheel, keys or a swipe), and
+  // the game sits in view. Let go when the game ends (for the card) or you quit.
+  let locked = false;
+  function lock(on: boolean) {
+    locked = on;
+    document.documentElement.classList.toggle('four-locked', on);
+    if (on) {
+      const r = game!.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > innerHeight) game!.scrollIntoView({ block: r.height < innerHeight ? 'center' : 'start', behavior: calm ? 'auto' : 'smooth' });
+    }
+  }
+  // Each finished game counts toward the pet's record (from your side: 'you' won, 'them' won, or a draw)
+  function stat(result: 'you' | 'them' | 'draw') {
+    fetch('/api/four', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pet: foe.name, result, moves: moves.length }), keepalive: true }).catch(() => {});
+  }
+  document.addEventListener('touchmove', (e) => { if (locked && !(e.target as Element).closest('.four__dial, .four-card')) e.preventDefault(); }, { passive: false });
+
   function start() {
     if (playing) return;
     playing = true; level = 1; score = 0; againBtn.hidden = cardBtn.hidden = nextBtn.hidden = stopBtn.hidden = true; meet();
@@ -280,7 +306,7 @@ if (game && grid404 && head) {
   }
   function quit() {
     if (paused) resume();
-    playing = false; turn = 'off';
+    playing = false; turn = 'off'; lock(false);
     document.documentElement.classList.remove('four-on');
     game!.hidden = true; grid404!.hidden = false;
     grid404!.querySelectorAll<HTMLElement>('i.on').forEach((d) => { d.style.animation = 'none'; void d.offsetWidth; d.style.animation = ''; });
@@ -323,6 +349,7 @@ if (game && grid404 && head) {
   }
   // The game's over, lost or stopped: keep the best, and offer a card of it
   function finish(by: 'you' | 'them', run: number[]) {
+    lock(false); stat(by);
     const record = score > best;
     if (record) { best = score; try { localStorage.setItem('hdj:four:best', String(best)); } catch {} }
     tally();
@@ -333,7 +360,7 @@ if (game && grid404 && head) {
   // A draw is a cat's game: a stamp, and paw prints across the board in their colour.
   // The cats (Leroy, Irma) are thrilled; the dogs (Lilo, Kiya) are not.
   function roundDraw() {
-    turn = 'off'; paint(); score += 50; tally(); talk(pick(LINES.draw));
+    turn = 'off'; paint(); score += 50; tally(); talk(pick(LINES.draw)); stat('draw');
     beep(foe.kind === 'cat' ? [784, 988, 1175, 988, 1319] : [392, 370, 349], foe.kind === 'cat' ? 0.09 : 0.14, 'triangle');
     catsGame();
     const id = runId;
