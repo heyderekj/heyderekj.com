@@ -7,7 +7,7 @@
   "description": "Personal site for Derek Castelli",
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node scripts/ensure-git-history.mjs",
+    "prebuild": "node scripts/ensure-git-history.mjs && node scripts/project-redirects.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",

@@ -1,4 +1,3 @@
-import { getCollection } from 'astro:content';
 import { getPublishedPosts, postHref, tagCounts, topicHref, TYPE_LABELS } from '../lib/posts';
 import { getRevisions } from '../lib/revisions';
 import { getPublishedWork, partnerHref, partnersOf } from '../lib/work';
@@ -13,18 +12,14 @@ export async function GET(context) {
 
   const staticPaths = [
     '/',
-    '/posts/',
     ...types,
     '/topics/',
     ...topicPaths,
     '/work/',
     ...partnersOf(work).map((p) => partnerHref(p.name)),
-    '/projects/',
     '/about/',
     '/colophon/',
   ];
-
-  const projects = await getCollection('projects', ({ data }) => !data.draft && data.status !== 'retired');
 
   const urls = [
     ...staticPaths.map((p) => ({ loc: `${site}${p}`, lastmod: null })),
@@ -35,10 +30,6 @@ export async function GET(context) {
     ...work.map((p) => ({
       loc: `${site}/work/${p.slug}/`,
       lastmod: p.data.date.toISOString().slice(0, 10),
-    })),
-    ...projects.map((p) => ({
-      loc: `${site}/projects/${p.slug}/`,
-      lastmod: null,
     })),
   ];
 
