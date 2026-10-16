@@ -1003,7 +1003,8 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .lost__msg.is-me { align-self: flex-start; }
 .lost__msg.is-you { align-self: flex-end; flex-direction: row-reverse; }
 .lost__msg.is-me:has(+ .lost__msg.is-me) .lost__face { visibility: hidden; } /* my photo only on the last of a run */
-.lost__face { --r: 8px; flex: none; width: 26px; height: 26px; object-fit: cover; }
+.lost__face { --r: 8px; position: relative; z-index: 1; flex: none; width: 26px; height: 26px; object-fit: cover; }
+.lost__msg.is-me { gap: 12px; } /* room for the bubble's tail (and its cut-out) between it and my photo */
 .lost__bubble { position: relative; display: block; padding: 8px 13px; border-radius: 18px; font-size: 15px; line-height: 1.4; text-wrap: pretty; overflow-wrap: anywhere; }
 .is-me .lost__bubble { background: var(--me); color: var(--ink); }
 .is-you .lost__bubble { background: var(--you); color: #fff; }

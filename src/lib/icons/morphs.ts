@@ -155,7 +155,7 @@ export const MORPHS: Partial<Record<Name | 'x' | 'github', Frame[]>> = {
   // The lid closes.
   laptop: [{ s: { 0: sq(3, 9.75, 10, 1.5, 0.75) }, hold: 300 }],
   tv: [{ s: { 1: 'M4.5 2.75L8 4.25L11 1.25' } }, { s: { 1: 'M5 1.25L8 4.25L11.5 2.75' } }],
-  controller: [{ s: { 3: [10.75, 7.25, 0.4] }, hold: 100 }, { s: { 4: [12, 8.75, 0.4] }, hold: 100 }],
+  controller: [{ s: { 3: [10.75, 6.5, 0.4] }, hold: 100 }, { s: { 4: [12, 8, 0.4] }, hold: 100 }],
   lego: [{ s: { 1: tr(base('lego', 1), 0, -1.25) }, hold: 60 }, { s: { 2: tr(base('lego', 2), 0, -1.25) }, hold: 60 }],
   bolt: [{ s: { 0: sc(base('bolt', 0), 1.15) }, hold: 100 }],
   // The flag waves; its checks ride along.
