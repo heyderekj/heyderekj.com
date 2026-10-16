@@ -25,12 +25,13 @@ const { bar, legacy = false, ...head } = Astro.props;
     <Head {...head} />
   </head>
   <body class="site">
-    <!-- The signature, large and faint, writes itself at the top of every page; the title sits over it -->
+    <!-- The signature, large and faint, writes itself at the top of every page; the title sits over it. Click it to go home (client/sig-egg.ts) -->
     <div class="wm" aria-hidden="true"><div class="wm__in"><Signature label="" /></div></div>
     {legacy ? <div class="legacy-col"><main class="main"><slot /></main></div> : <slot />}
     <Bar context={bar} />
     <div class="toast" id="toast" role="status"></div>
     <script src="../client/signature.ts"></script>
+    <script src="../client/sig-egg.ts"></script>
     <script src="../client/plyr-init.ts"></script>
     <script src="../client/zoom.ts"></script>
     <script src="../client/figures.ts"></script>

@@ -612,3 +612,24 @@ body.site .app-toc { display: none !important; }
 .keep__topics { margin: 14px 0 0; font-size: 14px; color: var(--muted); }
 .keep__topics a { color: var(--ink); text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: 4px; }
 @media (max-width: 640px) { .work-chips { -webkit-mask-image: linear-gradient(to right, #000 85%, transparent); mask-image: linear-gradient(to right, #000 85%, transparent); } }
+
+/* ---------- The watermark is the way home, and (triple-click) a guestbook you countersign ---------- */
+body.wm-hot { cursor: pointer; }
+.wm__in { position: relative; }
+.wm .sig { transition: width var(--t-move) var(--ease), opacity var(--t-move) var(--ease); }
+.wm.is-cosigned .sig { width: min(340px, 54%); }
+.wm__guest { position: absolute; top: 34px; right: 0; width: 44%; aspect-ratio: 1000 / 260; opacity: 0.075; color: var(--ink); transition: opacity var(--t-move) var(--ease), background var(--t-move) var(--ease); }
+@media (prefers-color-scheme: dark) { .wm__guest { opacity: 0.1; } }
+@media (max-width: 760px) { .wm__guest { top: 30px; } }
+.wm__guest svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.wm__guest path { fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.wm.is-signing { z-index: 70; pointer-events: auto; }
+.wm.is-signing .sig { opacity: 0.9; }
+.wm.is-signing .wm__guest { opacity: 1; --r: 14px; border-radius: 14px; background: color-mix(in oklch, var(--ink) 4%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--ink) 14%, transparent); }
+.wm__pad { display: block; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+.wm__tools { position: absolute; right: 0; top: calc(100% + 10px); display: flex; align-items: center; gap: 2px; padding: 4px 4px 4px 12px; border-radius: 999px; font-size: 13px; color: var(--muted); background: var(--glass); -webkit-backdrop-filter: blur(16px) saturate(150%); backdrop-filter: blur(16px) saturate(150%); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); white-space: nowrap; }
+.wm__tools span { margin-right: 6px; }
+.wm__tools button { height: 28px; padding: 0 11px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--ink); }
+.wm__tools button:hover { background: color-mix(in oklch, var(--ink) 8%, transparent); }
+.wm__tools button.is-primary { background: var(--ink); color: var(--paper); }
+@media (max-width: 560px) { .wm__tools span { display: none; } }
