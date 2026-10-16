@@ -3,6 +3,7 @@
  * A website write-up, in the same voice and layout as an essay: what they needed, the problem,
  * what I built, with the site in a browser window and its pages on a rail beside it.
  */
+import { postComponents } from '../../components/post';
 import { type CollectionEntry } from 'astro:content';
 import Site from '../../layouts/Site.astro';
 import Icon from '../../components/Icon.astro';
@@ -90,7 +91,7 @@ const posterSrc = d.videoPoster ? imgSrc(d.videoPoster, 1280) : undefined;
     <div class="prose post-content">
       {pages.length > 0 && (
         <figure class="fig sq">
-          <div class="fig__head"><span class="fig__no">FIG 1</span><span class="fig__title">The site</span>{live && <a class="fig__reset" href={live} target="_blank" rel="noopener">Visit ↗</a>}</div>
+          <div class="fig__head"><span class="fig__no">FIG 1</span><span class="fig__title">{/brand/i.test(d.workType ?? '') ? 'The brand' : 'The site'}</span>{live && <a class="fig__reset" href={live} target="_blank" rel="noopener">Visit ↗</a>}</div>
           <div class="fig__stage">
             <div class="wslide wslide--solo" data-rail data-drawer="closed">
               <Browser pages={pages} url={host(live)} deck drawer eager />
@@ -117,7 +118,7 @@ const posterSrc = d.videoPoster ? imgSrc(d.videoPoster, 1280) : undefined;
       )}
 
       {sections.map(([h, html]) => <><h2>{h}</h2><Fragment set:html={html} /></>)}
-      <Content />
+      <Content components={postComponents} />
 
       {(prior.html.length > 0 || prior.shots.length > 0) && (
         <>

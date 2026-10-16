@@ -61,7 +61,7 @@ export const EXAMPLES: Record<ServiceId, Example[]> = {
   site: ['revisemy', 'exodus51', 'harvouscom', 'throne', 'care-continuity', 'claimable', 'eternity-church-2', 'ccc-omaha', 'river-valley-church', 'david-energy'].map((work) => ({ work })),
   // Logos for Josh Pigford's projects, and my own apps' icons
   logo: [{ work: 'namesnag' }, { work: 'schemakit' }, { work: 'linkscout' }, { work: 'revise-dev' }, { app: 'revisemy', show: 'icon' }, { app: 'heres-my-church', show: 'icon' }, { app: 'harvous', show: 'icon' }],
-  rebrand: [{ work: 'scenery' }, { work: 'bowen-design-and-print' }],
+  rebrand: [{ work: 'crowdhealth' }, { work: 'scenery' }, { work: 'bowen-design-and-print' }],
   // Consulting: no examples, so these show as short rows
   feedback: [],
   ai: [],
