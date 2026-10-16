@@ -925,6 +925,9 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .said__who small { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .said__rel { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); white-space: nowrap; }
 .said__rel time { font-weight: 500; color: var(--muted); }
+.said__rel--link { text-decoration: none; transition: background-color var(--t-ui) var(--ease); }
+.said__rel--link:hover { background: color-mix(in oklch, var(--ink) 11%, transparent); }
+.said__rel--link .icon { font-size: 11px; color: var(--tone); }
 @media (max-width: 560px) { .said__pull { font-size: 20px; } .said__by { grid-template-columns: auto minmax(0, 1fr); } .said__rel { grid-column: 2; justify-self: start; } }
 
 /* Work rows with a thumbnail of the site on the left (components/site/WorkIndex.astro) */

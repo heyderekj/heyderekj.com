@@ -115,6 +115,8 @@ export type Testimonial = {
   pull?: string;
   /** How we know each other, for the Work page's tag (otherwise read from `context`) */
   relation?: string;
+  /** Where it was said (a post, an episode at the moment), so the tag links there */
+  href?: string;
 };
 
 export const testimonials: Testimonial[] = [
@@ -151,6 +153,15 @@ export const workTestimonials: Testimonial[] = [
     context: 'A shout-out in the Apollos Slack · Dec 2024',
     pull: "my favorite website we've completed in just 6 months",
     relation: 'Teammate',
+  },
+  {
+    quote: 'There’s a guy named Derek who, whenever I post these side projects, he’s like, “Hey man, I made a logo for you.” And then I’ll be like, oh man, that’s legit. Send me a Stripe invoice link and I’ll send you some money. This has happened maybe like five times now, where he does this and then I just give him money, unprompted.',
+    author: 'Josh Pigford',
+    role: 'Founder of Baremetrics, maker of NameSnag',
+    context: 'On Greg Isenberg’s podcast, about the NameSnag logo · Jul 2025',
+    pull: 'oh man, that’s legit',
+    relation: 'Client',
+    href: 'https://youtu.be/OAqCyVuZ_6o?t=884',
   },
   ...testimonials,
 ];

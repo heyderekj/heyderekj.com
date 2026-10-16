@@ -4,6 +4,7 @@
  * line highlighted, and who said it. Each person has their own colour. Used on /work/ and /hire/.
  */
 import { workTestimonials } from '../../data/about';
+import Icon from '../Icon.astro';
 
 interface Props { testimonials?: typeof workTestimonials }
 const { testimonials = workTestimonials } = Astro.props;
@@ -25,7 +26,9 @@ const said = testimonials.map((t) => {
       <figcaption class="said__by">
         <span class="said__face sq" aria-hidden="true">{t.initials}</span>
         <span class="said__who"><b>{t.author}</b><small>{t.role}</small></span>
-        <span class="said__rel">{t.relation}{t.when && <time>{t.when}</time>}</span>
+        {t.href
+          ? <a class="said__rel said__rel--link" href={t.href} target="_blank" rel="noopener" title={`Watch: ${t.context.split(' · ')[0]}`}><Icon name="play" loop={false} />{t.relation}{t.when && <time>{t.when}</time>}</a>
+          : <span class="said__rel">{t.relation}{t.when && <time>{t.when}</time>}</span>}
       </figcaption>
     </figure>
   ))}
