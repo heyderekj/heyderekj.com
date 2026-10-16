@@ -289,7 +289,7 @@ button.wchip { font: inherit; }
 .wchip[data-act=here] .pop.pop--below::after { top: auto; bottom: 100%; }
 /* Topic chips filter the essays */
 .wchip.topic[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
-.topic-note { display: flex; align-items: center; gap: 10px; margin: 28px 0 -12px; font-size: 14px; color: var(--muted); }
+.topic-note { display: flex; align-items: center; gap: 10px; margin: 0 0 20px; font-size: 14px; color: var(--muted); }
 .topic-note button { text-decoration: underline; text-underline-offset: 3px; color: var(--ink); font-size: 14px; }
 @media (hover: none) { .wchip:hover .pop { opacity: 0; } .wchip.is-on .pop { opacity: 1; } }
 
