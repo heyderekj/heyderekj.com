@@ -5,7 +5,7 @@
  * Drawn on a canvas (1080 × 1350); the clip is recorded from it with MediaRecorder.
  */
 export type Move = { c: number; r: number; who: 1 | 2 };
-type Game = { board: number[]; moves: Move[]; run: number[]; score: number; level: number; wins: number; foe: string };
+type Game = { board: number[]; moves: Move[]; run: number[]; by: 'you' | 'them'; score: number; level: number; wins: number; foe: string; foeTone: string };
 type Design = 'paper' | 'blueprint' | 'arcade' | 'orange';
 
 const W = 1080, H = 1350, COLS = 7, ROWS = 6;
@@ -57,9 +57,9 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
     if (design === 'orange' && m.who === 1) { ctx.fillStyle = 'rgba(255,247,239,0.9)'; ctx.beginPath(); ctx.arc(x + hole / 2, yy + hole / 2, hole / 2 + 3, 0, 7); ctx.fill(); }
     ctx.drawImage(chip(m.who === 1 ? 'orange' : g.foe.toLowerCase()), x, yy, hole, hole);
   });
-  // Their winning four, ringed
+  // The winning four, ringed: yours in orange when you stopped on a win, theirs in their colour
   if (flash && upto >= g.moves.length && g.run.length) {
-    ctx.strokeStyle = t.accent; ctx.lineWidth = 7;
+    ctx.strokeStyle = g.by === 'you' ? (design === 'orange' ? t.ink : '#ea580c') : g.foeTone; ctx.lineWidth = 7;
     g.run.forEach((i) => { const [x, y] = at(i % COLS, Math.floor(i / COLS)); ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, hole / 2 + 7, 0, 7); ctx.stroke(); });
   }
 

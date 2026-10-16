@@ -46,6 +46,8 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
           <p class="four__tally">vs <b class="four__vs"></b> · Level <b data-four="level">1</b> · <b data-four="score">0</b> pts · best <b data-four="best">0</b></p>
         </div>
         <div class="four__controls">
+          <button type="button" class="is-primary" data-four-next hidden>Next level</button>
+          <button type="button" data-four-stop hidden>Stop here</button>
           <button type="button" class="is-primary" data-four-card hidden>Make a card</button>
           <button type="button" data-four-again hidden>Play again</button>
           <button type="button" data-four-sound aria-pressed="true">Sound on</button>

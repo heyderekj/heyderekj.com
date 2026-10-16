@@ -19,17 +19,19 @@ if (game && grid404 && head) {
   const board = $('.four__board'), say = $('.four__line'), soundBtn = $<HTMLButtonElement>('[data-four-sound]');
   const levelEl = $('[data-four="level"]'), scoreEl = $('[data-four="score"]'), bestEl = $('[data-four="best"]');
   const againBtn = $<HTMLButtonElement>('[data-four-again]'), cardBtn = $<HTMLButtonElement>('[data-four-card]');
+  const nextBtn = $<HTMLButtonElement>('[data-four-next]'), stopBtn = $<HTMLButtonElement>('[data-four-stop]');
   const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
 
   // ---- Who you're playing: one of the animals, each with their own way of playing and talking
-  type Lines = { start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[] };
+  type Lines = { stop: string[]; start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[] };
   type Foe = { name: string; tone: string; toneInk?: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
   const WARGAMES = 'A strange game. The only winning move is not to play.';
   const FOES: Foe[] = [
     { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
       name: 'Leroy', tone: 'oklch(0.86 0.16 95)', toneInk: '#3d3a35', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
       lines: {
+        stop: ['Leaving? I’ll be right here.', 'Smart. Quit while you’re ahead.'],
         start: ['Leroy here. Shall we play a game? Take your time. I will.'],
         level: (l) => [`Level ${l}. I have all day.`, `Level ${l}. Slow and steady.`, `Level ${l}. I’m not going anywhere.`],
         mine: ['Hmm. Hmm. Okay, here.', 'Slow and steady.', 'Still thinking. Don’t rush me.', 'I’ll get there.', 'Measure twice. Drop once.', 'Patience.', 'There. Worth the wait.'],
@@ -42,6 +44,7 @@ if (game && grid404 && head) {
     { // Attentive and smart, but kind: always blocks you, and sometimes won't take the win
       name: 'Lilo', tone: 'oklch(0.55 0.17 300)', delay: [600, 1000], depth: (l) => Math.min(6, l + 1), slip: (l) => Math.max(0, 0.15 - 0.05 * (l - 1)), spares: 0.4,
       lines: {
+        stop: ['Good game! Come back anytime.', 'That was so fun. Thank you!'],
         start: ['Hi, I’m Lilo! Want to play? You go first.'],
         level: (l) => [`Level ${l}. We can keep going, if you want.`, `Level ${l}! You’re doing so well.`],
         mine: ['Is this okay? I’ll go here.', 'I’ll just put this here, gently.', 'Hope that’s alright.', 'Your turn! No rush.', 'This one feels nice.'],
@@ -55,6 +58,7 @@ if (game && grid404 && head) {
     { // Competitive and smart, but a bully and easily distracted: quick, mouthy, and wanders off
       name: 'Kiya', tone: 'oklch(0.62 0.11 195)', delay: [250, 520], depth: (l) => Math.min(6, l + 1), slip: () => 0.18,
       lines: {
+        stop: ['Scared? Thought so.', 'Running away? Classic.'],
         start: ['Kiya. You’re going down. Go first, it won’t help.'],
         level: (l) => [`Level ${l}. Now I’m annoyed.`, `Level ${l}. Lucky. Won’t happen again.`],
         mine: ['Too easy.', 'Watch and learn.', 'Is that all you’ve got?', 'Keep up.', 'Mine. Obviously.', 'Yawn.'],
@@ -68,6 +72,7 @@ if (game && grid404 && head) {
     { // Dumb, but plays hard: barely looks ahead, moves fast and loud, grabs any win
       name: 'Irma', tone: 'oklch(0.84 0.09 55)', toneInk: '#3d3a35', delay: [200, 420], depth: () => 1, slip: (l) => Math.max(0.15, 0.4 - 0.05 * (l - 1)),
       lines: {
+        stop: ['NOOO! Okay. Bye!', 'Already? Again soon?!'],
         start: ['IRMA! LET’S PLAY! You go first!'],
         level: (l) => [`Level ${l}! More! More!`, `Level ${l}! I’m trying SO hard!`],
         mine: ['HERE!', 'I’m going HERE!', 'Big move! I think!', 'Is this the good one?', 'As hard as I can!', 'This one! No, this one!'],
@@ -202,7 +207,7 @@ if (game && grid404 && head) {
   }
   function start() {
     if (playing) return;
-    playing = true; level = 1; score = 0; againBtn.hidden = cardBtn.hidden = true; meet();
+    playing = true; level = 1; score = 0; againBtn.hidden = cardBtn.hidden = nextBtn.hidden = stopBtn.hidden = true; meet();
     document.documentElement.classList.add('four-on');
     head!.scrollIntoView({ block: 'start', behavior: 'auto' });
     beep([392, 523, 659, 784], 0.09);
@@ -266,11 +271,27 @@ if (game && grid404 && head) {
     turn = 'you'; paint();
   }
   const flash = (run: number[] | null) => run?.forEach((i) => cells[i].classList.add('win'));
+  // After a win you choose: on to the next level, or stop here and keep what you've got
+  let wonRun: number[] = [];
   function roundWon() {
-    flash(won(b, 1)); turn = 'off'; paint();
+    wonRun = won(b, 1) ?? []; flash(wonRun); turn = 'off'; paint();
     score += 100 * level + 10 * b.filter((x) => !x).length; level++; tally();
     talk(pick(LINES.youWin)); beep([523, 659, 784, 1047], 0.1);
-    setTimeout(() => playing && round(pick(LINES.level(level))), calm ? 600 : 1800);
+    nextBtn.textContent = `On to level ${level}`; nextBtn.hidden = stopBtn.hidden = false; nextBtn.focus({ preventScroll: true });
+  }
+  function next() { nextBtn.hidden = stopBtn.hidden = true; round(pick(LINES.level(level))); cols[aim].focus({ preventScroll: true }); }
+  function stop() {
+    nextBtn.hidden = stopBtn.hidden = true;
+    talk(pick(foe.lines.stop));
+    finish('you', wonRun);
+  }
+  // The game's over, lost or stopped: keep the best, and offer a card of it
+  function finish(by: 'you' | 'them', run: number[]) {
+    const record = score > best;
+    if (record) { best = score; try { localStorage.setItem('hdj:four:best', String(best)); } catch {} }
+    tally();
+    lastGame = { board: [...b], moves: [...moves], run, by, score, level: by === 'you' ? level - 1 : level, wins: level - 1, foe: foe.name, foeTone: foe.tone };
+    setTimeout(() => { if (by === 'them') talk(record ? 'New best! Make a card of it?' : 'Game over. Make a card of it, or go again?'); againBtn.hidden = cardBtn.hidden = false; }, calm ? 300 : by === 'you' ? 600 : 1400); // stopping keeps their parting line
   }
   function roundDraw() {
     turn = 'off'; paint(); score += 50; tally(); talk(pick(LINES.draw)); beep([440, 440, 440], 0.12, 'triangle');
@@ -279,11 +300,7 @@ if (game && grid404 && head) {
   function gameOver() {
     const run = won(b, 2); flash(run); turn = 'off'; paint();
     talk(pick(LINES.iWin)); beep([392, 330, 262, 196], 0.14, 'sawtooth', 0.05);
-    const record = score > best;
-    if (record) { best = score; try { localStorage.setItem('hdj:four:best', String(best)); } catch {} }
-    tally();
-    lastGame = { board: [...b], moves: [...moves], run: run ?? [], score, level, wins: level - 1, foe: foe.name };
-    setTimeout(() => { talk(record ? 'New best! Make a card of it?' : 'Game over. Make a card of it, or go again?'); againBtn.hidden = cardBtn.hidden = false; }, calm ? 300 : 1400);
+    finish('them', run ?? []);
   }
   let lastGame: Parameters<typeof openCard>[0] | null = null;
 
@@ -294,10 +311,13 @@ if (game && grid404 && head) {
     if ((e.target as HTMLElement).closest('.four-card')) return;
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); aim = (aim + (e.key === 'ArrowRight' ? 1 : -1) + COLS) % COLS; cols[aim].focus(); paint(); }
     if (/^[1-7]$/.test(e.key)) { aim = Number(e.key) - 1; cols[aim].focus(); youMove(aim); }
+    if (e.key === 'Enter' && !nextBtn.hidden && e.target !== stopBtn) { e.preventDefault(); next(); }
     if (e.key === 'Escape') { quit(); document.querySelector<HTMLElement>('[data-four-play]')?.focus(); }
   });
   $('[data-four-quit]').addEventListener('click', quit);
   againBtn.addEventListener('click', () => { againBtn.hidden = cardBtn.hidden = true; level = 1; score = 0; meet(); round(); });
+  nextBtn.addEventListener('click', next);
+  stopBtn.addEventListener('click', stop);
   cardBtn.addEventListener('click', () => { if (lastGame) openCard(lastGame); });
   document.querySelectorAll('[data-four-play]').forEach((btn) => btn.addEventListener('click', start));
   document.addEventListener('four:start', start);
