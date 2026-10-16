@@ -6,7 +6,7 @@
  * one tick per project: the current one fills as autoplay runs, and any tick jumps to its project.
  */
 import Browser from './Browser.astro';
-import { getDeck } from '../../lib/deck';
+import { frameAttrs, getDeck } from '../../lib/deck';
 
 const { slides } = await getDeck();
 ---
@@ -28,7 +28,7 @@ const { slides } = await getDeck();
             <div class="pages" role="group" aria-label={`${s.title} pages`}>
               {s.pages.map((p, n) => (
                 <button class="sq" data-page-to={n} aria-current={n === 0 ? 'true' : 'false'} aria-label={`Page ${n + 1}`} style={`--n:${n}`}>
-                  {'mesh' in p ? <span class="mesh" data-mesh={p.mesh}><img src={p.icon} alt="" /></span> : <img src={p.src} alt="" loading="lazy" decoding="async" />}
+                  {'mesh' in p ? <span class="mesh" data-mesh={p.mesh}><img src={p.icon} alt="" /></span> : <img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" />}
                 </button>
               ))}
             </div>

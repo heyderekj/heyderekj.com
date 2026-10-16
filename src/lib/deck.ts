@@ -4,6 +4,9 @@
  */
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { getPublishedWork, type Work } from './work';
+import fs from 'node:fs';
+import path from 'node:path';
+import sharp from 'sharp';
 import { imgSrc } from './img';
 
 type Project = CollectionEntry<'projects'>;
@@ -24,8 +27,52 @@ const DECK_FIRST = ['throne', 'river-valley-church', 'scenery', 'exodus51'];
 
 export const host = (u?: string | null) => { try { return u ? new URL(u).host.replace(/^www\./, '') : ''; } catch { return ''; } };
 
-/** A page in a preview: a screenshot, or an app icon on its mesh. */
-export type DeckPage = { src: string } | { mesh: string; icon: string };
+/**
+ * A page in a preview: a screenshot, or an app icon on its mesh. A screenshot exported inside a
+ * device frame (transparent margin, shadow, dark bezel) carries `frame`: the screen's box as
+ * fractions of the image, so the preview can show just the site, filling the window.
+ */
+export interface Frame { x: number; y: number; w: number; h: number; wide: boolean }
+export type DeckPage = { src: string; frame?: Frame } | { mesh: string; icon: string };
+
+const frames = new Map<string, Promise<Frame | undefined>>();
+async function findFrame(src: string): Promise<Frame | undefined> {
+  const file = path.join(process.cwd(), 'public', decodeURI(src));
+  if (!/\.(png|webp)$/i.test(src) || !fs.existsSync(file)) return undefined;
+  try {
+    const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    const { width: W, height: H, channels: C } = info;
+    const px = (x: number, y: number) => (y * W + x) * C;
+    const solid = (x: number, y: number) => data[px(x, y) + 3] === 255;
+    const dark = (x: number, y: number) => { const i = px(x, y); return data[i + 3] === 255 && data[i] < 40 && data[i + 1] < 40 && data[i + 2] < 40; };
+    // The opaque window, scanning in from the middle of each edge
+    const cx = W >> 1, cy = H >> 1;
+    let l = 0; while (l < cx && !solid(l, cy)) l++;
+    let r = W - 1; while (r > cx && !solid(r, cy)) r--;
+    let t = 0; while (t < cy && !solid(cx, t)) t++;
+    let b = H - 1; while (b > cy && !solid(cx, b)) b--;
+    if (l < W * 0.01 && t < H * 0.01) return undefined; // full-bleed already
+    // Then past the dark bezel (and its 1px highlight), at most ~1.5% in
+    const max = Math.round(W * 0.015);
+    const skip = (start: number, step: number, at: (n: number) => [number, number]) => {
+      let n = start; while (Math.abs(n - start) < max && (dark(...at(n)) || !dark(...at(n)) && Math.abs(n - start) < 2)) n += step;
+      return n;
+    };
+    l = skip(l, 1, (n) => [n, cy]); r = skip(r, -1, (n) => [n, cy]);
+    t = skip(t, 1, (n) => [cx, n]); b = skip(b, -1, (n) => [cx, n]);
+    const f = { x: l / W, y: t / H, w: (r - l + 1) / W, h: (b - t + 1) / H };
+    return { ...f, wide: (f.w * W) / (f.h * H) > 16 / 10 };
+  } catch { return undefined; }
+}
+/** A screenshot page, sized for `w`, with its device frame found (once per image). */
+export function pageOf(src: string, w = 1280): Promise<DeckPage> {
+  if (!frames.has(src)) frames.set(src, findFrame(src));
+  return frames.get(src)!.then((frame) => ({ src: shot(src, w), ...(frame ? { frame } : {}) }));
+}
+/** Inline style and class for a framed screenshot's <img>. */
+export const frameAttrs = (p: DeckPage) => 'frame' in p && p.frame
+  ? { class: p.frame.wide ? 'framed framed--wide' : 'framed', style: `--fx:${p.frame.x.toFixed(4)};--fy:${p.frame.y.toFixed(4)};--fw:${p.frame.w.toFixed(4)};--fh:${p.frame.h.toFixed(4)}` }
+  : { class: '', style: undefined };
 export interface DeckSlide {
   kind: 'client' | 'app';
   slug: string;
@@ -50,11 +97,13 @@ export async function getApps(): Promise<Project[]> {
   return APP_ORDER.map((slug) => all.find((p) => p.slug === slug)).filter((p): p is Project => Boolean(p));
 }
 
-function appPages(p: Project): DeckPage[] {
+/** An app's screenshots first, then its icon on its mesh. */
+async function appPages(p: Project): Promise<DeckPage[]> {
   const d = p.data;
   const imgs = [d.image, d.hero, ...(d.media ?? []).filter((m) => m.type === 'image').map((m) => m.src)]
     .filter((s): s is string => Boolean(s));
-  return [...(d.icon ? [{ mesh: p.slug, icon: shot(d.icon, 320) }] : []), ...[...new Set(imgs)].slice(0, 4).map((s) => ({ src: shot(s) }))];
+  const shots = await Promise.all([...new Set(imgs)].slice(0, 4).map((s) => pageOf(s)));
+  return [...shots, ...(d.icon ? [{ mesh: p.slug, icon: shot(d.icon, 320) }] : [])];
 }
 
 export async function getDeck() {
@@ -63,18 +112,20 @@ export async function getDeck() {
   const clients = work.filter((w) => w.data.highlight && shotsOf(w).length && !NOT_IN_DECK.includes(w.slug));
   const rank = (slug: string) => { const i = DECK_FIRST.indexOf(slug); return i < 0 ? DECK_FIRST.length : i; };
   clients.sort((a, b) => rank(a.slug) - rank(b.slug));
+  const clientPages = await Promise.all(clients.map((w) => Promise.all(shotsOf(w).map((s) => pageOf(s)))));
+  const appPageList = await Promise.all(apps.map(appPages));
   const slides: DeckSlide[] = [
-    ...clients.map((w) => ({
+    ...clients.map((w, i) => ({
       kind: 'client' as const, slug: w.slug, title: w.data.title, partner: w.data.partnership ?? null,
       sub: `${w.data.partnership ? `With ${w.data.partnership}` : 'Solo'} · ${workDate(w).getUTCFullYear()}`,
       url: host(w.data.liveLink ?? w.data.waybackUrl),
-      pages: shotsOf(w).map((s) => ({ src: shot(s) })),
+      pages: clientPages[i],
       link: { href: `/work/${w.slug}/`, label: 'Read the write-up →', external: false },
     })),
-    ...apps.map((p) => ({
+    ...apps.map((p, i) => ({
       kind: 'app' as const, slug: p.slug, title: p.data.name, sub: p.data.tagline ?? '',
       url: host(p.data.url) || 'testamentmade.com',
-      pages: appPages(p),
+      pages: appPageList[i],
       link: p.data.url
         ? { href: p.data.url, label: `${host(p.data.url)} ↗`, external: true }
         : { href: 'https://testamentmade.com', label: 'Coming soon ↗', external: true },
