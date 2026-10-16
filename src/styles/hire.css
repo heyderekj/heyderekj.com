@@ -11,7 +11,8 @@
 .hire-me__name { display: grid; gap: 4px; }
 .hire-me__name h1 { margin: 0; font-size: clamp(34px, 6vw, 46px); line-height: 1.02; letter-spacing: -0.035em; }
 .hire-me .essay__meta { margin: 0; }
-.hire-lede { margin-top: 22px; }
+/* The intro, set like every page's lede (site.css .page-head .lede) */
+.hire-lede { margin: 22px 0 0; max-width: 34em; font-size: 18.5px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
 .hire-status { display: flex; align-items: center; gap: 8px; margin: 2px 0 0; font-size: 14.5px; font-weight: 600; color: var(--ink); }
 .hire-status > i { width: 8px; height: 8px; border-radius: 50%; background: #18c26a; box-shadow: 0 0 0 3px color-mix(in srgb, #18c26a 22%, transparent); animation: hire-pulse 2.4s ease-in-out infinite; }
 .hire-status > span { font-weight: 500; color: var(--muted); }
