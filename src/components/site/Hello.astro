@@ -46,7 +46,7 @@ const pagesFor = Object.fromEntries(TOPICS.map((t) => {
       <Fragment>
         <button class="wchip sq topic" data-tag={t.key} data-label={t.label} data-tags={t.tags.join(' ')} aria-pressed="false">{t.label}{pagesFor[t.key].pages.length > 0 && (
           <span class="pop" aria-hidden="true"><span class="leaves">{pagesFor[t.key].pages.map((pg) => (
-            <span class="leaf sq"><small>{pg.date}</small><b>{pg.title}</b><i></i><i></i><i></i></span>
+            <span class="leaf sq"><small>{pg.date}</small><b>{pg.title}</b></span>
           ))}</span></span>
         )}</button>{i < last - 1 ? ', ' : i === last - 1 ? ' and ' : '.'}
       </Fragment>
