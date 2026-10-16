@@ -15,8 +15,8 @@ export const TM_TILES: [slug: string, color: string][] = [
 ];
 /** The order apps appear in the deck. */
 const APP_ORDER = ['harvous', 'koati', 'revisemy', 'heres-my-church', 'dinky', 'binky'];
-/** Highlighted work left out of the deck's websites: their apps already show in the apps half. */
-const NOT_IN_DECK = ['revisemy', 'harvouscom'];
+/** Highlighted work left out of the home deck (ReviseMy and Harvous already show in the apps half). */
+const NOT_IN_DECK = ['revisemy', 'harvouscom', 'david-energy', 'tutorme'];
 
 export const host = (u?: string | null) => { try { return u ? new URL(u).host.replace(/^www\./, '') : ''; } catch { return ''; } };
 
