@@ -34,7 +34,7 @@ export const host = (u?: string | null) => { try { return u ? new URL(u).host.re
  * website shots keep their frame on purpose; the Kem fan's small windows crop it.)
  */
 export interface Frame { x: number; y: number; w: number; h: number; ratio: number }
-export type DeckPage = { src: string; frame?: Frame } | { mesh: string; icon: string };
+export type DeckPage = { src: string; frame?: Frame } | { mesh: string; icon: string; collage?: string[] };
 
 const frames = new Map<string, Promise<Frame | undefined>>();
 async function findFrame(src: string): Promise<Frame | undefined> {
@@ -97,13 +97,12 @@ export async function getApps(): Promise<Project[]> {
   return APP_ORDER.map((slug) => all.find((p) => p.slug === slug)).filter((p): p is Project => Boolean(p));
 }
 
-/** An app's screenshots first, then its icon on its mesh. */
+/** An app is one page: three of its screenshot cards collaged on its mesh, with its icon. */
 async function appPages(p: Project): Promise<DeckPage[]> {
   const d = p.data;
   const imgs = [d.image, d.hero, ...(d.media ?? []).filter((m) => m.type === 'image').map((m) => m.src)]
     .filter((s): s is string => Boolean(s));
-  const shots = await Promise.all([...new Set(imgs)].slice(0, 4).map((s) => pageOf(s)));
-  return [...shots, ...(d.icon ? [{ mesh: p.slug, icon: shot(d.icon, 320) }] : [])];
+  return [{ mesh: p.slug, icon: d.icon ? shot(d.icon, 320) : '', collage: [...new Set(imgs)].slice(0, 3).map((s) => shot(s, 960)) }];
 }
 
 export async function getDeck() {

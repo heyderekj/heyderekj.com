@@ -22,7 +22,9 @@ const { pages, url = '', ticks = false, eager = false, deck = false, drawer = fa
   )}<span class="browser__url">{url}</span><span style={`width:${drawer && pages.length > 1 ? 82 : 37}px`}></span></div>
   <div class="browser__view">
     {pages.map((p, n) => 'mesh' in p
-      ? <div class={`mesh${n ? '' : ' is-on'}`} data-page data-mesh={p.mesh} style={`opacity:${n ? 0 : 1}`}><img src={p.icon} alt="" /></div>
+      ? p.collage?.length
+        ? <div class={`mesh collage${n ? '' : ' is-on'}`} data-page data-mesh={p.mesh} data-count={p.collage.length} style={`opacity:${n ? 0 : 1}`}>{p.collage.map((src) => <img class="collage__card" src={src} alt="" loading={eager ? undefined : 'lazy'} decoding="async" />)}{p.icon && <img class="collage__icon" src={p.icon} alt="" />}</div>
+        : <div class={`mesh${n ? '' : ' is-on'}`} data-page data-mesh={p.mesh} style={`opacity:${n ? 0 : 1}`}><img src={p.icon} alt="" /></div>
       : <img src={p.src} alt="" data-page class:list={[frameAttrs(p).class, !n && 'is-on']} style={frameAttrs(p).style} loading={n || !eager ? 'lazy' : undefined} decoding="async" />)}
     {ticks && !deck && pages.length > 1 && <div class="browser__ticks">{pages.map((_, n) => <i class={n ? '' : 'is-on'}></i>)}</div>}
   </div>

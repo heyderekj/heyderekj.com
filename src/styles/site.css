@@ -749,17 +749,37 @@ img.framed { --iw: max(100cqw / var(--fw), 100cqh * var(--fr) / var(--fh)); posi
 .wslide > .browser { display: flex; flex-direction: column; }
 .wslide > .browser > .browser__view { flex: 1 0 auto; }
 
-/* Topics: the latest three posts, fanned like loose pages (components/site/Hello.astro) */
-.leaves { position: relative; display: block; width: 300px; height: 118px; }
-.leaf { --r: 10px; position: absolute; left: 50%; bottom: 0; width: 132px; height: 104px; translate: -50% 0; display: flex; flex-direction: column; gap: 4px; padding: 10px 11px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); font-size: 11px; line-height: 1.25; color: var(--ink); transition: transform var(--t-move) var(--ease); background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 9%, transparent) 0.7px, transparent 1px); background-size: 8px 8px; }
+/* Topics: the latest three posts as a little pile of pages, newest on top (components/site/Hello.astro) */
+.leaves { position: relative; display: block; width: 190px; height: 140px; }
+.leaf { --r: 10px; position: absolute; left: 50%; bottom: 0; width: 150px; height: 112px; translate: -50% 0; display: flex; flex-direction: column; gap: 4px; padding: 11px 12px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); font-size: 11.5px; line-height: 1.25; color: var(--ink); transition: transform var(--t-move) var(--ease); background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 9%, transparent) 0.7px, transparent 1px); background-size: 8px 8px; }
+.leaf:last-child { box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
 .leaf small { font-size: 9.5px; color: var(--muted); letter-spacing: 0.01em; }
 .leaf b { font-weight: 650; letter-spacing: -0.01em; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-wrap: balance; }
 .leaf i { display: block; height: 3px; border-radius: 2px; background: color-mix(in oklch, var(--ink) 9%, transparent); }
 .leaf i:nth-of-type(1) { margin-top: auto; }
 .leaf i:nth-of-type(3) { width: 60%; }
-.leaf:nth-child(1) { transform: rotate(-4deg); }
-.leaf:nth-child(3) { transform: rotate(4deg); }
-.wchip:hover .leaf:nth-child(1), .wchip:focus-visible .leaf:nth-child(1) { transform: translateX(-84px) translateY(8px) rotate(-8deg); }
-.wchip:hover .leaf:nth-child(3), .wchip:focus-visible .leaf:nth-child(3) { transform: translateX(84px) translateY(8px) rotate(8deg); }
-.wchip:hover .leaf:nth-child(2), .wchip:focus-visible .leaf:nth-child(2) { transform: translateY(-4px); z-index: 1; }
-.leaf:nth-child(2) { z-index: 1; }
+.leaf:nth-last-child(3) { transform: translate(-8px, -12px) rotate(-5deg); }
+.leaf:nth-last-child(2) { transform: translate(7px, -6px) rotate(3deg); }
+.wchip:hover .leaf:nth-last-child(3), .wchip:focus-visible .leaf:nth-last-child(3) { transform: translate(-16px, -26px) rotate(-8deg); }
+.wchip:hover .leaf:nth-last-child(2), .wchip:focus-visible .leaf:nth-last-child(2) { transform: translate(14px, -14px) rotate(5deg); }
+.wchip:hover .leaf:last-child, .wchip:focus-visible .leaf:last-child { transform: translateY(-2px); }
+
+
+/* Apps in the deck: three screenshot cards collaged on the app's mesh, its icon tucked in front */
+.browser__view .collage { display: block; container-type: size; }
+.browser__view .collage img { position: absolute; max-width: none; height: auto; aspect-ratio: auto; object-fit: contain; border-radius: 0; box-shadow: none; inset: auto; opacity: 1; filter: drop-shadow(0 14px 24px rgb(0 0 0 / 0.18)); transition: transform var(--t-move) var(--ease); }
+.browser__view .collage .collage__card:nth-child(1) { width: 50cqw; left: 50%; top: 3cqh; translate: -50% 0; z-index: 2; transform: rotate(-1.5deg); }
+.browser__view .collage .collage__card:nth-child(2) { width: 40cqw; left: 3cqw; top: 16cqh; z-index: 1; transform: rotate(-7deg); }
+.browser__view .collage .collage__card:nth-child(3) { width: 40cqw; right: 3cqw; top: 12cqh; z-index: 1; transform: rotate(6deg); }
+.browser__view .collage[data-count="1"] .collage__card { width: 62cqw; }
+.browser__view .collage .collage__icon { width: 13cqw; max-width: 96px; aspect-ratio: 1; right: 8cqw; bottom: 7cqh; z-index: 3; border-radius: 24%; transform: rotate(8deg); filter: drop-shadow(0 10px 18px var(--glow, rgb(0 0 0 / 0.3))); }
+.deck__track > .wslide.is-in .collage img { animation: collage-in 620ms var(--ease) both; }
+.deck__track > .wslide.is-in .collage img:nth-child(2) { animation-delay: 70ms; }
+.deck__track > .wslide.is-in .collage img:nth-child(3) { animation-delay: 140ms; }
+.deck__track > .wslide.is-in .collage .collage__icon { animation-delay: 240ms; }
+@keyframes collage-in { from { opacity: 0; translate: 0 18px; } }
+.deck__track > .wslide.is-in .collage .collage__card:nth-child(1) { animation-name: collage-in-mid; }
+@keyframes collage-in-mid { from { opacity: 0; translate: -50% 18px; } }
+@media (prefers-reduced-motion: reduce) { .collage img { animation: none !important; } }
+.browser__view .collage[data-count="2"] .collage__card:nth-child(1) { left: 58%; }
+.browser__view .collage[data-count="2"] .collage__card:nth-child(2) { left: 7cqw; top: 12cqh; width: 44cqw; }
