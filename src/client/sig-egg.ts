@@ -83,15 +83,17 @@ if (wm && inner && mine) {
     const r = mine.getBoundingClientRect();
     return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
   };
-  let clicks = 0, clickT = 0;
+  // The browser counts the clicks (e.detail): one goes home, three open the note.
+  // Stop a double or triple click on the watermark from selecting the text around it.
+  let homeT = 0;
+  document.addEventListener('mousedown', (e) => { if (e.detail > 1 && overMe(e)) e.preventDefault(); });
   document.addEventListener('click', (e) => {
-    if (!overMe(e) || !getSelection()?.isCollapsed) { clicks = 0; return; }
-    clicks++; clearTimeout(clickT);
-    if (clicks >= 3) { clicks = 0; getSelection()?.removeAllRanges(); open(); return; }
-    clickT = window.setTimeout(() => {
-      if (clicks === 1) { if (location.pathname === '/') resign(); else location.href = '/'; }
-      clicks = 0;
-    }, 330);
+    if (!overMe(e)) return;
+    clearTimeout(homeT);
+    if (e.detail >= 3) { getSelection()?.removeAllRanges(); open(); return; }
+    if (e.detail === 1 && getSelection()?.isCollapsed) {
+      homeT = window.setTimeout(() => { if (location.pathname === '/') resign(); else location.href = '/'; }, 330);
+    }
   });
   document.addEventListener('mousemove', (e) => document.body.classList.toggle('wm-hot', overMe(e)), { passive: true });
 }
