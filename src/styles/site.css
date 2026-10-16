@@ -1073,3 +1073,5 @@ body.site .lost__input input:focus-visible { outline: none; } /* the field shows
 .lost-head__line code { font: 15px/1.4 ui-monospace, SFMono-Regular, monospace; color: var(--ink); padding: 2px 7px; border-radius: 7px; background: color-mix(in oklch, var(--ink) 6%, transparent); overflow-wrap: anywhere; }
 @media (max-width: 560px) { .lost-404 { grid-template-columns: repeat(var(--cols), 9px); gap: 4px; } .lost-404 i { width: 9px; height: 9px; } }
 @media (prefers-reduced-motion: reduce) { .lost-404 i.on { animation: none; } }
+.lost-404 i { transition: background 120ms linear, box-shadow 120ms linear; }
+.lost-404 i.wopr { background: #ea580c; box-shadow: 0 0 8px 1px color-mix(in srgb, #ea580c 55%, transparent); }

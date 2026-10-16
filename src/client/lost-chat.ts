@@ -179,6 +179,21 @@ if (box && thread && slash && prompts && form && input) {
     const v = !slash.hidden && picks[at] ? `/${picks[at][0]}` : input.value;
     input.value = ''; menu(); reply(v);
   });
+  // The 404's dots, thinking like WOPR in WarGames: orange lights blink on and off at random across the
+  // unlit dots, a few at a time, while the page is on screen
+  const lights = [...document.querySelectorAll<HTMLElement>('.lost-404 i:not(.on)')];
+  if (lights.length && !calm) {
+    const blink = () => {
+      if (!document.hidden) for (let n = 0; n < 1 + Math.floor(Math.random() * 3); n++) {
+        const dot = lights[Math.floor(Math.random() * lights.length)];
+        if (dot.classList.contains('wopr')) continue;
+        dot.classList.add('wopr');
+        setTimeout(() => dot.classList.remove('wopr'), 260 + Math.random() * 1100);
+      }
+      setTimeout(blink, 90 + Math.random() * 160);
+    };
+    setTimeout(blink, 1200); // after the 404 lights up
+  }
   const pathEl = document.getElementById('lostPath'); if (pathEl) pathEl.textContent = decodeURIComponent(location.pathname);
   intro();
 }
