@@ -68,9 +68,12 @@
 .hire-mini > span:last-child { font-size: 13px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
 /* What people say: one at a time, sliding, under the intro */
 .hire-said { display: grid; gap: 10px; margin-top: 26px; }
-/* Room inside the scroller so the cards' edge and shadow aren't cut off */
-.hire-said .said { display: flex; gap: 14px; padding: 2px 2px 26px; margin: -2px -2px -24px; scroll-padding-inline: 2px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; align-items: stretch; }
+/* The scroller reaches past the column on both sides and fades out there, so cards slide in and out
+   softly instead of being cut at the column's edge. The gap is wider than that reach, so the next card
+   never peeks in at rest. Room below for the cards' shadow. */
+.hire-said .said { --bleed: 40px; display: flex; gap: calc(var(--bleed) + 12px); padding: 2px var(--bleed) 26px; margin: -2px calc(-1 * var(--bleed)) -24px; scroll-padding-inline: var(--bleed); -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--bleed), #000 calc(100% - var(--bleed)), transparent); mask-image: linear-gradient(to right, transparent, #000 var(--bleed), #000 calc(100% - var(--bleed)), transparent); overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; align-items: stretch; }
 .hire-said .said::-webkit-scrollbar { display: none; }
+@media (max-width: 720px) { .hire-said .said { --bleed: 16px; } }
 .hire-said .said__card { flex: 0 0 100%; scroll-snap-align: start; }
 .hire-said__nav { display: flex; align-items: center; justify-content: center; gap: 12px; }
 .hire-said__nav button { --r: 999px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; font-size: 14px; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease); }

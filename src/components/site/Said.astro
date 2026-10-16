@@ -9,7 +9,7 @@ import Icon from '../Icon.astro';
 interface Props { testimonials?: typeof workTestimonials }
 const { testimonials = workTestimonials } = Astro.props;
 
-const TONE: Record<string, string> = { 'Shelley Martin': 'green', 'Barrett Johnson': 'blue', 'Danny Begnoche': 'pink', 'Corey Moen': 'yellow' };
+const TONE: Record<string, string> = { 'Shelley Martin': 'green', 'Barrett Johnson': 'purple', 'Josh Pigford': 'blue', 'Danny Begnoche': 'pink', 'Corey Moen': 'yellow' };
 const said = testimonials.map((t) => {
   const [rel, when] = t.context.split(' · ');
   const relation = t.relation ?? (/client/i.test(rel) ? 'Client' : /mentor/i.test(rel) ? 'Mentor' : /team/i.test(rel) ? 'Teammate' : rel);
