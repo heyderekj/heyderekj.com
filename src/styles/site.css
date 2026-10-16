@@ -395,7 +395,7 @@ body.site { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .bar__t mark { background: color-mix(in oklch, var(--hl) 50%, transparent); color: inherit; border-radius: 3px; }
 .bar__y { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .bar__none { padding: 12px; font-size: 14px; color: var(--muted); }
-.bar__menu { width: min(304px, calc(100vw - 24px)); padding: 10px; display: grid; gap: 14px; }
+.bar__menu { width: min(320px, calc(100vw - 24px)); padding: 10px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
 .bar__lbl { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
 .bar__lbl--pad { padding: 6px 10px 0; margin: 0; }
 .bar__group { display: grid; }
@@ -426,7 +426,7 @@ body.site { padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 .bar__sound .s1, .bar__sound .s2 { transition: opacity var(--t-ui) var(--ease); }
 .bar__sound[aria-pressed="false"] { color: var(--muted); }
 .bar__sound[aria-pressed="false"] :is(.s1, .s2) { opacity: 0; }
-.bar__mail { margin-right: auto; height: 34px; padding: 0 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
+.bar__mail { min-width: 0; overflow: hidden; white-space: nowrap; margin-right: auto; height: 34px; padding: 0 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
 .bar__mail span { font-size: 12px; font-weight: 600; color: var(--muted); }
 /* The toast sits just above the bar */
 body.site .toast { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
