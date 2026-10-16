@@ -748,3 +748,18 @@ img.framed { --iw: max(100cqw / var(--fw), 100cqh * var(--fr) / var(--fh)); posi
 /* The window's view grows to fill it when the window is stretched (the deck's grid) */
 .wslide > .browser { display: flex; flex-direction: column; }
 .wslide > .browser > .browser__view { flex: 1 0 auto; }
+
+/* Topics: the latest three posts, fanned like loose pages (components/site/Hello.astro) */
+.leaves { position: relative; display: block; width: 300px; height: 118px; }
+.leaf { --r: 10px; position: absolute; left: 50%; bottom: 0; width: 132px; height: 104px; translate: -50% 0; display: flex; flex-direction: column; gap: 4px; padding: 10px 11px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); font-size: 11px; line-height: 1.25; color: var(--ink); transition: transform var(--t-move) var(--ease); background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 9%, transparent) 0.7px, transparent 1px); background-size: 8px 8px; }
+.leaf small { font-size: 9.5px; color: var(--muted); letter-spacing: 0.01em; }
+.leaf b { font-weight: 650; letter-spacing: -0.01em; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-wrap: balance; }
+.leaf i { display: block; height: 3px; border-radius: 2px; background: color-mix(in oklch, var(--ink) 9%, transparent); }
+.leaf i:nth-of-type(1) { margin-top: auto; }
+.leaf i:nth-of-type(3) { width: 60%; }
+.leaf:nth-child(1) { transform: rotate(-4deg); }
+.leaf:nth-child(3) { transform: rotate(4deg); }
+.wchip:hover .leaf:nth-child(1), .wchip:focus-visible .leaf:nth-child(1) { transform: translateX(-84px) translateY(8px) rotate(-8deg); }
+.wchip:hover .leaf:nth-child(3), .wchip:focus-visible .leaf:nth-child(3) { transform: translateX(84px) translateY(8px) rotate(8deg); }
+.wchip:hover .leaf:nth-child(2), .wchip:focus-visible .leaf:nth-child(2) { transform: translateY(-4px); z-index: 1; }
+.leaf:nth-child(2) { z-index: 1; }

@@ -12,11 +12,20 @@ import Browser from './Browser.astro';
 import Byline from './Byline.astro';
 import { getDeck, host, pageOf, shotsOf, TM_TILES } from '../../lib/deck';
 import { TOPICS } from '../../lib/bar';
+import { getPublishedPosts, postTitle } from '../../lib/posts';
 
 const { kem, icons } = await getDeck();
 // The fan's windows are small, so its shots are cropped to the screen (no device frame)
 const kemPages = await Promise.all(kem.map((w) => pageOf(shotsOf(w)[0], 480)));
 const last = TOPICS.length - 1;
+// Each topic's three latest posts, fanned like pages when you hover it (newest in the middle)
+const posts = await getPublishedPosts();
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+const pagesFor = Object.fromEntries(TOPICS.map((t) => {
+  const mine = posts.filter((p) => p.data.tags?.some((g) => t.tags.includes(g)));
+  const [a, b, c] = mine.slice(0, 3).map((p) => ({ title: postTitle(p), date: fmt(p.data.date) }));
+  return [t.key, { pages: [b, a, c].filter(Boolean) }];
+}));
 ---
 <header class="hello-head" data-bar-label="Home">
   <Byline />
@@ -35,7 +44,11 @@ const last = TOPICS.length - 1;
     </span></span></button>.
     Here I write about {TOPICS.map((t, i) => (
       <Fragment>
-        <button class="wchip sq topic" data-tag={t.key} data-tags={t.tags.join(' ')} aria-pressed="false">{t.label}</button>{i < last - 1 ? ', ' : i === last - 1 ? ' and ' : '.'}
+        <button class="wchip sq topic" data-tag={t.key} data-label={t.label} data-tags={t.tags.join(' ')} aria-pressed="false">{t.label}{pagesFor[t.key].pages.length > 0 && (
+          <span class="pop" aria-hidden="true"><span class="leaves">{pagesFor[t.key].pages.map((pg) => (
+            <span class="leaf sq"><small>{pg.date}</small><b>{pg.title}</b><i></i><i></i><i></i></span>
+          ))}</span></span>
+        )}</button>{i < last - 1 ? ', ' : i === last - 1 ? ' and ' : '.'}
       </Fragment>
     ))}
   </p>

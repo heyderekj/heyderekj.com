@@ -49,7 +49,7 @@ function applyTopic() {
   years.forEach((y) => (y.hidden = !$$('.row', y).some((r) => !r.hidden)));
   more.forEach((m) => (m.hidden = true));
   note.innerHTML = '';
-  note.append(`${n} ${n === 1 ? 'post' : 'posts'} about ${chip?.textContent ?? topic} `);
+  note.append(`${n} ${n === 1 ? 'post' : 'posts'} about ${chip?.dataset.label ?? topic} `);
   const clear = document.createElement('button'); clear.dataset.clearTopic = ''; clear.textContent = 'Show all'; note.append(clear);
   note.hidden = false;
 }
