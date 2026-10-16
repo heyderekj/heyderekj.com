@@ -1,44 +1,38 @@
 ---
 /**
- * About, as a signed letter: the byline and who I am, then what I'm doing now, what I'm proud of,
- * a line I keep close, what I'm good at, and where I've been. Built from the home page's pieces.
+ * About, as a short letter: the byline and who I am, my story in six small chapters with the year
+ * in the margin, what I'm doing now, three highlights, the signature, and the résumé folded away.
  */
-import { getCollection } from 'astro:content';
 import Site from '../layouts/Site.astro';
 import Byline from '../components/site/Byline.astro';
 import Signature from '../components/Signature.astro';
 import Icon from '../components/Icon.astro';
-import { bragClippings, bragEpigraphNote, bragHero, bragMeta, bragRightNow, bragSkills, sortBragFavoritePosts, type BragPreview } from '../data/brag';
-import { aboutExperienceGroups } from '../data/about';
-import { computeBragStatCycles } from '../lib/bragProjectTrend';
-import { projectStartTime } from '../lib/projectStart';
+import { bragClippings, bragHero, bragMeta, bragRightNow, bragSkills, type BragPreview } from '../data/brag';
+import { aboutChapters, aboutExperienceGroups } from '../data/about';
 import { imgSrc } from '../lib/img';
-
-// "29 side projects since 2008": the first of the project stats
-const projects = await getCollection('projects', ({ data }) => !data.draft);
-const startYear = projects.reduce((min, p) => { const t = projectStartTime(p); return t ? Math.min(min, new Date(t).getUTCFullYear()) : min; }, new Date().getUTCFullYear());
-const [total] = computeBragStatCycles(projects, projects.length, startYear);
 
 const previewsOf = (clip: (typeof bragClippings)[number]): BragPreview[] => !clip.preview ? [] : Array.isArray(clip.preview) ? clip.preview : [clip.preview];
 const external = (href?: string) => Boolean(href && /^https?:/.test(href));
-const highlights = bragClippings.map((clip) => {
+// The three highlights worth leading with: the podcast, the Mac apps, the faith-tech apps
+const highlights = bragClippings.slice(0, 3).map((clip) => {
   const previews = previewsOf(clip);
   const video = previews.find((p) => p.variant === 'video');
   const image = previews.find((p) => p.src && p.variant !== 'video');
-  const link = previews.find((p) => p.variant === 'link');
-  const posts = previews.filter((p) => p.variant === 'posts').flatMap((p) => sortBragFavoritePosts(p.favoritePosts ?? []));
-  const stats = previews.some((p) => p.variant === 'stats' && p.aggregateProjects);
-  // Rows that pointed back at this page link to what they're about instead
-  const href = clip.href === '/about/' ? link?.href : clip.href;
-  return { clip, video, href, peek: image?.src ? imgSrc(image.src, 640) : undefined, posts, stats };
+  return { clip, video, href: clip.href, peek: image?.src ? imgSrc(image.src, 640) : undefined };
 });
-const year = (d?: string) => d ? new Date(d).getUTCFullYear() : '';
+const roles = aboutExperienceGroups.filter((g) => g.title !== 'Education').reduce((n, g) => n + g.items.length, 0);
 ---
 <Site title="About — Derek Castelli" description={bragMeta.description} bar={{ kind: 'page', title: 'About' }}>
   <article class="essay about" data-select>
     <Byline />
     <h1 class="visually-hidden">About Derek Castelli</h1>
     <p class="lede">{bragHero.bio}</p>
+
+    <ol class="story" id="story" data-bar-section="My story">
+      {aboutChapters.map((c) => (
+        <li class="story__ch"><span class="story__when">{c.when}</span><p><b>{c.title}</b> {c.text}</p></li>
+      ))}
+    </ol>
 
     <div class="prose">
       <h2 id="now" data-bar-section="Right now">Right now</h2>
@@ -50,51 +44,27 @@ const year = (d?: string) => d ? new Date(d).getUTCFullYear() : '';
 
       <h2 id="highlights" data-bar-section="Highlights">Highlights</h2>
       <div class="list"><section class="list__year">
-        {highlights.map(({ clip, video, href, peek, posts, stats }) => (
-          <Fragment>
-            {video?.youtubeId ? (
-              <a class="clipcard sq" href={`https://www.youtube.com/watch?v=${video.youtubeId}`} target="_blank" rel="noopener" data-peek-img={video.src ? imgSrc(video.src, 640) : undefined}>
-                <span class="clipcard__play"><Icon name="play" /></span>
-                <span><b>{clip.publication}: {clip.headline}</b><small>{clip.summary}</small></span>
-                <time>{clip.dateline}</time>
-              </a>
-            ) : (
-              <a class="row sq" href={href} data-peek-img={peek} {...(external(href) ? { target: '_blank', rel: 'noopener' } : {})}>
-                <span class="row__kicker">{clip.publication}</span>
-                <span class="row__title">{clip.headline}</span>
-                <span class="row__date">{clip.dateline}</span>
-                <span class="row__desc">{clip.summary}{stats && total && <> <b class="about__stat">{total.value} {total.title} {total.subtitle}.</b></>}</span>
-              </a>
-            )}
-            {posts.length > 0 && (
-              <div class="sublist">
-                {posts.map((p) => (
-                  <a class="row row--sub sq" href={p.href} {...(p.external ? { target: '_blank', rel: 'noopener' } : {})}>
-                    <span class="row__title">{p.title}</span>
-                    <span class="row__date">{p.likes ? `${p.likes} likes on X` : year(p.date)}</span>
-                  </a>
-                ))}
-              </div>
-            )}
-            {clip.testimonial && (
-              <figure class="qcard sq about__quote">
-                <p>{clip.testimonial.quote}</p>
-                <span><b>{clip.testimonial.author}</b>, {clip.testimonial.role}</span>
-              </figure>
-            )}
-          </Fragment>
-        ))}
+        {highlights.map(({ clip, video, href, peek }) => <Fragment>{video?.youtubeId ? (
+          <a class="clipcard sq" href={`https://www.youtube.com/watch?v=${video.youtubeId}`} target="_blank" rel="noopener" data-peek-img={video.src ? imgSrc(video.src, 640) : undefined}>
+            <span class="clipcard__play"><Icon name="play" /></span>
+            <span><b>{clip.publication}: {clip.headline}</b><small>{clip.summary}</small></span>
+            <time>{clip.dateline}</time>
+          </a>
+        ) : (
+          <a class="row sq" href={href} data-peek-img={peek} {...(external(href) ? { target: '_blank', rel: 'noopener' } : {})}>
+            <span class="row__kicker">{clip.publication}</span>
+            <span class="row__title">{clip.headline}</span>
+            <span class="row__date">{clip.dateline}</span>
+            <span class="row__desc">{clip.summary}</span>
+          </a>
+        )}</Fragment>)}
       </section></div>
+    </div>
 
-      <figure class="qcard sq about__epigraph">
-        <p>You’re only given a little spark of madness. You mustn’t lose it.</p>
-        <span><b>Robin Williams</b> · {bragEpigraphNote}</span>
-      </figure>
+    <div class="essay__sign"><Signature /></div>
 
-      <h2 id="skills" data-bar-section="Skills">Skills</h2>
-      <div class="about__skills">{bragSkills.map((s) => <span class="wchip sq">{s}</span>)}</div>
-
-      <h2 id="experience" data-bar-section="Experience">Experience</h2>
+    <details class="resume">
+      <summary><span>Résumé</span><small>{roles} roles · 2007 to now</small><Icon name="chevron-down" /></summary>
       <div class="list">
         {aboutExperienceGroups.map((g) => (
           <section class="list__year">
@@ -105,9 +75,8 @@ const year = (d?: string) => d ? new Date(d).getUTCFullYear() : '';
           </section>
         ))}
       </div>
-    </div>
-
-    <div class="essay__sign"><Signature /></div>
+      <p class="resume__skills"><b>Good at:</b> {bragSkills.join(', ')}.</p>
+    </details>
   </article>
   <div class="peek sq" id="peek" aria-hidden="true"></div>
   <div class="selbar" id="selbar" hidden></div>

@@ -503,16 +503,9 @@ body.site .app-toc { display: none !important; }
 .essay .list .row__desc { font-size: 15px; line-height: 1.5; }
 .list__year h3 { margin: 18px 0 6px; font-size: 13px; font-weight: 600; color: var(--muted); }
 .list__year h3:first-child { margin-top: 0; }
-.sublist { display: grid; margin: -4px 0 10px 18px; padding-left: 12px; border-left: 1px solid var(--hair); }
 .row--sub { padding-block: 6px; }
 .row--sub .row__title { font-size: 15px; font-weight: 500; }
 .row--sub .row__date { font-size: 12.5px; }
-.about__stat { color: var(--ink); font-weight: 600; }
-.about__quote, .about__epigraph { margin: 6px 0 18px; }
-.about__epigraph { margin-top: 40px; }
-.about__epigraph p { font-size: 20px; }
-.about__skills { display: flex; flex-wrap: wrap; gap: 6px; font-size: 15px; }
-.about__skills .wchip { cursor: default; padding: 4px 10px; }
 .essay .clipcard { margin: 6px 0 12px; }
 .clipcard__play .icon { font-size: 14px; }
 .clipcard small { display: block; }
@@ -840,3 +833,25 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 @keyframes beat-tap { 50% { scale: 0.88; } }
 @keyframes beat-fill { to { scale: 0.92; rotate: -4deg; } }
 @media (prefers-reduced-motion: reduce) { .bar__home img { animation: none !important; } }
+
+/* About: the story in short chapters, the year in the margin on wide screens (pages/about.astro) */
+.story { list-style: none; margin: 36px 0 0; padding: 0; display: grid; gap: 22px; }
+.story__ch { position: relative; display: grid; gap: 2px; }
+.story__when { font-size: 13px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.story__ch p { margin: 0; font-size: 18px; line-height: 1.68; color: var(--ink-soft); text-wrap: pretty; }
+.story__ch b { color: var(--ink); font-weight: 600; }
+@media (min-width: 1100px) {
+  .story__when { position: absolute; right: calc(100% + 28px); top: 0.35em; width: 120px; text-align: right; }
+}
+/* The résumé, folded away at the end */
+.resume { margin-top: 56px; border-top: 1px solid var(--hair); }
+.resume summary { display: flex; align-items: center; gap: 10px; padding: 16px 0; cursor: pointer; list-style: none; }
+.resume summary::-webkit-details-marker { display: none; }
+.resume summary span { font-size: 17px; font-weight: 600; }
+.resume summary small { font-size: 14px; color: var(--muted); }
+.resume summary .icon { margin-left: auto; color: var(--muted); transition: rotate var(--t-ui) var(--ease); }
+.resume[open] summary .icon { rotate: 180deg; }
+.resume summary:hover span { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--hair); }
+.resume .list { margin-top: 0; }
+.resume__skills { margin: 18px 0 0; font-size: 15px; line-height: 1.6; color: var(--muted); }
+.resume__skills b { color: var(--ink); font-weight: 600; }

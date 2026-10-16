@@ -205,3 +205,38 @@ export const aboutExperienceGroups: AboutExpGroup[] = [
     ],
   },
 ];
+
+/** The About page's story: short chapters in my own words, the year in the margin. */
+export type AboutChapter = { when: string; title: string; text: string };
+export const aboutChapters: AboutChapter[] = [
+  {
+    when: 'As a kid',
+    title: 'It started on paper.',
+    text: 'The first designing I remember is making custom environments for my Micro Machines on notebook paper with markers. Then I watched my dad design our house in AutoCAD, and I’d draw floor plans and elevations on grid paper.',
+  },
+  {
+    when: '2010',
+    title: 'A $100 logo.',
+    text: 'My first ever client was Chris Ducker. He needed a logo for his blog and I only charged $100. Through college I wrote for a blog about blogging, launched a design blog and a college tips blog, and had an opinion column in the Iowa State Daily.',
+  },
+  {
+    when: '2012',
+    title: 'Apple Retail.',
+    text: 'For six years I worked directly with customers, and loved to surprise and delight them. It’s why I’d still rather have customers than clients.',
+  },
+  {
+    when: '2018',
+    title: 'Designing a church.',
+    text: 'I led experience design at my then church: the physical spaces, the screens and our digital properties. Months before the world shut down I learned Webflow and redesigned the site, with a “Chat with a Pastor” service anyone could book as soon as the same day. It got the attention of Hillsong Church.',
+  },
+  {
+    when: '2020',
+    title: 'Out on my own.',
+    text: 'That June I left to start my own business for the first time: an LLC, the connections I had, and slowly, work. Things weren’t great, but I got by.',
+  },
+  {
+    when: '2022',
+    title: 'Sites, and apps.',
+    text: 'I went full-time freelancing in Webflow, first with One Branding (GoGuardian, IGN), now as a Webflow Expert with Kem Design. On the side, Testament Made: apps with customers of their own, starting with Harvous.',
+  },
+];
