@@ -29,7 +29,6 @@
 .hire-caps:has(.hire-cap:hover) .hire-cap:not(:hover) { opacity: 0.45; filter: grayscale(0.4); }
 .hire-cap:is(:hover, :focus-within) { background: color-mix(in oklch, var(--ink) 4%, transparent); }
 .hire-cap__stack { position: relative; display: block; aspect-ratio: 16 / 10; transition: opacity 200ms var(--ease); }
-.hire-cap .row__shot.is-icon, .hire-ex.is-icon { display: grid; place-items: center; background: color-mix(in oklch, var(--ink) 4%, var(--card)); }
 
 .hire-cap__text { display: grid; gap: 4px; min-width: 0; transition: opacity 200ms var(--ease); }
 .hire-cap__text b { display: flex; align-items: center; gap: 8px; font-size: 17px; font-weight: 600; }
@@ -239,6 +238,8 @@
   .bar, .peek, .toast { display: none !important; }
 }
 
-/* App icons: centred at home-screen proportions on a soft tile, not stretched to the card */
-.hire-cap .row__shot.is-icon img:not(.framed), .hire-ex.is-icon img:not(.framed) { position: static; inset: auto; width: 46cqh; height: 46cqh; object-fit: contain; border-radius: 23%; translate: 0 -12cqh; box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 8px 18px -8px rgb(0 0 0 / 0.45); }
-.hire-ex.is-icon:hover img { scale: 1.06; transition: scale 240ms var(--ease); }
+/* App icons, as on testamentmade.com: the icon on a soft mesh of its own colours (site.css .mesh) */
+.hire-cap .row__shot.is-icon .mesh img:not(.framed), .hire-ex.is-icon .mesh img:not(.framed) { position: relative; inset: auto; width: 44cqh; height: 44cqh; max-width: none; translate: 0 -8cqh; }
+.hire-cap .row__shot.is-icon .mesh img:not(.framed) { translate: none; width: 48cqh; height: 48cqh; }
+.hire-ex.is-icon:hover .mesh img { scale: 1.06; }
+.hire-ex.is-icon .mesh img { transition: scale 240ms var(--ease); }

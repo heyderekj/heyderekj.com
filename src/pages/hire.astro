@@ -19,7 +19,7 @@ const work = await getPublishedWork();
 
 // Each service's examples, newest first: a write-up's first shot, or one of my apps (its icon or picture)
 const apps = await getApps();
-type Layer = { src: string; title: string; href: string; at: number; frame?: { class?: string; style?: string }; icon?: boolean };
+type Layer = { src: string; title: string; href: string; at: number; frame?: { class?: string; style?: string }; icon?: boolean; mesh?: string };
 const stacks = Object.fromEntries(await Promise.all(SERVICES.map(async (s) => {
   const layers = (await Promise.all(EXAMPLES[s.id].map(async (ex): Promise<Layer | null> => {
     if ('work' in ex) {
@@ -30,7 +30,7 @@ const stacks = Object.fromEntries(await Promise.all(SERVICES.map(async (s) => {
     }
     const a = apps.find((x) => x.slug === ex.app); if (!a) return null;
     const icon = ex.show === 'icon' || comingSoon(a), src = icon ? a.data.icon : appPicture(a);
-    return src ? { src: imgSrc(src, icon ? 240 : 640), title: a.data.name, href: a.data.url || '/projects/', at: Date.UTC(a.data.year ?? new Date().getUTCFullYear(), 0), icon } : null;
+    return src ? { src: imgSrc(src, icon ? 240 : 640), title: a.data.name, href: a.data.url || '/projects/', at: Date.UTC(a.data.year ?? new Date().getUTCFullYear(), 0), icon, mesh: a.slug } : null;
   }))).filter((l): l is Layer => Boolean(l)).sort((x, y) => y.at - x.at);
   return [s.id, layers] as const;
 })));
@@ -62,7 +62,7 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
       {SERVICES.filter((s) => stacks[s.id].length).map((s) => (
         <div class="hire-cap sq">
           <span class="row__shots hire-cap__stack" aria-hidden="true">{stacks[s.id].slice(0, 4).map((l, i) => (
-            <span class:list={['row__shot sq', l.icon && 'is-icon']} style={`--i:${i}`}><img src={l.src} alt="" class={l.frame?.class} style={l.frame?.style} loading="lazy" decoding="async" /></span>
+            <span class:list={['row__shot sq', l.icon && 'is-icon']} style={`--i:${i}`}>{l.icon ? <span class="mesh" data-mesh={l.mesh}><img src={l.src} alt="" loading="lazy" decoding="async" /></span> : <img src={l.src} alt="" class={l.frame?.class} style={l.frame?.style} loading="lazy" decoding="async" />}</span>
           ))}</span>
           <span class="hire-cap__text">
             <b><Icon name={s.icon as never} loop={false} /> {s.name}</b>
@@ -72,7 +72,7 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
           <div class="hire-cap__strip" aria-label={`${s.name}: examples`}>
             {stacks[s.id].map((l, i) => (
               <a class:list={['hire-ex sq', l.icon && 'is-icon']} href={l.href} style={`--n:${i}`} {...(l.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>
-                <img src={l.src} alt="" class={l.frame?.class} style={l.frame?.style} loading="lazy" decoding="async" /><i>{l.title}</i>
+                {l.icon ? <span class="mesh" data-mesh={l.mesh}><img src={l.src} alt="" loading="lazy" decoding="async" /></span> : <img src={l.src} alt="" class={l.frame?.class} style={l.frame?.style} loading="lazy" decoding="async" />}<i>{l.title}</i>
               </a>
             ))}
           </div>
