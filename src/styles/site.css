@@ -677,8 +677,8 @@ html.load-in .bar { animation: deck-fade 360ms var(--ease) 150ms both; }
 
 .pt-fams { margin-top: 4px; }
 .pt-dot { width: 7px; height: 7px; border-radius: 30%; background: var(--fam); margin-right: 3px; }
-.pt--blog { --fam: oklch(0.64 0.14 62); }
-.pt--app { --fam: oklch(0.56 0.17 258); }
+.pt--blog { --fam: oklch(0.56 0.17 258); }
+.pt--app { --fam: #ea580c; } /* my brand orange */
 .pt--shop { --fam: oklch(0.58 0.17 5); }
 .pt--media { --fam: oklch(0.56 0.12 160); }
 .pt--other { --fam: oklch(0.52 0.15 300); }
