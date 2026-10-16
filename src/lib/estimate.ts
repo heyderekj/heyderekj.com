@@ -19,7 +19,8 @@ export interface Answers {
   extras?: string[];
 }
 
-export interface Line { title: string; desc: string; price: number; unit?: '/hr' | '/mo' }
+/** step: the form screen where this line's answers live, so the proposal can open it */
+export interface Line { title: string; desc: string; price: number; unit?: '/hr' | '/mo'; step?: string }
 export interface Estimate { lines: Line[]; total: number; monthly: number; payments: { when: string; pct: number; amount: number; after: string }[] }
 
 export const DEFAULTS = {
@@ -66,38 +67,39 @@ export function estimate(a: Answers): Estimate {
       title: `${kind === 'redesign' ? 'Website redesign' : 'New website'}`,
       desc: `${what} across ${pages} page${pages === 1 ? '' : 's'}${platform === 'webflow' ? ' on Webflow' : ''}${cms ? ', with a CMS your team can update' : ''}.${pages < P.minPages ? ` Priced at the ${P.minPages}-page minimum.` : ''}${scope !== 'build' ? ' Two rounds of revision in design and two in the build.' : ' Two rounds of revision in the build.'}`,
       price: round50(n * P.perPage * P.scope[scope] + (cms ? P.cms * (scope === 'design' ? 0.5 : 1) : 0)),
+      step: 'site',
     });
   }
   if (a.logo) {
     const { kind, type } = a.logo;
     lines.push(kind === 'refresh'
-      ? { title: 'Logo refresh', desc: 'Tightening what you have: proportions, spacing and a cleaner set of files. Two rounds of revision.', price: PRICES.logo.refresh }
-      : { title: `New logo`, desc: `${type === 'wordmark' ? 'A wordmark' : type === 'mark' ? 'A mark' : 'A mark and a wordmark'}, from a few directions down to one. Two rounds of revision, and every file you’ll need.`, price: PRICES.logo.new[type] });
+      ? { title: 'Logo refresh', desc: 'Tightening what you have: proportions, spacing and a cleaner set of files. Two rounds of revision.', price: PRICES.logo.refresh, step: 'logo' }
+      : { title: `New logo`, desc: `${type === 'wordmark' ? 'A wordmark' : type === 'mark' ? 'A mark' : 'A mark and a wordmark'}, from a few directions down to one. Two rounds of revision, and every file you’ll need.`, price: PRICES.logo.new[type], step: 'logo' });
   }
   if (a.rebrand) {
     lines.push(a.rebrand.has === 'keepLogo'
-      ? { title: 'Rebrand, keeping your logo', desc: 'Type, color and a short guide built around the logo you have.', price: PRICES.rebrand.keepLogo }
-      : { title: 'Full rebrand', desc: 'A new logo with the type, color and short guide around it, so everything feels like the same place.', price: PRICES.rebrand.full });
+      ? { title: 'Rebrand, keeping your logo', desc: 'Type, color and a short guide built around the logo you have.', price: PRICES.rebrand.keepLogo, step: 'rebrand' }
+      : { title: 'Full rebrand', desc: 'A new logo with the type, color and short guide around it, so everything feels like the same place.', price: PRICES.rebrand.full, step: 'rebrand' });
   }
   if (a.feedback) {
     const on = { site: 'your site', app: 'your app', brand: 'your brand' }[a.feedback.on];
-    lines.push({ title: 'Feedback', desc: a.feedback.how === 'call' ? `An hour-long call walking through ${on}, after I’ve spent time with it first.` : `A careful look at ${on}, written up: what’s working, what isn’t, and what I’d do next.`, price: PRICES.feedback[a.feedback.how] });
+    lines.push({ title: 'Feedback', desc: a.feedback.how === 'call' ? `An hour-long call walking through ${on}, after I’ve spent time with it first.` : `A careful look at ${on}, written up: what’s working, what isn’t, and what I’d do next.`, price: PRICES.feedback[a.feedback.how], step: 'feedback' });
   }
   if (a.ai) {
     const kind = { workflow: 'An AI workflow or automation', tool: 'An internal tool with AI in it', prototype: 'A first version of an app' }[a.ai.kind];
     const hrs = Math.round(PRICES.ai[a.ai.size] / RATE);
-    lines.push({ title: { workflow: 'AI workflow', tool: 'AI tool', prototype: 'App prototype' }[a.ai.kind], desc: `${kind}, ${a.ai.size} in scope (about ${hrs} hours).${a.ai.size === 'large' ? ' Large ones get scoped together before a final number.' : ''}`, price: PRICES.ai[a.ai.size] });
+    lines.push({ title: { workflow: 'AI workflow', tool: 'AI tool', prototype: 'App prototype' }[a.ai.kind], desc: `${kind}, ${a.ai.size} in scope (about ${hrs} hours).${a.ai.size === 'large' ? ' Large ones get scoped together before a final number.' : ''}`, price: PRICES.ai[a.ai.size], step: 'ai' });
   }
   // Extras, under the service they belong to
-  for (const x of EXTRAS) if (a.extras?.includes(x.id)) lines.push({ title: x.name, desc: x.desc, price: x.price });
+  for (const x of EXTRAS) if (a.extras?.includes(x.id)) lines.push({ title: x.name, desc: x.desc, price: x.price, step: x.service });
   // Starting right away moves other work around
   const rush = TIMELINE[a.timeline ?? 'flexible'].rush, core = lines.reduce((t, l) => t + l.price, 0);
-  if (rush && core) lines.push({ title: 'Starting right away', desc: `A ${Math.round(rush * 100)}% rush, for moving other work around to begin within a few weeks.`, price: round50(core * rush) });
+  if (rush && core) lines.push({ title: 'Starting right away', desc: `A ${Math.round(rush * 100)}% rush, for moving other work around to begin within a few weeks.`, price: round50(core * rush), step: 'timing' });
   if (lines.length && (a.site || a.logo || a.rebrand)) {
     lines.push({ title: 'More than the included revisions', desc: 'Any round beyond what’s included above.', price: RATE, unit: '/hr' });
   }
   if (a.retainer) {
-    lines.push({ title: 'Monthly retainer', desc: `${PRICES.retainer.hours} hours a month for updates, fixes and new pages after launch.`, price: PRICES.retainer.monthly, unit: '/mo' });
+    lines.push({ title: 'Monthly retainer', desc: `${PRICES.retainer.hours} hours a month for updates, fixes and new pages after launch.`, price: PRICES.retainer.monthly, unit: '/mo', step: 'timing' });
   }
   const total = lines.filter((l) => !l.unit).reduce((t, l) => t + l.price, 0);
   const monthly = lines.filter((l) => l.unit === '/mo').reduce((t, l) => t + l.price, 0);

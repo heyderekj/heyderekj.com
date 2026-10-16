@@ -16,6 +16,7 @@ if (form) {
   const P = (k: string) => $(`[data-p="${k}"]`, prop);
   const nextBtn = $<HTMLButtonElement>('[data-next]', form), backBtn = $<HTMLButtonElement>('[data-back]', form), hint = $('.est__hint', form);
   const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const pencil = document.querySelector<HTMLTemplateElement>('#hirePencil')?.innerHTML ?? '';
   const openedAt = Date.now();
 
   // ---- What's been answered (each service's options start at sensible defaults)
@@ -48,6 +49,7 @@ if (form) {
     const f = flow(), i = name === 'sent' ? f.length - 1 : f.indexOf(name), dot = DOT[name] ?? 'details';
     const dots = ['services', 'details', 'timing', 'you', 'review'], di = dots.indexOf(dot);
     $$('[data-dot]', app).forEach((li, n) => { li.classList.toggle('is-on', n === di && name !== 'sent'); li.classList.toggle('is-done', n < di || name === 'sent'); });
+    prop.classList.toggle('is-final', name === 'sent');
     app.style.setProperty('--p', String(name === 'sent' ? 1 : i / (f.length - 1)));
     $('.est__count', app).textContent = name === 'sent' ? 'Sent' : `Step ${i + 1} of ${f.length}`;
     backBtn.hidden = i === 0 || name === 'sent';
@@ -126,7 +128,7 @@ if (form) {
     P('overview').textContent = !wants.length && !draft.unsure
       ? 'Pick what you need and your estimate builds here, line by line.'
       : `${who || 'You'} ${who ? 'has' : 'have'} requested a project estimate ${wants.length ? `covering ${list(wants)} ` : 'to talk through what’s needed '}from Derek Castelli of Derek J Design / Testament Made, LLC.${when}`;
-    P('lines').innerHTML = e.lines.map((l) => `<li><b>${esc(l.title)}</b><em>${money(l.price)}${l.unit ?? ''}</em><small>${esc(l.desc)}</small></li>`).join('');
+    P('lines').innerHTML = e.lines.map((l) => `<li><b>${esc(l.title)}</b><em>${money(l.price)}${l.unit ?? ''}</em><small>${esc(l.desc)}</small>${l.step ? `<button type="button" class="prop__edit" data-go="${l.step}" aria-label="Change ${esc(l.title)}">${pencil}</button>` : ''}</li>`).join('');
     P('scope-wrap').hidden = !e.lines.length;
     P('totals').innerHTML = `<li><b>Total</b><em>${money(e.total)}</em></li>${e.monthly ? `<li><b>Total Ongoing</b><em>${money(e.monthly)}/mo</em></li>` : ''}`;
     P('total-wrap').hidden = !e.total;
@@ -150,6 +152,13 @@ if (form) {
     $('[data-review]', form!).innerHTML = rows.map(([k, v, go]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd>${go ? `<button type="button" data-go="${go}">Edit</button>` : '<span></span>'}</div>`).join('');
   }
   form.addEventListener('click', (e) => { const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]')?.dataset.go; if (go) show(go, -1); });
+  // A line on the proposal opens the screen where it's decided
+  prop.addEventListener('click', (e) => {
+    const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]')?.dataset.go;
+    if (!go || at === 'sent' || go === at) return;
+    const f = flow(); show(go, f.indexOf(go) < f.indexOf(at) ? -1 : 1);
+    form!.scrollIntoView({ block: 'nearest', behavior: calm() ? 'auto' : 'smooth' });
+  });
 
   // On phones, a bar keeps the total in sight while the proposal is off screen
   let propVisible = false, inApp = false;
@@ -223,8 +232,9 @@ if (form) {
   const said = document.querySelector<HTMLElement>('.hire-said');
   if (said) {
     const track = $('.said', said), cards = $$('.said__card', track), dots = $$('.hire-said__dots i', said);
-    const index = () => Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
-    const go = (i: number) => track.scrollTo({ left: ((i + cards.length) % cards.length) * track.clientWidth, behavior: calm() ? 'auto' : 'smooth' });
+    const step = () => Math.max(1, cards.length > 1 ? cards[1].offsetLeft - cards[0].offsetLeft : track.clientWidth); // a card and the gap
+    const index = () => Math.round(track.scrollLeft / step());
+    const go = (i: number) => track.scrollTo({ left: ((i + cards.length) % cards.length) * step(), behavior: calm() ? 'auto' : 'smooth' });
     track.addEventListener('scroll', () => dots.forEach((d, n) => d.classList.toggle('is-on', n === index())), { passive: true });
     $$<HTMLButtonElement>('[data-said]', said).forEach((b) => b.addEventListener('click', () => go(index() + Number(b.dataset.said))));
     let held = false;

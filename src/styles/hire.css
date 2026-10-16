@@ -68,7 +68,8 @@
 .hire-mini > span:last-child { font-size: 13px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
 /* What people say: one at a time, sliding, under the intro */
 .hire-said { display: grid; gap: 10px; margin-top: 26px; }
-.hire-said .said { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; align-items: stretch; }
+/* Room inside the scroller so the cards' edge and shadow aren't cut off */
+.hire-said .said { display: flex; gap: 14px; padding: 2px 2px 26px; margin: -2px -2px -24px; scroll-padding-inline: 2px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; align-items: stretch; }
 .hire-said .said::-webkit-scrollbar { display: none; }
 .hire-said .said__card { flex: 0 0 100%; scroll-snap-align: start; }
 .hire-said__nav { display: flex; align-items: center; justify-content: center; gap: 12px; }
@@ -219,6 +220,13 @@
 .prop__lines b { font-weight: 500; }
 .prop__lines em { grid-column: 3; font-style: normal; font-weight: 600; color: var(--money); font-variant-numeric: tabular-nums; }
 .prop__lines small { grid-column: 1 / -1; font-size: 13px; line-height: 1.5; color: var(--muted); }
+/* Each line opens the screen it came from: a tint over the line, a pencil in the margin */
+.prop__lines li { position: relative; }
+.prop__edit { position: absolute; inset: -6px -10px -6px -30px; z-index: 1; display: flex; align-items: flex-start; padding: 8px 0 0 8px; border-radius: 10px; font-size: 13px; color: var(--muted); background: transparent; cursor: pointer; opacity: 0.001; transition: opacity var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.prop__edit:is(:hover, :focus-visible) { opacity: 1; background: color-mix(in oklch, var(--ink) 4%, transparent); }
+.prop__edit:focus-visible { outline: 2px solid var(--you); outline-offset: 0; }
+.prop__edit svg { pointer-events: none; }
+.prop.is-final .prop__edit { display: none; }
 .prop__lines--totals b { font-weight: 600; }
 .prop__pay { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; color: var(--ink-soft); }
 .prop__pay em { font-style: normal; font-weight: 600; color: var(--money); }
