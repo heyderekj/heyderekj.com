@@ -8,6 +8,7 @@
 export type Move = { c: number; r: number; who: 1 | 2 };
 type Game = { board: number[]; moves: Move[]; run: number[]; by: 'you' | 'them'; score: number; level: number; wins: number; foe: string; foeTone: string };
 type Design = 'paper' | 'blueprint' | 'arcade' | 'orange';
+type Layout = 'classic' | 'poster' | 'faceoff';
 
 const W = 1080, H = 1350, COLS = 7, ROWS = 6;
 const THEMES: Record<Design, { bg: string; ink: string; muted: string; board: string; hole: string; edge: string; accent: string }> = {
@@ -26,7 +27,7 @@ const chip = (name: string, onload?: () => void) => { let img = chipImages.get(n
 const pets = new Map<string, HTMLImageElement>();
 const portrait = (name: string, onload?: () => void) => { let img = pets.get(name); if (!img) { img = new Image(); img.src = `/images/four/pet-${name.toLowerCase()}.webp`; pets.set(name, img); } if (onload && !img.complete) img.addEventListener('load', onload, { once: true }); return img; };
 
-let game: Game | null = null, design: Design = 'paper';
+let game: Game | null = null, design: Design = 'paper', layout: Layout = 'classic';
 let openCardImpl: (g: Game) => void = () => {};
 // Your side of the card: your pet, if you add one (a square crop, drawn once), and their name
 let petPhoto: HTMLCanvasElement | null = null, petName = '';
@@ -35,8 +36,9 @@ const TAGS: Record<string, string> = { Leroy: 'Slow and steady', Lilo: 'Too kind
 
 // ---- Drawing the card. `upto` and `fall` animate the clip: how many moves are in, and how far the last has dropped.
 // `flash` rings the winning four; as a number (0–1) it's the clip's reveal, ringing them one by one as the rest dim.
-// `typed` (0–1) types out the heading's prompt and `cursor` shows its block cursor (the clip blinks it)
-function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fall = 1, flash: boolean | number = true, typed = 1, cursor = true) {
+// `intro` (0–1) drops the title's four chips in, one after another, then brings up its words.
+// Three layouts arrange the same parts: the title, the result, the board, the two players and the footer.
+function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fall = 1, flash: boolean | number = true, intro = 1) {
   const t = THEMES[design];
   ctx.save(); ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = t.bg; ctx.fillRect(0, 0, W, H);
@@ -46,69 +48,104 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
   if (design === 'arcade') { ctx.fillStyle = 'rgba(255,255,255,0.025)'; for (let y = 0; y < H; y += 6) ctx.fillRect(0, y, W, 2); }
 
   const sans = 'Figtree, ui-sans-serif, system-ui, sans-serif', mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
-  // Heading
-  // Heading: the WOPR's question at a terminal prompt, in a tinted pill with a block cursor
-  const ask = 'SHALL WE PLAY A GAME?', line = `> ${ask.slice(0, Math.round(ask.length * typed))}`;
-  ctx.font = `700 27px ${mono}`; ctx.letterSpacing = '4px';
-  const pw = ctx.measureText(`> ${ask}`).width + 26 + 44, px = 86, py = 88, ph = 56;
-  ctx.fillStyle = t.accent; ctx.globalAlpha = 0.13; ctx.beginPath(); ctx.roundRect(px, py, pw, ph, 14); ctx.fill();
-  ctx.globalAlpha = 0.4; ctx.strokeStyle = t.accent; ctx.lineWidth = 2; ctx.stroke(); ctx.globalAlpha = 1;
-  ctx.fillText(line, px + 22, py + 38);
-  if (cursor) ctx.fillRect(px + 22 + ctx.measureText(line).width + 4, py + 13, 15, 31);
-  ctx.letterSpacing = '0px';
-  ctx.fillStyle = t.ink; ctx.font = `700 92px ${sans}`;
-  // This game: who took it, and in how many moves
-  ctx.fillText(result(g), 86, 236);
-  ctx.fillStyle = t.muted; ctx.font = `500 38px ${sans}`;
-  ctx.fillText(`In ${myMoves(g)} moves  ·  Level ${g.level}  ·  ${g.score.toLocaleString()} points`, 90, 296);
+  const mine = design === 'orange' ? t.ink : '#ea580c', foeChip = chip(g.foe.toLowerCase()), myChip = chip('orange');
 
-  // The board, as it stood
-  const bw = 780, bx = (W - bw) / 2, by = 352, gap = 14, pad = 26, hole = (bw - pad * 2 - gap * (COLS - 1)) / COLS, bh = pad * 2 + hole * ROWS + gap * (ROWS - 1);
-  ctx.fillStyle = t.board; ctx.strokeStyle = t.edge; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 42); ctx.fill(); ctx.stroke();
-  const at = (c: number, r: number) => [bx + pad + c * (hole + gap), by + pad + r * (hole + gap)] as const;
-  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) { const [x, y] = at(c, r); ctx.fillStyle = t.hole; ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, hole / 2, 0, 7); ctx.fill(); }
-  const shown = g.moves.slice(0, upto), reveal = typeof flash === 'number' && g.run.length ? flash : -1;
-  shown.forEach((m, n) => {
-    ctx.globalAlpha = reveal >= 0 && !g.run.includes(m.r * COLS + m.c) ? 1 - 0.6 * Math.min(1, reveal * 2) : 1;
-    const [x, y] = at(m.c, m.r), last = n === shown.length - 1 && fall < 1;
-    const yy = last ? by + pad - hole + (y - (by + pad - hole)) * easeOutBounce(fall) : y;
-    if (design === 'orange' && m.who === 1) { ctx.fillStyle = 'rgba(255,247,239,0.9)'; ctx.beginPath(); ctx.arc(x + hole / 2, yy + hole / 2, hole / 2 + 3, 0, 7); ctx.fill(); }
-    ctx.drawImage(chip(m.who === 1 ? 'orange' : g.foe.toLowerCase()), x, yy, hole, hole);
-  });
-  ctx.globalAlpha = 1;
-  // The winning four, ringed: yours in orange when you stopped on a win, theirs in their colour
-  if (flash && upto >= g.moves.length && g.run.length) {
-    ctx.strokeStyle = g.by === 'you' ? (design === 'orange' ? t.ink : '#ea580c') : g.foeTone; ctx.lineWidth = 7;
-    g.run.forEach((i, k) => {
-      const [x, y] = at(i % COLS, Math.floor(i / COLS));
-      const p = reveal < 0 ? 1 : Math.max(0, Math.min(1, (reveal - k * 0.15) / 0.4)); // one after another
-      if (!p) return;
-      ctx.globalAlpha = Math.min(1, p * 2);
-      ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, (hole / 2 + 7) * (0.7 + 0.3 * easeOutBack(p)), 0, 7); ctx.stroke();
+  // The title: four chips, yours and theirs, dropped in a row like a winning line, then the WOPR's question
+  const title = (x: number, y: number, center: boolean) => {
+    const d = 34, gap = 8, words = 'Shall we play a game?';
+    ctx.font = `600 34px ${sans}`;
+    const tw = 4 * d + 3 * gap + 18 + ctx.measureText(words).width, x0 = center ? (W - tw) / 2 : x;
+    [myChip, foeChip, myChip, foeChip].forEach((img, k) => {
+      const p = Math.max(0, Math.min(1, (intro - k * 0.12) / 0.4)); if (!p) return;
+      const cx = x0 + k * (d + gap), cy = y - d + 6 - (1 - easeOutBounce(p)) * 70;
+      ctx.globalAlpha = Math.min(1, p * 3); ctx.drawImage(img, cx, cy, d, d);
+    });
+    ctx.globalAlpha = Math.max(0, Math.min(1, (intro - 0.55) / 0.35));
+    ctx.fillStyle = t.accent; ctx.fillText(words, x0 + 4 * d + 3 * gap + 18, y);
+    ctx.globalAlpha = 1;
+  };
+  // This game: who took it, and in how many moves
+  const heading = (x: number, y: number, size: number, center: boolean) => {
+    ctx.textAlign = center ? 'center' : 'left';
+    ctx.fillStyle = t.ink; ctx.font = `700 ${size}px ${sans}`;
+    let s = size; while (ctx.measureText(result(g)).width > W - 160 && (s -= 4) > 48) ctx.font = `700 ${s}px ${sans}`;
+    ctx.fillText(result(g), x, y);
+    ctx.fillStyle = t.muted; ctx.font = `500 ${Math.round(size * 0.41)}px ${sans}`;
+    ctx.fillText(`In ${myMoves(g)} moves  ·  Level ${g.level}  ·  ${g.score.toLocaleString()} points`, x + (center ? 0 : 4), y + Math.round(size * 0.66));
+    ctx.textAlign = 'left';
+  };
+  // The board, as it stood, `bw` wide from (bx, by); returns its height
+  const board = (bx: number, by: number, bw: number) => {
+    const gap = Math.round(bw * 0.018), pad = Math.round(bw * 0.033), hole = (bw - pad * 2 - gap * (COLS - 1)) / COLS, bh = pad * 2 + hole * ROWS + gap * (ROWS - 1);
+    ctx.fillStyle = t.board; ctx.strokeStyle = t.edge; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, bw * 0.054); ctx.fill(); ctx.stroke();
+    const at = (c: number, r: number) => [bx + pad + c * (hole + gap), by + pad + r * (hole + gap)] as const;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) { const [x, y] = at(c, r); ctx.fillStyle = t.hole; ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, hole / 2, 0, 7); ctx.fill(); }
+    const shown = g.moves.slice(0, upto), reveal = typeof flash === 'number' && g.run.length ? flash : -1;
+    shown.forEach((m, n) => {
+      ctx.globalAlpha = reveal >= 0 && !g.run.includes(m.r * COLS + m.c) ? 1 - 0.6 * Math.min(1, reveal * 2) : 1;
+      const [x, y] = at(m.c, m.r), last = n === shown.length - 1 && fall < 1;
+      const yy = last ? by + pad - hole + (y - (by + pad - hole)) * easeOutBounce(fall) : y;
+      if (design === 'orange' && m.who === 1) { ctx.fillStyle = 'rgba(255,247,239,0.9)'; ctx.beginPath(); ctx.arc(x + hole / 2, yy + hole / 2, hole / 2 + 3, 0, 7); ctx.fill(); }
+      ctx.drawImage(m.who === 1 ? myChip : foeChip, x, yy, hole, hole);
     });
     ctx.globalAlpha = 1;
-  }
-
-  // The matchup under the board: you (or your pet) against them, each ringed in their colour
-  const cy = by + bh + 118, r = 64, gutter = 90;
-  const side = (img: CanvasImageSource | null, ring: string, cx: number, name: string, tag: string, align: 'left' | 'right') => {
+    // The winning four, ringed: yours in orange when you stopped on a win, theirs in their colour
+    if (flash && upto >= g.moves.length && g.run.length) {
+      ctx.strokeStyle = g.by === 'you' ? mine : g.foeTone; ctx.lineWidth = Math.max(5, bw * 0.009);
+      g.run.forEach((i, k) => {
+        const [x, y] = at(i % COLS, Math.floor(i / COLS));
+        const p = reveal < 0 ? 1 : Math.max(0, Math.min(1, (reveal - k * 0.15) / 0.4)); // one after another
+        if (!p) return;
+        ctx.globalAlpha = Math.min(1, p * 2);
+        ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, (hole / 2 + 7) * (0.7 + 0.3 * easeOutBack(p)), 0, 7); ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+    }
+    return bh;
+  };
+  // A player: their face in a ring, with name and tag beside it, or under it when `under`
+  const player = (img: CanvasImageSource | null, ring: string, cx: number, cy: number, r: number, name: string, tag: string, align: 'left' | 'right' | 'center') => {
     ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.clip();
     if (img) ctx.drawImage(img, cx - r, cy - r, r * 2, r * 2); else { ctx.fillStyle = t.hole; ctx.fillRect(cx - r, cy - r, r * 2, r * 2); }
     ctx.restore();
-    ctx.strokeStyle = ring; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(cx, cy, r + 8, 0, 7); ctx.stroke();
-    const tx = align === 'left' ? cx + r + 30 : cx - r - 30, room = W / 2 - 50 - (align === 'left' ? tx : W - tx);
+    ctx.strokeStyle = ring; ctx.lineWidth = Math.max(6, r * 0.07); ctx.beginPath(); ctx.arc(cx, cy, r + r * 0.12, 0, 7); ctx.stroke();
+    const under = align === 'center', tx = under ? cx : align === 'left' ? cx + r + 30 : cx - r - 30, ty = under ? cy + r + 74 : cy + 4;
+    const room = under ? 380 : W / 2 - 50 - (align === 'left' ? tx : W - tx);
     ctx.textAlign = align; ctx.fillStyle = t.ink;
-    let size = 46; do { ctx.font = `700 ${size}px ${sans}`; } while (ctx.measureText(name).width > room && (size -= 2) > 26);
+    let size = under ? 54 : 46; do { ctx.font = `700 ${size}px ${sans}`; } while (ctx.measureText(name).width > room && (size -= 2) > 26);
     let n = name; while (ctx.measureText(n).width > room && n.length > 1) n = n.slice(0, -2) + '…';
-    ctx.fillText(n, tx, cy + 4);
-    ctx.fillStyle = t.muted; ctx.font = `500 24px ${sans}`; ctx.fillText(tag, tx, cy + 42);
+    ctx.fillText(n, tx, ty);
+    ctx.fillStyle = t.muted; ctx.font = `500 ${under ? 28 : 24}px ${sans}`; ctx.fillText(tag, tx, ty + (under ? 42 : 38));
     ctx.textAlign = 'left';
   };
-  const mine = design === 'orange' ? t.ink : '#ea580c';
-  side(petPhoto ?? chip('orange'), mine, gutter + r, petName || (petPhoto ? 'Your pet' : 'You'), petPhoto && !petName ? 'Unnamed' : 'Challenger', 'left');
-  side(pets.get(g.foe) ?? chip(g.foe.toLowerCase()), g.foeTone, W - gutter - r, g.foe, TAGS[g.foe] ?? '', 'right');
-  ctx.fillStyle = t.muted; ctx.font = `600 26px ${mono}`; ctx.textAlign = 'center'; ctx.fillText('VS', W / 2, cy + 10); ctx.textAlign = 'left';
+  const me = { img: petPhoto ?? myChip, name: petName || (petPhoto ? 'Your pet' : 'You'), tag: petPhoto && !petName ? 'Unnamed' : 'Challenger' };
+  const them = { img: pets.get(g.foe) ?? foeChip, name: g.foe, tag: TAGS[g.foe] ?? '' };
+  const vs = (x: number, y: number, size = 26) => { ctx.fillStyle = t.muted; ctx.font = `600 ${size}px ${mono}`; ctx.textAlign = 'center'; ctx.fillText('VS', x, y); ctx.textAlign = 'left'; };
+
+  if (layout === 'poster') {
+    // The board, big, then the result under it
+    title(0, 116, true);
+    const bw = 940, bh = board((W - bw) / 2, 170, bw);
+    heading(W / 2, 170 + bh + 118, 84, true);
+  } else if (layout === 'faceoff') {
+    // The two of you, big, then the result, then the board
+    title(0, 116, true);
+    const cy = 300, r = 118;
+    player(me.img, mine, 260, cy, r, me.name, me.tag, 'center');
+    player(them.img, g.foeTone, W - 260, cy, r, them.name, them.tag, 'center');
+    vs(W / 2, cy + 14, 40);
+    heading(W / 2, 640, 76, true);
+    const bw = 520; board((W - bw) / 2, 730, bw);
+  } else {
+    // Classic: the result up top, the board, and the matchup under it
+    title(90, 136, false);
+    heading(86, 246, 92, false);
+    const bw = 780, by = 352, bh = board((W - bw) / 2, by, bw), cy = by + bh + 118, r = 64, gutter = 90;
+    player(me.img, mine, gutter + r, cy, r, me.name, me.tag, 'left');
+    player(them.img, g.foeTone, W - gutter - r, cy, r, them.name, them.tag, 'right');
+    vs(W / 2, cy + 10);
+  }
 
   // Footer
   ctx.fillStyle = t.muted; ctx.font = `500 26px ${mono}`;
@@ -245,9 +282,9 @@ if (root) {
           if (game !== g || !root!.classList.contains('is-recording')) { cut = true; return resolve(); }
           const t = now - t0;
           root!.style.setProperty('--rec', String(Math.min(1, t / length)));
-          const typed = Math.min(1, t / 900), cursor = t < 900 || Math.floor(t / 450) % 2 === 0;
-          if (t < replay) draw(pctx, g, from + Math.floor(t / per) + 1, (t % per) / per, false, typed, cursor);
-          else if (t < length) draw(pctx, g, g.moves.length, 1, reveal ? Math.min(1, (t - replay) / reveal) : true, typed, cursor);
+          const intro = Math.min(1, t / 1100);
+          if (t < replay) draw(pctx, g, from + Math.floor(t / per) + 1, (t % per) / per, false, intro);
+          else if (t < length) draw(pctx, g, g.moves.length, 1, reveal ? Math.min(1, (t - replay) / reveal) : true, intro);
           else return resolve();
           requestAnimationFrame(frame);
         };
@@ -324,10 +361,15 @@ if (root) {
     say(note);
   }));
 
-  // Designs
+  // Layouts and colours
   root.querySelectorAll<HTMLButtonElement>('[data-design]').forEach((b) => b.addEventListener('click', () => {
     design = b.dataset.design as Design;
     root.querySelectorAll('[data-design]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+    changed();
+  }));
+  root.querySelectorAll<HTMLButtonElement>('[data-layout]').forEach((b) => b.addEventListener('click', () => {
+    layout = b.dataset.layout as Layout;
+    root.querySelectorAll('[data-layout]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
     changed();
   }));
 

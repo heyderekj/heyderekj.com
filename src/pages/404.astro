@@ -74,22 +74,29 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
           </div>
           <div class="four-card__tools">
             <div class="four-card__head"><b>Make it yours</b><button type="button" data-card-close>Done</button></div>
-            <div class="four-card__designs" role="radiogroup" aria-label="Design">
-              <button type="button" role="radio" aria-checked="true" data-design="paper"><i style="--sw:#faf9f7"></i>Paper</button>
-              <button type="button" role="radio" aria-checked="false" data-design="blueprint"><i style="--sw:#1d4b8c"></i>Blueprint</button>
-              <button type="button" role="radio" aria-checked="false" data-design="arcade"><i style="--sw:#0d0c0b"></i>Arcade</button>
-              <button type="button" role="radio" aria-checked="false" data-design="orange"><i style="--sw:#ea580c"></i>Orange</button>
+            <!-- Layout and colour: small pictures to pick from, nothing to read -->
+            <div class="four-card__pick">
+              <div class="four-card__layouts" role="radiogroup" aria-label="Layout">
+                <button type="button" role="radio" aria-checked="true" data-layout="classic" title="Classic"><svg viewBox="0 0 32 40" aria-hidden="true"><rect x="5" y="5" width="14" height="3" rx="1.5" /><rect x="5" y="10" width="20" height="4" rx="2" /><rect x="5" y="17" width="22" height="13" rx="3" class="b" /><circle cx="8" cy="34" r="2.5" /><circle cx="24" cy="34" r="2.5" /></svg><span class="visually-hidden">Classic</span></button>
+                <button type="button" role="radio" aria-checked="false" data-layout="poster" title="Poster"><svg viewBox="0 0 32 40" aria-hidden="true"><rect x="9" y="4" width="14" height="2.5" rx="1.25" /><rect x="3" y="9" width="26" height="19" rx="3" class="b" /><rect x="7" y="31" width="18" height="4" rx="2" /></svg><span class="visually-hidden">Poster</span></button>
+                <button type="button" role="radio" aria-checked="false" data-layout="faceoff" title="Face-off"><svg viewBox="0 0 32 40" aria-hidden="true"><circle cx="9" cy="10" r="5" /><circle cx="23" cy="10" r="5" /><rect x="7" y="19" width="18" height="3.5" rx="1.75" /><rect x="9" y="25" width="14" height="11" rx="2.5" class="b" /></svg><span class="visually-hidden">Face-off</span></button>
+              </div>
+              <div class="four-card__colors" role="radiogroup" aria-label="Colour">
+                <button type="button" role="radio" aria-checked="true" data-design="paper" title="Paper" style="--sw:#faf9f7"><span class="visually-hidden">Paper</span></button>
+                <button type="button" role="radio" aria-checked="false" data-design="blueprint" title="Blueprint" style="--sw:#1d4b8c"><span class="visually-hidden">Blueprint</span></button>
+                <button type="button" role="radio" aria-checked="false" data-design="arcade" title="Arcade" style="--sw:#0d0c0b"><span class="visually-hidden">Arcade</span></button>
+                <button type="button" role="radio" aria-checked="false" data-design="orange" title="Orange" style="--sw:#ea580c"><span class="visually-hidden">Orange</span></button>
+              </div>
             </div>
+            <!-- Play as your own pet: a photo and a name, kept on your device -->
             <div class="four-card__pet">
-              <label class="four-card__photo sq" title="Add a photo of your pet">
+              <label class="four-card__photo" title="Add your pet’s photo">
                 <input type="file" accept="image/*" class="visually-hidden" data-pet-file />
                 <Icon name="paw" loop={false} />
                 <span class="visually-hidden">Add a photo of your pet</span>
               </label>
-              <div class="four-card__pet-text">
-                <input type="text" maxlength="24" placeholder="Your pet’s name" aria-label="Your pet’s name" autocomplete="off" data-pet-name />
-                <small>Play as your own pet: add their photo and name. It stays on your device. <button type="button" data-pet-clear hidden>Remove photo</button></small>
-              </div>
+              <input type="text" maxlength="24" placeholder="Play as your pet" aria-label="Your pet’s name" autocomplete="off" data-pet-name />
+              <button type="button" class="four-card__unpet" data-pet-clear title="Remove photo" hidden><Icon name="close" loop={false} /><span class="visually-hidden">Remove photo</span></button>
             </div>
             <div class="four-card__as" role="radiogroup" aria-label="Share it as">
               <button type="button" role="radio" aria-checked="true" data-as="image">Image</button>
