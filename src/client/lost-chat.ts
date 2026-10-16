@@ -58,7 +58,7 @@ if (box && thread && slash && prompts && form && input) {
   // Follow-ups under my answer, like an assistant's: three things to ask next, never the one just asked
   const ASKS: [string, string][] = [
     ['Latest writing', 'What have you written?'], ['Work', 'What have you built?'], ['Projects', 'Show me your apps'],
-    ['About', 'Who are you?'], ['Leave a note', 'Leave you a note'], ['Home', 'Take me home'],
+    ['About', 'Who are you?'], ['Secrets', 'Any secrets?'], ['Leave a note', 'Leave you a note'], ['Home', 'Take me home'],
   ];
   const ASK_OF = Object.fromEntries(ASKS.map(([a, q]) => [q.toLowerCase(), a]));
   const FOLLOW = '<svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v5.5a2 2 0 0 0 2 2h6.5"/><path d="M10 8l2.5 2.5L10 13"/></svg>';
@@ -70,6 +70,29 @@ if (box && thread && slash && prompts && form && input) {
     d.innerHTML = `<span>${list ? '' : 'Ask next'}</span>` + items.map(([, q]) => `<button type="button">${FOLLOW}${esc(q)}</button>`).join('');
     thread!.append(d); scroll();
   }
+
+  // ---- The cheat sheet: every easter egg, with the keys, and a Try for the ones that can go off here
+  const EGGS: { keys: string; name: string; what: string; tryit?: 'blueprint' | 'konami'; href?: string }[] = [
+    { keys: '<kbd>B</kbd>', name: 'Blueprint mode', what: 'The whole site as a cyanotype on graph paper. B again to go back.', tryit: 'blueprint' },
+    { keys: '<kbd>↑</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd><kbd>←</kbd><kbd>→</kbd>', name: 'Orange mode', what: 'My favorite color, with a fanfare.', tryit: 'konami' },
+    { keys: '<kbd>Click ×3</kbd>', name: 'Leave me a note', what: 'Triple-click my signature at the top of any page. One click goes home.' },
+    { keys: '<kbd>Tap ×4</kbd>', name: 'Count me in', what: 'Tap my photo in the bar four times, in time, for a drum fill.' },
+    { keys: '<kbd>Des Moines</kbd>', name: 'Where I am', what: 'The weather card on the home page follows my week: church, the Kem sync, lunch with Cam.', href: '/' },
+    { keys: '<kbd>Nu</kbd>', name: 'A fun fact', what: 'Open NotionUp in the projects table.', href: '/projects/#archive' },
+    { keys: '<kbd>⌥⌘I</kbd>', name: 'A note in the console', what: 'For whoever opens devtools.' },
+    { keys: '<kbd>404</kbd>', name: 'This page', what: 'Any wrong address. WOPR lights included.' },
+  ];
+  function sheet() {
+    const d = document.createElement('div'); d.className = 'lost__sheet';
+    d.innerHTML = EGGS.map((e) => `<div class="lost__egg"><span class="lost__keys">${e.keys}</span><span class="lost__eggtext"><b>${e.name}</b><small>${e.what}</small></span>${e.tryit ? `<button type="button" data-try="${e.tryit}">Try</button>` : e.href ? `<a href="${e.href}">Go</a>` : ''}</div>`).join('');
+    thread!.append(d); scroll();
+  }
+  thread.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-try]'); if (!b) return;
+    if (b.dataset.try === 'blueprint') document.dispatchEvent(new KeyboardEvent('keydown', { key: 'b' })); // client/blueprint.ts
+    // Play the Konami code for you (client/easter-egg.ts listens for it)
+    if (b.dataset.try === 'konami') ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight'].forEach((key) => document.dispatchEvent(new KeyboardEvent('keydown', { key })));
+  });
 
   // ---- Finding things
   const STOP = new Set(['the', 'and', 'for', 'with', 'www', 'html', 'php', 'index', 'page', 'posts', 'post', 'work', 'p', 'a', 'of', 'to', 'in', 'my', 'is']);
@@ -105,7 +128,7 @@ if (box && thread && slash && prompts && form && input) {
     lastAsk = ASKS.find(([a]) => a === asked)?.[0] ?? '';
     const cmd = asked.toLowerCase().replace(/^\//, '').replace(/[.!?]+$/, '');
     if (/^(help|commands|\?)$/.test(cmd)) {
-      return say('Type anything and I’ll search the site. Or type <code>/</code> for shortcuts: home, writing, work, projects, about, note and clear.');
+      return say('Type anything and I’ll search the site. Or type <code>/</code> for shortcuts: home, writing, work, projects, about, secrets, note and clear.');
     }
     if (/^(home|go home|take me home)$/.test(cmd)) { await say('Heading home…'); return void setTimeout(() => { location.href = '/'; }, calm ? 0 : 500); }
     if (/^(clear|reset)$/.test(cmd)) { thread!.innerHTML = ''; lastStatus = null; lastAsk = ''; return intro(); }
@@ -122,6 +145,10 @@ if (box && thread && slash && prompts && form && input) {
     }
     if (/^(about|who are you|who is derek)$/.test(cmd)) {
       return say('Self-taught designer in Des Moines. Husband, and a Christian before all of it. The longer story:', () => links([{ t: 'About', h: '/about/', sub: 'My story, in six chapters' }]));
+    }
+    if (/^(secrets?|easter eggs?|eggs|cheats?|cheat sheet|cheat codes?)$/.test(cmd)) {
+      await say('Shh. Here’s every easter egg on the site:', sheet);
+      return say('Try the first two right here.');
     }
     if (/^(note|leave a note|message|contact)$/.test(cmd)) {
       noting = Date.now(); box!.classList.add('is-noting'); input!.placeholder = 'Your note to Derek…';
@@ -154,7 +181,7 @@ if (box && thread && slash && prompts && form && input) {
   // ---- Slash shortcuts: type / for a little menu above the field (arrows and Enter, or click)
   const SHORTCUTS = [
     ['home', 'Go to the home page'], ['writing', 'What I wrote most recently'], ['work', 'Sites I’ve designed and built'],
-    ['projects', 'Apps and side projects'], ['about', 'My story'], ['note', 'Leave me a note'], ['clear', 'Start over'], ['help', 'What I can do here'],
+    ['projects', 'Apps and side projects'], ['about', 'My story'], ['secrets', 'Every easter egg on the site'], ['note', 'Leave me a note'], ['clear', 'Start over'], ['help', 'What I can do here'],
   ];
   let picks: string[][] = [], at = 0;
   function menu() {

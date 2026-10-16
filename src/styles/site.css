@@ -1075,3 +1075,20 @@ body.site .lost__input input:focus-visible { outline: none; } /* the field shows
 @media (prefers-reduced-motion: reduce) { .lost-404 i.on { animation: none; } }
 .lost-404 i { transition: background 240ms ease, box-shadow 240ms ease; }
 .lost-404 i.wopr { background: #ea580c; box-shadow: 0 0 6px color-mix(in srgb, #ea580c 30%, transparent); }
+/* The cheat sheet in the 404 chat: every easter egg, its keys, and Try or Go */
+.lost__sheet { --r: 16px; display: grid; margin: 4px 0 0 34px; max-width: min(460px, 88%); border-radius: 16px; overflow: hidden; background: var(--paper); box-shadow: 0 0 0 1px var(--hair); animation: lost-in 320ms var(--ease) both; }
+.lost__egg { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'keys go' 'text go'; align-items: center; gap: 4px 12px; padding: 10px 12px; }
+.lost__egg + .lost__egg { border-top: 1px solid var(--hair); }
+.lost__keys { grid-area: keys; display: flex; flex-wrap: wrap; gap: 3px; }
+.lost__keys kbd { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 6px; font: 600 11.5px var(--font); color: var(--ink); background: var(--card); box-shadow: inset 0 -1.5px 0 var(--hair), 0 0 0 1px var(--hair); }
+.lost__eggtext { grid-area: text; display: grid; }
+.lost__eggtext b { font-size: 14px; font-weight: 600; }
+.lost__eggtext small { font-size: 12.5px; line-height: 1.4; color: var(--muted); text-wrap: pretty; }
+.lost__egg :is(button, a) { grid-area: go; padding: 5px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 600; text-decoration: none; color: #fff; background: var(--you); transition: scale var(--t-ui) var(--ease); }
+.lost__egg a { color: var(--ink); background: color-mix(in oklch, var(--ink) 7%, transparent); }
+.lost__egg :is(button, a):hover { scale: 1.05; }
+/* Orange mode (client/easter-egg.ts) on the redesigned pages too */
+html.orange-mode { --paper: #fff3e8; --card: #fff8f1; --tint: #ffe8d0; --hl: #fdba74; }
+@media (prefers-color-scheme: dark) { html.orange-mode { --paper: #1c0e02; --card: #271200; --tint: #33190a; } }
+html.orange-mode body.site { transition: background-color 400ms var(--ease); }
+.lost__thread > * { flex-shrink: 0; } /* messages never squeeze; the thread scrolls */

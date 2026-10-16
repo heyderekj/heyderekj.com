@@ -13,7 +13,7 @@ export function blueprint(on = !root.classList.contains('blueprint')) {
 }
 document.addEventListener('keydown', (e) => {
   if (e.key.toLowerCase() !== 'b' || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
-  const t = e.target as HTMLElement;
-  if (t.closest('input, textarea, select, [contenteditable]')) return;
+  const t = e.target;
+  if (t instanceof Element && t.closest('input, textarea, select, [contenteditable]')) return;
   blueprint();
 });
