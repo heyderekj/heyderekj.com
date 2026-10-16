@@ -7,7 +7,9 @@ import { testimonials } from '../../data/about';
 
 const entries = await getPublishedWork();
 
-// Each testimonial leads with its best line; the full quote follows with that line highlighted
+// Each testimonial leads with its best line; the full quote follows with that line highlighted.
+// Each person has their own colour.
+const TONE: Record<string, string> = { 'Barrett Johnson': 'blue', 'Danny Begnoche': 'pink', 'Corey Moen': 'yellow' };
 const said = testimonials.map((t) => {
   const [rel, when] = t.context.split(' · ');
   const relation = /client/i.test(rel) ? 'Client' : /mentor/i.test(rel) ? 'Mentor' : /team/i.test(rel) ? 'Teammate' : rel;
@@ -28,7 +30,7 @@ const said = testimonials.map((t) => {
     <h2 class="h">What people say</h2>
     <div class="said">
       {said.map((t) => (
-        <figure class="said__card sq">
+        <figure class="said__card sq" data-tone={TONE[t.author] ?? 'orange'}>
           {t.pull && <blockquote class="said__pull">“{t.pull}.”</blockquote>}
           <p class="said__full">{t.parts.length === 3 ? <Fragment>{t.parts[0]}<mark class="said__mark">{t.parts[1]}</mark>{t.parts[2]}</Fragment> : t.parts[0]}</p>
           <figcaption class="said__by">

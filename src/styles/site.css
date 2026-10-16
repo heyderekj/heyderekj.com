@@ -889,14 +889,16 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 /* Work: what people say. The best line pulled out big, the full quote with it highlighted, who said it */
 .said { display: grid; gap: 14px; }
 .said__card { --r: 18px; position: relative; margin: 0; display: grid; gap: 12px; padding: 22px 22px 18px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); overflow: hidden; }
-.said__card::before { content: '“'; position: absolute; top: -26px; right: 14px; font-size: 140px; line-height: 1; font-weight: 700; color: color-mix(in oklch, #ea580c 14%, transparent); pointer-events: none; }
+.said__card::before { content: '“'; position: absolute; top: -26px; right: 14px; font-size: 140px; line-height: 1; font-weight: 700; color: color-mix(in oklch, var(--ink) 7%, transparent); pointer-events: none; }
 .said__pull { position: relative; margin: 0; padding: 0; border: 0; background: none; font-style: normal; font-size: 23px; line-height: 1.25; font-weight: 650; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; max-width: 30ch; }
 .said__full { position: relative; margin: 0; font-size: 15px; line-height: 1.6; color: var(--muted); text-wrap: pretty; }
 .said__mark { color: var(--ink); background: linear-gradient(to top, color-mix(in oklch, var(--hl) 55%, transparent) 0 0.62em, transparent 0.62em); padding: 0 1px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .said__by { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; margin-top: 4px; padding-top: 14px; border-top: 1px dashed var(--hair); }
-.said__face { --r: 10px; display: grid; place-items: center; width: 34px; height: 34px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em; color: #fff; background: linear-gradient(160deg, color-mix(in oklch, #ea580c 80%, white), #ea580c 65%); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3); }
-.said__card:nth-child(3n + 2) .said__face { background: linear-gradient(160deg, color-mix(in oklch, oklch(0.55 0.13 240) 80%, white), oklch(0.55 0.13 240) 65%); }
-.said__card:nth-child(3n + 3) .said__face { background: linear-gradient(160deg, color-mix(in oklch, oklch(0.6 0.12 128) 80%, white), oklch(0.6 0.12 128) 65%); }
+.said__face { --r: 10px; display: grid; place-items: center; width: 34px; height: 34px; font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em; color: var(--tone-ink, #fff); background: linear-gradient(160deg, color-mix(in oklch, var(--tone) 78%, white), var(--tone) 65%); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3), inset 0 0 0 0.5px rgb(0 0 0 / 0.1); }
+.said__card { --tone: #ea580c; }
+.said__card[data-tone=blue] { --tone: oklch(0.55 0.13 240); }
+.said__card[data-tone=pink] { --tone: oklch(0.66 0.16 355); }
+.said__card[data-tone=yellow] { --tone: oklch(0.84 0.15 88); --tone-ink: #3d3a35; }
 .said__who { display: grid; min-width: 0; line-height: 1.3; }
 .said__who b { font-size: 14px; font-weight: 600; }
 .said__who small { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
