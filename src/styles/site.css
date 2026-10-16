@@ -208,12 +208,18 @@ mark.hl { background: color-mix(in oklch, var(--hl) 55%, transparent); color: in
 }
 
 /* ---------- The work deck: clients, then apps, one slide at a time ---------- */
-.deck__track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
-.deck__track::-webkit-scrollbar { display: none; }
-/* Each slide carries a little room inside the scroller so frames and their shadows aren't sliced off at its edges */
-.deck__track { margin: -8px -12px -16px; }
-.wslide { padding: 8px 12px 16px; }
-.wslide { flex: 0 0 100%; scroll-snap-align: start; display: grid; gap: 14px; }
+.deck__track { display: grid; touch-action: pan-y; }
+.wslide { display: grid; gap: 14px; min-width: 0; }
+/* Projects stack in one place. The one leaving fades; the one arriving comes in staggered:
+   the preview rises, then its pages one by one down the rail, then the caption */
+.deck__track > .wslide { grid-area: 1 / 1; visibility: hidden; opacity: 0; }
+.deck__track > .wslide.is-on { visibility: visible; opacity: 1; z-index: 1; }
+.deck__track > .wslide.is-leaving { visibility: visible; opacity: 0; transition: opacity 220ms var(--ease), visibility 0s 220ms; }
+.deck__track > .wslide.is-in .browser { animation: deck-rise 560ms var(--ease) both; }
+.deck__track > .wslide.is-in .pages button { animation: deck-rise 420ms var(--ease) both; animation-delay: calc(180ms + var(--n, 0) * 60ms); }
+.deck__track > .wslide.is-in .wslide__cap > * { animation: deck-fade 420ms var(--ease) both; animation-delay: calc(260ms + var(--n, 0) * 50ms); }
+@keyframes deck-rise { from { opacity: 0; transform: translateY(10px); } }
+@keyframes deck-fade { from { opacity: 0; } }
 .wslide__cap { display: flex; align-items: baseline; gap: 6px 14px; flex-wrap: wrap; padding: 0 2px; }
 .wslide__cap b { font-size: 17px; font-weight: 600; letter-spacing: -0.012em; }
 .wslide__cap span { font-size: 14px; color: var(--muted); }
@@ -315,16 +321,18 @@ button.wchip { font: inherit; }
 #deckPlay[aria-pressed="false"] .i-pause { display: none; }
 .wslide .browser__ticks { display: none; }
 .wslide .browser__view { cursor: default; }
-.pages { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 2px; }
+.pages { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 3px; }
 .pages::-webkit-scrollbar { display: none; }
 /* The page rail sits down the left of the preview; on phones it drops below as a row */
-.wslide:has(.pages) { grid-template-columns: 76px minmax(0, 1fr); grid-template-areas: "pages view" "cap cap"; column-gap: 12px; }
+.wslide:has(.pages) { grid-template-columns: 82px minmax(0, 1fr); grid-template-areas: "pages view" "cap cap"; column-gap: 12px; }
 .wslide:has(.pages) > .browser { grid-area: view; }
 .wslide:has(.pages) > .pages { grid-area: pages; flex-direction: column; overflow: hidden auto; height: 0; min-height: 100%; }
+.wslide:has(.pages) > .pages button { width: 100%; }
 .wslide:has(.pages) > .wslide__cap { grid-area: cap; }
 @media (max-width: 560px) {
   .wslide:has(.pages) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "view" "pages" "cap"; }
   .wslide:has(.pages) > .pages { flex-direction: row; overflow: auto hidden; height: auto; min-height: 0; }
+  .wslide:has(.pages) > .pages button { width: 76px; }
 }
 .pages button { --r: 9px; flex: 0 0 auto; width: 76px; aspect-ratio: 16 / 10; padding: 0; overflow: hidden; position: relative; background: var(--tint); box-shadow: 0 0 0 1px var(--hair); opacity: 0.6; transition: opacity var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
 .pages button:hover { opacity: 0.9; }
@@ -548,3 +556,16 @@ body.site .app-toc { display: none !important; }
 .home > h2.h--quiet { margin: 40px 0 0; }
 .home > h2.h--quiet + .writing { margin-top: 8px; }
 @media (max-width: 560px) { .clipcard { grid-template-columns: auto minmax(0, 1fr); } .clipcard time { grid-column: 2; } }
+.wslide__cap > :nth-child(2) { --n: 1; }
+.wslide__cap > :nth-child(3) { --n: 2; }
+
+/* The deck's header runs down its left side as a spine: the title reads down it, the controls stack at the foot */
+@media (min-width: 561px) {
+  #fig-deck { display: grid; grid-template-columns: 46px minmax(0, 1fr); }
+  #fig-deck .fig__head { flex-direction: column; align-items: center; justify-content: flex-start; gap: 14px; padding: 18px 0 12px; border-bottom: 0; border-right: 1px solid var(--hair); }
+  #fig-deck .fig__no, #fig-deck .deck__title { writing-mode: vertical-rl; white-space: nowrap; }
+  #fig-deck .fig__no { letter-spacing: 0.12em; }
+  #fig-deck .deck__nav { margin: auto 0 0; flex-direction: column; gap: 2px; }
+  #fig-deck .deck__nav output { min-width: 0; padding: 6px 0; writing-mode: vertical-rl; }
+  #fig-deck #deckPrev .icon, #fig-deck #deckNext .icon { rotate: 90deg; }
+}

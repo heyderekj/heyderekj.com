@@ -1,7 +1,9 @@
 /**
- * The work deck (components/site/WorkDeck.astro). Autoplay moves between projects every 7s,
- * shown by a ring filling around the pause button; it holds while you're hovering or have just
- * used it, and stops when the deck is off screen. Each project's pages are on a rail you browse yourself.
+ * The work deck (components/site/WorkDeck.astro). Projects stack in one place: the one leaving fades,
+ * the one arriving comes in staggered (its preview, then its pages, then the caption; see site.css).
+ * Autoplay moves between projects every 7s, shown by a ring filling around the pause button; it holds
+ * while you're hovering or have just used it, and stops when the deck is off screen. Each project's
+ * pages are on a rail you browse yourself. Swipe sideways on touch to change project.
  * Other scripts can move it with `deck:go` (detail: 'kem' | 'apps' | an index).
  */
 import { calm } from './toast';
@@ -13,9 +15,22 @@ if (fig && track) {
   const total = slides.length;
   const $ = (id: string) => document.getElementById(id)!;
   const bar = $('deckBar') as unknown as SVGCircleElement, play = $('deckPlay');
-  const step = () => track.clientWidth + 16;
-  const deckIndex = () => Math.round(track.scrollLeft / Math.max(1, step()));
-  const goSlide = (n: number) => { n = (n + total) % total; track.scrollTo({ left: n * step(), behavior: calm() ? 'auto' : 'smooth' }); };
+  let cur = 0, inView = false;
+
+  function goSlide(n: number) {
+    n = (n + total) % total;
+    if (n === cur) return;
+    const from = slides[cur], to = slides[n];
+    from.classList.remove('is-on', 'is-in');
+    from.classList.add('is-leaving');
+    window.setTimeout(() => from.classList.remove('is-leaving'), 260);
+    to.classList.remove('is-leaving', 'is-in');
+    void to.offsetWidth; // restart the entrance
+    to.classList.add('is-on');
+    if (!calm()) to.classList.add('is-in');
+    cur = n;
+    update();
+  }
 
   // Picking a page on the rail swaps the big preview
   track.addEventListener('click', (e) => {
@@ -26,48 +41,46 @@ if (fig && track) {
     hold();
   });
 
-  let lastIndex = -1;
   function update() {
-    const n = Math.min(deckIndex(), total - 1);
-    $('deckCount').textContent = `${n + 1} / ${total}`;
-    const kind = slides[n].dataset.kind;
+    $('deckCount').textContent = `${cur + 1} / ${total}`;
+    const kind = slides[cur].dataset.kind;
     fig!.querySelectorAll('[data-jump]').forEach((b) => b.setAttribute('aria-pressed', String((b as HTMLElement).dataset.jump === kind)));
-    if (n !== lastIndex) {
-      lastIndex = n; restart();
-      if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[n].dataset.title}` }));
-    }
+    slides.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== cur)));
+    restart();
+    if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[cur].dataset.title}` }));
   }
 
   // Autoplay
   const DWELL = 7000;
-  let playing = !calm(), hovering = false, held = false, inView = false, holdT = 0;
+  let playing = !calm(), hovering = false, held = false, holdT = 0;
   bar.style.setProperty('--dur', `${DWELL}ms`);
   function restart() { bar.classList.remove('is-run'); bar.getBoundingClientRect(); if (playing) bar.classList.add('is-run'); sync(); }
   function sync() { bar.classList.toggle('is-paused', !playing || hovering || held || !inView); }
   function hold() { held = true; sync(); clearTimeout(holdT); holdT = window.setTimeout(() => { held = false; sync(); }, 12000); }
-  bar.addEventListener('animationend', () => goSlide(deckIndex() + 1));
+  bar.addEventListener('animationend', () => goSlide(cur + 1));
   fig.addEventListener('pointerenter', () => { hovering = true; sync(); });
   fig.addEventListener('pointerleave', () => { hovering = false; sync(); });
   new IntersectionObserver(([e]) => {
     inView = e.isIntersecting; sync();
-    if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[Math.min(deckIndex(), total - 1)].dataset.title}` }));
+    if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[cur].dataset.title}` }));
   }, { threshold: 0.4 }).observe(fig);
   play.addEventListener('click', () => { playing = !playing; play.setAttribute('aria-pressed', String(playing)); play.setAttribute('aria-label', playing ? 'Pause' : 'Play'); restart(); });
-  $('deckPrev').addEventListener('click', () => { goSlide(deckIndex() - 1); hold(); });
-  $('deckNext').addEventListener('click', () => { goSlide(deckIndex() + 1); hold(); });
+  $('deckPrev').addEventListener('click', () => { goSlide(cur - 1); hold(); });
+  $('deckNext').addEventListener('click', () => { goSlide(cur + 1); hold(); });
   fig.querySelectorAll<HTMLElement>('[data-jump]').forEach((b) => b.addEventListener('click', () => { goSlide(slides.findIndex((s) => s.dataset.kind === b.dataset.jump)); hold(); }));
-  track.addEventListener('scroll', update, { passive: true });
-  track.addEventListener('pointerdown', hold);
   fig.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') { e.preventDefault(); goSlide(deckIndex() + 1); hold(); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); goSlide(deckIndex() - 1); hold(); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); goSlide(cur + 1); hold(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goSlide(cur - 1); hold(); }
   });
 
-  // Always come to rest on exactly one project, after a scroll settles and whenever the width changes
-  let settleT = 0, lastIdx = 0;
-  const settle = () => { const n = deckIndex(); lastIdx = n; if (Math.abs(track.scrollLeft - n * step()) > 1) track.scrollTo({ left: n * step(), behavior: 'auto' }); update(); };
-  track.addEventListener('scroll', () => { clearTimeout(settleT); settleT = window.setTimeout(settle, 140); }, { passive: true });
-  new ResizeObserver(() => track.scrollTo({ left: lastIdx * step(), behavior: 'auto' })).observe(track);
+  // Swipe sideways on touch to change project
+  let sx = 0, sy = 0;
+  track.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; hold(); });
+  track.addEventListener('pointerup', (e) => {
+    if (e.pointerType === 'mouse') return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) goSlide(cur + (dx < 0 ? 1 : -1));
+  });
 
   document.addEventListener('deck:go', (e) => {
     const d = (e as CustomEvent<string | number>).detail;

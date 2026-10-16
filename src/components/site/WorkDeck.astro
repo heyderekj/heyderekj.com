@@ -1,7 +1,8 @@
 ---
 /**
  * "From websites to apps": one project per slide, a big preview with its pages on a rail beside it.
- * Autoplay moves between projects; the rail is yours to browse (client/deck.ts).
+ * Projects stack in place and change with a staggered entrance; autoplay moves between them,
+ * and the rail is yours to browse (client/deck.ts). The header runs down the side as a spine.
  */
 import Icon from '../Icon.astro';
 import Browser from './Browser.astro';
@@ -27,12 +28,12 @@ const { slides } = await getDeck();
   <div class="fig__stage">
     <div class="deck__track" id="deckTrack">
       {slides.map((s, i) => (
-        <section class="wslide" data-kind={s.kind} data-title={s.title} data-partner={s.partner ?? ''} aria-label={`${i + 1} of ${slides.length}: ${s.title}`}>
+        <section class:list={['wslide', i === 0 && 'is-on']} data-kind={s.kind} data-title={s.title} data-partner={s.partner ?? ''} aria-label={`${i + 1} of ${slides.length}: ${s.title}`}>
           <Browser pages={s.pages} url={s.url} deck eager={i === 0} />
           {s.pages.length > 1 && (
             <div class="pages" role="group" aria-label={`${s.title} pages`}>
               {s.pages.map((p, n) => (
-                <button class="sq" data-page-to={n} aria-current={n === 0 ? 'true' : 'false'} aria-label={`Page ${n + 1}`}>
+                <button class="sq" data-page-to={n} aria-current={n === 0 ? 'true' : 'false'} aria-label={`Page ${n + 1}`} style={`--n:${n}`}>
                   {'mesh' in p ? <span class="mesh" data-mesh={p.mesh}><img src={p.icon} alt="" /></span> : <img src={p.src} alt="" loading="lazy" decoding="async" />}
                 </button>
               ))}
