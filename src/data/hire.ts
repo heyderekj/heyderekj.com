@@ -38,11 +38,13 @@ export const PRICES = {
   // From $250 (a refresh); a new one by what it includes. Drafts between those, to adjust
   logo: { new: { wordmark: 400, mark: 600, both: 800 }, refresh: 250 },
   /**
-   * Rebrands are brand sprints: a week of my freelance hours (20 × $100) on the brand. One sprint is the
-   * core identity: logo, type, color and a short guide (my CrowdHealth concept took a few days). More
-   * sprints put it to work (templates, social, a fuller guide) and leave room for more directions.
+   * Rebrands are brand sprints: a week of my freelance hours on the brand. One sprint is the core identity:
+   * logo, type, color and a short guide (my CrowdHealth concept took a few days). More sprints put it to
+   * work (templates, social, a fuller guide) and leave room for more directions. The first week is $1,500
+   * (about 15 billable hours of the 20, the rest is thinking time), and each week after is 10% less than
+   * the one before it: $1,500, $1,350, $1,200 (lib/estimate.ts sprintPrices).
    */
-  rebrand: { sprint: 2000 },
+  rebrand: { sprint: 1500, nextOff: 0.1 },
   // By the hour: written notes take about two, a call about one
   feedback: { rate: 125, hours: { notes: 2, call: 1 } },
   ai: { small: 1000, medium: 2500, large: 5000 },
@@ -76,7 +78,7 @@ export const PAY_SMALL = 1500, PAY_LARGE = 10000;
 /** Starting right away takes a bigger deposit (up to half) to hold the time */
 export const RUSH_DEPOSIT = { add: 10, upTo: 50, why: 'Starting right away takes a larger deposit to hold the time.' };
 /** The retainer, after the project */
-export const RETAINER_TERMS = 'The retainer is billed at the start of each month, beginning the month after launch.';
+export const RETAINER_TERMS = 'The retainer is billed at the start of each month, beginning the month after we wrap.';
 
 /** When it starts. Starting right away means moving other work around, so it costs a little more. */
 export const TIMELINE = {
@@ -91,7 +93,7 @@ export type ServiceId = 'site' | 'logo' | 'rebrand' | 'feedback' | 'ai';
 export const SERVICES: { id: ServiceId; name: string; icon: string; line: string; from: string; tags: string[] }[] = [
   { id: 'site', name: 'Websites', icon: 'laptop', line: 'Designed and built in Webflow or custom code, with content your team can update. Two rounds of revisions in design, two in the build.', from: `from $${PRICES.site.base.toLocaleString()}`, tags: ['design', 'work'] },
   { id: 'logo', name: 'Logos', icon: 'pencil', line: 'A mark or wordmark that fits who you are, with the files you need for everything.', from: `from $${PRICES.logo.refresh.toLocaleString()}`, tags: ['branding'] },
-  { id: 'rebrand', name: 'Rebrands', icon: 'palette', line: 'Week-long brand sprints: logo, type, color and a short guide, so everything starts to feel like the same place.', from: `$${PRICES.rebrand.sprint.toLocaleString()} a sprint`, tags: ['branding'] },
+  { id: 'rebrand', name: 'Rebrands', icon: 'palette', line: 'Week-long brand sprints: logo, type, color and a short guide, so everything starts to feel like the same place.', from: `from $${PRICES.rebrand.sprint.toLocaleString()} a sprint`, tags: ['branding'] },
   { id: 'feedback', name: 'Feedback', icon: 'eye', line: 'A careful look at your site, app or brand: what’s working, what isn’t, and what I’d do next.', from: `$${PRICES.feedback.rate}/hr`, tags: ['design'] },
   { id: 'ai', name: 'AI workflows & apps', icon: 'branch', line: 'Putting AI to work where it actually helps: an automation, an internal tool, or a first version of an app.', from: `from $${PRICES.ai.small.toLocaleString()}`, tags: ['ai', 'making'] },
 ];

@@ -4,8 +4,8 @@
  * priced by lib/estimate.ts (the same code the request function uses). Sends to /api/hire, then a
  * signed note from me. Answers are kept in this browser until they're sent.
  */
-import { budgetGap, clean, DEFAULTS, estimate, extraPrice, money, patched, schedule, short, type Answers, type Gap } from '../lib/estimate';
-import { EXTRAS, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
+import { budgetGap, retainerFor, clean, DEFAULTS, estimate, extraPrice, money, patched, schedule, short, type Answers, type Gap } from '../lib/estimate';
+import { EXTRAS, PRICES, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 import { copyText, toast } from './toast';
 
 const form = document.querySelector<HTMLFormElement>('#hireForm');
@@ -111,6 +111,8 @@ if (form) {
 
   function paintForm() {
     paintGap();
+    const note = form!.querySelector<HTMLElement>('[data-retainer-note]'), c = clean(draft);
+    if (note) note.textContent = `$${PRICES.retainer.monthly}/mo, ${PRICES.retainer.hours} hours ${retainerFor(c)}`;
     // Per-page extras follow the page count
     const now = clean(draft);
     for (const x of EXTRAS.filter((e) => e.perPage)) $$(`[data-extra-price="${x.id}"]`, form!).forEach((em) => { em.innerHTML = `+${money(extraPrice(x, now))}<small>$${x.price} × ${now.site?.pages ?? DEFAULTS.site.pages} pages</small>`; });

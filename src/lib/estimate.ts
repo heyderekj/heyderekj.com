@@ -42,7 +42,8 @@ export function clean(raw: unknown): Answers {
   const ids = SERVICES.map((s) => s.id);
   const services = Array.isArray(r.services) ? [...new Set(r.services.filter((s): s is ServiceId => ids.includes(s as ServiceId)))] : [];
   const o = (k: string) => (r[k] && typeof r[k] === 'object' ? (r[k] as Record<string, unknown>) : {});
-  const a: Answers = { services, retainer: r.retainer === true, timeline: pick(r.timeline, ['asap', 'soon', 'flexible'] as const, 'flexible') };
+  // A retainer follows a site or a rebrand
+  const a: Answers = { services, retainer: r.retainer === true && services.some((s) => s === 'site' || s === 'rebrand'), timeline: pick(r.timeline, ['asap', 'soon', 'flexible'] as const, 'flexible') };
   a.extras = Array.isArray(r.extras) ? [...new Set(r.extras.filter((id): id is string => EXTRAS.some((x) => x.id === id && services.includes(x.service))))] : [];
   if (services.includes('site')) {
     const s = o('site'), pages = Math.round(Number(s.pages));
@@ -63,6 +64,15 @@ export function clean(raw: unknown): Answers {
 const extraPages = (a: Answers) => a.site?.pages ?? DEFAULTS.site.pages;
 /** An extra's price for these answers: flat, or per page of the site */
 export const extraPrice = (x: (typeof EXTRAS)[number], a: Answers) => (x.perPage ? x.price * extraPages(a) : x.price);
+
+/** Each sprint's price: the first in full, each after it 10% less than the one before (to the $50) */
+export const sprintPrices = (n: number) => Array.from({ length: n }, (_, i) => round50(PRICES.rebrand.sprint * (1 - PRICES.rebrand.nextOff * i)));
+
+/** What a retainer covers, by what came before it */
+export const retainerFor = (a: Pick<Answers, 'site' | 'rebrand'>) =>
+  a.site && a.rebrand ? 'for design help as you use the new brand, and updates, fixes and new pages on the site'
+  : a.rebrand ? 'for design help as you put the brand to use: new pieces, tweaks and questions'
+  : 'for updates, fixes and new pages after launch';
 
 export function estimate(a: Answers): Estimate {
   const lines: Line[] = [];
@@ -86,8 +96,8 @@ export function estimate(a: Answers): Estimate {
     const n = Number(a.rebrand.sprints), core = a.rebrand.has === 'keepLogo' ? 'type, color and a short guide around the logo you have' : 'a logo, type, color and a short guide';
     lines.push({
       title: `Brand sprint${n > 1 ? 's' : ''} × ${n}`,
-      desc: `A week each. The first gets ${core}.${n > 1 ? ' The second puts it to work: templates, social and a fuller guide.' : ''}${n > 2 ? ' The third leaves room for more directions and more of it in use.' : ''}`,
-      price: n * PRICES.rebrand.sprint, step: 'rebrand',
+      desc: `${n > 1 ? `A week each: ${sprintPrices(n).map((x) => money(x)).join(', then ')}. The first gets` : 'One week, for'} ${core}.${n > 1 ? ' The second puts it to work: templates, social and a fuller guide.' : ''}${n > 2 ? ' The third leaves room for more directions and more of it in use.' : ''}`,
+      price: sprintPrices(n).reduce((t, x) => t + x, 0), step: 'rebrand',
     });
   }
   if (a.feedback) {
@@ -109,7 +119,7 @@ export function estimate(a: Answers): Estimate {
     lines.push({ title: 'More than the included revisions', desc: 'Any round beyond what’s included above.', price: RATE, unit: '/hr' });
   }
   if (a.retainer) {
-    lines.push({ title: 'Monthly retainer', desc: `${PRICES.retainer.hours} hours a month for updates, fixes and new pages after launch.`, price: PRICES.retainer.monthly, unit: '/mo', step: 'timing' });
+    lines.push({ title: 'Monthly retainer', desc: `${PRICES.retainer.hours} hours a month ${retainerFor(a)}.`, price: PRICES.retainer.monthly, unit: '/mo', step: 'timing' });
   }
   const total = lines.filter((l) => !l.unit).reduce((t, l) => t + l.price, 0);
   const monthly = lines.filter((l) => l.unit === '/mo').reduce((t, l) => t + l.price, 0);
@@ -118,14 +128,17 @@ export function estimate(a: Answers): Estimate {
   const steps = plan !== 'sprints' ? PLANS[plan].steps.map((x) => ({ ...x }))
     : sprints === 1 ? [{ pct: 50, when: 'To book the sprint', after: 'is due' }, { pct: 50, when: 'When it wraps, the remaining', after: 'is due' }]
     : Array.from({ length: sprints }, (_, i) => ({ pct: Math.round(100 / sprints), when: i ? `At the start of sprint ${i + 1}` : 'To book the first sprint', after: 'is due' }));
+  const weights = sprintPrices(sprints);
+  if (plan === 'sprints' && sprints > 1) weights.forEach((w, i) => { steps[i].pct = Math.round((100 * w) / weights.reduce((t, x) => t + x, 0)); });
   if (plan === 'sprints') steps[steps.length - 1].pct = 100 - steps.slice(0, -1).reduce((t, x) => t + x.pct, 0);
   // Starting right away moves some of the second payment into the deposit
   const asap = plan !== 'sprints' && a.timeline === 'asap' && steps.length > 1 && steps[0].pct < RUSH_DEPOSIT.upTo;
   if (asap) { const d = Math.min(RUSH_DEPOSIT.add, RUSH_DEPOSIT.upTo - steps[0].pct, steps[1].pct - 10); steps[0].pct += d; steps[1].pct -= d; }
   let left = total;
   const payments = steps.map((p, i) => {
-    // Sprints split evenly to the dollar; the rest by percent, the last taking what's left
-    const amount = i === steps.length - 1 ? left : plan === 'sprints' ? Math.round(total / steps.length) : Math.round((total * p.pct) / 100);
+    // Sprints are each paid their own price (scaled if a rush or extras change the total); the rest by
+    // percent, the last taking what's left
+    const amount = i === steps.length - 1 ? left : plan === 'sprints' && sprints > 1 ? Math.round((total * weights[i]) / weights.reduce((t, x) => t + x, 0)) : Math.round((total * p.pct) / 100);
     left -= amount;
     return { when: p.when, pct: p.pct, amount, after: p.after };
   });
