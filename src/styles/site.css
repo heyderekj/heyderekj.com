@@ -619,17 +619,17 @@ body.wm-hot { cursor: pointer; }
 .wm .sig { transition: opacity var(--t-move) var(--ease); }
 .wm.is-noting { z-index: 70; pointer-events: auto; }
 .wm.is-noting .sig { opacity: 0.9; }
-.wm__note { --r: 18px; position: absolute; right: 0; top: calc(100% - 28px); width: min(380px, 100%); display: grid; gap: 10px; padding: 14px; background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); animation: deck-rise 320ms var(--ease) both; }
-.wm__label { font-size: 13px; font-weight: 600; color: var(--ink); }
-.wm__note textarea, .wm__note input { width: 100%; font: 400 15px/1.5 var(--font); color: var(--ink); background: color-mix(in oklch, var(--ink) 4%, transparent); border: 0; border-radius: 10px; padding: 9px 11px; outline: none; box-shadow: inset 0 0 0 1px var(--hair); }
-.wm__note textarea { resize: vertical; min-height: 96px; }
-.wm__note textarea:focus, .wm__note input:focus { box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--ink) 40%, transparent); }
+.wm__note { --r: 16px; position: absolute; right: 0; top: calc(100% - 28px); width: min(360px, 100%); display: grid; padding: 6px; background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); animation: deck-rise 320ms var(--ease) both; }
+.wm__note textarea, .wm__note input { width: 100%; font: 400 15px/1.45 var(--font); color: var(--ink); background: none; border: 0; outline: none; }
+.wm__note textarea { display: block; resize: none; padding: 8px 10px; min-height: 37px; overflow: hidden; }
+.wm__note textarea:focus-visible, .wm__note input:focus-visible { outline: none; }
 .wm__note ::placeholder { color: var(--muted); }
-.wm__row { display: flex; gap: 6px; align-items: center; }
-.wm__row input { flex: 1; min-width: 0; font-size: 14px; padding: 7px 10px; }
-.wm__row button { height: 32px; padding: 0 12px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; }
-.wm__row button:hover { background: color-mix(in oklch, var(--ink) 8%, transparent); }
-.wm__row button.is-primary { background: var(--ink); color: var(--paper); }
-.wm__row button:disabled { opacity: 0.6; }
-.wm__hint { margin: 0; font-size: 12px; color: var(--muted); }
+/* The name and send row slides in once there's a note to send */
+.wm__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px; max-height: 0; opacity: 0; overflow: hidden; border-top: 1px solid transparent; transition: max-height var(--t-move) var(--ease), opacity var(--t-ui) var(--ease), border-color var(--t-ui) var(--ease), padding var(--t-move) var(--ease); }
+.wm__note.has-text .wm__row { max-height: 48px; opacity: 1; padding-top: 6px; border-top-color: var(--hair); }
+.wm__row input { font-size: 13.5px; padding: 6px 10px; border-radius: 9px; }
+.wm__row input:focus { background: color-mix(in oklch, var(--ink) 5%, transparent); }
+.wm__send { width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; font-size: 15px; background: var(--ink); color: var(--paper); transition: transform var(--t-ui) var(--ease), opacity var(--t-ui) var(--ease); }
+.wm__send:hover { transform: translateY(-1px); }
+.wm__note.is-sending .wm__send { opacity: 0.5; }
 .wm__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }

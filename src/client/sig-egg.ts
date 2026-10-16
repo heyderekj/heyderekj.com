@@ -23,24 +23,30 @@ if (wm && inner && mine) {
     card = document.createElement('form');
     card.className = 'wm__note sq';
     card.innerHTML = `
-      <label class="wm__label" for="wmNote">Leave me a note</label>
-      <textarea id="wmNote" name="note" rows="4" maxlength="2000" required placeholder="Anything at all. I read every one."></textarea>
+      <textarea name="note" rows="1" maxlength="2000" required placeholder="Leave me a note…" aria-label="Leave me a note"></textarea>
       <div class="wm__row">
-        <input name="name" maxlength="80" autocomplete="name" placeholder="Your name (optional)" aria-label="Your name, optional">
+        <input name="name" maxlength="80" autocomplete="name" placeholder="Anonymous, or your name" aria-label="Your name, optional">
         <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="wm__hp">
-        <button type="button" data-act="cancel">Cancel</button>
-        <button type="submit" class="is-primary">Send</button>
-      </div>
-      <p class="wm__hint">Anonymous unless you add a name. It comes straight to my inbox.</p>`;
+        <button type="submit" class="wm__send" aria-label="Send"><svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5"/></svg></button>
+      </div>`;
     inner!.append(card);
-    card.querySelector('textarea')!.focus();
-    card.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('[data-act="cancel"]')) close(); });
+    const area = card.querySelector('textarea')!;
+    area.focus();
+    area.addEventListener('input', () => {
+      area.style.height = 'auto'; area.style.height = `${Math.min(area.scrollHeight, 220)}px`;
+      card!.classList.toggle('has-text', area.value.trim().length > 0);
+    });
+    area.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) card!.requestSubmit(); });
+    setTimeout(() => document.addEventListener('pointerdown', outside), 0);
     card.addEventListener('submit', send);
     document.addEventListener('keydown', onKey);
   }
   function onKey(e: KeyboardEvent) { if (e.key === 'Escape') close(); }
+  // Clicking away closes it, unless there's an unsent note
+  function outside(e: PointerEvent) { if (card && !card.contains(e.target as Node) && !card.querySelector('textarea')!.value.trim()) close(); }
   function close() {
     document.removeEventListener('keydown', onKey);
+    document.removeEventListener('pointerdown', outside);
     card?.remove(); card = null;
     wm!.classList.remove('is-noting');
   }
@@ -50,7 +56,7 @@ if (wm && inner && mine) {
     const data = Object.fromEntries(new FormData(card)) as Record<string, string>;
     if (!data.note?.trim()) return;
     const button = card.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-    button.disabled = true; button.textContent = 'Sending…';
+    button.disabled = true; card.classList.add('is-sending');
     try {
       const r = await fetch('/api/note', {
         method: 'POST',
@@ -61,7 +67,7 @@ if (wm && inner && mine) {
       close(); resign();
       toast(data.name?.trim() ? `Thanks, ${data.name.trim().split(' ')[0]}. Got it.` : 'Thank you. Got it.');
     } catch {
-      button.disabled = false; button.textContent = 'Send';
+      button.disabled = false; card?.classList.remove('is-sending');
       toast('That didn’t send. You can email derekj@hey.com');
     }
   }
