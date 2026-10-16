@@ -20,9 +20,9 @@ if (game && grid404 && head) {
   const levelEl = $('[data-four="level"]'), scoreEl = $('[data-four="score"]'), bestEl = $('[data-four="best"]');
   const againBtn = $<HTMLButtonElement>('[data-four-again]'), cardBtn = $<HTMLButtonElement>('[data-four-card]');
   const nextBtn = $<HTMLButtonElement>('[data-four-next]'), stopBtn = $<HTMLButtonElement>('[data-four-stop]');
-  // Settings, from the dial under their face: sound, the ghost chip, less motion (kept in this browser)
+  // Settings, from the dial under their face: sound and less motion (kept in this browser)
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const prefs = { sound: true, hints: true, calm: false };
+  const prefs = { sound: true, calm: false };
   try { Object.assign(prefs, JSON.parse(localStorage.getItem('hdj:four:set') || '{}')); if (localStorage.getItem('hdj:four:sound') === 'off') prefs.sound = false; } catch {}
   let calm = reduce || prefs.calm;
   const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
@@ -228,33 +228,47 @@ if (game && grid404 && head) {
   }
   // The 404's dots gather into the board: each hole takes the dot nearest its spot on the 404 grid,
   // and every other dot flows into its nearest hole and melts away. Clones fly between the two layouts.
+  // The 404 becomes the board in one move: its letters drain to grey and the dots outside a 7 × 6 block
+  // fade where they are; that block then grows into the board's holes (grid onto grid, so nothing
+  // crosses), while the board's card grows out from under it. Clones fly in a fixed layer; the real
+  // holes take over at the end.
   function morph() {
     const dots = [...grid404!.querySelectorAll<HTMLElement>('i')], from = dots.map((d) => d.getBoundingClientRect());
     const dcols = Number(getComputedStyle(grid404!).getPropertyValue('--cols')) || 17, drows = Math.round(dots.length / dcols);
+    const c0 = Math.floor((dcols - COLS) / 2), r0 = drows - ROWS; // the middle seven columns, the bottom six rows
+    const holeOf = (d: number) => { const c = (d % dcols) - c0, r = Math.floor(d / dcols) - r0; return c >= 0 && c < COLS && r >= 0 ? r * COLS + c : -1; };
+    const ink = getComputedStyle(dots.find((d) => d.classList.contains('on')) ?? dots[0]).backgroundColor, faint = getComputedStyle(dots.find((d) => !d.classList.contains('on')) ?? dots[0]).backgroundColor;
     const lit = dots.map((d) => d.classList.contains('on'));
     grid404!.hidden = true; game!.hidden = false; game!.classList.add('is-morph'); round();
     const to = cells.map((c) => c.getBoundingClientRect()), holeColor = getComputedStyle(cells[0]).backgroundColor;
-    // Which dot each hole takes, and which hole every dot heads for
-    const taken = new Map<number, number>();
-    cells.forEach((_, i) => { const c = i % COLS, r = Math.floor(i / COLS); taken.set(Math.round((r * (drows - 1)) / (ROWS - 1)) * dcols + Math.round((c * (dcols - 1)) / (COLS - 1)), i); });
-    const near = (d: number) => { const x = from[d].left + from[d].width / 2, y = from[d].top + from[d].height / 2; let best = 0, bd = Infinity; to.forEach((t, i) => { const dd = (t.left + t.width / 2 - x) ** 2 + (t.top + t.height / 2 - y) ** 2; if (dd < bd) { bd = dd; best = i; } }); return best; };
+
+    // The board starts as the block it grows from: its holes laid over the kept dots
+    const first = from[dots.findIndex((_, d) => holeOf(d) === 0)], last = from[dots.findIndex((_, d) => holeOf(d) === COLS * ROWS - 1)];
+    const bRect = board.getBoundingClientRect(), h0 = to[0], h1 = to[COLS * ROWS - 1];
+    const sx = (last.right - first.left) / (h1.right - h0.left), sy = (last.bottom - first.top) / (h1.bottom - h0.top);
+    const tx = first.left - (bRect.left + (h0.left - bRect.left) * sx), ty = first.top - (bRect.top + (h0.top - bRect.top) * sy);
+    board.style.transition = 'none'; board.style.transformOrigin = '0 0';
+    board.style.transform = `translate(${tx}px, ${ty}px) scale(${sx}, ${sy})`; board.style.opacity = '0';
+
     const layer = document.createElement('div'); layer.className = 'four-morph'; document.body.append(layer);
-    const ink = getComputedStyle(dots.find((d) => d.classList.contains('on')) ?? dots[0]).backgroundColor, faint = getComputedStyle(dots.find((d) => !d.classList.contains('on')) ?? dots[0]).backgroundColor;
     const flights = dots.map((_, d) => {
-      const f = from[d], hole = taken.get(d), keep = hole != null, t = to[keep ? hole! : near(d)];
-      const el = document.createElement('i'); el.style.cssText = `left:${f.left}px;top:${f.top}px;width:${f.width}px;height:${f.height}px;background:${lit[d] ? ink : faint}`;
+      const f = from[d], hole = holeOf(d), el = document.createElement('i');
+      el.style.cssText = `left:${f.left}px;top:${f.top}px;width:${f.width}px;height:${f.height}px;background:${lit[d] ? ink : faint}`;
+      if (hole < 0) el.className = 'is-out';
       layer.append(el);
-      const dx = t.left + t.width / 2 - (f.left + f.width / 2), dy = t.top + t.height / 2 - (f.top + f.height / 2), k = (keep ? t.width : t.width * 0.5) / f.width;
-      return { el, keep, dx, dy, k, delay: (f.left - from[0].left) * 0.35 + (f.top - from[0].top) * 0.6 };
+      if (hole < 0) return { el, transform: 'scale(0.4)' };
+      const t = to[hole];
+      return { el, transform: `translate(${t.left + t.width / 2 - (f.left + f.width / 2)}px, ${t.top + t.height / 2 - (f.top + f.height / 2)}px) scale(${t.width / f.width})` };
     });
-    requestAnimationFrame(() => requestAnimationFrame(() => flights.forEach(({ el, keep, dx, dy, k, delay }) => {
-      el.style.transitionDelay = `${delay}ms`;
-      el.style.transform = `translate(${dx}px, ${dy}px) scale(${k})`;
-      el.style.background = holeColor;
-      if (!keep) el.style.opacity = '0';
-    })));
-    const longest = Math.max(...flights.map((f) => f.delay)) + 720;
-    setTimeout(() => { game!.classList.remove('is-morph'); layer.classList.add('is-done'); setTimeout(() => layer.remove(), 200); cols[aim].focus({ preventScroll: true }); }, longest);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      flights.forEach(({ el, transform }) => { el.style.transform = transform; el.style.background = holeColor; if (el.className) el.style.opacity = '0'; });
+      board.style.transition = ''; board.style.transform = ''; board.style.opacity = '';
+    }));
+    setTimeout(() => {
+      game!.classList.remove('is-morph'); board.style.transformOrigin = '';
+      layer.classList.add('is-done'); setTimeout(() => layer.remove(), 200);
+      cols[aim].focus({ preventScroll: true });
+    }, 820);
   }
   function quit() {
     playing = false; turn = 'off';
@@ -370,7 +384,7 @@ if (game && grid404 && head) {
   document.addEventListener('pointerdown', (e) => { if (!dial.hidden && !(e.target as HTMLElement).closest('.four__dial, .four__who')) closeDial(); });
   const applyPrefs = () => {
     calm = reduce || prefs.calm;
-    game.classList.toggle('no-hints', !prefs.hints); game.classList.toggle('is-calm', calm);
+    game.classList.toggle('is-calm', calm);
     dial.querySelectorAll<HTMLInputElement>('[data-four-set]').forEach((x) => (x.checked = prefs[x.dataset.fourSet as keyof typeof prefs]));
   };
   dial.querySelectorAll<HTMLInputElement>('[data-four-set]').forEach((x) => x.addEventListener('change', () => {
