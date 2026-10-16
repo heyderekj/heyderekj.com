@@ -36,7 +36,7 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
       <div class="lost-404" aria-hidden="true" style={`--cols:${rows[0].length}`}>
         {dots.map((x) => <i class={x.on ? 'on' : undefined} style={`--d:${x.d}`}></i>)}
       </div>
-      <p class="lost-head__line">Nothing lives at <code id="lostPath">this address</code>. Let’s find what you were after.</p>
+      <p class="lost-head__line">Nothing lives at <code id="lostPath">this address</code>.</p>
     </header>
     <section class="lost sq" aria-label="Chat with Derek about the missing page" data-photo={photo}>
       <header class="lost__top">
