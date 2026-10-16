@@ -58,8 +58,10 @@ export const SERVICES: { id: ServiceId; name: string; icon: string; line: string
 export type Example = { work: string } | { app: string; show?: 'icon' | 'image' };
 export const EXAMPLES: Record<ServiceId, Example[]> = {
   site: [{ work: 'revisemy' }, { work: 'exodus51' }, { work: 'throne' }, { work: 'care-continuity' }],
-  logo: [{ app: 'harvous', show: 'icon' }, { app: 'koati', show: 'icon' }, { app: 'revisemy', show: 'icon' }, { app: 'heres-my-church', show: 'icon' }],
-  rebrand: [{ work: 'scenery' }, { work: 'mantle' }, { work: 'bowen-design-and-print' }],
+  // Logos for Josh Pigford's projects, and one of my own apps
+  logo: [{ work: 'schemakit' }, { work: 'linkscout' }, { work: 'revise-dev' }, { app: 'harvous', show: 'icon' }],
+  // NameSnag was a redesign of the logo Josh had
+  rebrand: [{ work: 'scenery' }, { work: 'namesnag' }, { work: 'bowen-design-and-print' }],
   // Consulting: no examples, so these show as short rows
   feedback: [],
   ai: [],
