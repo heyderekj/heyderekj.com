@@ -1,7 +1,7 @@
 /**
  * The 404 game's card (client/four.ts): when a game ends, you can make a card of it instead of
- * going on a leaderboard. Pick a design, sign it, then copy, save or share it as an image, or as a
- * short clip that replays the last round chip by chip.
+ * going on a leaderboard. Pick a design, add your own pet (a photo and a name, kept on your
+ * device), then copy, save or share it as an image, or as a short clip that replays the last round chip by chip.
  * Drawn on a canvas (1080 × 1350); the clip is recorded from it with MediaRecorder and loops in
  * the preview once it's made.
  */
@@ -22,10 +22,16 @@ const root = document.querySelector<HTMLElement>('.four-card');
 const chipImages = new Map<string, HTMLImageElement>();
 const chip = (name: string, onload?: () => void) => { let img = chipImages.get(name); if (!img) { img = new Image(); img.src = `/images/four/chip-${name}.webp`; chipImages.set(name, img); } if (onload && !img.complete) img.addEventListener('load', onload, { once: true }); return img; };
 
+// The animals' portraits, for their side of the card
+const pets = new Map<string, HTMLImageElement>();
+const portrait = (name: string, onload?: () => void) => { let img = pets.get(name); if (!img) { img = new Image(); img.src = `/images/four/pet-${name.toLowerCase()}.webp`; pets.set(name, img); } if (onload && !img.complete) img.addEventListener('load', onload, { once: true }); return img; };
+
 let game: Game | null = null, design: Design = 'paper';
 let openCardImpl: (g: Game) => void = () => {};
-let strokes: [number, number][][] = []; // the player's signature, in 0–1 coordinates of the pad
-let padAspect = 2.5; // the pad's width ÷ height, so the signature keeps its shape on the card
+// Your side of the card: your pet, if you add one (a square crop, drawn once), and their name
+let petPhoto: HTMLCanvasElement | null = null, petName = '';
+// Under each animal's name on the card
+const TAGS: Record<string, string> = { Leroy: 'Slow, smart, persistent', Lilo: 'Kind, avoids conflict', Kiya: 'Competitive, easily distracted', Irma: 'Not smart, plays hard' };
 
 // ---- Drawing the card. `upto` and `fall` animate the clip: how many moves are in, and how far the last has dropped
 function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fall = 1, flash = true) {
@@ -64,15 +70,25 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
     g.run.forEach((i) => { const [x, y] = at(i % COLS, Math.floor(i / COLS)); ctx.beginPath(); ctx.arc(x + hole / 2, y + hole / 2, hole / 2 + 7, 0, 7); ctx.stroke(); });
   }
 
-  // Your signature, on a line under the board
-  const sw = 560, sh = 120, sx = (W - sw) / 2, sy = by + bh + 34; // leaves room for the footer
-  ctx.strokeStyle = t.edge; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(sx, sy + sh); ctx.lineTo(sx + sw, sy + sh); ctx.stroke();
-  ctx.fillStyle = t.muted; ctx.font = `500 24px ${sans}`; ctx.textAlign = 'center';
-  ctx.fillText('Signed', W / 2, sy + sh + 40); ctx.textAlign = 'left';
-  ctx.strokeStyle = t.ink; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 6;
-  const fw = Math.min(sw, sh * padAspect), fh = fw / padAspect, fx = sx + (sw - fw) / 2, fy = sy + sh - fh;
-  for (const s of strokes) { ctx.beginPath(); s.forEach(([x, y], i) => { const px = fx + x * fw, py = fy + y * fh; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }); ctx.stroke(); }
+  // The matchup under the board: you (or your pet) against them, each ringed in their colour
+  const cy = by + bh + 118, r = 64, gutter = 90;
+  const side = (img: CanvasImageSource | null, ring: string, cx: number, name: string, tag: string, align: 'left' | 'right') => {
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.clip();
+    if (img) ctx.drawImage(img, cx - r, cy - r, r * 2, r * 2); else { ctx.fillStyle = t.hole; ctx.fillRect(cx - r, cy - r, r * 2, r * 2); }
+    ctx.restore();
+    ctx.strokeStyle = ring; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(cx, cy, r + 8, 0, 7); ctx.stroke();
+    const tx = align === 'left' ? cx + r + 30 : cx - r - 30, room = W / 2 - 50 - (align === 'left' ? tx : W - tx);
+    ctx.textAlign = align; ctx.fillStyle = t.ink;
+    let size = 46; do { ctx.font = `700 ${size}px ${sans}`; } while (ctx.measureText(name).width > room && (size -= 2) > 26);
+    let n = name; while (ctx.measureText(n).width > room && n.length > 1) n = n.slice(0, -2) + '…';
+    ctx.fillText(n, tx, cy + 4);
+    ctx.fillStyle = t.muted; ctx.font = `500 24px ${sans}`; ctx.fillText(tag, tx, cy + 42);
+    ctx.textAlign = 'left';
+  };
+  const mine = design === 'orange' ? t.ink : '#ea580c';
+  side(petPhoto ?? chip('orange'), mine, gutter + r, petName || (petPhoto ? 'Your pet' : 'You'), petPhoto && !petName ? 'Unnamed, undefeated' : 'The challenger', 'left');
+  side(pets.get(g.foe) ?? chip(g.foe.toLowerCase()), g.foeTone, W - gutter - r, g.foe, TAGS[g.foe] ?? '', 'right');
+  ctx.fillStyle = t.muted; ctx.font = `600 26px ${mono}`; ctx.textAlign = 'center'; ctx.fillText('VS', W / 2, cy + 10); ctx.textAlign = 'left';
 
   // Footer
   ctx.fillStyle = t.muted; ctx.font = `500 26px ${mono}`;
@@ -102,7 +118,6 @@ const PER = 260, HOLD = 1800; // the clip: a beat per chip, then a hold on the e
 if (root) {
   const preview = root.querySelector<HTMLCanvasElement>('.four-card__preview canvas')!;
   const pctx = preview.getContext('2d')!;
-  const pad = root.querySelector<HTMLCanvasElement>('.four-card__pad canvas')!;
   const status = root.querySelector<HTMLElement>('.four-card__status')!;
   const render = () => { if (game) draw(pctx, game); };
 
@@ -154,7 +169,7 @@ if (root) {
       let cut = false;
       await new Promise<void>((resolve) => {
         const frame = (now: number) => {
-          // Changing the design or signature mid-take restarts it
+          // Changing the design or your pet mid-take restarts it
           if (game !== g || !root!.classList.contains('is-recording')) { cut = true; return resolve(); }
           const t = now - t0;
           root!.style.setProperty('--rec', String(Math.min(1, t / length)));
@@ -218,32 +233,43 @@ if (root) {
     changed();
   }));
 
-  // The signature pad: your strokes, kept as points so they draw crisply on the card at any size
-  const sizePad = () => { const r = pad.getBoundingClientRect(), dpr = devicePixelRatio || 1; pad.width = r.width * dpr; pad.height = r.height * dpr; padAspect = r.width / r.height || padAspect; paintPad(); };
-  function paintPad() {
-    const c = pad.getContext('2d')!; c.clearRect(0, 0, pad.width, pad.height);
-    c.strokeStyle = getComputedStyle(root!).color; c.lineWidth = 2.6 * (devicePixelRatio || 1); c.lineCap = c.lineJoin = 'round';
-    for (const s of strokes) { c.beginPath(); s.forEach(([x, y], i) => (i ? c.lineTo(x * pad.width, y * pad.height) : c.moveTo(x * pad.width, y * pad.height))); c.stroke(); }
-    root!.classList.toggle('is-signed', strokes.length > 0);
+  // Your pet: a photo (picked, dropped or pasted) and a name. The photo never leaves the browser
+  const petBox = root.querySelector<HTMLElement>('.four-card__pet')!;
+  const petFile = root.querySelector<HTMLInputElement>('[data-pet-file]')!;
+  const petThumb = root.querySelector<HTMLElement>('.four-card__photo')!;
+  const nameInput = root.querySelector<HTMLInputElement>('[data-pet-name]')!;
+  const clearBtn = root.querySelector<HTMLButtonElement>('[data-pet-clear]')!;
+  async function usePhoto(file: File | undefined) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const url = URL.createObjectURL(file), img = new Image();
+    try { img.src = url; await img.decode(); } catch { status.textContent = 'That photo didn’t load. Try another.'; return; } finally { setTimeout(() => URL.revokeObjectURL(url), 0); }
+    // A centred square, small enough to keep around
+    const c = document.createElement('canvas'), side = Math.min(img.naturalWidth, img.naturalHeight);
+    c.width = c.height = 480;
+    c.getContext('2d')!.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, 480, 480);
+    petPhoto = c; petThumb.style.backgroundImage = `url(${c.toDataURL('image/jpeg', 0.8)})`;
+    root!.classList.add('has-pet'); clearBtn.hidden = false;
+    if (!nameInput.value) nameInput.focus();
+    changed();
   }
-  let drawing = false;
-  const point = (e: PointerEvent): [number, number] => { const r = pad.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; };
-  pad.addEventListener('pointerdown', (e) => { drawing = true; pad.setPointerCapture(e.pointerId); strokes.push([point(e)]); paintPad(); });
-  pad.addEventListener('pointermove', (e) => { if (!drawing) return; strokes[strokes.length - 1].push(point(e)); paintPad(); });
-  const end = () => { if (!drawing) return; drawing = false; changed(); };
-  pad.addEventListener('pointerup', end); pad.addEventListener('pointercancel', end);
-  root.querySelector('[data-sign-clear]')!.addEventListener('click', () => { strokes = []; paintPad(); changed(); });
+  petFile.addEventListener('change', () => { usePhoto(petFile.files?.[0]); petFile.value = ''; });
+  petBox.addEventListener('dragover', (e) => { e.preventDefault(); petBox.classList.add('is-over'); });
+  petBox.addEventListener('dragleave', () => petBox.classList.remove('is-over'));
+  petBox.addEventListener('drop', (e) => { e.preventDefault(); petBox.classList.remove('is-over'); usePhoto(e.dataTransfer?.files[0]); });
+  root.addEventListener('paste', (e) => { const f = [...(e.clipboardData?.files ?? [])].find((x) => x.type.startsWith('image/')); if (f) { e.preventDefault(); usePhoto(f); } });
+  let typing = 0;
+  nameInput.addEventListener('input', () => { petName = nameInput.value.trim(); render(); clearTimeout(typing); typing = window.setTimeout(changed, 500); });
+  clearBtn.addEventListener('click', () => { petPhoto = null; petThumb.style.backgroundImage = ''; root.classList.remove('has-pet'); clearBtn.hidden = true; changed(); });
 
   root.querySelector('[data-card-close]')!.addEventListener('click', () => { root.hidden = true; root.classList.remove('is-recording'); video.pause(); document.querySelector<HTMLElement>('[data-four-card]')?.focus(); });
-  addEventListener('resize', () => { if (!root.hidden) sizePad(); });
 
   // Called by the game when you ask for a card
   openCardImpl = (g) => {
     game = g; root.hidden = false; status.textContent = ''; clip = null;
     lengthLabel.textContent = ` · ${Math.round((g.moves.length * PER + HOLD) / 1000)}s`;
     setAs('image');
-    chip('orange', render); chip(g.foe.toLowerCase(), render);
-    requestAnimationFrame(() => { sizePad(); render(); root.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); });
+    chip('orange', render); chip(g.foe.toLowerCase(), render); portrait(g.foe, render);
+    requestAnimationFrame(() => { render(); root.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); });
   };
 }
 export const openCard = (g: Game) => openCardImpl(g);

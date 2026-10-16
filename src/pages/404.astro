@@ -69,7 +69,17 @@ const dots = rows.flatMap((row, r) => [...row].map((on, c) => ({ on: on === '1',
               <button type="button" role="radio" aria-checked="false" data-design="arcade"><i style="--sw:#0d0c0b"></i>Arcade</button>
               <button type="button" role="radio" aria-checked="false" data-design="orange"><i style="--sw:#ea580c"></i>Orange</button>
             </div>
-            <div class="four-card__pad"><canvas aria-label="Sign here"></canvas><span>Sign here</span><button type="button" data-sign-clear>Clear</button></div>
+            <div class="four-card__pet">
+              <label class="four-card__photo sq" title="Add a photo of your pet">
+                <input type="file" accept="image/*" class="visually-hidden" data-pet-file />
+                <Icon name="paw" loop={false} />
+                <span class="visually-hidden">Add a photo of your pet</span>
+              </label>
+              <div class="four-card__pet-text">
+                <input type="text" maxlength="24" placeholder="Your pet’s name" aria-label="Your pet’s name" autocomplete="off" data-pet-name />
+                <small>Play as your own pet. Add a photo, drop one or paste it. It stays on your device. <button type="button" data-pet-clear hidden>Remove photo</button></small>
+              </div>
+            </div>
             <div class="four-card__as" role="radiogroup" aria-label="Share it as">
               <button type="button" role="radio" aria-checked="true" data-as="image">Image</button>
               <button type="button" role="radio" aria-checked="false" data-as="clip"><Icon name="clapper" />Clip<small data-clip-length></small></button>

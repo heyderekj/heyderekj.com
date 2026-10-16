@@ -92,7 +92,7 @@ if (game && grid404 && head) {
     try { localStorage.setItem('hdj:four:foe', foe.name); } catch {}
     game!.style.setProperty('--foe', foe.tone); game!.style.setProperty('--foe-ink', foe.toneInk ?? '#fff');
     game!.style.setProperty('--foe-chip', `url(/images/four/chip-${foe.name.toLowerCase()}.webp)`); // their chip, in their colour
-    whoEl.textContent = foe.name[0]; whoEl.setAttribute('aria-label', foe.name);
+    whoEl.style.backgroundImage = `url(/images/four/pet-${foe.name.toLowerCase()}-sm.webp)`; whoEl.setAttribute('aria-label', foe.name); // their face, ringed in their colour
     $('.four__vs').textContent = foe.name;
   }
   const LINES = { get start() { return foe.lines.start; }, level: (l: number) => foe.lines.level(l), get mine() { return foe.lines.mine; }, get block() { return foe.lines.block; }, get youWin() { return foe.lines.youWin; }, get iWin() { return foe.lines.iWin; }, get draw() { return foe.lines.draw; } };
