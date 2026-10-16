@@ -85,15 +85,19 @@ if (game && grid404 && head) {
   ];
   let foe = FOES[0];
   const whoEl = $('.four__who');
-  function meet() {
+  // Who you play: picked at random each game (never the last one twice), unless you pick someone from the faces
+  const foesEl = $('.four__foes');
+  foesEl.innerHTML = FOES.map((f) => `<button type="button" class="sq" data-foe="${f.name}" title="Play ${f.name}" aria-label="${f.name}" aria-pressed="false" style="--tone:${f.tone};background-image:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp)"></button>`).join('');
+  let chosen = '';
+  function meet(name = chosen) {
     let last = ''; try { last = localStorage.getItem('hdj:four:foe') ?? ''; } catch {}
     const pool = FOES.filter((f) => f.name !== last);
-    foe = pick(pool.length ? pool : FOES);
+    foe = FOES.find((f) => f.name === name) ?? pick(pool.length ? pool : FOES);
     try { localStorage.setItem('hdj:four:foe', foe.name); } catch {}
     game!.style.setProperty('--foe', foe.tone); game!.style.setProperty('--foe-ink', foe.toneInk ?? '#fff');
     game!.style.setProperty('--foe-chip', `url(/images/four/chip-${foe.name.toLowerCase()}.webp)`); // their chip, in their colour
     whoEl.style.backgroundImage = `url(/images/four/pet-${foe.name.toLowerCase()}-sm.webp)`; whoEl.setAttribute('aria-label', foe.name); // their face, ringed in their colour
-    $('.four__vs').textContent = foe.name;
+    foesEl.querySelectorAll<HTMLElement>('[data-foe]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.foe === foe.name)));
   }
   const LINES = { get start() { return foe.lines.start; }, level: (l: number) => foe.lines.level(l), get mine() { return foe.lines.mine; }, get block() { return foe.lines.block; }, get youWin() { return foe.lines.youWin; }, get iWin() { return foe.lines.iWin; }, get draw() { return foe.lines.draw; } };
   const talk = (t: string) => { say.textContent = t; say.parentElement!.classList.remove('is-new'); void say.offsetWidth; say.parentElement!.classList.add('is-new'); };
@@ -184,7 +188,7 @@ if (game && grid404 && head) {
 
   // ---- A game: rounds until I win one. Score: 100 × level + 10 for each hole left, per win
   let b: Who[] = Array(COLS * ROWS).fill(0), level = 1, score = 0, turn: 'you' | 'me' | 'off' = 'off', aim = 3, playing = false;
-  let moves: Move[] = [], best = 0;
+  let moves: Move[] = [], best = 0, runId = 0; // runId: a new run cancels the last one's pending lines
   try { best = Number(localStorage.getItem('hdj:four:best') || 0); } catch {}
   const tally = () => { levelEl.textContent = String(level); scoreEl.textContent = score.toLocaleString(); bestEl.textContent = Math.max(best, score).toLocaleString(); };
   function paint(drop?: number) {
@@ -291,7 +295,8 @@ if (game && grid404 && head) {
     if (record) { best = score; try { localStorage.setItem('hdj:four:best', String(best)); } catch {} }
     tally();
     lastGame = { board: [...b], moves: [...moves], run, by, score, level: by === 'you' ? level - 1 : level, wins: level - 1, foe: foe.name, foeTone: foe.tone };
-    setTimeout(() => { if (by === 'them') talk(record ? 'New best! Make a card of it?' : 'Game over. Make a card of it, or go again?'); againBtn.hidden = cardBtn.hidden = false; }, calm ? 300 : by === 'you' ? 600 : 1400); // stopping keeps their parting line
+    const id = runId;
+    setTimeout(() => { if (id !== runId) return; if (by === 'them') talk(record ? 'New best! Make a card of it?' : 'Game over. Make a card of it, or go again?'); againBtn.hidden = cardBtn.hidden = false; }, calm ? 300 : by === 'you' ? 600 : 1400); // stopping keeps their parting line
   }
   // A draw is a cat's game: a stamp, and paw prints across the board in their colour.
   // The cats (Leroy, Irma) are thrilled; the dogs (Lilo, Kiya) are not.
@@ -299,7 +304,8 @@ if (game && grid404 && head) {
     turn = 'off'; paint(); score += 50; tally(); talk(pick(LINES.draw));
     beep(foe.kind === 'cat' ? [784, 988, 1175, 988, 1319] : [392, 370, 349], foe.kind === 'cat' ? 0.09 : 0.14, 'triangle');
     catsGame();
-    setTimeout(() => { board.querySelector('.four__cats')?.remove(); if (playing) round(); }, calm ? 1200 : 3000);
+    const id = runId;
+    setTimeout(() => { board.querySelector('.four__cats')?.remove(); if (playing && id === runId) round(); }, calm ? 1200 : 3000);
   }
   function catsGame() {
     const paw = document.getElementById('fourPaw')?.innerHTML ?? '';
@@ -330,7 +336,18 @@ if (game && grid404 && head) {
     if (e.key === 'Escape') { quit(); document.querySelector<HTMLElement>('[data-four-play]')?.focus(); }
   });
   $('[data-four-quit]').addEventListener('click', quit);
-  againBtn.addEventListener('click', () => { againBtn.hidden = cardBtn.hidden = true; level = 1; score = 0; meet(); round(); });
+  // A fresh run, at level 1: Play again, or picking someone else from the faces
+  function rematch() {
+    runId++; againBtn.hidden = cardBtn.hidden = nextBtn.hidden = stopBtn.hidden = true; level = 1; score = 0;
+    board.querySelector('.four__cats')?.remove(); cells.forEach((el) => el.classList.remove('win'));
+    meet(); round();
+  }
+  againBtn.addEventListener('click', rematch);
+  foesEl.addEventListener('click', (e) => {
+    const name = (e.target as HTMLElement).closest<HTMLElement>('[data-foe]')?.dataset.foe;
+    if (!name || name === foe.name || turn === 'me') return; // not mid-move
+    chosen = name; beep([523, 659], 0.06); rematch(); cols[aim].focus({ preventScroll: true });
+  });
   nextBtn.addEventListener('click', next);
   stopBtn.addEventListener('click', stop);
   cardBtn.addEventListener('click', () => { if (lastGame) openCard(lastGame); });

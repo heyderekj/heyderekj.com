@@ -1136,7 +1136,15 @@ body.site .four__col:focus-visible { outline: none; }
 .four__say.is-new span { animation: lost-in 260ms var(--ease) both; }
 .four__tally { margin: 0; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .four__tally b { color: var(--ink); font-weight: 600; }
-.four__controls { display: flex; flex-wrap: wrap; gap: 6px; }
+/* The faces you can play: whoever's up in colour with their ring, the rest quiet until you hover */
+.four__pick { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
+.four__pick small { font-size: 12.5px; color: var(--muted); }
+.four__foes { display: inline-flex; gap: 6px; }
+.four__foes button { --r: 9px; width: 30px; height: 30px; padding: 0; background: var(--hair) center / cover no-repeat; filter: grayscale(1); opacity: 0.55; transition: opacity var(--t-ui) var(--ease), filter var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
+.four__foes button:hover, .four__foes button:focus-visible { filter: none; opacity: 1; }
+.four__foes button[aria-pressed="true"] { filter: none; opacity: 1; box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px var(--tone); }
+.four[data-turn="me"] .four__foes button:not([aria-pressed="true"]) { pointer-events: none; }
+.four__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .four__controls button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 13px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--muted); background: color-mix(in oklch, var(--ink) 6%, transparent); transition: color var(--t-ui) var(--ease); }
 .four__controls button:hover { color: var(--ink); }
 .four__controls button.is-primary { color: #fff; background: var(--you); font-weight: 600; }
@@ -1181,7 +1189,7 @@ body.site .four__col:focus-visible { outline: none; }
 /* One row: copy, save (and share where the browser can), then post it to X, Instagram, Facebook or a text.
    Icon squircles that share the width; the posts take their brand colour on hover */
 .four-card__head { display: flex; align-items: center; justify-content: space-between; }
-.four-card__head b { font-size: 17px; font-weight: 650; }
+.four-card__head b { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; }
 .four-card__head button { padding: 4px 2px; font-size: 13.5px; font-weight: 500; color: var(--muted); transition: color var(--t-ui) var(--ease); }
 .four-card__head button:hover { color: var(--ink); }
 .four-card__actions { display: flex; align-items: center; gap: 6px; }
