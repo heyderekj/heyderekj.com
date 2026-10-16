@@ -2,8 +2,8 @@
 /**
  * The Des Moines chip's card (components/site/Hello.astro): an architect's elevation of downtown from
  * across the river, drawn for the real hour, season and weather. Pen lines run a little past their
- * corners, the shadow side is hatched, and colour goes on in loose brush strokes. Each time the card
- * opens, the ink draws itself in and the colour follows.
+ * corners and the shadow side is hatched, printed as a cyanotype: white lines on Prussian blue. Each time
+ * the card opens, the ink draws itself in and the print comes up behind it.
  * Weather comes from Open-Meteo (no key), fetched the first time the card opens and kept 15 minutes.
  */
 const $ = (s) => document.querySelector(s);
@@ -31,8 +31,8 @@ function skyAt(h) {
   return { top: mix(A[1], B[1], t), mid: mix(A[2], B[2], t), low: mix(A[3], B[3], t), stars: A[4] + (B[4] - A[4]) * t, light: mix(A[5], B[5], t) };
 }
 // The Des Moines card: an architect's elevation of downtown from across the river, for the real hour, season and weather.
-// Pen lines run a little past their corners, the shadow side is hatched, and colour goes on in loose brush strokes.
-// When the card opens the ink draws itself in, then the colour follows.
+// Pen lines run a little past their corners and the shadow side is hatched, in white on a cyanotype blue.
+// When the card opens the ink draws itself in, then the print comes up behind it.
 const rng = (s) => () => (s = (s * 16807) % 2147483647) / 2147483647;
 let seed = 7; const rnd = rng(seed);
 const hexOf = (c) => c[0] === '#' ? c : '#' + c.match(/\d+/g).map(n => (+n).toString(16).padStart(2, '0')).join('');
@@ -132,7 +132,6 @@ const WX = [
 ];
 let wxI = 1; // partly cloudy until the real weather arrives
 const SEASON = () => { if (window.__dsmSeason) return window.__dsmSeason; const m = +new Date().toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'numeric' }); return m <= 2 || m === 12 ? 'winter' : m <= 5 ? 'spring' : m <= 8 ? 'summer' : 'autumn'; };
-const LEAVES = { autumn: ['#c06a2c', '#d9a03c', '#9c4f2a'], summer: ['#5c8f4a', '#7aa35a', '#3f6e3c'], spring: ['#8fb865', '#e6b3c2', '#a9c47a'], winter: [] };
 
 // Downtown from the south bank, left to right: low blocks, the Hub Tower, Principal, 801 Grand, the Ruan Center, EMC, then the Capitol on its hill
 const TOWERS = [[10, 12, 12], [22, 10, 19], [32, 9, 15], [41, 13, 34, 'hub'], [54, 20, 43, 'principal'], [74, 9, 22], [83, 15, 56, '801'], [99, 15, 46, 'ruan'], [115, 14, 33, 'emc'], [130, 11, 26], [142, 15, 17], [158, 10, 12]];
@@ -152,37 +151,22 @@ const DROPS = Array.from({ length: 80 }, () => ({ x: rnd(), y: rnd(), l: 4 + rnd
 const FLAKES = Array.from({ length: 55 }, () => ({ x: rnd(), y: rnd(), r: 0.6 + rnd() * 0.7, s: 7 + rnd() * 8, w: 0.5 + rnd(), p: rnd() * 6.28 }));
 const RIPPLES = Array.from({ length: 7 }, (_, r) => { const segs = []; let x = 8 + rnd() * 10; while (x < DW - 12) { const w = 4 + rnd() * 16; segs.push([x, Math.min(DW - 8, x + w)]); x += w + 4 + rnd() * 14; } return { y: DATUM + 5 + r * 3.9, segs }; });
 const BOLT = (() => { const R = rng(5), p = [[168, 12]]; while (p[p.length - 1][1] < 76) { const [x, y] = p[p.length - 1]; p.push([x + (R() - 0.55) * 9, y + 5 + R() * 7]); } return p; })();
-let skyRAF = null, skyCache = null, drawStart = 0, lastFrame = -1e9;
+let skyRAF = null;
 
 function paintScene(W, H, dpr, h, k, wx, season) {
   const night = k.stars > 0.55, day = h >= 7.25 && h < 18.5, dusk = !day || h < 8.3 || h > 17.3, veiled = wx.stratus || wx.fog;
-  const paper = night ? '#1d2342' : '#f4efe4', ink = night ? '#ece6d6' : '#2b2a33';
-  const gT = night ? '#4a4f66' : wx.fog ? '#c9c7c1' : wx.storm ? '#5d6271' : '#a3a8b2';
-  const lift = (c, n) => night ? mx(c, '#a8b4ec', n) : c;
-  const top = lift(mx(k.top, gT, wx.grey), 0.32), mid = lift(mx(k.mid, gT, wx.grey), 0.28), low = lift(mx(k.low, gT, wx.grey * 0.9), 0.22);
-  const shade = night ? '#0c1024' : mx(k.top, '#30344a', 0.55);
+  // A cyanotype: white lines on Prussian blue that deepens through the evening and greys under cloud
+  const paper = mx(night ? '#0b1a3a' : dusk ? '#173a74' : '#1d4b8c', '#3a4658', wx.grey * 0.5), ink = '#eef3fb';
   const p = day ? (h - 7.25) / 11.25 : ((h < 7.25 ? h + 24 : h) - 18.5) / 12.75;
   const ox = 22 + p * 204, oy = DATUM - 6 - Math.sin(p * Math.PI) * 74, shadowRight = ox < 124;
-  const R = rng(41);
 
-  // Colour: loose brush strokes across the sky, over the city, on the water and along the near bank
+  // The print: uneven where the light hit it, brightest around the sun or moon, darker toward the near bank
   const [paint, w] = sheet(W, H, dpr);
-  [[16, top, 20], [32, top, 18], [48, mid, 18], [64, mid, 16], [82, low, 18], [96, low, 12]].forEach(([y, col, wd], i) => brush(w, along(-6 + R() * 40, y + (R() - 0.5) * 6, 196 + R() * 60, y + (R() - 0.5) * 8, (R() - 0.5) * 6), wd, col, { alpha: 0.42, bristles: 18, seed: 10 + i, dry: 0.45 }));
-  if (wx.stratus) for (let i = 0; i < 4; i++) brush(w, along(-10 + R() * 30, 12 + i * 13 + R() * 4, 180 + R() * 80, 14 + i * 13, (R() - 0.5) * 5), 13, mx(top, night ? '#0f1226' : '#5c6172', wx.storm ? 0.55 : 0.32), { alpha: 0.45, seed: 20 + i, dry: 0.5 });
-  if (!wx.stratus) dab(w, oval(ox + 1.5, oy + 1, 7.5, 7), day ? (wx.fog ? '#f3e2b4' : '#f2c14e') : '#e9e6f4', { layers: 8, alpha: wx.fog ? 0.08 : 0.16, v: 0.25, seed: 6 });
-  // Over the city: a shadow stroke down each tower's dark side, and one long stroke to sit it on the river
-  TOWERS.forEach(([x, wd, hh], i) => { if (hh < 14) return; const sx = shadowRight ? x + wd * 0.75 : x + wd * 0.25; brush(w, along(sx + (R() - 0.5) * 2, DATUM - hh + 3, sx + (R() - 0.5) * 3, DATUM + 1, (R() - 0.5) * 2), wd * 0.6, shade, { alpha: 0.3, bristles: 9, seed: 40 + i, dry: 0.3 }); });
-  brush(w, along(4, DATUM - 6, 170, DATUM - 7, 2), 12, mx(mid, shade, 0.4), { alpha: 0.3, seed: 60, dry: 0.4 });
-  dab(w, oval(201.5, DATUM - 27, 5, 4.2), day ? (veiled ? '#cfae5c' : '#e3b347') : '#b88a2c', { layers: 8, alpha: 0.18, v: 0.25, seed: 11 });
-  brush(w, along(162, DATUM - 3, 244, DATUM - 2, -3), 9, season === 'winter' || wx.snow ? mx(low, '#e6e8ec', 0.5) : mx('#7d8c58', shade, 0.3), { alpha: 0.32, seed: 61, dry: 0.4 });
-  if (!day || dusk) { const Lr = rng(300), n = night ? 18 : 7; for (let i = 0; i < n; i++) { const [x, wd, hh] = TOWERS[3 + Math.floor(Lr() * 7)]; dab(w, oval(x + 2 + Lr() * (wd - 4), DATUM - hh * (0.2 + Lr() * 0.7), 1.3, 1.1, 7), '#ffcf7a', { layers: 5, alpha: 0.35, v: 0.2, seed: 310 + i }); } }
-  // The river, and light laid down it under the sun or moon
-  [[DATUM + 5, mid, 9], [DATUM + 13, low, 10], [DATUM + 22, mid, 9]].forEach(([y, col, wd], i) => brush(w, along(-6 + R() * 30, y, 200 + R() * 54, y + (R() - 0.5) * 3, (R() - 0.5) * 3), wd, mx(col, shade, 0.25), { alpha: 0.4, seed: 70 + i, dry: 0.5 }));
-  if (!wx.stratus && oy < DATUM) brush(w, along(ox, DATUM + 2, ox + 1, SHORE - 3, 1), 5, day ? '#f6d985' : '#dfe2f5', { alpha: 0.5, bristles: 8, seed: 75, dry: 0.6 });
-  const leaves = LEAVES[season], bankCol = wx.snow ? mx(low, '#eef0f3', 0.6) : mx({ autumn: '#8a8a4a', summer: '#5f8a48', spring: '#79a052', winter: '#857a6c' }[season], shade, night ? 0.6 : 0.15);
-  brush(w, along(-8, SHORE + 7, DW + 8, SHORE + 6, 2), 15, bankCol, { alpha: 0.45, bristles: 20, seed: 80, dry: 0.4 });
   const TREES = [[20, 126, 12], [38, 131, 8], [226, 125, 13], [243, 132, 8]];
-  if (leaves.length && !wx.snow) TREES.forEach(([x, y, r], i) => dab(w, oval(x + 1.5, y + 1, r * 0.95, r * 0.7, 10), mx(leaves[i % leaves.length], shade, night ? 0.65 : dusk ? 0.3 : 0.05), { layers: 7, alpha: 0.16, v: 0.35, seed: 90 + i }));
+  // A blueprint: the print is uneven where the light hit it, brightest around the sun or moon
+  const Rb = rng(77); for (let i = 0; i < 14; i++) dab(w, oval(Rb() * DW, Rb() * DH, 20 + Rb() * 40, 10 + Rb() * 20), Rb() < 0.5 ? '#ffffff' : '#000a22', { layers: 4, alpha: 0.012, v: 0.4, seed: 700 + i });
+  if (!wx.stratus) { const g = w.createRadialGradient(ox, oy, 0, ox, oy, 70); g.addColorStop(0, 'rgba(190,220,255,0.32)'); g.addColorStop(1, 'rgba(190,220,255,0)'); w.fillStyle = g; w.fillRect(0, 0, DW, DH); }
+  const gr = w.createLinearGradient(0, DATUM, 0, DH); gr.addColorStop(0, 'rgba(0,10,40,0)'); gr.addColorStop(1, 'rgba(0,10,40,0.22)'); w.fillStyle = gr; w.fillRect(0, DATUM, DW, DH - DATUM);
 
   // Ink, in the order it gets drawn: the sheet border, the datum, guides, the sun, the city, the Capitol, the water, trees and labels
   const L = [], Rp = rng(500), P = (x0, y0, x1, y1, o = {}) => pen(L, x0, y0, x1, y1, { R: Rp, ...o });
@@ -244,7 +228,7 @@ function paintScene(W, H, dpr, h, k, wx, season) {
   const clouds = CLOUDS.map((cl, n) => {
     const cw = cl.w * DW, ch = cw * 0.5, [cs, c] = sheet(cw * W / DW, ch * H / DH, dpr), Rc = rng(30 + n);
     c.setTransform(dpr * W / DW, 0, 0, dpr * H / DH, 0, 0);
-    dab(c, oval(cw * 0.5, ch * 0.62, cw * 0.4, ch * 0.22), storm ? mx(shade, '#5a6070', 0.5) : night ? '#3a4370' : mx(low, '#b8bfcc', 0.5), { layers: 6, alpha: storm ? 0.12 : 0.1, v: 0.3, seed: 40 + n });
+    dab(c, oval(cw * 0.5, ch * 0.62, cw * 0.4, ch * 0.22), '#ffffff', { layers: 6, alpha: storm ? 0.04 : 0.07, v: 0.3, seed: 40 + n });
     c.strokeStyle = ink; c.lineWidth = 0.5; c.globalAlpha = 0.7; c.lineCap = 'round'; c.beginPath();
     let x = cw * 0.12; const base = ch * 0.78; c.moveTo(x, base);
     const bumps = 3 + Math.floor(Rc() * 2), step = (cw * 0.76) / bumps;
@@ -258,18 +242,21 @@ function paintScene(W, H, dpr, h, k, wx, season) {
   gc.putImageData(id, 0, 0);
   return { paint, L, total, veil, clouds, grain, paper, ink, night, day };
 }
-function drawSky(time) {
-  const cv = $('#dsmCanvas'); if (!cv) return;
+// Draws the scene on a canvas at `time`; each canvas keeps its own cache and draw-in clock
+const states = new WeakMap();
+function render(cv, time) {
+  let st = states.get(cv); if (!st) states.set(cv, st = { cache: null, drawStart: 0, lastFrame: -1e9 });
   const dpr = Math.min(2, devicePixelRatio || 1), W = cv.clientWidth || DW, H = cv.clientHeight || DH;
   if (cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
   const c = cv.getContext('2d'); c.setTransform(dpr * W / DW, 0, 0, dpr * H / DH, 0, 0);
   // Each time the card opens after a pause, the drawing starts over
-  if (time - lastFrame > 900) drawStart = time; lastFrame = time;
-  const still = calm() || window.__dsmStill, el = time - drawStart;
+  if (time - st.lastFrame > 900) st.drawStart = time; st.lastFrame = time;
+  const still = calm() || window.__dsmStill, el = time - st.drawStart;
   const inkP = still ? 1 : 1 - (1 - clamp01(el / 1700)) ** 2, paintP = still ? 1 : clamp01((el - 450) / 1100), waterP = still ? 1 : clamp01((el - 1100) / 700);
-  const h = DSM(), k = skyAt(h), sec = time / 1000, wx = WX[wxI], season = SEASON(), key = `${W}x${H}@${dpr}:${Math.round(h * 60)}:${wx.id}:${season}`;
-  if (skyCache?.key !== key) skyCache = { key, ...paintScene(W, H, dpr, h, k, wx, season) };
-  const S = skyCache;
+  const h = DSM(), k = skyAt(h), sec = time / 1000, wx = WX[wxI], season = SEASON();
+  const key = `${W}x${H}@${dpr}:${Math.round(h * 60)}:${wx.id}:${season}`;
+  if (st.cache?.key !== key) st.cache = { key, ...paintScene(W, H, dpr, h, k, wx, season) };
+  const S = st.cache;
   c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1; c.fillStyle = S.paper; c.fillRect(0, 0, DW, DH);
   c.globalAlpha = paintP; c.drawImage(S.paint, 0, 0, DW, DH);
   // Stars as small pen crosses, only under a clear night sky
@@ -293,8 +280,13 @@ function drawSky(time) {
     const ph = sec % 6.2, on = ph < 0.07 || (ph > 0.13 && ph < 0.24);
     if (on) { const g = c.createRadialGradient(165, 40, 0, 165, 40, 70); g.addColorStop(0, 'rgba(255,226,140,0.35)'); g.addColorStop(1, 'rgba(255,226,140,0)'); c.globalAlpha = 1; c.fillStyle = g; c.fillRect(0, 0, DW, DH); c.strokeStyle = S.ink; c.lineWidth = 0.9; c.beginPath(); BOLT.forEach(([x, y], n) => n ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke(); }
   }
-  c.globalCompositeOperation = 'multiply'; c.globalAlpha = S.night ? 0.3 : 0.5; c.drawImage(S.grain, 0, 0, DW, DH);
+  c.globalCompositeOperation = 'multiply'; c.globalAlpha = 0.18; c.drawImage(S.grain, 0, 0, DW, DH);
   c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+  return inkP;
+}
+function drawSky(time) {
+  const cv = $('#dsmCanvas'); if (!cv) return;
+  const inkP = render(cv, time);
   const hovering = $('[data-act=here]')?.matches(':hover, .is-on, :focus-visible');
   if (hovering && (!calm() || inkP < 1)) skyRAF = requestAnimationFrame(drawSky); else skyRAF = null;
 }
@@ -342,4 +334,4 @@ document.addEventListener('click', (e) => { if (e.target.closest?.('[data-act=he
 setInterval(tickTime, 30000);
 tickTime();
 // For checking the drawing at other hours and weather from the console
-window.__dsm = { draw: (t = performance.now()) => drawSky(t), weather: (id) => { const i = WX.findIndex((w) => w.id === id); if (i >= 0) { wxI = i; lastFrame = performance.now(); drawSky(lastFrame); } } };
+window.__dsm = { draw: (t = performance.now()) => drawSky(t), weather: (id) => { const i = WX.findIndex((w) => w.id === id); if (i >= 0) { wxI = i; drawSky(performance.now()); } } };
