@@ -4,7 +4,7 @@
  */
 import { postHref, postTitle, type Post } from './posts';
 import { peekFor, readingMinutes, type Peek, type Subject } from './pullquote';
-import { getDeck, host, shot, shotsOf } from './deck';
+import { appPicture, getDeck, host, shot, shotsOf } from './deck';
 import { figuresIn } from './figures';
 
 export interface PostRow { href: string; title: string; year: number; at: number; date: string; tags: string; figures: number; peek: Peek; mins: number }
@@ -15,7 +15,7 @@ let subjects: Promise<Subject[]> | null = null;
 /** Things an essay might be about, with the picture we already have for each. */
 function getSubjects(): Promise<Subject[]> {
   return (subjects ??= getDeck().then(({ apps, work }) => [
-    ...apps.filter((p) => p.data.image || p.data.icon).map((p) => ({ name: p.data.name, img: shot((p.data.image || p.data.icon)!, 640), url: host(p.data.url), type: 'project' as const })),
+    ...apps.filter((p) => appPicture(p)).map((p) => ({ name: p.data.name, img: shot(appPicture(p)!, 640), url: host(p.data.url), type: 'project' as const })),
     ...work.filter((w) => shotsOf(w).length).map((w) => ({ name: w.data.title.replace(/\.com$/, ''), img: shot(shotsOf(w)[0], 640), url: host(w.data.liveLink), type: 'work' as const })),
   ].filter((s) => s.name.length > 3)));
 }

@@ -99,8 +99,14 @@ export async function getApps(): Promise<Project[]> {
 
 /** An app opens on a cover (three of its screenshot cards collaged on its mesh, with its icon),
  *  then each shot on its own, to look closer. */
+/** An app that's in the works (active, no public link yet, like Koati): shown by its icon only, not screenshots */
+export const comingSoon = (p: Project) => !p.data.url && p.data.status === 'active';
+/** What stands in for an app in previews: its icon while it's coming soon, else its card */
+export const appPicture = (p: Project) => (comingSoon(p) ? p.data.icon : p.data.image || p.data.icon);
+
 async function appPages(p: Project): Promise<DeckPage[]> {
   const d = p.data;
+  if (comingSoon(p) && d.icon) return [{ mesh: p.slug, icon: shot(d.icon, 320), collage: [] }];
   const imgs = [...new Set([d.image, d.hero, ...(d.media ?? []).filter((m) => m.type === 'image').map((m) => m.src)]
     .filter((s): s is string => Boolean(s)))].slice(0, 6);
   const cover = { mesh: p.slug, icon: d.icon ? shot(d.icon, 320) : '', collage: imgs.slice(0, 3).map((s) => shot(s, 960)) };

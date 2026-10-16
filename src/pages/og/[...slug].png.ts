@@ -6,7 +6,7 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
 import { getPublishedPosts, postTitle, TYPE_LABELS, type Post } from '../../lib/posts';
 import { getPublishedWork, type Work } from '../../lib/work';
-import { getApps, shotsOf, workDate } from '../../lib/deck';
+import { appPicture, getApps, shotsOf, workDate } from '../../lib/deck';
 import { peekFor, readingMinutes, type Subject } from '../../lib/pullquote';
 import { topicLabel } from '../../data/topics';
 import { renderOg, type OgCard } from '../../lib/og';
@@ -17,7 +17,7 @@ const day = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'n
 async function subjects(): Promise<Subject[]> {
   const [apps, work] = await Promise.all([getApps(), getPublishedWork()]);
   return [
-    ...apps.filter((p) => p.data.image || p.data.icon).map((p) => ({ name: p.data.name, img: (p.data.image || p.data.icon)!, url: '', type: 'project' as const })),
+    ...apps.filter((p) => appPicture(p)).map((p) => ({ name: p.data.name, img: appPicture(p)!, url: '', type: 'project' as const })),
     ...work.filter((w) => shotsOf(w).length).map((w) => ({ name: w.data.title.replace(/\.com$/, ''), img: shotsOf(w)[0], url: '', type: 'work' as const })),
   ].filter((s) => s.name.length > 3);
 }
