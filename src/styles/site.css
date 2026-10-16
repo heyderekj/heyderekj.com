@@ -905,3 +905,13 @@ html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 
 .said__rel { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); white-space: nowrap; }
 .said__rel time { font-weight: 500; color: var(--muted); }
 @media (max-width: 560px) { .said__pull { font-size: 20px; } .said__by { grid-template-columns: auto minmax(0, 1fr); } .said__rel { grid-column: 2; justify-self: start; } }
+
+/* Work rows with a thumbnail of the site on the left (components/site/WorkIndex.astro) */
+.row--thumb { grid-template-columns: 76px minmax(0, 1fr) auto; column-gap: 16px; align-items: center; }
+.row--thumb .row__thumb { --r: 8px; grid-row: 1 / span 2; position: relative; width: 76px; aspect-ratio: 16 / 10; overflow: hidden; container-type: size; background: var(--tint); box-shadow: 0 0 0 1px var(--hair); transition: transform var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
+.row--thumb .row__thumb img:not(.framed) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.row--thumb:hover .row__thumb { transform: scale(1.04); box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.row--thumb .row__title { align-self: end; }
+.row--thumb .row__date { align-self: end; }
+.row--thumb .row__desc { grid-column: 2 / -1; align-self: start; }
+@media (max-width: 560px) { .row--thumb { grid-template-columns: 60px minmax(0, 1fr) auto; column-gap: 12px; } .row--thumb .row__thumb { width: 60px; } }

@@ -1,24 +1,25 @@
 ---
 /**
- * Every website write-up by year, like the writing on the home page. Hover a row to see the site
- * in the margin (client/peek.ts). Partner chips narrow it to the work done with a studio.
+ * Every website write-up by year, like the writing on the home page, each with a small thumbnail of
+ * the site (cropped to its screen). Hover a row to see it bigger in the margin (client/peek.ts). Partner chips narrow it to the work done with a studio.
  */
 import { getPublishedWork, partnerHref, partnersOf, type Work } from '../../lib/work';
-import { host, shot, shotsOf, workDate } from '../../lib/deck';
+import { frameAttrs, host, pageOf, shot, shotsOf, workDate } from '../../lib/deck';
 
 interface Props { work: Work[]; active?: string }
 const { work, active } = Astro.props;
 const all = await getPublishedWork();
 const partners = partnersOf(all);
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const rows = [...work].sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf()).map((w) => {
-  const done = workDate(w);
+const rows = await Promise.all([...work].sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf()).map(async (w) => {
+  const done = workDate(w), first = shotsOf(w)[0];
   return {
+    thumb: first ? await pageOf(first, 320) : undefined,
     href: `/work/${w.slug}/`, title: w.data.title, year: done.getUTCFullYear(), date: `${MON[done.getUTCMonth()]}`,
     sub: [w.data.partnership ? `With ${w.data.partnership}` : 'Solo', w.data.workType].filter(Boolean).join(' · '),
-    img: shotsOf(w)[0] ? shot(shotsOf(w)[0], 640) : undefined, url: host(w.data.liveLink ?? w.data.waybackUrl),
+    img: first ? shot(first, 640) : undefined, url: host(w.data.liveLink ?? w.data.waybackUrl),
   };
-});
+}));
 const years = [...new Set(rows.map((r) => r.year))];
 ---
 <nav class="work-chips" aria-label="Filter by studio">
@@ -32,7 +33,8 @@ const years = [...new Set(rows.map((r) => r.year))];
     <section class="list__year">
       <h2>{y}</h2>
       {rows.filter((r) => r.year === y).map((r) => (
-        <a class="row sq" href={r.href} data-peek-img={r.img} data-peek-url={r.url || undefined}>
+        <a class="row row--thumb sq" href={r.href} data-peek-img={r.img} data-peek-url={r.url || undefined}>
+          <span class="row__thumb sq" aria-hidden="true">{r.thumb && 'src' in r.thumb && <img src={r.thumb.src} alt="" class={frameAttrs(r.thumb).class} style={frameAttrs(r.thumb).style} loading="lazy" decoding="async" />}</span>
           <span class="row__title">{r.title}</span>
           <span class="row__date">{r.date}</span>
           <span class="row__desc">{r.sub}</span>

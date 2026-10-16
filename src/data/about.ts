@@ -113,6 +113,8 @@ export type Testimonial = {
   context: string;
   /** The line to pull out big on the Work page; must appear word for word in `quote` */
   pull?: string;
+  /** How we know each other, for the Work page's tag (otherwise read from `context`) */
+  relation?: string;
 };
 
 export const testimonials: Testimonial[] = [
@@ -136,6 +138,7 @@ export const testimonials: Testimonial[] = [
     role: 'Former Brand/Web Designer at Webflow',
     context: "Corey was Derek's mentor · Apr 2023",
     pull: 'a unique drive to always seek out the best solution',
+    relation: 'Friend',
   },
 ];
 

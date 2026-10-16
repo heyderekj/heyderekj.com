@@ -12,7 +12,7 @@ const entries = await getPublishedWork();
 const TONE: Record<string, string> = { 'Barrett Johnson': 'blue', 'Danny Begnoche': 'pink', 'Corey Moen': 'yellow' };
 const said = testimonials.map((t) => {
   const [rel, when] = t.context.split(' · ');
-  const relation = /client/i.test(rel) ? 'Client' : /mentor/i.test(rel) ? 'Mentor' : /team/i.test(rel) ? 'Teammate' : rel;
+  const relation = t.relation ?? (/client/i.test(rel) ? 'Client' : /mentor/i.test(rel) ? 'Mentor' : /team/i.test(rel) ? 'Teammate' : rel);
   const at = t.pull ? t.quote.indexOf(t.pull) : -1;
   const pull = t.pull ? t.pull[0].toUpperCase() + t.pull.slice(1) : '';
   return { ...t, relation, when, pull, parts: at < 0 ? [t.quote] : [t.quote.slice(0, at), t.pull!, t.quote.slice(at + t.pull!.length)], initials: t.author.split(' ').map((w) => w[0]).join('').slice(0, 2) };
