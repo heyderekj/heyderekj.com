@@ -739,3 +739,4 @@ html.load-in .bar { animation: deck-fade 360ms var(--ease) 150ms both; }
   .pt__el { grid-template-rows: auto 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { .pt__el, .pt__note { animation: none; } }
+.tmnow__apps b .badge { margin-left: 6px; height: 18px; padding: 0 7px; font-size: 10.5px; font-style: normal; vertical-align: 1px; }

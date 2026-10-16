@@ -16,7 +16,7 @@ const bySlug = Object.fromEntries(all.map((p) => [p.slug, p]));
 // ---- Now: the Testament Made apps, in the mark's order
 const apps = TM_TILES.flatMap(([slug, c]) => {
   const p = bySlug[slug];
-  return p ? [{ slug, c, name: p.data.name, tagline: p.data.tagline, href: p.data.url ?? 'https://testamentmade.com/', icon: p.data.icon ? shot(p.data.icon, 160) : '' }] : [];
+  return p ? [{ slug, c, name: p.data.name, tagline: p.data.tagline, href: p.data.url ?? 'https://testamentmade.com/', soon: !p.data.url, icon: p.data.icon ? shot(p.data.icon, 160) : '' }] : [];
 });
 
 // ---- The archive, as elements
@@ -85,7 +85,7 @@ const families = FAMILIES.map((f) => ({ ...f, n: archive.filter((a) => a.family 
           <li>
             <a href={a.href} target="_blank" rel="noopener" style={`--c:${a.c}`} data-app={a.slug}>
               <img class="sq" src={a.icon} alt="" width="40" height="40" loading="lazy" />
-              <span><b>{a.name}</b><small>{a.tagline}</small></span>
+              <span><b>{a.name}{a.soon && <em class="badge">Coming soon</em>}</b><small>{a.tagline}</small></span>
             </a>
           </li>
         ))}
