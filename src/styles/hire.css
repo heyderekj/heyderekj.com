@@ -31,8 +31,15 @@
 .hire-cap { --r: 16px; position: relative; z-index: 0; display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 22px; align-items: center; margin: 0 -12px; padding: 14px 12px; text-align: left; font: inherit; color: var(--ink); transition: background-color var(--t-ui) var(--ease), opacity 260ms var(--ease), filter 260ms var(--ease); }
 .hire-cap:is(:hover, :focus-visible) { z-index: 30; background: color-mix(in oklch, var(--ink) 4%, transparent); }
 .hire-caps:has(.hire-cap:hover) .hire-cap:not(:hover) { opacity: 0.45; filter: grayscale(0.4); }
+.hire-cap .row__shot.is-icon .hire-cap__tag { left: 50%; translate: -50% 0; }
 .hire-cap__stack { position: relative; display: block; aspect-ratio: 16 / 10; }
-.hire-cap:is(:hover, :focus-visible) .row__shot { transform: translateY(-14px) rotate(calc((var(--k) + var(--shift, 0)) * 13deg)) scale(1.08); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+/* Hover: the examples are dealt out side by side across the row, each whole, with its name */
+.hire-cap .row__shot { transform-origin: left center; }
+.hire-cap:is(:hover, :focus-visible) .row__shot { transform: translateX(calc(var(--i) * (100% * 0.88 + 12px))) scale(0.88); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); transition-delay: calc(var(--i) * 30ms); }
+.hire-cap__text { transition: opacity 200ms var(--ease); }
+.hire-cap:is(:hover, :focus-visible) .hire-cap__text { opacity: 0; }
+.hire-cap__tag { position: absolute; left: 6px; bottom: 6px; z-index: 1; max-width: calc(100% - 12px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 3px 8px; border-radius: 999px; font-style: normal; font-size: 11px; font-weight: 600; color: #fff; background: rgb(22 21 19 / 0.72); opacity: 0; transition: opacity 200ms var(--ease) 120ms; }
+.hire-cap:is(:hover, :focus-visible) .hire-cap__tag { opacity: 1; }
 .hire-cap .row__shot.is-icon { display: grid; place-items: center; background: color-mix(in oklch, var(--ink) 4%, var(--card)); }
 .hire-cap .row__shot.is-icon img { position: static; width: 46%; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: 22%; box-shadow: 0 6px 14px -8px rgb(0 0 0 / 0.4); }
 .hire-cap__text { display: grid; gap: 4px; min-width: 0; }
@@ -46,8 +53,7 @@
 .hire-mini { --r: 14px; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 2px 12px; align-items: start; padding: 12px 14px; text-align: left; font: inherit; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
 .hire-mini:hover { translate: 0 -1px; box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow); }
 .hire-mini__icon { --r: 9px; grid-row: 1 / span 2; display: grid; place-items: center; width: 30px; height: 30px; font-size: 15px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
-.hire-mini b { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 15px; font-weight: 650; }
-.hire-mini b small { font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.hire-mini b { font-size: 15px; font-weight: 650; }
 .hire-mini > span:last-child { font-size: 13px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
 .hire-proof { margin-top: 28px; }
 
