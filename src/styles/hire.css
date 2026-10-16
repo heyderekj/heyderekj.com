@@ -12,10 +12,10 @@
 .hire-me__name h1 { margin: 0; font-size: clamp(34px, 6vw, 46px); line-height: 1.02; letter-spacing: -0.035em; }
 .hire-me .essay__meta { margin: 0; }
 .hire-lede { margin-top: 22px; }
-.hire-status { --r: 18px; display: grid; gap: 2px; padding: 12px 16px 13px; border-radius: 18px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
-.hire-status__light { display: flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #15a85b; }
-.hire-status__light i { width: 8px; height: 8px; border-radius: 50%; background: #18c26a; box-shadow: 0 0 0 3px color-mix(in srgb, #18c26a 22%, transparent); animation: hire-pulse 2.4s ease-in-out infinite; }
-.hire-status b { font-size: 24px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; white-space: nowrap; }
+.hire-status { --r: 14px; display: grid; gap: 1px; padding: 8px 12px 9px; border-radius: 14px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.hire-status__light { display: flex; align-items: center; gap: 6px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #15a85b; }
+.hire-status__light i { width: 7px; height: 7px; border-radius: 50%; background: #18c26a; box-shadow: 0 0 0 3px color-mix(in srgb, #18c26a 22%, transparent); animation: hire-pulse 2.4s ease-in-out infinite; }
+.hire-status b { font-size: 16px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; white-space: nowrap; }
 .hire-status.is-closed .hire-status__light { color: var(--muted); }
 .hire-status.is-closed .hire-status__light i { background: var(--muted); box-shadow: none; animation: none; }
 @keyframes hire-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, #18c26a 8%, transparent); } }
@@ -25,19 +25,28 @@
   .hire-status { grid-column: 1 / -1; justify-self: start; }
 }
 
-/* What I do: the high-level list; each one starts the estimate with it picked */
-.hire-caps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+/* What I do: a compact list (each starts the estimate with it picked), then some work and what people say */
+.hire-caps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 18px; }
 @media (max-width: 560px) { .hire-caps { grid-template-columns: 1fr; } }
-.hire-cap { --r: 16px; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 2px 12px; align-items: center; padding: 12px 14px; text-align: left; font: inherit; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
-.hire-cap:hover { translate: 0 -1px; box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow); }
-.hire-cap__icon { --r: 10px; grid-row: 1 / span 2; display: grid; place-items: center; width: 36px; height: 36px; font-size: 17px; color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
-.hire-cap b { font-size: 15.5px; font-weight: 650; }
+.hire-cap { --r: 12px; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 0 12px; align-items: start; margin: 0 -10px; padding: 10px; text-align: left; font: inherit; color: var(--ink); transition: background-color var(--t-ui) var(--ease); }
+.hire-cap:hover { background: color-mix(in oklch, var(--ink) 5%, transparent); }
+.hire-cap__icon { --r: 9px; grid-row: 1 / span 2; display: grid; place-items: center; width: 30px; height: 30px; font-size: 15px; color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.hire-cap b { font-size: 15px; font-weight: 600; }
 .hire-cap span:last-child { font-size: 13.5px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
-.hire-cap:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.hire-proof { display: grid; gap: 14px; margin-top: 26px; }
+.hire-shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 640px) { .hire-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.hire-shot { --r: 14px; display: grid; gap: 2px; text-decoration: none; color: var(--ink); }
+.hire-shot__img { --r: 10px; position: relative; aspect-ratio: 16 / 10; overflow: hidden; margin-bottom: 6px; background: var(--card); box-shadow: 0 0 0 1px var(--hair); container-type: size; transition: translate var(--t-ui) var(--ease), box-shadow var(--t-ui) var(--ease); }
+.hire-shot__img img:not(.framed) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.hire-shot:hover .hire-shot__img { translate: 0 -2px; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.hire-shot b { font-size: 14px; font-weight: 600; }
+.hire-shot small { font-size: 12.5px; color: var(--muted); }
+.hire-proof .hire-more { justify-self: start; margin: 0 0 6px; }
 
 /* The estimate, as a small app: wider than the column */
-.hire-app { width: min(var(--fig), calc(100vw - 32px)); margin: 64px 0 0 calc((var(--read) - min(var(--fig), calc(100vw - 32px))) / 2); scroll-margin-top: 20px; }
-@media (max-width: 960px) { .hire-app { width: 100%; margin-left: 0; } }
+.hire-app { --est: min(72rem, calc(100vw - 32px)); width: var(--est); margin: 64px 0 0 calc((var(--read) - var(--est)) / 2); scroll-margin-top: 20px; }
+@media (max-width: 720px) { .hire-app { width: 100%; margin-left: 0; } }
 .est { --r: 26px; overflow: hidden; border-radius: 26px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
 .est__top { position: relative; display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--hair); }
 .est__title { font-size: 15px; font-weight: 650; white-space: nowrap; }
@@ -52,7 +61,7 @@
 .est__bar { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; }
 .est__bar i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--you); transition: width 420ms var(--ease); }
 @media (max-width: 720px) { .est__steps { display: none; } .est__count { margin-left: auto; } }
-.est__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); }
+.est__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); }
 @media (max-width: 900px) { .est__body { grid-template-columns: 1fr; } }
 .est__panel { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 560px; border-right: 1px solid var(--hair); }
 @media (max-width: 900px) { .est__panel { border-right: 0; border-bottom: 1px solid var(--hair); min-height: 0; } }
@@ -144,7 +153,7 @@
 .hire-next { counter-reset: n; display: grid; gap: 8px; width: 100%; margin: 6px 0 0; padding: 0; list-style: none; }
 .hire-next li { counter-increment: n; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 0 10px; align-items: baseline; }
 .hire-next li::before { content: counter(n); grid-row: 1 / span 2; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: 700; color: var(--you); box-shadow: inset 0 0 0 1.5px var(--you); }
-.hire-next b { font-size: 15px; }
+.hire-next b { font-size: 15px; font-weight: 500; }
 .hire-next span { font-size: 13.5px; color: var(--muted); }
 .hire-note__sign { width: 200px; color: var(--ink); }
 .hire-note__sign .sig { width: 100%; }

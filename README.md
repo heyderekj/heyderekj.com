@@ -69,3 +69,12 @@ The [/hire/](src/pages/hire.astro) form builds an estimate as people answer. Pri
 4. Redeploy.
 
 To read requests: `npx wrangler d1 execute hdj-hire --remote --command "SELECT created_at, name, email, org, total FROM requests ORDER BY created_at DESC LIMIT 20"`. With only one binding, it still saves or still emails. With neither, the form offers your email address instead.
+
+#### Availability from Notion
+
+The "Open for work" date can follow your projects in Notion instead of the line in `src/data/hire.ts`. [functions/api/availability.ts](functions/api/availability.ts) finds the latest end date among projects that aren't done, adds a week, and caches the result for an hour. To set it up:
+
+1. Go to notion.so/my-integrations, create an internal integration (read content only), and copy its secret.
+2. Open the projects database, then **… → Connections →** add the integration. Copy the database id from its URL (the 32 characters before `?v=`).
+3. In the Pages project, go to **Settings → Variables and secrets** and add `NOTION_TOKEN` (as a secret) and `NOTION_PROJECTS_DB`. If your properties aren't named "Dates" (a date with start and end) and "Status", also set `NOTION_DATE_PROP` and `NOTION_STATUS_PROP`. `NOTION_DONE` lists the statuses that don't count, and `AVAILABILITY_BUFFER_DAYS` sets the gap (7 by default).
+4. Redeploy. Until it's set up, the site shows the date from the data file.

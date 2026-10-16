@@ -155,6 +155,8 @@ export const MORPHS: Partial<Record<Name | 'x' | 'github', Frame[]>> = {
   // The lid closes.
   laptop: [{ s: { 0: sq(3, 9.75, 10, 1.5, 0.75) }, hold: 300 }],
   tv: [{ s: { 1: 'M4.5 2.75L8 4.25L11 1.25' } }, { s: { 1: 'M5 1.25L8 4.25L11.5 2.75' } }],
+  // A notch around, the inside turning back the other way, like gears meshing.
+  gear: [{ r: 72, s: { 1: ro(base('gear', 1), -144, 8.1, 8) }, hold: 160 }, { r: 144, s: { 1: ro(base('gear', 1), -288, 8.1, 8) }, hold: 160 }],
   // The sun comes up.
   figure: [{ s: { 3: [10.75, 5, 0.875] }, hold: 300 }],
   controller: [{ s: { 3: [10.75, 6.5, 0.4] }, hold: 100 }, { s: { 4: [12, 8, 0.4] }, hold: 100 }],

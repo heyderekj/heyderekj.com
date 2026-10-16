@@ -69,6 +69,8 @@ export const GLYPHS = {
   // further out than a circle's.
   search: [{ c: [6.75, 6.75, 4.75] }, { d: 'M10.6 10.6L13.75 13.75' }],
   // A main spark and a small one, like a second thought.
+  // The Derek J Design mark, drawn like the rest: a rounded pentagon around a smaller one, like a gear.
+  gear: [{ d: 'M14 8L9.5 13.75L2.25 11.5L2 4.25L9.5 2Z' }, { d: 'M10.75 8L8.75 10.75L5.5 9.75L5.5 6.25L8.75 5.25Z' }],
   // A figure: a framed picture, hills and a sun.
   figure: [{ d: sq(1.75, 2.75, 12.5, 10.5, 2.5) }, { d: 'M4.25 10.75L6.75 8.25L8.75 10.25' }, { d: 'M8 9.5L9.5 8L11.75 10.25' }, dot(10.75, 5.75, 0.875)],
   spark: [

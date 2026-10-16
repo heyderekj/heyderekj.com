@@ -6,7 +6,8 @@
  * a $500/mo retainer for 5 hours, and 40% to start, 40% at design approval, 20% at launch.
  */
 
-/** Shown at the top of /hire/, in the home page's chip and the bar menu: open or not, and from when (a month, or 'now') */
+/** Shown at the top of /hire/, in the home page's chip and the bar menu: open or not, and from when (a month, or 'now').
+ *  When Notion is connected (functions/api/availability.ts), the date comes from my projects instead; this is the fallback. */
 export const availability = { open: true, from: 'November' };
 export const availabilityLine = availability.open ? (availability.from === 'now' ? 'Taking projects now' : `Taking projects from ${availability.from}`) : 'Booked up for now';
 
