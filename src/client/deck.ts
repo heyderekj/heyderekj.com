@@ -56,7 +56,6 @@ if (fig && track) {
     tickBtns.forEach((b, i) => { b.classList.toggle('is-on', i === cur); b.setAttribute('aria-selected', String(i === cur)); });
     slides.forEach((s, i) => s.setAttribute('aria-hidden', String(i !== cur)));
     restart();
-    if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[cur].dataset.title}` }));
   }
 
   // Autoplay
@@ -71,7 +70,6 @@ if (fig && track) {
   fig.addEventListener('pointerleave', () => { hovering = false; sync(); });
   new IntersectionObserver(([e]) => {
     inView = e.isIntersecting; sync();
-    if (inView) document.dispatchEvent(new CustomEvent('bar:label', { detail: `Work · ${slides[cur].dataset.title}` }));
   }, { threshold: 0.4 }).observe(fig);
   fig.addEventListener('keydown', (e) => {
     if ((e.target as HTMLElement).closest('.dial')) return;

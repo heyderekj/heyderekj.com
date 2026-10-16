@@ -76,7 +76,7 @@ if (sections.length && document.getElementById('bar')?.dataset.kind === 'home') 
   const io = new IntersectionObserver((entries) => {
     entries.forEach((en) => visible.set(en.target, en.isIntersecting));
     const first = sections.find((s) => visible.get(s));
-    if (first && first.id !== 'fig-deck') document.dispatchEvent(new CustomEvent('bar:label', { detail: first.dataset.barLabel }));
+    if (first) document.dispatchEvent(new CustomEvent('bar:label', { detail: first.dataset.barLabel }));
   }, { rootMargin: '-35% 0px -45% 0px' });
   sections.forEach((s) => io.observe(s));
 }
