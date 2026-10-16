@@ -4,7 +4,7 @@
  * (client/hire.ts) and the request function (functions/api/hire.ts) all price it the same way;
  * the function recalculates rather than trusting the browser's number.
  */
-import { EXTRAS, PAY_LARGE, PAY_SMALL, PLANS, PRICES, RATE, RETAINER_TERMS, RUSH_DEPOSIT, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
+import { CAPACITY, EXTRAS, PAY_LARGE, PAY_SMALL, PLANS, PRICES, RATE, RETAINER_TERMS, RUSH_DEPOSIT, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 
 export interface Answers {
   services: ServiceId[];
@@ -130,4 +130,74 @@ export function payPlan(a: Answers, lines: Line[], total: number): string {
   const sum = (steps: string[]) => lines.filter((l) => l.step && steps.includes(l.step)).reduce((t, l) => t + l.price, 0);
   if (a.ai && (!brand || sum(['ai']) >= sum(['logo', 'rebrand']))) return a.ai.size === 'large' ? 'aiLarge' : 'ai';
   return 'brand';
+}
+
+// ---- When it happens
+
+export interface Schedule { approveBy: string; steps: { title: string; when: string; desc?: string }[] }
+
+const DAY = 86_400_000;
+const at = (iso: string) => new Date(`${iso}T12:00:00Z`).getTime();
+const iso = (t: number) => new Date(t).toISOString().slice(0, 10);
+const plus = (d: string, days: number) => iso(at(d) + Math.round(days) * DAY);
+/** The Monday on or after; the Friday nearest (phases start on Mondays and wrap up on Fridays) */
+const monday = (d: string) => plus(d, (8 - new Date(at(d)).getUTCDay()) % 7);
+const friday = (d: string) => { const w = new Date(at(d)).getUTCDay(); return plus(d, w === 6 ? -1 : w === 0 ? -2 : 5 - w); };
+/** Christmas to New Year's is off: a phase that runs into it takes a week longer, and nothing starts in it */
+const off = (d: string) => d.slice(5) >= '12-24' || d.slice(5) === '01-01';
+const pastBreak = (from: string, to: string) => { for (let d = from; d <= to; d = plus(d, 1)) if (off(d)) return true; return false; };
+/** "Sep 1" */
+export const short = (d: string) => new Date(at(d)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+
+/**
+ * A rough timeline, in the shape of my proposals: when it can start, and when each phase wraps up.
+ * It starts when my freelance hours free up (`free`, from Notion or src/data/hire.ts), unless they asked
+ * for right away (the rush moves other work aside), and is paced by those hours: the estimate's hours
+ * spread over CAPACITY.hoursPerWeek, plus the time reviews take. Fit to Agape: Homes ($4,200) ran Sep 1,
+ * design to Sep 18, build to Oct 2, launch Oct 8; Development ($12,700) Oct 13, Nov 13, Dec 4, Dec 11.
+ */
+export function schedule(a: Answers, e: Estimate, free: string, today: string): Schedule | null {
+  if (!e.total) return null;
+  // Feedback is a couple of hours, so it fits around booked work
+  const fits = !a.services.some((x) => x !== 'feedback');
+  const open = fits || free === 'now' || !/^\d{4}-\d{2}-\d{2}$/.test(free) || free < today ? today : free;
+  const ready = { asap: plus(today, 14), soon: [open, plus(today, 21)].sort()[1], flexible: [open, plus(today, 7)].sort()[1] }[a.timeline ?? 'flexible'];
+  let start = monday(a.timeline === 'asap' ? [ready, open].sort()[0] : ready);
+  while (off(start) || pastBreak(start, plus(start, 4))) start = monday(plus(start, 7));
+  const hours = (steps: string[]) => e.lines.filter((l) => !l.unit && l.step && steps.includes(l.step)).reduce((t, l) => t + l.price, 0) / RATE;
+  const weeks = (h: number) => h / CAPACITY.hoursPerWeek;
+  const steps: Schedule['steps'] = [];
+  let t = start;
+  const phase = (w: number) => {
+    let end = friday(plus(t, w * 7));
+    if (pastBreak(t, end)) end = friday(plus(end, 7));
+    while (off(end)) end = friday(plus(end, 7));
+    return (t = end);
+  };
+
+  const brand = a.logo || a.rebrand, W = weeks(hours(['site', 'logo', 'rebrand', 'ai', 'feedback']));
+  if (brand && a.site) {
+    const b = weeks(hours(['logo', 'rebrand'])), s = weeks(hours(['site']));
+    steps.push({ title: 'Brand kickoff', when: start, desc: `First directions by ${short(phase(Math.max(1.5, 0.4 * b + 1)))}, final files by ${short(phase(Math.max(1, 0.6 * b + 1)))}.` });
+    const site = t = monday(plus(t, 1));
+    steps.push({ title: 'Site kickoff', when: site, desc: `Design through ${short(phase(Math.max(2, 0.5 * s + 1.5)))}, build through ${short(phase(Math.max(1.5, 0.3 * s + 1.2)))}.` });
+    steps.push({ title: 'Launch', when: phase(1) });
+  } else if (a.site) {
+    const scope = a.site.scope;
+    if (scope === 'design') { steps.push({ title: 'Kickoff', when: start, desc: 'Designs for every page, ready to hand off.' }); steps.push({ title: 'Design handoff', when: phase(Math.max(2, W + 1)) }); }
+    else if (scope === 'build') { steps.push({ title: 'Kickoff', when: start, desc: `Build through ${short(phase(Math.max(1.5, W + 1)))}.` }); steps.push({ title: 'Launch', when: phase(1) }); }
+    else { steps.push({ title: 'Kickoff', when: start, desc: `Design through ${short(phase(Math.max(2, 0.5 * W + 1.5)))}, build through ${short(phase(Math.max(1.5, 0.3 * W + 1.2)))}.` }); steps.push({ title: 'Launch', when: phase(1) }); }
+  } else if (brand) {
+    steps.push({ title: 'Kickoff', when: start, desc: `First directions by ${short(phase(Math.max(1.5, 0.4 * W + 1)))}.` });
+    steps.push({ title: 'Final files', when: phase(Math.max(1, 0.6 * W + 1)) });
+  } else if (a.ai) {
+    steps.push({ title: 'Kickoff', when: start, desc: `A first version to try by ${short(phase(Math.max(1, 0.6 * W + 1)))}.` });
+    steps.push({ title: 'Handoff', when: phase(Math.max(1, 0.4 * W + 1)) });
+  } else {
+    steps.push({ title: a.feedback?.how === 'call' ? 'Our call' : 'Your notes', when: friday(plus(today, 7)), desc: 'Within a week of booking.' });
+    return { approveBy: today, steps };
+  }
+  let approveBy = plus(start, -3);
+  while (off(approveBy)) approveBy = plus(approveBy, -1);
+  return { approveBy, steps };
 }

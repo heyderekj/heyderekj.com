@@ -206,7 +206,7 @@
 
 /* The proposal */
 /* A sheet of paper: square corners, a little whiter than the page, and one more sheet peeking out under it */
-.prop { --sheet: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 440px; padding: 0 0 84px; border-radius: 0; font-size: 14.5px; color: var(--ink); background: var(--sheet);
+.prop { --sheet: #fff; position: relative; overflow: hidden; overflow: clip; display: flex; flex-direction: column; min-height: 440px; padding: 0 0 84px; border-radius: 0; font-size: 14.5px; color: var(--ink); background: var(--sheet);
   box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 7%, transparent), 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 0 -1px var(--sheet), 0 4px 0 0 color-mix(in oklch, var(--ink) 8%, transparent), 0 22px 40px -22px rgb(0 0 0 / 0.28); }
 @media (prefers-color-scheme: dark) { .prop { --sheet: var(--card); } }
 /* Long estimates scroll inside the sheet: it stops at the screen's height, fades where there's more, and a

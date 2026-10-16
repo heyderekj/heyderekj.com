@@ -11,7 +11,8 @@
  * With only one of them, it still does that one; with neither, it answers 503 and the page offers my email.
  */
 import { EmailMessage } from 'cloudflare:email';
-import { clean, estimate, money } from '../../src/lib/estimate';
+import { clean, estimate, money, schedule, short } from '../../src/lib/estimate';
+import { availability } from '../../src/data/hire';
 import { SERVICES } from '../../src/data/hire';
 
 interface D1 { prepare(sql: string): { bind(...v: unknown[]): { run(): Promise<unknown> } } }
@@ -41,6 +42,10 @@ export async function onRequestPost({ request, env }: { request: Request; env: E
   const answers = clean(data.answers), unsure = data.unsure === true;
   if (!answers.services.length && !unsure) return json(400, { error: 'at least one thing you need' });
   const est = estimate(answers);
+  // The timeline they saw: from the free date their page had (Notion's or the written one) and their today
+  const ymd = (v: unknown) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : '');
+  const day = new Date().toISOString().slice(0, 10), seen = ymd(data.today);
+  const plan = schedule(answers, est, data.free === 'now' ? 'now' : ymd(data.free) || availability.from, seen && Math.abs(Date.parse(seen) - Date.parse(day)) < 2 * 86_400_000 ? seen : day);
   if (!env.HIRE_DB && !env.NOTES_MAIL) return json(503, { error: 'requests are not set up yet' });
 
   const id = crypto.randomUUID(), at = new Date();
@@ -78,6 +83,7 @@ export async function onRequestPost({ request, env }: { request: Request; env: E
       est.monthly ? `Ongoing: ${money(est.monthly)}/mo` : '',
       ...est.payments.map((p) => `${p.when} ${p.pct}% (${money(p.amount)}) ${p.after}`),
       est.terms && `Payment plan: ${est.plan}. ${est.terms}`,
+      ...(plan ? ['', '— Their timeline', `Approval by ${short(plan.approveBy)}`, ...plan.steps.map((s) => `${s.title}: ~${short(s.when)}${s.desc ? ` (${s.desc})` : ''}`)] : []),
       '',
       `Answers: ${JSON.stringify(answers)}`,
       saved ? `Saved as ${id}` : 'Not saved to D1 (binding missing or the insert failed)',

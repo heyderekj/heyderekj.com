@@ -11,7 +11,7 @@ import Icon from '../Icon.astro';
 import Browser from './Browser.astro';
 import Byline from './Byline.astro';
 import Gear from './Gear.astro';
-import { availability, SERVICES } from '../../data/hire';
+import { availability, availabilityWhen, SERVICES } from '../../data/hire';
 import { getDeck, host, pageOf, shotsOf, TM_TILES } from '../../lib/deck';
 import { TOPICS } from '../../lib/bar';
 import { getPublishedPosts, postTitle } from '../../lib/posts';
@@ -45,7 +45,7 @@ const pagesFor = Object.fromEntries(TOPICS.map((t) => {
       </span>
     </span></span></button>.
     I also take on projects of my own as <a class="wchip sq djd-chip" href="/hire/"><Gear size={15} id="helloGear" /> Derek J Design<span class="pop"><span class="djd sq">
-      <span class:list={['djd__status', !availability.open && 'is-closed']}><span class="djd__light"><i></i>{availability.open ? 'Open for work' : 'Booked up'}</span><b data-avail={availability.open ? 'big' : undefined}>{availability.open ? (availability.from === 'now' ? 'Right now' : `From ${availability.from}`) : 'For now'}</b></span>
+      <span class:list={['djd__status', !availability.open && 'is-closed']}><span class="djd__light"><i></i>{availability.open ? 'Open for work' : 'Booked up'}</span><b data-avail={availability.open ? 'big' : undefined}>{availability.open ? (availability.from === 'now' ? 'Right now' : `From ${availabilityWhen}`) : 'For now'}</b></span>
       <span class="djd__caps">{SERVICES.map((sv) => <span>{sv.name}</span>)}</span>
     </span></span></a>.
     Here I write about {TOPICS.map((t, i) => (

@@ -6,10 +6,20 @@
  * a $500/mo retainer for 5 hours, and 40% to start, 40% at design approval, 20% at launch.
  */
 
-/** Shown at the top of /hire/, in the home page's chip and the bar menu: open or not, and from when (a month, or 'now').
- *  When Notion is connected (functions/api/availability.ts), the date comes from my projects instead; this is the fallback. */
-export const availability = { open: true, from: 'November' };
-export const availabilityLine = availability.open ? (availability.from === 'now' ? 'Taking projects now' : `Taking projects from ${availability.from}`) : 'Booked up for now';
+/** Shown at the top of /hire/, in the home page's chip and the bar menu: open or not, and from when (a date, or 'now').
+ *  When Notion is connected (functions/api/availability.ts), the date comes from my projects instead; this is the fallback.
+ *  Agape Development launches about Dec 11, plus a week. */
+export const availability = { open: true, from: '2026-12-18' as string };
+/** The date as people read it: "Dec 18" */
+export const availabilityWhen = availability.from === 'now' ? 'now' : new Date(`${availability.from}T12:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+export const availabilityLine = availability.open ? (availability.from === 'now' ? 'Taking projects now' : `Taking projects from ${availabilityWhen}`) : 'Booked up for now';
+
+/**
+ * How much of my week goes to freelance work. Every booked project (Agape now, anything else in Notion)
+ * comes out of these hours, so a new one starts when they free up, and its timeline is paced by them:
+ * an estimate's hours (its price at RATE) spread over this many hours a week.
+ */
+export const CAPACITY = { hoursPerWeek: 20 };
 
 export const RATE = 100; // per hour, for anything beyond the scope (like a fifth round of revisions)
 

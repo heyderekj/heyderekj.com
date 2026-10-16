@@ -1,11 +1,14 @@
 /**
  * When I'm free, kept current from my projects in Notion (functions/api/availability.ts): the status on
  * /hire/, in the home page's Derek J Design chip and in the bar menu. Each starts with the date written in
- * src/data/hire.ts; if the function answers, they're rewritten. Asked once per visit.
+ * src/data/hire.ts; if the function answers, they're rewritten. Asked once per visit. The date is also put
+ * on <html data-avail-from> with an `hdj:avail` event, so the estimate on /hire/ can plan from it.
  */
 const spots = [...document.querySelectorAll<HTMLElement>('[data-avail]')];
 if (spots.length) {
   const paint = (from: string) => {
+    document.documentElement.dataset.availFrom = from;
+    window.dispatchEvent(new CustomEvent('hdj:avail', { detail: from }));
     const now = from === 'now';
     const when = now ? '' : new Date(`${from}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     for (const el of spots) {

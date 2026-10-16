@@ -4,7 +4,7 @@
  * priced by lib/estimate.ts (the same code the request function uses). Sends to /api/hire, then a
  * signed note from me. Answers are kept in this browser until they're sent.
  */
-import { clean, DEFAULTS, estimate, money, type Answers } from '../lib/estimate';
+import { clean, DEFAULTS, estimate, money, schedule, short, type Answers } from '../lib/estimate';
 import { EXTRAS, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 import { copyText, toast } from './toast';
 
@@ -17,6 +17,9 @@ if (form) {
   const nextBtn = $<HTMLButtonElement>('[data-next]', form), backBtn = $<HTMLButtonElement>('[data-back]', form), hint = $('.est__hint', form);
   const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pencil = document.querySelector<HTMLTemplateElement>('#hirePencil')?.innerHTML ?? '';
+  // When my hours free up: the date written on the page, then Notion's when client/availability.ts has it
+  const free = () => document.documentElement.dataset.availFrom || prop.dataset.free || 'now';
+  const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   const openedAt = Date.now();
 
   // ---- What's been answered (each service's options start at sensible defaults)
@@ -134,6 +137,13 @@ if (form) {
     P('total-wrap').hidden = !e.total;
     P('pay').innerHTML = e.payments.map((p) => `<li>${esc(p.when)} <em>${p.pct}% (${money(p.amount)})</em> ${esc(p.after)}</li>`).join('');
     P('terms').textContent = e.terms;
+    // When: from my free date (Notion's, once it's in) and how they want to start
+    const plan = schedule(a, e, free(), today());
+    P('time-wrap').hidden = !plan;
+    if (plan) {
+      P('time-note').textContent = plan.steps.length > 1 ? `Assumes approval by ${short(plan.approveBy)} and content delivered on schedule.` : '';
+      P('time').innerHTML = plan.steps.map((s) => `<li><b>${esc(s.title)}</b><em>~${short(s.when)}</em>${s.desc ? `<small>${esc(s.desc)}</small>` : ''}</li>`).join('');
+    }
     fade();
     P('pay-wrap').hidden = !e.payments.length && !e.monthly;
     $('[data-p="sum"]', sum).textContent = money(e.total) + (e.monthly ? ` + ${money(e.monthly)}/mo` : '');
@@ -185,6 +195,7 @@ if (form) {
   new IntersectionObserver(([e]) => { inApp = e.isIntersecting; showSum(); }).observe(form);
 
   const paint = () => { paintForm(); paintProposal(); save(); };
+  window.addEventListener('hdj:avail', () => paintProposal());
 
   // ---- Answering
   form.addEventListener('click', (e) => {
@@ -218,7 +229,7 @@ if (form) {
       const r = await fetch('/api/hire', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          answers: clean(draft), unsure: draft.unsure, name: field('name'), email: field('email'), org: field('org'), link: field('link'),
+          answers: clean(draft), free: free(), today: today(), unsure: draft.unsure, name: field('name'), email: field('email'), org: field('org'), link: field('link'),
           message: field('message'), budget: draft.budget, website: field('website'), ms: Date.now() - openedAt, page: location.pathname,
         }),
       });

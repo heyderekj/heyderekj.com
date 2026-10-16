@@ -4,7 +4,7 @@
  * opens a menu, and turns into search (press /). It morphs between those states
  * without moving anything on the page. Behaviour lives in client/bar.ts.
  */
-import { availability } from '../data/hire';
+import { availability, availabilityWhen } from '../data/hire';
 import Icon from './Icon.astro';
 import type { BarContext } from '../lib/bar';
 
@@ -34,7 +34,7 @@ const nav = [
         {nav.map((n) => (
           <a href={n.href} {...(n.external ? { target: '_blank', rel: 'noopener' } : {})}><Icon name={n.icon} />{n.label}{n.external && <Icon name="arrow-up-right" class="bar__ext" />}</a>
         ))}
-        <a class="bar__hire" href="/hire/"><Icon name="gear" />Work with me<small data-avail={availability.open ? 'small' : undefined}>{availability.open ? (availability.from === 'now' ? 'open now' : `from ${availability.from}`) : 'booked up'}</small></a>
+        <a class="bar__hire" href="/hire/"><Icon name="gear" />Work with me<small data-avail={availability.open ? 'small' : undefined}>{availability.open ? (availability.from === 'now' ? 'open now' : `from ${availabilityWhen}`) : 'booked up'}</small></a>
       </div>
       <div class="bar__else">
         <button class="bar__mail" data-copy-email>derekj@hey.com <span>Copy</span></button>
