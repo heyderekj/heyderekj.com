@@ -85,7 +85,7 @@ const families = FAMILIES.map((f) => ({ ...f, n: archive.filter((a) => a.family 
           <li>
             <a href={a.href} target="_blank" rel="noopener" style={`--c:${a.c}`} data-app={a.slug}>
               <img class="sq" src={a.icon} alt="" width="40" height="40" loading="lazy" />
-              <span><b>{a.name}{a.soon && <em class="badge">Coming soon</em>}</b><small>{a.tagline}</small></span>
+              <span><b>{a.name}{a.soon && <em class="badge">Coming</em>}</b><small>{a.tagline}</small></span>
             </a>
           </li>
         ))}
