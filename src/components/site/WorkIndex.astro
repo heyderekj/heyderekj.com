@@ -55,7 +55,7 @@ const years = [...new Set(rows.map((r) => r.year))];
           <span class="row__thumb sq" aria-hidden="true">{r.thumb && 'src' in r.thumb && <img src={r.thumb.src} alt="" class={frameAttrs(r.thumb).class} style={frameAttrs(r.thumb).style} loading="lazy" decoding="async" />}</span>
           <span class="row__title">{r.title}</span>
           <span class="row__date">{r.date}</span>
-          <span class="row__shots" aria-hidden="true">{r.shots.map((p) => 'src' in p && <span class="row__shot sq"><img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" /></span>)}<em>{r.title}</em></span>
+          <span class="row__shots" aria-hidden="true" style={`--n:${r.shots.length}`}>{r.shots.map((p, i) => 'src' in p && <span class="row__shot sq" style={`--i:${i}`}><img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" /></span>)}<em>{r.title}</em></span>
           <span class="row__desc">{r.sub}</span>
         </a>
       ))}
