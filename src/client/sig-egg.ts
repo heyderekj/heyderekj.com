@@ -14,7 +14,7 @@ if (wm && inner && mine) {
   const resign = () => { if (calm()) { mine.classList.add('is-drawn'); return; } mine.classList.remove('is-drawn', 'is-signing'); void mine.offsetWidth; mine.classList.add('is-signing'); };
 
   // ---- The note card
-  let card: HTMLFormElement | null = null, openedAt = 0;
+  let card: HTMLFormElement | null = null, openedAt = 0, draft = { note: '', name: '' };
   function open() {
     if (card) { card.querySelector('textarea')?.focus(); return; }
     wm!.classList.add('is-noting');
@@ -31,22 +31,26 @@ if (wm && inner && mine) {
       </div>`;
     inner!.append(card);
     const area = card.querySelector('textarea')!;
+    area.value = draft.note;
+    card.querySelector<HTMLInputElement>('input[name="name"]')!.value = draft.name;
     area.focus();
     area.addEventListener('input', () => {
       area.style.height = 'auto'; area.style.height = `${Math.min(area.scrollHeight, 220)}px`;
       card!.classList.toggle('has-text', area.value.trim().length > 0);
     });
+    if (draft.note) area.dispatchEvent(new Event('input'));
     area.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) card!.requestSubmit(); });
     setTimeout(() => document.addEventListener('pointerdown', outside), 0);
     card.addEventListener('submit', send);
     document.addEventListener('keydown', onKey);
   }
   function onKey(e: KeyboardEvent) { if (e.key === 'Escape') close(); }
-  // Clicking away closes it, unless there's an unsent note
-  function outside(e: PointerEvent) { if (card && !card.contains(e.target as Node) && !card.querySelector('textarea')!.value.trim()) close(); }
+  // Clicking away dismisses it; an unsent note comes back next time it opens
+  function outside(e: PointerEvent) { if (card && !card.contains(e.target as Node)) close(); }
   function close() {
     document.removeEventListener('keydown', onKey);
     document.removeEventListener('pointerdown', outside);
+    if (card) draft = { note: card.querySelector('textarea')!.value, name: card.querySelector<HTMLInputElement>('input[name="name"]')!.value };
     card?.remove(); card = null;
     wm!.classList.remove('is-noting');
   }
@@ -64,7 +68,7 @@ if (wm && inner && mine) {
         body: JSON.stringify({ note: data.note, name: data.name, website: data.website, page: location.pathname, ms: Date.now() - openedAt }),
       });
       if (!r.ok) throw new Error(String(r.status));
-      close(); resign();
+      card.querySelector('textarea')!.value = ''; close(); draft = { note: '', name: '' }; resign();
       toast(data.name?.trim() ? `Thanks, ${data.name.trim().split(' ')[0]}. Got it.` : 'Thank you. Got it.');
     } catch {
       button.disabled = false; card?.classList.remove('is-sending');
