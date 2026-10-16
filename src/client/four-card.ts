@@ -7,13 +7,12 @@
  */
 export type Move = { c: number; r: number; who: 1 | 2 };
 type Game = { board: number[]; moves: Move[]; run: number[]; by: 'you' | 'them'; score: number; level: number; wins: number; foe: string; foeTone: string };
-type Design = 'paper' | 'blueprint' | 'arcade' | 'orange';
+type Design = 'paper' | 'arcade' | 'orange';
 type Layout = 'classic' | 'poster' | 'faceoff';
 
 const W = 1080, H = 1350, COLS = 7, ROWS = 6;
 const THEMES: Record<Design, { bg: string; ink: string; muted: string; board: string; hole: string; edge: string; accent: string }> = {
   paper: { bg: '#faf9f7', ink: '#161513', muted: '#6c6760', board: '#fdfcfa', hole: 'rgba(22,21,19,0.07)', edge: 'rgba(22,21,19,0.12)', accent: '#ea580c' },
-  blueprint: { bg: '#1d4b8c', ink: '#eef3fb', muted: '#a8bfdf', board: 'rgba(238,243,251,0.06)', hole: 'rgba(238,243,251,0.12)', edge: 'rgba(238,243,251,0.4)', accent: '#ffb27a' },
   arcade: { bg: '#0d0c0b', ink: '#f6f4f0', muted: '#8a847b', board: '#1b1a18', hole: '#2a2824', edge: 'rgba(246,244,240,0.12)', accent: '#ea580c' },
   orange: { bg: '#ea580c', ink: '#fff7ef', muted: 'rgba(255,247,239,0.78)', board: 'rgba(255,255,255,0.14)', hole: 'rgba(0,0,0,0.14)', edge: 'rgba(255,255,255,0.35)', accent: '#fff7ef' },
 };
@@ -42,9 +41,8 @@ function draw(ctx: CanvasRenderingContext2D, g: Game, upto = g.moves.length, fal
   const t = THEMES[design];
   ctx.save(); ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = t.bg; ctx.fillRect(0, 0, W, H);
-  // The ground: dot grid, graph paper, or scanlines
+  // The ground: a dot grid, or scanlines
   if (design === 'paper' || design === 'orange') { ctx.fillStyle = design === 'paper' ? 'rgba(22,21,19,0.1)' : 'rgba(255,255,255,0.16)'; for (let y = 27; y < H; y += 36) for (let x = 27; x < W; x += 36) { ctx.beginPath(); ctx.arc(x, y, 2, 0, 7); ctx.fill(); } }
-  if (design === 'blueprint') { ctx.strokeStyle = 'rgba(238,243,251,0.08)'; ctx.lineWidth = 1; for (let x = 0; x <= W; x += 36) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 0; y <= H; y += 36) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } ctx.strokeStyle = 'rgba(238,243,251,0.16)'; for (let x = 0; x <= W; x += 180) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } }
   if (design === 'arcade') { ctx.fillStyle = 'rgba(255,255,255,0.025)'; for (let y = 0; y < H; y += 6) ctx.fillRect(0, y, W, 2); }
 
   const sans = 'Figtree, ui-sans-serif, system-ui, sans-serif', mono = 'ui-monospace, SFMono-Regular, Menlo, monospace';
@@ -364,14 +362,20 @@ if (root) {
   // Layouts and colours
   root.querySelectorAll<HTMLButtonElement>('[data-design]').forEach((b) => b.addEventListener('click', () => {
     design = b.dataset.design as Design;
-    root.querySelectorAll('[data-design]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
-    changed();
+    root.querySelectorAll<HTMLElement>('[data-design]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.design === design)));
+    tintLayouts(); changed();
   }));
   root.querySelectorAll<HTMLButtonElement>('[data-layout]').forEach((b) => b.addEventListener('click', () => {
     layout = b.dataset.layout as Layout;
     root.querySelectorAll('[data-layout]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
     changed();
   }));
+
+  // The layout pictures take the colour you picked
+  function tintLayouts() {
+    const t = THEMES[design], box = root!.querySelector<HTMLElement>('.four-card__layouts')!;
+    box.style.setProperty('--tb', t.bg); box.style.setProperty('--ti', design === 'paper' ? '#9a958d' : t.muted);
+  }
 
   // Your pet: a photo (picked, dropped or pasted) and a name. The photo never leaves the browser
   const petBox = root.querySelector<HTMLElement>('.four-card__pet')!;
