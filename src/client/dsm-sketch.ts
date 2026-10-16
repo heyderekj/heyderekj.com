@@ -217,7 +217,6 @@ function paintScene(W, H, dpr, h, k, wx, season) {
   const font = '600 5px Figtree, system-ui, sans-serif';
   P(89.5, DATUM - 68, 76, DATUM - 76, { w: 0.35, a: 0.6, over: 0 }); L.push({ text: '801 GRAND', x: 74.5, y: DATUM - 75.2, font, align: 'right', a: 0.75, len: 18 });
   P(199, domeTop - 4, 186, domeTop - 13, { w: 0.35, a: 0.6, over: 0 }); L.push({ text: 'STATE CAPITOL', x: 184.5, y: domeTop - 12.2, font, align: 'right', a: 0.75, len: 18 });
-  L.push({ text: 'DES MOINES, IA', x: DW / 2, y: DH - 9.5, font, align: 'center', a: 0.5, len: 14 });
   const total = L.reduce((s, l) => s + l.len, 0);
 
   // Fog lifts the ink back toward the paper
