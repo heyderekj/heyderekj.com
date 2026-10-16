@@ -3,20 +3,9 @@ import Site from '../../layouts/Site.astro';
 import PageHead from '../../components/site/PageHead.astro';
 import WorkIndex from '../../components/site/WorkIndex.astro';
 import { getPublishedWork } from '../../lib/work';
-import { workTestimonials as testimonials } from '../../data/about';
+import Said from '../../components/site/Said.astro';
 
 const entries = await getPublishedWork();
-
-// Each testimonial leads with its best line; the full quote follows with that line highlighted.
-// Each person has their own colour.
-const TONE: Record<string, string> = { 'Shelley Martin': 'green', 'Barrett Johnson': 'blue', 'Danny Begnoche': 'pink', 'Corey Moen': 'yellow' };
-const said = testimonials.map((t) => {
-  const [rel, when] = t.context.split(' · ');
-  const relation = t.relation ?? (/client/i.test(rel) ? 'Client' : /mentor/i.test(rel) ? 'Mentor' : /team/i.test(rel) ? 'Teammate' : rel);
-  const at = t.pull ? t.quote.indexOf(t.pull) : -1;
-  const pull = t.pull ? t.pull[0].toUpperCase() + t.pull.slice(1) : '';
-  return { ...t, relation, when, pull, parts: at < 0 ? [t.quote] : [t.quote.slice(0, at), t.pull!, t.quote.slice(at + t.pull!.length)], initials: t.author.split(' ').map((w) => w[0]).join('').slice(0, 2) };
-});
 ---
 <Site
   title="Work — Derek Castelli"
@@ -28,19 +17,7 @@ const said = testimonials.map((t) => {
     <WorkIndex work={entries} />
 
     <h2 class="h">What people say</h2>
-    <div class="said">
-      {said.map((t) => (
-        <figure class="said__card sq" data-tone={TONE[t.author] ?? 'orange'}>
-          {t.pull && <blockquote class="said__pull">“{t.pull}.”</blockquote>}
-          <p class="said__full">{t.parts.length === 3 ? <Fragment>{t.parts[0]}<mark class="said__mark">{t.parts[1]}</mark>{t.parts[2]}</Fragment> : t.parts[0]}</p>
-          <figcaption class="said__by">
-            <span class="said__face sq" aria-hidden="true">{t.initials}</span>
-            <span class="said__who"><b>{t.author}</b><small>{t.role}</small></span>
-            <span class="said__rel">{t.relation}{t.when && <time>{t.when}</time>}</span>
-          </figcaption>
-        </figure>
-      ))}
-    </div>
+    <Said />
   </main>
   <script src="../../client/chips.ts"></script>
 </Site>

@@ -1,0 +1,196 @@
+---
+/**
+ * Work with me: what I do as Derek J Design, what it costs, and a form that builds an estimate as you
+ * answer, set like the proposals I send (client/hire.ts). Requests are saved and emailed to me
+ * (functions/api/hire.ts). Prices and availability live in src/data/hire.ts.
+ */
+import Site from '../layouts/Site.astro';
+import PageHead from '../components/site/PageHead.astro';
+import Icon from '../components/Icon.astro';
+import Said from '../components/site/Said.astro';
+import PostRow from '../components/site/PostRow.astro';
+import { availability, PAYMENT, PRICES, RATE, SAMPLES, SERVICES, THINKING } from '../data/hire';
+import { getPublishedWork } from '../lib/work';
+import { frameAttrs, pageOf, shot, shotsOf, workDate } from '../lib/deck';
+import { getPublishedPosts } from '../lib/posts';
+import { postRows } from '../lib/postRows';
+import '../styles/hire.css';
+
+// Some sites to show: any picked in the data file, else the highlighted ones, newest first
+const work = await getPublishedWork();
+const pinned = Object.values(SAMPLES).flat();
+const samples = (pinned.length ? work.filter((w) => pinned.includes(w.slug)) : work.filter((w) => w.data.highlight && shotsOf(w).length))
+  .sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf()).slice(0, 6);
+const sampleRows = await Promise.all(samples.map(async (w) => ({
+  href: `/work/${w.slug}/`, title: w.data.title, year: workDate(w).getUTCFullYear(),
+  sub: [w.data.partnership ? `With ${w.data.partnership}` : 'Solo', w.data.workType].filter(Boolean).join(' · '),
+  thumb: await pageOf(shotsOf(w)[0], 480), img: shot(shotsOf(w)[0], 640),
+})));
+
+// Posts that show how I think about this work: any pinned, then the latest in these topics
+const posts = await getPublishedPosts();
+const picked = [
+  ...THINKING.pinned.map((s) => posts.find((p) => p.slug === s)).filter((p): p is (typeof posts)[number] => Boolean(p)),
+  ...posts.filter((p) => !THINKING.pinned.includes(p.slug) && p.data.tags.some((t) => THINKING.tags.includes(t))),
+].slice(0, THINKING.count);
+const thinking = await postRows(picked);
+
+const [first, second, third] = PAYMENT.big;
+const GEAR = 'M265.211 124.541C272.306 134.304 272.321 147.522 265.248 157.301L183.357 270.523C176.262 280.333 163.65 284.449 152.134 280.713L19.4531 237.675C7.9591 233.947 0.170298 223.245 0.156758 211.161L1.7679e-05 71.2763C-0.0135219 59.1928 7.7512 48.4732 19.2368 44.7191L151.821 1.38292C163.329 -2.3785 175.949 1.70923 183.067 11.5032L265.211 124.541ZM96.1302 94.6653C84.6447 98.4195 76.88 109.139 76.8935 121.222L76.938 161.004C76.9516 173.087 84.7404 183.79 96.2345 187.518L133.88 199.729C145.397 203.464 158.008 199.348 165.103 189.539L188.372 157.368C195.445 147.589 195.43 134.37 188.335 124.607L164.995 92.4893C157.877 82.6954 145.257 78.6078 133.749 82.3693L96.1302 94.6653Z';
+---
+<Site
+  title="Work with me — Derek Castelli"
+  description="Websites, logos, rebrands, feedback, and AI workflows and apps, from Derek J Design. See what it costs before we talk."
+  ogImage="/og/hire.png"
+  bar={{ kind: 'page', title: 'Work with me' }}
+>
+  <main class="home hire">
+    <PageHead title="Work with me" meta="Derek J Design · Testament Made, LLC">
+      <Fragment slot="lede">I design and build sites, logos and brands, and lately help people put AI to work where it actually helps. It’s just me, so you work with the person doing the work. Tell me what you need below and you’ll see what it costs before we ever talk.</Fragment>
+      <p class:list={['hire-avail sq', !availability.open && 'is-closed']}><i aria-hidden="true"></i>{availability.line}</p>
+    </PageHead>
+
+    <h2 class="h">What I do</h2>
+    <div class="list hire-services">
+      {SERVICES.map((s) => (
+        <button type="button" class="row hire-service sq" data-pick={s.id}>
+          <span class="hire-service__icon sq" aria-hidden="true"><Icon name={s.icon as never} /></span>
+          <span class="row__title">{s.name}</span>
+          <span class="row__date">{s.from}</span>
+          <span class="row__desc">{s.line}</span>
+        </button>
+      ))}
+    </div>
+
+    <h2 class="h">How it works</h2>
+    <ol class="hire-steps">
+      <li><b>We talk</b><span>A short call about what you need and why. No cost, no pressure.</span></li>
+      <li><b>A proposal</b><span>Scope, price and timing, written down, like the estimate below.</span></li>
+      <li><b>Design, build, launch</b><span>{first.pct}% to start, {second.pct}% at design approval, {third.pct}% at launch. Two rounds of revisions in each stage; more are ${RATE}/hr.</span></li>
+    </ol>
+
+    <section class="hire-est" id="estimate" aria-labelledby="estH">
+      <h2 class="h" id="estH">Get an estimate</h2>
+      <div class="hire-est__grid">
+        <form class="hire-form" id="hireForm" novalidate>
+          <fieldset class="hire-q" data-step="what">
+            <legend><span class="hire-q__n">1</span>What do you need?</legend>
+            <div class="hire-picks">
+              {SERVICES.map((s) => (
+                <button type="button" class="hire-pick sq" data-service={s.id} aria-pressed="false"><Icon name={s.icon as never} /><b>{s.name}</b><small>{s.from}</small></button>
+              ))}
+              <button type="button" class="hire-pick sq" data-service="unsure" aria-pressed="false"><Icon name="message" /><b>Not sure yet</b><small>Let’s talk it through</small></button>
+            </div>
+          </fieldset>
+
+          <fieldset class="hire-q" data-for="site" hidden>
+            <legend><span class="hire-q__n"><Icon name="laptop" loop={false} /></span>Your website</legend>
+            <div class="hire-row"><span>Is it</span><div class="hire-seg" data-k="site.kind"><button type="button" data-v="new">New</button><button type="button" data-v="redesign">A redesign</button></div></div>
+            <label class="hire-row hire-slider"><span>Pages</span><output data-out="site.pages">5</output><input type="range" min="1" max={PRICES.site.maxPages} step="1" value="5" data-k="site.pages" aria-label="How many pages" /></label>
+            <div class="hire-row"><span>From me</span><div class="hire-seg" data-k="site.scope"><button type="button" data-v="both">Design + build</button><button type="button" data-v="design">Design</button><button type="button" data-v="build">Build</button></div></div>
+            <label class="hire-row hire-switch"><span>Content your team updates<small>Posts, listings, a team page (a CMS)</small></span><input type="checkbox" data-k="site.cms" /><i aria-hidden="true"></i></label>
+            <div class="hire-row"><span>Built in</span><div class="hire-seg" data-k="site.platform"><button type="button" data-v="webflow">Webflow</button><button type="button" data-v="open">You tell me</button></div></div>
+          </fieldset>
+
+          <fieldset class="hire-q" data-for="logo" hidden>
+            <legend><span class="hire-q__n"><Icon name="pencil" loop={false} /></span>Your logo</legend>
+            <div class="hire-row"><span>Is it</span><div class="hire-seg" data-k="logo.kind"><button type="button" data-v="new">New</button><button type="button" data-v="refresh">A refresh</button></div></div>
+            <div class="hire-row" data-when="logo.kind=new"><span>Kind</span><div class="hire-seg" data-k="logo.type"><button type="button" data-v="wordmark">Wordmark</button><button type="button" data-v="mark">Mark</button><button type="button" data-v="both">Both</button></div></div>
+          </fieldset>
+
+          <fieldset class="hire-q" data-for="rebrand" hidden>
+            <legend><span class="hire-q__n"><Icon name="palette" loop={false} /></span>Your rebrand</legend>
+            <div class="hire-row"><span>The logo</span><div class="hire-seg" data-k="rebrand.has"><button type="button" data-v="full">New one too</button><button type="button" data-v="keepLogo">Keep it</button></div></div>
+            <label class="hire-row hire-switch"><span>Carry it through to the website<small>Adds the site to your estimate</small></span><input type="checkbox" data-also="site" /><i aria-hidden="true"></i></label>
+          </fieldset>
+
+          <fieldset class="hire-q" data-for="feedback" hidden>
+            <legend><span class="hire-q__n"><Icon name="eye" loop={false} /></span>Feedback on</legend>
+            <div class="hire-row"><span>What</span><div class="hire-seg" data-k="feedback.on"><button type="button" data-v="site">Site</button><button type="button" data-v="app">App</button><button type="button" data-v="brand">Brand</button></div></div>
+            <div class="hire-row"><span>As</span><div class="hire-seg" data-k="feedback.how"><button type="button" data-v="notes">Written notes</button><button type="button" data-v="call">A call</button></div></div>
+          </fieldset>
+
+          <fieldset class="hire-q" data-for="ai" hidden>
+            <legend><span class="hire-q__n"><Icon name="branch" loop={false} /></span>Your AI project</legend>
+            <div class="hire-row"><span>What</span><div class="hire-seg" data-k="ai.kind"><button type="button" data-v="workflow">A workflow</button><button type="button" data-v="tool">A tool</button><button type="button" data-v="prototype">An app</button></div></div>
+            <div class="hire-row"><span>Size</span><div class="hire-seg" data-k="ai.size"><button type="button" data-v="small">Small</button><button type="button" data-v="medium">Medium</button><button type="button" data-v="large">Large</button></div></div>
+          </fieldset>
+
+          <fieldset class="hire-q" data-step="when" hidden>
+            <legend><span class="hire-q__n">2</span>When, and after</legend>
+            <div class="hire-row"><span>Start</span><div class="hire-seg" data-k="timeline"><button type="button" data-v="asap">ASAP</button><button type="button" data-v="soon">In 1–2 months</button><button type="button" data-v="flexible">Flexible</button></div></div>
+            <label class="hire-row hire-switch" data-when-any="site"><span>Keep me on after launch<small>${PRICES.retainer.monthly}/mo for {PRICES.retainer.hours} hours of updates</small></span><input type="checkbox" data-k="retainer" /><i aria-hidden="true"></i></label>
+            <label class="hire-row"><span>Budget in mind</span><select name="budget"><option value="">Not sure</option><option>Under $2k</option><option>$2–5k</option><option>$5–10k</option><option>$10k+</option></select></label>
+          </fieldset>
+
+          <fieldset class="hire-q" data-step="you" hidden>
+            <legend><span class="hire-q__n">3</span>About you</legend>
+            <div class="hire-fields">
+              <label><span>Name</span><input name="name" autocomplete="name" required maxlength="80" /></label>
+              <label><span>Email</span><input name="email" type="email" autocomplete="email" required maxlength="120" /></label>
+              <label><span>Organization</span><input name="org" autocomplete="organization" maxlength="100" placeholder="Optional" /></label>
+              <label><span>Your site</span><input name="link" type="url" inputmode="url" maxlength="200" placeholder="Optional" /></label>
+              <label class="hire-fields__wide"><span>Anything else</span><textarea name="message" rows="4" maxlength="3000" placeholder="What you’re hoping for, what’s not working, who it’s for…"></textarea></label>
+            </div>
+            <input class="hire-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <div class="hire-send">
+              <button type="submit" class="hire-send__btn sq">Send it my way <Icon name="arrow-right" /></button>
+              <small class="hire-send__note" aria-live="polite">I’ll reply within two business days.</small>
+            </div>
+          </fieldset>
+        </form>
+
+        <aside class="hire-side">
+          <article class="prop sq" id="proposal" aria-label="Your estimate" aria-live="polite">
+            <header class="prop__head">
+              <div>
+                <b class="prop__title"><span data-p="org">Your project</span><i class="prop__mark" aria-hidden="true"><Icon name="arrow-right" loop={false} /></i>Derek J Design</b>
+                <small>Project estimate</small>
+                <small class="prop__tags" data-p="tags"></small>
+              </div>
+              <time data-p="date"></time>
+            </header>
+            <section><h3><i class="prop__mark" aria-hidden="true"><Icon name="arrow-right" loop={false} /></i>Overview</h3><p class="prop__overview" data-p="overview">Pick what you need and your estimate builds here, line by line.</p></section>
+            <section data-p="scope-wrap" hidden><h3><i class="prop__mark" aria-hidden="true"><Icon name="arrow-right" loop={false} /></i>Scope</h3><ul class="prop__lines" data-p="lines"></ul></section>
+            <section data-p="total-wrap" hidden><h3><i class="prop__mark" aria-hidden="true"><Icon name="arrow-right" loop={false} /></i>Proposed Total</h3><ul class="prop__lines prop__lines--totals" data-p="totals"></ul></section>
+            <section data-p="pay-wrap" hidden><h3><i class="prop__mark" aria-hidden="true"><Icon name="arrow-right" loop={false} /></i>Payment</h3><ul class="prop__pay" data-p="pay"></ul></section>
+            <footer class="prop__foot">
+              <svg class="prop__gear" viewBox="0 0 271 283" aria-hidden="true"><path d={GEAR} /></svg>
+              <span><b>Derek J Design</b>Testament Made, LLC</span>
+              <p>An estimate, not a quote. I’ll confirm the details after we talk.</p>
+            </footer>
+          </article>
+          <div class="hire-sum sq" id="hireSum" hidden><span>Estimate</span><b data-p="sum">$0</b><a href="#proposal">See it <Icon name="arrow-down" loop={false} /></a></div>
+        </aside>
+      </div>
+      <div class="hire-done" id="hireDone" hidden>
+        <b>Sent. Thank you!</b>
+        <p>I’ll read it closely and reply within two business days. Keep a copy of your estimate:</p>
+        <button type="button" class="hire-send__btn sq" data-print><Icon name="file-down" /> Save as PDF</button>
+      </div>
+    </section>
+
+    <h2 class="h">Some of my work <a class="hire-more" href="/work/">All sites <Icon name="arrow-right" /></a></h2>
+    <div class="list">
+      {sampleRows.map((r) => (
+        <a class="row row--thumb sq" href={r.href} data-peek-img={r.img}>
+          <span class="row__thumb sq" aria-hidden="true">{'src' in r.thumb && <img src={r.thumb.src} alt="" class={frameAttrs(r.thumb).class} style={frameAttrs(r.thumb).style} loading="lazy" decoding="async" />}</span>
+          <span class="row__title">{r.title}</span>
+          <span class="row__date">{r.year}</span>
+          <span class="row__desc">{r.sub}</span>
+        </a>
+      ))}
+    </div>
+
+    <h2 class="h">What people say</h2>
+    <Said />
+
+    <h2 class="h">How I think about it</h2>
+    <div class="list">{thinking.map((r) => <PostRow row={r} />)}</div>
+
+    <p class="hire-close">Rather just talk? Email me at <button type="button" class="hire-mail sq" data-copy="derekj@hey.com">derekj@hey.com <small>Copy</small></button></p>
+  </main>
+  <div class="peek sq" id="peek" aria-hidden="true"></div>
+  <script src="../client/peek.ts"></script>
+  <script src="../client/hire.ts"></script>
+</Site>

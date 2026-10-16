@@ -10,6 +10,8 @@
 import Icon from '../Icon.astro';
 import Browser from './Browser.astro';
 import Byline from './Byline.astro';
+import Gear from './Gear.astro';
+import { availability, SERVICES } from '../../data/hire';
 import { getDeck, host, pageOf, shotsOf, TM_TILES } from '../../lib/deck';
 import { TOPICS } from '../../lib/bar';
 import { getPublishedPosts, postTitle } from '../../lib/posts';
@@ -42,6 +44,11 @@ const pagesFor = Object.fromEntries(TOPICS.map((t) => {
         <span class="here__home">Home with my wife, Lilo, Kiya, Leroy and Irma.</span>
       </span>
     </span></span></button>.
+    I also take on projects of my own as <a class="wchip sq djd-chip" href="/hire/"><Gear size={15} id="helloGear" /> Derek J Design<span class="pop"><span class="djd sq">
+      <span class:list={['djd__avail', !availability.open && 'is-closed']}><i></i>{availability.line}</span>
+      {SERVICES.map((sv) => <span class="djd__row"><span>{sv.name}</span><small>{sv.from}</small></span>)}
+      <span class="djd__go">See what it costs →</span>
+    </span></span></a>.
     Here I write about {TOPICS.map((t, i) => (
       <Fragment>
         <button class="wchip sq topic" data-tag={t.key} data-label={t.label} data-tags={t.tags.join(' ')} aria-pressed="false">{t.label}{pagesFor[t.key].pages.length > 0 && (

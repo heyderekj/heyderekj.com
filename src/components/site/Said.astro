@@ -1,0 +1,32 @@
+---
+/**
+ * What people say: testimonial cards, each leading with its best line, then the full quote with that
+ * line highlighted, and who said it. Each person has their own colour. Used on /work/ and /hire/.
+ */
+import { workTestimonials } from '../../data/about';
+
+interface Props { testimonials?: typeof workTestimonials }
+const { testimonials = workTestimonials } = Astro.props;
+
+const TONE: Record<string, string> = { 'Shelley Martin': 'green', 'Barrett Johnson': 'blue', 'Danny Begnoche': 'pink', 'Corey Moen': 'yellow' };
+const said = testimonials.map((t) => {
+  const [rel, when] = t.context.split(' · ');
+  const relation = t.relation ?? (/client/i.test(rel) ? 'Client' : /mentor/i.test(rel) ? 'Mentor' : /team/i.test(rel) ? 'Teammate' : rel);
+  const at = t.pull ? t.quote.indexOf(t.pull) : -1;
+  const pull = t.pull ? t.pull[0].toUpperCase() + t.pull.slice(1) : '';
+  return { ...t, relation, when, pull, parts: at < 0 ? [t.quote] : [t.quote.slice(0, at), t.pull!, t.quote.slice(at + t.pull!.length)], initials: t.author.split(' ').map((w) => w[0]).join('').slice(0, 2) };
+});
+---
+<div class="said">
+  {said.map((t) => (
+    <figure class="said__card sq" data-tone={TONE[t.author] ?? 'orange'}>
+      {t.pull && <blockquote class="said__pull">“{t.pull}.”</blockquote>}
+      <p class="said__full">{t.parts.length === 3 ? <Fragment>{t.parts[0]}<mark class="said__mark">{t.parts[1]}</mark>{t.parts[2]}</Fragment> : t.parts[0]}</p>
+      <figcaption class="said__by">
+        <span class="said__face sq" aria-hidden="true">{t.initials}</span>
+        <span class="said__who"><b>{t.author}</b><small>{t.role}</small></span>
+        <span class="said__rel">{t.relation}{t.when && <time>{t.when}</time>}</span>
+      </figcaption>
+    </figure>
+  ))}
+</div>

@@ -27,6 +27,7 @@ export const getStaticPaths = (async () => {
   return [
     ...posts.map((post) => ({ params: { slug: `posts/${post.slug}` }, props: { card: postCard(post, subs) } })),
     ...work.map((w) => ({ params: { slug: `work/${w.slug}` }, props: { card: workCard(w) } })),
+    { params: { slug: 'hire' }, props: { card: { eyebrow: ['Derek J Design', 'Testament Made, LLC'], title: 'Work with me', quote: 'Sites, logos, rebrands, feedback, and AI workflows and apps. See what it costs before we talk.' } } },
   ];
 }) satisfies GetStaticPaths;
 

@@ -171,6 +171,9 @@ if (box && thread && slash && prompts && form && input) {
     if (/^(work|sites|websites|portfolio)$/.test(cmd)) {
       return say('The sites I’ve designed and built, on my own and with studios:', () => links([{ t: 'Sites', h: '/work/', sub: 'Work' }]));
     }
+    if (/^(hire|hire me|work with me|freelance|freelancing|pricing|prices|rates|services|estimate|quote)$/.test(cmd)) {
+      return say('I take on projects of my own as Derek J Design: sites, logos, rebrands, feedback and AI workflows. You can see what it’d cost right away:', () => links([{ t: 'Work with me', h: '/hire/', sub: 'Services and a live estimate' }]));
+    }
     if (/^(projects|apps|side projects)$/.test(cmd)) {
       const apps = (await load()).filter((i) => i.k === 'App');
       return say('My apps live at Testament Made, and every side project since 2008 is in the archive:', () => links([{ t: 'Projects', h: '/projects/', sub: 'Testament Made and the archive' }, ...apps.slice(0, 2).map(card)]));
@@ -216,7 +219,7 @@ if (box && thread && slash && prompts && form && input) {
 
   // ---- Slash shortcuts: type / for a little menu above the field (arrows and Enter, or click)
   const SHORTCUTS = [
-    ['home', 'Go to the home page'], ['writing', 'What I wrote most recently'], ['work', 'Sites I’ve designed and built'],
+    ['home', 'Go to the home page'], ['writing', 'What I wrote most recently'], ['work', 'Sites I’ve designed and built'], ['hire', 'Work with me, and what it costs'],
     ['projects', 'Apps and side projects'], ['about', 'My story'], ['play', 'Connect Four with the animals'], ['secrets', 'Every easter egg on the site'], ['note', 'Leave me a note'], ['clear', 'Start over'], ['help', 'What I can do here'],
   ];
   let picks: string[][] = [], at = 0;

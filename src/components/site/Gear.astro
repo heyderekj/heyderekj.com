@@ -1,0 +1,6 @@
+---
+/** The Derek J Design gear (public/brand/gear.svg), in its orange, at any size. `id` keeps gradients apart when it's on a page twice. */
+interface Props { size?: number; id?: string; class?: string }
+const { size = 16, id = 'gear', class: cls } = Astro.props;
+---
+<svg class:list={['gear', cls]} viewBox="0 0 271 283" width={size} height={Math.round(size * 283 / 271)} aria-hidden="true"><defs><radialGradient id={id} cx="0" cy="0" r="1" gradientTransform="matrix(109.424 190.634 -250.295 192.197 95.787 71.0251)" gradientUnits="userSpaceOnUse"><stop stop-color="#FF8A48" /><stop offset="1" stop-color="#FF4D00" /></radialGradient></defs><path fill={`url(#${id})`} fill-rule="evenodd" d="M265.211 124.541C272.306 134.304 272.321 147.522 265.248 157.301L183.357 270.523C176.262 280.333 163.65 284.449 152.134 280.713L19.4531 237.675C7.9591 233.947 0.170298 223.245 0.156758 211.161L1.7679e-05 71.2763C-0.0135219 59.1928 7.7512 48.4732 19.2368 44.7191L151.821 1.38292C163.329 -2.3785 175.949 1.70923 183.067 11.5032L265.211 124.541ZM96.1302 94.6653C84.6447 98.4195 76.88 109.139 76.8935 121.222L76.938 161.004C76.9516 173.087 84.7404 183.79 96.2345 187.518L133.88 199.729C145.397 203.464 158.008 199.348 165.103 189.539L188.372 157.368C195.445 147.589 195.43 134.37 188.335 124.607L164.995 92.4893C157.877 82.6954 145.257 78.6078 133.749 82.3693L96.1302 94.6653Z" /></svg>

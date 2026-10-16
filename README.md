@@ -58,3 +58,14 @@ Triple-clicking the signature watermark opens a "Leave me a note" card (`src/cli
 3. Redeploy.
 
 Until the binding exists, the function answers 503 and the card tells the visitor to email instead. Notes come from `notes@heyderekj.com`.
+
+### Work requests (/hire/)
+
+The [/hire/](src/pages/hire.astro) form builds an estimate as people answer. Prices, payment terms and the availability line all live in [src/data/hire.ts](src/data/hire.ts), and [src/lib/estimate.ts](src/lib/estimate.ts) does the math. Requests post to [functions/api/hire.ts](functions/api/hire.ts), which recalculates the estimate, saves the request to D1 and emails it to derekj@hey.com. The email's Reply-To is the person who sent it, so you can just hit reply. One-time setup:
+
+1. Create the database: `npx wrangler d1 create hdj-hire`
+2. Make the table: `npx wrangler d1 execute hdj-hire --remote --file=migrations/0001_hire.sql`
+3. In the Pages project, go to **Settings → Bindings → Add → D1 database**. Name it `HIRE_DB` and pick `hdj-hire`. The email uses the `NOTES_MAIL` binding from above, so there's nothing more to set up for it.
+4. Redeploy.
+
+To read requests: `npx wrangler d1 execute hdj-hire --remote --command "SELECT created_at, name, email, org, total FROM requests ORDER BY created_at DESC LIMIT 20"`. With only one binding, it still saves or still emails. With neither, the form offers your email address instead.
