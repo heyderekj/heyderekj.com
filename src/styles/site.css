@@ -824,3 +824,19 @@ img.framed { --iw: max(100cqw / var(--fw), 100cqh * var(--fr) / var(--fh)); posi
 .deck__track > .wslide .collage[data-count="1"] .collage__card:nth-child(1) { animation: collage-in-one 420ms var(--ease) both; }
 @keyframes collage-in-one { from { opacity: 0; scale: 0.97; } }
 .pages .mesh img.pages__card { width: 84%; height: 84%; aspect-ratio: auto; border-radius: 0; object-fit: contain; }
+
+/* Easter egg: Blueprint mode (client/blueprint.ts). The page as a cyanotype on graph paper. */
+html.blueprint { --paper: #1d4b8c; --card: #21528f; --ink: #eef3fb; --ink-soft: #d6e3f5; --muted: #a8bfdf; --hair: rgb(238 243 251 / 0.22); --tint: rgb(238 243 251 / 0.08); --glass: rgb(26 68 128 / 0.88); --hl: #6fa4f2; --shadow: 0 0 0 1px rgb(238 243 251 / 0.14); --shadow-lift: 0 0 0 1px rgb(238 243 251 / 0.2), 0 18px 40px -18px rgb(0 10 40 / 0.6); color-scheme: dark; background: #1d4b8c; }
+html.blueprint body.site::before { background-image: linear-gradient(rgb(238 243 251 / 0.16) 1px, transparent 1px), linear-gradient(90deg, rgb(238 243 251 / 0.16) 1px, transparent 1px), linear-gradient(rgb(238 243 251 / 0.07) 1px, transparent 1px), linear-gradient(90deg, rgb(238 243 251 / 0.07) 1px, transparent 1px); background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px; }
+html.blueprint body.site :is(img, video, canvas:not(#dsmCanvas)) { filter: grayscale(1) contrast(1.1) brightness(1.08); mix-blend-mode: screen; }
+html.blueprint .mesh::before { filter: grayscale(1) brightness(0.6); }
+html.bp-fade body.site, html.bp-fade body.site * { transition: background-color 600ms var(--ease), color 600ms var(--ease), box-shadow 600ms var(--ease), filter 600ms var(--ease) !important; }
+
+/* Easter egg: the count-in on the bar photo (client/count-in.ts) */
+.bar__home { position: relative; }
+.bar__home[data-beat]::after { content: attr(data-beat); position: absolute; top: -2px; right: 2px; display: grid; place-items: center; min-width: 15px; height: 15px; padding: 0 3px; border-radius: 999px; background: var(--ink); color: var(--paper); font: 700 9.5px/1 var(--font); }
+.bar__home[data-beat] img { animation: beat-tap 160ms var(--ease); }
+.bar__home.is-fill img { animation: beat-fill 220ms var(--ease) 6 alternate; }
+@keyframes beat-tap { 50% { scale: 0.88; } }
+@keyframes beat-fill { to { scale: 0.92; rotate: -4deg; } }
+@media (prefers-reduced-motion: reduce) { .bar__home img { animation: none !important; } }

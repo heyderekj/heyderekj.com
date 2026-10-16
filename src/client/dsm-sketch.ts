@@ -9,7 +9,14 @@
 const $ = (s) => document.querySelector(s);
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const DSM = () => { if (window.__dsmHour != null) return window.__dsmHour; const [h, m] = new Date().toLocaleTimeString('en-GB', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', hour12: false }).split(':').map(Number); return h + m / 60; };
-function tickTime() { const el = $('#dsmTime'); if (el) el.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' }).toLowerCase(); }
+function tickTime() { const el = $('#dsmTime'); if (el) el.textContent = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Chicago', hour: 'numeric', minute: '2-digit' }).toLowerCase(); sunday(); }
+// Easter egg: on Sunday mornings, Des Moines time, the card says where I probably am
+let homeLine = null;
+function sunday() {
+  const el = $('.here__home'); if (!el) return; homeLine ??= el.textContent;
+  const day = new Date().toLocaleDateString('en-US', { timeZone: 'America/Chicago', weekday: 'short' }), h = DSM();
+  el.textContent = day === 'Sun' && h >= 8.5 && h < 12.5 ? 'Probably at church right now.' : homeLine;
+}
 // Sky colours through the day: [hour, top, middle, horizon, star amount, light colour]
 const SKY = [
   [0, '#060b1d', '#0f1a3a', '#22325c', 1, '#cfd8ff'],
