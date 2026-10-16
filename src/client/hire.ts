@@ -219,6 +219,14 @@ if (form) {
   // Copy my email
   $$<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', async () => { if (await copyText(b.dataset.copy!)) toast('Email copied'); }));
 
+  // The examples strips under What I do scroll sideways with a plain mouse wheel too
+  $$('.hire-cap__strip').forEach((strip) => strip.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // a trackpad already scrolls it
+    const max = strip.scrollWidth - strip.clientWidth, next = strip.scrollLeft + e.deltaY;
+    if (max <= 0 || (next <= 0 && strip.scrollLeft <= 0) || (next >= max && strip.scrollLeft >= max)) return; // at an end, let the page scroll
+    e.preventDefault(); strip.scrollLeft = next;
+  }, { passive: false }));
+
   // A service named in the address (/hire/#site) starts picked
   const fromHash = location.hash.slice(1) as ServiceId;
   if (ORDER.includes(fromHash)) toggleService(fromHash, true);

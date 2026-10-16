@@ -54,14 +54,14 @@ export const SERVICES: { id: ServiceId; name: string; icon: string; line: string
   { id: 'ai', name: 'AI workflows & apps', icon: 'branch', line: 'Putting AI to work where it actually helps: an automation, an internal tool, or a first version of an app.', from: `from $${PRICES.ai.small.toLocaleString()}`, tags: ['ai', 'making'] },
 ];
 
-/** Examples beside each service, as a stack that fans out: a site write-up (its first shot) or one of my apps (its icon, or its picture) */
+/** Examples for each service: a site write-up (its first shot) or one of my apps (its icon, or its picture). Shown newest first,
+ *  the four newest as a stack and all of them in a strip you can scroll on hover. */
 export type Example = { work: string } | { app: string; show?: 'icon' | 'image' };
 export const EXAMPLES: Record<ServiceId, Example[]> = {
-  site: [{ work: 'revisemy' }, { work: 'exodus51' }, { work: 'throne' }, { work: 'care-continuity' }],
-  // Logos for Josh Pigford's projects, and one of my own apps
-  logo: [{ work: 'schemakit' }, { work: 'linkscout' }, { work: 'revise-dev' }, { app: 'harvous', show: 'icon' }],
-  // NameSnag was a redesign of the logo Josh had
-  rebrand: [{ work: 'scenery' }, { work: 'namesnag' }, { work: 'bowen-design-and-print' }],
+  site: ['revisemy', 'exodus51', 'harvouscom', 'throne', 'care-continuity', 'claimable', 'eternity-church-2', 'ccc-omaha', 'river-valley-church', 'david-energy'].map((work) => ({ work })),
+  // Logos for Josh Pigford's projects, and my own apps' icons
+  logo: [{ work: 'namesnag' }, { work: 'schemakit' }, { work: 'linkscout' }, { work: 'revise-dev' }, { app: 'revisemy', show: 'icon' }, { app: 'heres-my-church', show: 'icon' }, { app: 'harvous', show: 'icon' }],
+  rebrand: [{ work: 'scenery' }, { work: 'bowen-design-and-print' }],
   // Consulting: no examples, so these show as short rows
   feedback: [],
   ai: [],

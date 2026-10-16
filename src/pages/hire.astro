@@ -10,28 +10,28 @@ import Said from '../components/site/Said.astro';
 import Signature from '../components/Signature.astro';
 import { availability, EXAMPLES, EXTRAS, PRICES, SERVICES, TIMELINE } from '../data/hire';
 import { getPublishedWork } from '../lib/work';
-import { appPicture, comingSoon, frameAttrs, getApps, pageOf, shotsOf } from '../lib/deck';
+import { appPicture, comingSoon, frameAttrs, getApps, pageOf, shotsOf, workDate } from '../lib/deck';
 import { imgSrc } from '../lib/img';
 import { workTestimonials } from '../data/about';
 import '../styles/hire.css';
 
 const work = await getPublishedWork();
 
-// Each service's examples, as a stack: a write-up's first shot, or one of my apps (its icon or picture)
+// Each service's examples, newest first: a write-up's first shot, or one of my apps (its icon or picture)
 const apps = await getApps();
-type Layer = { src: string; title: string; frame?: { class?: string; style?: string }; icon?: boolean };
+type Layer = { src: string; title: string; href: string; at: number; frame?: { class?: string; style?: string }; icon?: boolean };
 const stacks = Object.fromEntries(await Promise.all(SERVICES.map(async (s) => {
   const layers = (await Promise.all(EXAMPLES[s.id].map(async (ex): Promise<Layer | null> => {
     if ('work' in ex) {
       const w = work.find((x) => x.slug === ex.work); const first = w && shotsOf(w)[0];
       if (!w || !first) return null;
       const page = await pageOf(first, 480);
-      return 'src' in page ? { src: page.src, title: w.data.title, frame: frameAttrs(page) } : null;
+      return 'src' in page ? { src: page.src, title: w.data.title, href: `/work/${w.slug}/`, at: workDate(w).valueOf(), frame: frameAttrs(page) } : null;
     }
     const a = apps.find((x) => x.slug === ex.app); if (!a) return null;
     const icon = ex.show === 'icon' || comingSoon(a), src = icon ? a.data.icon : appPicture(a);
-    return src ? { src: imgSrc(src, icon ? 240 : 640), title: a.data.name, icon } : null;
-  }))).filter((l): l is Layer => Boolean(l)).slice(0, 4);
+    return src ? { src: imgSrc(src, icon ? 240 : 640), title: a.data.name, href: a.data.url || '/projects/', at: Date.UTC(a.data.year ?? new Date().getUTCFullYear(), 0), icon } : null;
+  }))).filter((l): l is Layer => Boolean(l)).sort((x, y) => y.at - x.at);
   return [s.id, layers] as const;
 })));
 
@@ -60,17 +60,24 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
     <h2 class="h">What I do</h2>
     <div class="hire-caps">
       {SERVICES.filter((s) => stacks[s.id].length).map((s) => (
-        <button type="button" class="hire-cap sq" data-pick={s.id}>
-          <span class="row__shots hire-cap__stack" aria-hidden="true">{stacks[s.id].map((l, i) => (
-            <span class:list={['row__shot sq', l.icon && 'is-icon']} style={`--i:${i}`}><img src={l.src} alt="" class={l.frame?.class} style={l.frame?.style} loading="lazy" decoding="async" /><i class="hire-cap__tag">{l.title}</i></span>
+        <div class="hire-cap sq">
+          <span class="row__shots hire-cap__stack" aria-hidden="true">{stacks[s.id].slice(0, 4).map((l, i) => (
+            <span class:list={['row__shot sq', l.icon && 'is-icon']} style={`--i:${i}`}><img src={l.src} alt="" class={l.frame?.class} style={l.frame?.style} loading="lazy" decoding="async" /></span>
           ))}</span>
           <span class="hire-cap__text">
             <b><Icon name={s.icon as never} loop={false} /> {s.name}</b>
             <span>{s.line}</span>
-            <small>{stacks[s.id].map((l) => l.title).filter((t, i, all) => all.indexOf(t) === i).join(' · ')}</small>
+            <small>{stacks[s.id].length} examples, newest first</small>
           </span>
-          <span class="hire-cap__go" aria-hidden="true">Get an estimate <Icon name="arrow-right" loop={false} /></span>
-        </button>
+          <div class="hire-cap__strip" aria-label={`${s.name}: examples`}>
+            {stacks[s.id].map((l, i) => (
+              <a class:list={['hire-ex sq', l.icon && 'is-icon']} href={l.href} style={`--n:${i}`} {...(l.href.startsWith('http') ? { target: '_blank', rel: 'noopener' } : {})}>
+                <img src={l.src} alt="" class={l.frame?.class} style={l.frame?.style} loading="lazy" decoding="async" /><i>{l.title}</i>
+              </a>
+            ))}
+          </div>
+          <button type="button" class="hire-cap__go" data-pick={s.id}>Get an estimate <Icon name="arrow-right" loop={false} /></button>
+        </div>
       ))}
     </div>
     <div class="hire-consult">
