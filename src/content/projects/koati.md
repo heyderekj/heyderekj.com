@@ -6,7 +6,7 @@ category: App
 role: Designer & builder
 stack: [Laravel, Laravel Cloud]
 image: /assets/images/projects/koati-card.webp
-icon: /assets/images/projects/koati-icon-v3.webp
+icon: /assets/images/projects/koati-icon-v4.webp
 tier: 1
 order: 2
 status: active

@@ -1,0 +1,45 @@
+---
+/**
+ * Every website write-up by year, like the writing on the home page. Hover a row to see the site
+ * in the margin (client/peek.ts). Partner chips narrow it to the work done with a studio.
+ */
+import { getPublishedWork, partnerHref, partnersOf, type Work } from '../../lib/work';
+import { host, shot, shotsOf, workDate } from '../../lib/deck';
+
+interface Props { work: Work[]; active?: string }
+const { work, active } = Astro.props;
+const all = await getPublishedWork();
+const partners = partnersOf(all);
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const rows = [...work].sort((a, b) => workDate(b).valueOf() - workDate(a).valueOf()).map((w) => {
+  const done = workDate(w);
+  return {
+    href: `/work/${w.slug}/`, title: w.data.title, year: done.getUTCFullYear(), date: `${MON[done.getUTCMonth()]}`,
+    sub: [w.data.partnership ? `With ${w.data.partnership}` : 'Solo', w.data.workType].filter(Boolean).join(' · '),
+    img: shotsOf(w)[0] ? shot(shotsOf(w)[0], 640) : undefined, url: host(w.data.liveLink ?? w.data.waybackUrl),
+  };
+});
+const years = [...new Set(rows.map((r) => r.year))];
+---
+<div class="work-chips">
+  <a class:list={['wchip sq', !active && 'is-current']} href="/work/" aria-current={!active ? 'page' : undefined}>Everything <span>{all.length}</span></a>
+  {partners.map((p) => (
+    <a class:list={['wchip sq', active === p.slug && 'is-current']} href={partnerHref(p.name)} aria-current={active === p.slug ? 'page' : undefined}>With {p.name} <span>{p.count}</span></a>
+  ))}
+</div>
+<div class="list">
+  {years.map((y) => (
+    <section class="list__year">
+      <h2>{y}</h2>
+      {rows.filter((r) => r.year === y).map((r) => (
+        <a class="row sq" href={r.href} data-peek-img={r.img} data-peek-url={r.url || undefined}>
+          <span class="row__title">{r.title}</span>
+          <span class="row__date">{r.date}</span>
+          <span class="row__desc">{r.sub}</span>
+        </a>
+      ))}
+    </section>
+  ))}
+</div>
+<div class="peek sq" id="peek" aria-hidden="true"></div>
+<script src="../../client/peek.ts"></script>

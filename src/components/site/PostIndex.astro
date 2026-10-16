@@ -8,6 +8,7 @@ import Icon from '../Icon.astro';
 import { getPublishedPosts, postHref, postTitle } from '../../lib/posts';
 import { peekFor, readingMinutes, type Subject } from '../../lib/pullquote';
 import { getDeck, host, shot, shotsOf } from '../../lib/deck';
+import { figuresIn } from '../../lib/figures';
 
 interface Props { show?: number }
 const { show = 3 } = Astro.props;
@@ -27,7 +28,7 @@ const rows = posts.map((p) => {
     href: postHref(p), title: postTitle(p), year: p.data.date.getUTCFullYear(),
     date: `${MON[p.data.date.getUTCMonth()]} ${p.data.date.getUTCDate()}`,
     tags: p.data.tags.join(' '),
-    figures: (p.body.match(/<Fig[A-Z]\w*/g) || []).length,
+    figures: figuresIn(p.body).length,
     peek, mins: readingMinutes(p),
   };
 });

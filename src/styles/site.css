@@ -418,3 +418,51 @@ body.site .toast { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
 .writing { margin-top: 48px; }
 .writing .list { margin-top: 0; }
 .bar__input input:focus-visible { outline: none; }
+
+/* ---------- Essays on the new layout: the legacy prose and post components, in the figure kit ---------- */
+.essay .prose, .essay .prose p, .essay .prose ul, .essay .prose ol, .essay .prose blockquote { max-width: none; }
+.essay__meta a { color: inherit; text-decoration: none; }
+.essay__meta a:hover { color: var(--ink); }
+.essay__meta .badge { margin-left: 4px; vertical-align: 0; }
+.essay .prose > p:first-child { margin-top: 0; }
+.essay .prose ul, .essay .prose ol { font-size: 18px; line-height: 1.68; color: var(--ink-soft); padding-left: 1.2em; }
+.essay .prose li { margin: 0.3em 0; }
+.essay .prose a { color: var(--ink); text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); text-underline-offset: 4px; }
+.essay .prose a:hover { text-decoration-color: currentColor; }
+.essay .prose blockquote { margin: 1.6em 0; padding-left: 18px; border-left: 2px solid var(--hair); color: var(--ink-soft); font-size: 18px; }
+.essay__sign { width: min(160px, 44%); margin: 44px 0 8px; }
+.essay__sign .sig { width: 100%; }
+.essay .post-footer { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--hair); }
+/* MDX figures break out wider than the column, like the kit's figures */
+.essay .prose > .snapshots, .essay .prose > .compare, .essay .prose > .pfig, .essay .prose > .pclip {
+  width: min(var(--fig), calc(100vw - 32px)); max-width: none;
+  margin: 40px 0 44px calc((var(--read) - min(var(--fig), calc(100vw - 32px))) / 2);
+}
+@media (max-width: 680px) { .essay .prose > .snapshots, .essay .prose > .compare, .essay .prose > .pfig, .essay .prose > .pclip { width: 100%; margin-left: 0; } }
+.essay .prose > .pfig figcaption, .essay .ms figcaption, .essay .compare figcaption { font-size: 13.5px; color: var(--muted); }
+.essay .prose > .fig { margin-top: 40px; }
+
+/* ---------- Work write-ups ---------- */
+.wslide--solo { padding: 0; }
+.writeup__video { --r: 12px; display: block; width: 100%; height: auto; background: var(--tint); box-shadow: 0 0 0 1px var(--hair); }
+.writeup__note { font-size: 14px !important; color: var(--muted) !important; }
+.visit { display: flex; flex-wrap: wrap; gap: 8px; }
+.essay .prose .visit a { text-decoration: none; }
+.writeup .essay__sign { margin-top: 56px; }
+.writeup .pager { margin-top: 28px; }
+
+/* ---------- Index pages (work, partners) ---------- */
+.page-h { margin: 0 0 12px; font-size: clamp(34px, 5vw, 46px); line-height: 1.05; font-weight: 700; letter-spacing: -0.035em; }
+.page-lede { margin: 0 0 28px; font-size: 19px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+.page-lede a { color: var(--ink); text-underline-offset: 4px; text-decoration-color: color-mix(in srgb, currentColor 30%, transparent); }
+.work-chips { display: flex; flex-wrap: wrap; gap: 6px; font-size: 14px; }
+.work-chips .wchip { padding: 5px 11px; text-decoration: none; }
+.work-chips .wchip span { color: var(--muted); margin-left: 4px; font-variant-numeric: tabular-nums; }
+.work-chips .wchip.is-current { background: var(--ink); color: var(--paper); }
+.work-chips .wchip.is-current span { color: color-mix(in srgb, var(--paper) 70%, transparent); }
+.work-chips + .list { margin-top: 36px; }
+.quotes { display: grid; gap: 12px; }
+.quotes .qcard { margin: 0; }
+.quotes .qcard p { font-size: 16px; }
+.quotes .qcard p::before, .quotes .qcard p::after { content: none; }
+.quotes .qcard b { color: var(--ink); font-weight: 600; }
