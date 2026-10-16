@@ -136,8 +136,6 @@ export const MORPHS: Partial<Record<Name | 'x' | 'github', Frame[]>> = {
   // The flap opens.
   mail: [{ s: { 1: 'M3 5.75L6.9 3C7.55 2.55 8.45 2.55 9.1 3L13 5.75' }, hold: 600 }],
   rss: [{ s: { 2: sc(base('rss', 2), 1.15, 1.15, 5.5, 10.5) }, hold: 80 }, { s: { 3: sc(base('rss', 3), 1.1, 1.1, 5.5, 10.5) }, hold: 80 }],
-  x: [{ r: -10 }, { r: 6 }],
-  github: [{ r: -10 }, { r: 6 }],
 
   /* ---- Places & things ---- */
   'map-pin': [{ y: -2.25, hold: 0 }, { s: { 0: sc(base('map-pin', 0), 1.1, 0.88, 8, 14.25), 1: [8, 7.25, 1.6] }, hold: 120 }],
