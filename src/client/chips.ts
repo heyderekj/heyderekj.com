@@ -69,14 +69,4 @@ document.addEventListener('topic', (e) => setTopic((e as CustomEvent<string>).de
 const asked = new URLSearchParams(location.search).get('topic');
 if (asked) setTopic(asked);
 
-// The bar says which part of the page you're on
-const sections = $$<HTMLElement>('[data-bar-label]');
-if (sections.length && document.getElementById('bar')?.dataset.kind === 'home') {
-  const visible = new Map<Element, boolean>();
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((en) => visible.set(en.target, en.isIntersecting));
-    const first = sections.find((s) => visible.get(s));
-    if (first) document.dispatchEvent(new CustomEvent('bar:label', { detail: first.dataset.barLabel }));
-  }, { rootMargin: '-35% 0px -45% 0px' });
-  sections.forEach((s) => io.observe(s));
-}
+// (The bar just says Home here; it used to follow the section you were in.)

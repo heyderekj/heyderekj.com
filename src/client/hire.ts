@@ -1,57 +1,104 @@
 /**
- * The /hire/ form (pages/hire.astro): pick what you need, answer a few questions about each, and the
- * proposal beside it is rewritten as you go, priced by lib/estimate.ts (the same code the request
- * function uses). Sends to /api/hire; afterwards the proposal can be saved as a PDF. Your answers are
- * kept in this browser until you send them.
+ * The /hire/ estimate (pages/hire.astro), as a small app: one screen at a time (what you need, a screen
+ * for each of those, when, who you are, a review), with the proposal beside it rewritten as you go and
+ * priced by lib/estimate.ts (the same code the request function uses). Sends to /api/hire, then a
+ * signed note from me. Answers are kept in this browser until they're sent.
  */
 import { clean, DEFAULTS, estimate, money, type Answers } from '../lib/estimate';
-import { SERVICES, type ServiceId } from '../data/hire';
+import { EXTRAS, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 import { copyText, toast } from './toast';
 
 const form = document.querySelector<HTMLFormElement>('#hireForm');
 if (form) {
   const $ = <T extends Element = HTMLElement>(s: string, root: ParentNode = document) => root.querySelector<T>(s)!;
-  const prop = $('#proposal'), sum = $('#hireSum'), done = $('#hireDone');
+  const $$ = <T extends Element = HTMLElement>(s: string, root: ParentNode = document) => [...root.querySelectorAll<T>(s)];
+  const app = form.closest<HTMLElement>('.est')!, prop = $('#proposal'), sum = $('#hireSum');
   const P = (k: string) => $(`[data-p="${k}"]`, prop);
+  const nextBtn = $<HTMLButtonElement>('[data-next]', form), backBtn = $<HTMLButtonElement>('[data-back]', form), hint = $('.est__hint', form);
+  const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   const openedAt = Date.now();
 
-  // ---- What's been answered (services in the order picked; each service's options start at sensible defaults)
-  type Draft = Answers & { unsure: boolean };
-  let draft: Draft = { services: [], unsure: false, retainer: false, timeline: 'flexible', ...structuredClone(DEFAULTS) } as Draft;
+  // ---- What's been answered (each service's options start at sensible defaults)
+  type Draft = Answers & { unsure: boolean; budget: string };
+  const fresh = (): Draft => ({ services: [], unsure: false, retainer: false, timeline: 'flexible', extras: [], budget: '', ...structuredClone(DEFAULTS) } as unknown as Draft);
+  let draft = fresh();
   try { const saved = JSON.parse(localStorage.getItem('hdj:hire') || 'null'); if (saved) draft = { ...draft, ...saved }; } catch {}
   const save = () => { try { localStorage.setItem('hdj:hire', JSON.stringify(draft)); } catch {} };
-
   const get = (path: string) => path.split('.').reduce<unknown>((o, k) => (o as Record<string, unknown>)?.[k], draft);
   const set = (path: string, v: unknown) => {
     const keys = path.split('.'), last = keys.pop()!;
     const parent = keys.reduce<Record<string, unknown>>((o, k) => (o[k] ??= {}) as Record<string, unknown>, draft as unknown as Record<string, unknown>);
     parent[last] = v;
   };
+  const ORDER = SERVICES.map((s) => s.id);
   const toggleService = (id: ServiceId | 'unsure', on?: boolean) => {
     if (id === 'unsure') { draft.unsure = on ?? !draft.unsure; return; }
-    const has = draft.services.includes(id), want = on ?? !has;
-    draft.services = want ? (has ? draft.services : [...draft.services, id]) : draft.services.filter((s) => s !== id);
+    const want = on ?? !draft.services.includes(id);
+    draft.services = ORDER.filter((s) => (s === id ? want : draft.services.includes(s)));
   };
+  const field = (n: string) => (form!.elements.namedItem(n) as HTMLInputElement | null)?.value.trim() ?? '';
 
-  // ---- Painting the form from the draft
+  // ---- The screens: what you need, one for each of those, when, you, review
+  const flow = () => ['services', ...draft.services, 'timing', 'you', 'review'];
+  const DOT: Record<string, string> = { services: 'services', timing: 'timing', you: 'you', review: 'review', sent: 'review' };
+  let at = 'services';
+  function show(name: string, dir: 1 | -1 = 1) {
+    at = name;
+    $$('.est__screen', form!).forEach((s) => { const on = s.dataset.screen === name; s.classList.toggle('is-on', on); s.classList.toggle('from-back', on && dir < 0); });
+    const f = flow(), i = name === 'sent' ? f.length - 1 : f.indexOf(name), dot = DOT[name] ?? 'details';
+    const dots = ['services', 'details', 'timing', 'you', 'review'], di = dots.indexOf(dot);
+    $$('[data-dot]', app).forEach((li, n) => { li.classList.toggle('is-on', n === di && name !== 'sent'); li.classList.toggle('is-done', n < di || name === 'sent'); });
+    app.style.setProperty('--p', String(name === 'sent' ? 1 : i / (f.length - 1)));
+    $('.est__count', app).textContent = name === 'sent' ? 'Sent' : `Step ${i + 1} of ${f.length}`;
+    backBtn.hidden = i === 0 || name === 'sent';
+    const nav = $('.est__nav', form!); nav.hidden = name === 'sent';
+    const last = name === 'review';
+    nextBtn.innerHTML = last ? 'Send it my way <svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>' : 'Continue <svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
+    nextBtn.classList.toggle('est__btn--send', last);
+    say('');
+    if (last) paintReview();
+    const first = $$<HTMLElement>('.est__screen.is-on input:not([type=checkbox]):not([type=range]):not(.hire-hp)', form!)[0];
+    if (first && name === 'you') first.focus({ preventScroll: true });
+  }
+  const say = (t: string, bad = false) => { hint.textContent = t; hint.classList.toggle('is-bad', bad); };
+
+  function next() {
+    if (at === 'services' && !draft.services.length && !draft.unsure) return say('Pick at least one, or “Not sure yet”.', true);
+    if (at === 'you') {
+      const name = form!.elements.namedItem('name') as HTMLInputElement, email = form!.elements.namedItem('email') as HTMLInputElement;
+      const bad = [!name.value.trim() && name, !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim()) && email].filter(Boolean) as HTMLInputElement[];
+      bad.forEach((i) => i.classList.add('is-bad'));
+      if (bad.length) { bad[0].focus(); return say(bad.includes(name) ? 'Your name, and an email to reply to.' : 'That email doesn’t look quite right.', true); }
+    }
+    if (at === 'review') return send();
+    const f = flow(); show(f[Math.min(f.length - 1, f.indexOf(at) + 1)], 1);
+    if (innerWidth <= 900) app.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' });
+  }
+  const back = () => { const f = flow(); show(f[Math.max(0, f.indexOf(at) - 1)], -1); };
+  nextBtn.addEventListener('click', next);
+  backBtn.addEventListener('click', back);
+  form.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !(e.target as HTMLElement).closest('textarea, button')) { e.preventDefault(); next(); }
+  });
+  form.addEventListener('submit', (e) => { e.preventDefault(); next(); });
+
+  // ---- Painting the controls from the draft
   function paintForm() {
-    form!.querySelectorAll<HTMLButtonElement>('[data-service]').forEach((b) => {
+    $$<HTMLButtonElement>('[data-service]', form!).forEach((b) => {
       const id = b.dataset.service as ServiceId | 'unsure';
       b.setAttribute('aria-pressed', String(id === 'unsure' ? draft.unsure : draft.services.includes(id)));
     });
-    form!.querySelectorAll<HTMLElement>('[data-for]').forEach((f) => { f.hidden = !draft.services.includes(f.dataset.for as ServiceId); });
-    const started = draft.services.length > 0 || draft.unsure;
-    form!.querySelectorAll<HTMLElement>('[data-step="when"], [data-step="you"]').forEach((f) => { f.hidden = !started; });
-    form!.querySelectorAll<HTMLElement>('.hire-seg[data-k]').forEach((seg) => {
-      const v = get(seg.dataset.k!);
-      seg.querySelectorAll<HTMLButtonElement>('[data-v]').forEach((b) => { b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', String(b.dataset.v === v)); });
-      seg.setAttribute('role', 'radiogroup');
+    $$('[data-k]:not(input)', form!).forEach((group) => {
+      const v = get(group.dataset.k!);
+      group.setAttribute('role', 'radiogroup');
+      $$<HTMLButtonElement>('[data-v]', group).forEach((b) => { b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', String(b.dataset.v === (v ?? ''))); });
     });
-    form!.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-k]').forEach((i) => { i.checked = get(i.dataset.k!) === true; });
-    form!.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-also]').forEach((i) => { i.checked = draft.services.includes(i.dataset.also as ServiceId); });
-    form!.querySelectorAll<HTMLInputElement>('input[type="range"][data-k]').forEach((i) => { i.value = String(get(i.dataset.k!)); $(`[data-out="${i.dataset.k}"]`, form!).textContent = i.value; });
-    form!.querySelectorAll<HTMLElement>('[data-when]').forEach((el) => { const [k, v] = el.dataset.when!.split('='); el.hidden = get(k) !== v; });
-    form!.querySelectorAll<HTMLElement>('[data-when-any]').forEach((el) => { el.hidden = !el.dataset.whenAny!.split(' ').some((s) => draft.services.includes(s as ServiceId)); });
+    $$<HTMLInputElement>('input[type="checkbox"][data-k]', form!).forEach((i) => { i.checked = get(i.dataset.k!) === true; });
+    $$<HTMLInputElement>('input[type="checkbox"][data-also]', form!).forEach((i) => { i.checked = draft.services.includes(i.dataset.also as ServiceId); });
+    $$<HTMLInputElement>('input[type="checkbox"][data-extra]', form!).forEach((i) => { i.checked = draft.extras?.includes(i.dataset.extra!) ?? false; });
+    $$<HTMLInputElement>('input[type="range"][data-k]', form!).forEach((i) => { i.value = String(get(i.dataset.k!)); $(`[data-out="${i.dataset.k}"]`, form!).textContent = i.value; });
+    $$('[data-when]', form!).forEach((el) => { const [k, v] = el.dataset.when!.split('='); el.hidden = get(k) !== v; });
+    $$('[data-when-any]', form!).forEach((el) => { el.hidden = !el.dataset.whenAny!.split(' ').some((s) => draft.services.includes(s as ServiceId)); });
   }
 
   // ---- The proposal, in the shape of the ones I send
@@ -68,11 +115,9 @@ if (form) {
   };
   const list = (xs: string[]) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
-  const field = (n: string) => (form!.elements.namedItem(n) as HTMLInputElement | null)?.value.trim() ?? '';
 
   function paintProposal() {
-    const a = clean(draft), e = estimate(a), org = field('org'), name = field('name');
-    const who = org || name;
+    const a = clean(draft), e = estimate(a), org = field('org'), name = field('name'), who = org || name;
     P('org').textContent = org || 'Your project';
     const d = new Date(); P('date').textContent = `${d.getMonth() + 1}.${d.getDate()}.${String(d.getFullYear()).slice(2)}`;
     P('tags').innerHTML = [...new Set(a.services.flatMap((s) => TAGS[s](a)))].map((t) => `<span>${t}</span>`).join('');
@@ -91,10 +136,26 @@ if (form) {
     showSum();
   }
 
+  // Review: what's being sent, each part a tap away from changing
+  function paintReview() {
+    const a = clean(draft), names = a.services.map((s) => SERVICES.find((x) => x.id === s)!.name);
+    const extras = EXTRAS.filter((x) => a.extras?.includes(x.id)).map((x) => x.name);
+    const rows: [string, string, string][] = [
+      ['What', [...names, ...(draft.unsure ? ['Not sure yet'] : [])].join(', ') + (extras.length ? `, with ${list(extras.map((x) => x.toLowerCase()))}` : ''), 'services'],
+      ['When', `${TIMELINE[a.timeline ?? 'flexible'].label}${draft.budget ? ` · Budget ${draft.budget}` : ''}${a.retainer ? ' · Retainer after launch' : ''}`, 'timing'],
+      ['You', [field('name'), field('org'), field('email')].filter(Boolean).join(' · '), 'you'],
+      ...(field('message') ? [['Note', field('message').slice(0, 160) + (field('message').length > 160 ? '…' : ''), 'you'] as [string, string, string]] : []),
+      ['Estimate', `${money(estimate(a).total)}${estimate(a).monthly ? ` + ${money(estimate(a).monthly)}/mo` : ''}`, ''],
+    ];
+    $('[data-review]', form!).innerHTML = rows.map(([k, v, go]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd>${go ? `<button type="button" data-go="${go}">Edit</button>` : '<span></span>'}</div>`).join('');
+  }
+  form.addEventListener('click', (e) => { const go = (e.target as HTMLElement).closest<HTMLElement>('[data-go]')?.dataset.go; if (go) show(go, -1); });
+
   // On phones, a bar keeps the total in sight while the proposal is off screen
-  let propVisible = false;
-  const showSum = () => { sum.hidden = propVisible || !estimate(clean(draft)).total || !done.hidden; };
+  let propVisible = false, inApp = false;
+  const showSum = () => { sum.hidden = !inApp || propVisible || !estimate(clean(draft)).total || at === 'sent'; };
   new IntersectionObserver(([e]) => { propVisible = e.isIntersecting; showSum(); }).observe(prop);
+  new IntersectionObserver(([e]) => { inApp = e.isIntersecting; showSum(); }).observe(form);
 
   const paint = () => { paintForm(); paintProposal(); save(); };
 
@@ -102,8 +163,8 @@ if (form) {
   form.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
     const pick = t.closest<HTMLButtonElement>('[data-service]');
-    if (pick) { toggleService(pick.dataset.service as ServiceId | 'unsure'); paint(); return; }
-    const opt = t.closest<HTMLButtonElement>('.hire-seg [data-v]');
+    if (pick) { toggleService(pick.dataset.service as ServiceId | 'unsure'); say(''); paint(); return; }
+    const opt = t.closest<HTMLButtonElement>('[data-k]:not(input) [data-v]');
     if (opt) { set(opt.closest<HTMLElement>('[data-k]')!.dataset.k!, opt.dataset.v); paint(); }
   });
   form.addEventListener('input', (e) => {
@@ -111,52 +172,55 @@ if (form) {
     if (t.type === 'range' && t.dataset.k) { set(t.dataset.k, Number(t.value)); paint(); }
     else if (t.type === 'checkbox' && t.dataset.k) { set(t.dataset.k, t.checked); paint(); }
     else if (t.type === 'checkbox' && t.dataset.also) { toggleService(t.dataset.also as ServiceId, t.checked); paint(); }
+    else if (t.type === 'checkbox' && t.dataset.extra) { const id = t.dataset.extra; draft.extras = t.checked ? [...new Set([...(draft.extras ?? []), id])] : (draft.extras ?? []).filter((x) => x !== id); paint(); }
     else if (t.name === 'org' || t.name === 'name') paintProposal();
-    if (t.classList.contains('is-bad')) t.classList.remove('is-bad');
+    if (t.classList.contains('is-bad')) { t.classList.remove('is-bad'); say(''); }
   });
 
-  // The rows under "What I do" pick that service here
-  document.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((b) => b.addEventListener('click', () => {
-    toggleService(b.dataset.pick as ServiceId, true); paint();
-    $('#estimate').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // "What I do" picks that service and opens its screen
+  $$<HTMLButtonElement>('[data-pick]').forEach((b) => b.addEventListener('click', () => {
+    const id = b.dataset.pick as ServiceId;
+    toggleService(id, true); paint(); show(id);
+    app.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' });
   }));
 
   // ---- Sending
-  const note = $('.hire-send__note', form), btn = $<HTMLButtonElement>('.hire-send__btn', form);
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = form.elements.namedItem('name') as HTMLInputElement, email = form.elements.namedItem('email') as HTMLInputElement;
-    const bad = [!name.value.trim() && name, !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim()) && email].filter(Boolean) as HTMLInputElement[];
-    bad.forEach((i) => i.classList.add('is-bad'));
-    if (bad.length) { note.textContent = bad.includes(name) ? 'I’d love your name, and an email to reply to.' : 'That email doesn’t look quite right.'; note.classList.add('is-bad'); bad[0].focus(); return; }
-    btn.disabled = true; note.classList.remove('is-bad'); note.textContent = 'Sending…';
+  async function send() {
+    nextBtn.disabled = true; say('Sending…');
     try {
       const r = await fetch('/api/hire', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          answers: clean(draft), unsure: draft.unsure, name: name.value, email: email.value, org: field('org'), link: field('link'),
-          message: field('message'), budget: field('budget'), website: field('website'), ms: Date.now() - openedAt, page: location.pathname,
+          answers: clean(draft), unsure: draft.unsure, name: field('name'), email: field('email'), org: field('org'), link: field('link'),
+          message: field('message'), budget: draft.budget, website: field('website'), ms: Date.now() - openedAt, page: location.pathname,
         }),
       });
       if (!r.ok) throw new Error(String(r.status));
       try { localStorage.removeItem('hdj:hire'); } catch {}
-      form.querySelectorAll<HTMLElement>('[data-step="you"] .hire-fields, [data-step="you"] .hire-send').forEach((el) => (el.hidden = true));
-      done.hidden = false; showSum();
-      done.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      $('[data-thanks]', form!).textContent = field('name').split(/\s+/)[0] || 'friend';
+      show('sent'); showSum(); sign();
     } catch {
-      btn.disabled = false; note.classList.add('is-bad');
-      note.innerHTML = 'That didn’t send. Email me at <a href="mailto:derekj@hey.com">derekj@hey.com</a> and I’ll take it from there.';
-    }
-  });
-  done.querySelector('[data-print]')!.addEventListener('click', () => window.print());
+      say('');
+      hint.innerHTML = 'That didn’t send. Email me at <a href="mailto:derekj@hey.com">derekj@hey.com</a> and I’ll take it from there.';
+      hint.classList.add('is-bad');
+    } finally { nextBtn.disabled = false; }
+  }
+  // My signature, written out on the thank-you note (as client/signature.ts does for the others)
+  function sign() {
+    const box = $('[data-sign]', form!), tpl = $<HTMLTemplateElement>('#hireSign');
+    box.replaceChildren(tpl.content.cloneNode(true));
+    const sig = $('.sig', box);
+    if (calm()) { sig.classList.add('is-drawn'); return; }
+    requestAnimationFrame(() => { sig.classList.add('is-signing'); setTimeout(() => { sig.classList.add('is-drawn'); sig.classList.remove('is-signing'); }, Number(sig.dataset.total || 1600) + 50); });
+  }
+  $('[data-print]', form).addEventListener('click', () => window.print());
+  $('[data-again]', form).addEventListener('click', () => { draft = fresh(); form.reset(); paint(); show('services', -1); });
 
   // Copy my email
-  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
-    if (await copyText(b.dataset.copy!)) toast('Email copied');
-  }));
+  $$<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', async () => { if (await copyText(b.dataset.copy!)) toast('Email copied'); }));
 
   // A service named in the address (/hire/#site) starts picked
   const fromHash = location.hash.slice(1) as ServiceId;
-  if (SERVICES.some((s) => s.id === fromHash) && !draft.services.includes(fromHash)) toggleService(fromHash, true);
-  paint();
+  if (ORDER.includes(fromHash)) toggleService(fromHash, true);
+  paint(); show('services');
 }

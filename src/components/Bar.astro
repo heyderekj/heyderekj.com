@@ -35,7 +35,7 @@ const nav = [
         {nav.map((n) => (
           <a href={n.href} {...(n.external ? { target: '_blank', rel: 'noopener' } : {})}><Icon name={n.icon} />{n.label}{n.external && <Icon name="arrow-up-right" class="bar__ext" />}</a>
         ))}
-        <a class="bar__hire" href="/hire/"><Gear size={15} id="barHireGear" />Work with me<small>{availability.open ? availability.line.replace(/^Taking projects /, '') : 'Booked up'}</small></a>
+        <a class="bar__hire" href="/hire/"><Gear size={15} id="barHireGear" />Work with me<small>{availability.open ? (availability.from === 'now' ? 'open now' : `from ${availability.from}`) : 'booked up'}</small></a>
       </div>
       <div class="bar__else">
         <button class="bar__mail" data-copy-email>derekj@hey.com <span>Copy</span></button>

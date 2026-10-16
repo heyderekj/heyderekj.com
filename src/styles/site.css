@@ -76,7 +76,7 @@ mark.hl { background: color-mix(in oklch, var(--hl) 55%, transparent); color: in
 .fig__title { font-size: 14px; font-weight: 600; }
 .fig__reset { margin-left: auto; font-size: 12.5px; color: var(--muted); padding: 4px 10px; border-radius: 999px; }
 .fig__reset:hover { background: color-mix(in oklch, var(--ink) 7%, transparent); color: var(--ink); }
-.fig__stage { position: relative; padding: 22px; background-color: var(--paper); background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 13%, transparent) 1px, transparent 1.4px); background-size: 16px 16px; }
+.fig__stage { position: relative; padding: 22px; background-color: var(--paper); background-image: radial-gradient(circle at 8px 8px, color-mix(in srgb, var(--ink) 13%, transparent) 1px, transparent 1.4px); background-size: 16px 16px; background-repeat: space; } /* whole dots only, each centred in its cell, so none sit on the frame's edge */
 .fig__controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border-top: 1px solid var(--hair); }
 .fig__cap, .prose .fig__cap { margin: 0; padding: 0 18px 14px; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
 .seg { display: inline-flex; gap: 3px; padding: 3px; border-radius: 12px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
@@ -273,13 +273,16 @@ button.wchip { font: inherit; }
 /* Des Moines: what time it is here, and who's home */
 /* Derek J Design: availability and what I do, on the way to /hire/ */
 .djd-chip .gear { flex: none; align-self: center; }
-.djd { --r: 16px; display: grid; gap: 2px; width: 236px; padding: 12px; text-align: left; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
-.djd__avail { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; font-size: 12.5px; font-weight: 600; color: var(--ink); }
-.djd__avail i { width: 7px; height: 7px; border-radius: 50%; background: #18c26a; }
-.djd__avail.is-closed i { background: var(--muted); }
-.djd__row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--ink-soft); }
-.djd__row small { font-size: 12px; color: #2f9e44; font-weight: 600; }
-.djd__go { margin-top: 8px; font-size: 12.5px; font-weight: 600; color: #ea580c; }
+.djd { --r: 18px; display: grid; gap: 12px; width: 232px; padding: 14px; text-align: left; white-space: normal; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.djd__status { display: grid; gap: 2px; }
+.djd__light { display: flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #15a85b; }
+.djd__light i { width: 8px; height: 8px; border-radius: 50%; background: #18c26a; box-shadow: 0 0 0 3px color-mix(in srgb, #18c26a 22%, transparent); animation: djd-pulse 2.4s ease-in-out infinite; }
+.djd__status b { font-size: 24px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; color: var(--ink); }
+.djd__status.is-closed .djd__light { color: var(--muted); }
+.djd__status.is-closed .djd__light i { background: var(--muted); box-shadow: none; animation: none; }
+.djd__caps { display: flex; flex-wrap: wrap; gap: 4px; }
+.djd__caps span { padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 500; color: var(--ink-soft); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+@keyframes djd-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, #18c26a 8%, transparent); } }
 .here { --r: 16px; display: grid; width: 248px; overflow: hidden; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
 /* An architect's drawing of downtown, for the real hour, season and weather (client/dsm-sketch.ts) */
 .sky { position: relative; display: block; height: 150px; overflow: hidden; background: #1d4b8c; }

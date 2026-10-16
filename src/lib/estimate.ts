@@ -4,7 +4,7 @@
  * (client/hire.ts) and the request function (functions/api/hire.ts) all price it the same way;
  * the function recalculates rather than trusting the browser's number.
  */
-import { PAYMENT, PRICES, RATE, SERVICES, type ServiceId } from '../data/hire';
+import { EXTRAS, PAYMENT, PRICES, RATE, SERVICES, TIMELINE, type ServiceId } from '../data/hire';
 
 export interface Answers {
   services: ServiceId[];
@@ -14,7 +14,9 @@ export interface Answers {
   feedback?: { on: 'site' | 'app' | 'brand'; how: 'notes' | 'call' };
   ai?: { kind: 'workflow' | 'tool' | 'prototype'; size: 'small' | 'medium' | 'large' };
   retainer?: boolean;
-  timeline?: 'asap' | 'soon' | 'flexible';
+  timeline?: keyof typeof TIMELINE;
+  /** Extras picked (ids from EXTRAS), only for the services chosen */
+  extras?: string[];
 }
 
 export interface Line { title: string; desc: string; price: number; unit?: '/hr' | '/mo' }
@@ -39,6 +41,7 @@ export function clean(raw: unknown): Answers {
   const services = Array.isArray(r.services) ? [...new Set(r.services.filter((s): s is ServiceId => ids.includes(s as ServiceId)))] : [];
   const o = (k: string) => (r[k] && typeof r[k] === 'object' ? (r[k] as Record<string, unknown>) : {});
   const a: Answers = { services, retainer: r.retainer === true, timeline: pick(r.timeline, ['asap', 'soon', 'flexible'] as const, 'flexible') };
+  a.extras = Array.isArray(r.extras) ? [...new Set(r.extras.filter((id): id is string => EXTRAS.some((x) => x.id === id && services.includes(x.service))))] : [];
   if (services.includes('site')) {
     const s = o('site'), pages = Math.round(Number(s.pages));
     a.site = {
@@ -85,6 +88,11 @@ export function estimate(a: Answers): Estimate {
     const hrs = Math.round(PRICES.ai[a.ai.size] / RATE);
     lines.push({ title: { workflow: 'AI workflow', tool: 'AI tool', prototype: 'App prototype' }[a.ai.kind], desc: `${kind}, ${a.ai.size} in scope (about ${hrs} hours).${a.ai.size === 'large' ? ' Large ones get scoped together before a final number.' : ''}`, price: PRICES.ai[a.ai.size] });
   }
+  // Extras, under the service they belong to
+  for (const x of EXTRAS) if (a.extras?.includes(x.id)) lines.push({ title: x.name, desc: x.desc, price: x.price });
+  // Starting right away moves other work around
+  const rush = TIMELINE[a.timeline ?? 'flexible'].rush, core = lines.reduce((t, l) => t + l.price, 0);
+  if (rush && core) lines.push({ title: 'Starting right away', desc: `A ${Math.round(rush * 100)}% rush, for moving other work around to begin within a few weeks.`, price: round50(core * rush) });
   if (lines.length && (a.site || a.logo || a.rebrand)) {
     lines.push({ title: 'More than the included revisions', desc: 'Any round beyond what’s included above.', price: RATE, unit: '/hr' });
   }
@@ -93,7 +101,7 @@ export function estimate(a: Answers): Estimate {
   }
   const total = lines.filter((l) => !l.unit).reduce((t, l) => t + l.price, 0);
   const monthly = lines.filter((l) => l.unit === '/mo').reduce((t, l) => t + l.price, 0);
-  const plan = total >= PAYMENT.splitAt ? PAYMENT.big : PAYMENT.small;
+  const plan = PAYMENT.find((p) => total < p.under)!.steps;
   let left = total;
   const payments = plan.map((p, i) => {
     const amount = i === plan.length - 1 ? left : Math.round((total * p.pct) / 100);

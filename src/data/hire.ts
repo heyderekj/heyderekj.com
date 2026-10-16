@@ -6,8 +6,9 @@
  * a $500/mo retainer for 5 hours, and 40% to start, 40% at design approval, 20% at launch.
  */
 
-/** Shown at the top of /hire/ and in the home page's chip. Keep it short. */
-export const availability = { open: true, line: 'Taking projects starting November' };
+/** Shown at the top of /hire/, in the home page's chip and the bar menu: open or not, and from when (a month, or 'now') */
+export const availability = { open: true, from: 'November' };
+export const availabilityLine = availability.open ? (availability.from === 'now' ? 'Taking projects now' : `Taking projects from ${availability.from}`) : 'Booked up for now';
 
 export const RATE = 100; // per hour, for anything beyond the scope (like a fifth round of revisions)
 
@@ -27,12 +28,18 @@ export const PRICES = {
   retainer: { monthly: 500, hours: 5 },
 } as const;
 
-/** How payment splits, by the size of the project */
-export const PAYMENT = {
-  /** At or above this, three payments; below it, half and half */
-  splitAt: 1500,
-  big: [{ pct: 40, when: 'To start', after: 'is required upfront' }, { pct: 40, when: 'Then at design approval', after: 'is due' }, { pct: 20, when: 'To launch, the remaining', after: 'is due' }],
-  small: [{ pct: 50, when: 'To start', after: 'is required upfront' }, { pct: 50, when: 'On delivery, the remaining', after: 'is due' }],
+/** How payment splits, by the size of the project: the first tier it's under. Every proposal spells this out. */
+export const PAYMENT: { under: number; steps: { pct: number; when: string; after: string }[] }[] = [
+  { under: 1500, steps: [{ pct: 50, when: 'To start', after: 'is required upfront' }, { pct: 50, when: 'On delivery, the remaining', after: 'is due' }] },
+  { under: 10000, steps: [{ pct: 40, when: 'To start', after: 'is required upfront' }, { pct: 40, when: 'Then at design approval', after: 'is due' }, { pct: 20, when: 'To launch, the remaining', after: 'is due' }] },
+  { under: Infinity, steps: [{ pct: 30, when: 'To start', after: 'is required upfront' }, { pct: 30, when: 'Then at design approval', after: 'is due' }, { pct: 30, when: 'At build review', after: 'is due' }, { pct: 10, when: 'To launch, the remaining', after: 'is due' }] },
+];
+
+/** When it starts. Starting right away means moving other work around, so it costs a little more. */
+export const TIMELINE = {
+  asap: { label: 'As soon as possible', short: 'ASAP', rush: 0.2 },
+  soon: { label: 'In the next month or two', short: 'In 1–2 months', rush: 0 },
+  flexible: { label: 'Whenever works', short: 'Flexible', rush: 0 },
 } as const;
 
 export type ServiceId = 'site' | 'logo' | 'rebrand' | 'feedback' | 'ai';
@@ -46,7 +53,17 @@ export const SERVICES: { id: ServiceId; name: string; icon: string; line: string
   { id: 'ai', name: 'AI workflows & apps', icon: 'branch', line: 'Putting AI to work where it actually helps: an automation, an internal tool, or a first version of an app.', from: `from $${PRICES.ai.small.toLocaleString()}`, tags: ['ai', 'making'] },
 ];
 
-/** Posts that show how I think about this kind of work (slugs); topped up with the latest in these tags */
-export const THINKING = { pinned: [] as string[], tags: ['work', 'design', 'branding', 'ai'], count: 4 };
 /** Write-ups to show as samples, by service (slugs); otherwise the highlighted ones */
 export const SAMPLES: Partial<Record<ServiceId, string[]>> = {};
+
+/** Things a project can include beyond the core, by service (drafts: change freely) */
+export const EXTRAS: { id: string; service: ServiceId; name: string; desc: string; price: number }[] = [
+  { id: 'site.copy', service: 'site', name: 'Help with the words', desc: 'Writing or editing the copy with you, page by page.', price: 800 },
+  { id: 'site.move', service: 'site', name: 'Moving your content over', desc: 'Posts, listings or pages from your current site.', price: 400 },
+  { id: 'site.seo', service: 'site', name: 'Search and analytics', desc: 'Titles, redirects, a sitemap and analytics, set up.', price: 300 },
+  { id: 'logo.kit', service: 'logo', name: 'Social and icon kit', desc: 'Avatars, a favicon and app icons from the new logo.', price: 200 },
+  { id: 'logo.motion', service: 'logo', name: 'A little motion', desc: 'An animated version for video and the web.', price: 400 },
+  { id: 'rebrand.templates', service: 'rebrand', name: 'Templates', desc: 'Slides, social posts and documents in the new look.', price: 600 },
+  { id: 'feedback.followup', service: 'feedback', name: 'A second look', desc: 'Another review after you’ve made changes.', price: 150 },
+  { id: 'ai.handoff', service: 'ai', name: 'Docs and a walkthrough', desc: 'So your team can run it and change it without me.', price: 300 },
+];

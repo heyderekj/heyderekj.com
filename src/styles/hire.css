@@ -1,90 +1,158 @@
-/* Work with me (pages/hire.astro, client/hire.ts). The estimate is set like my proposals: orange
-   circled arrows on each section, dotted leaders to green prices, and the gear in the corner. */
+/* Work with me (pages/hire.astro, client/hire.ts). The estimate is a small app: one screen at a time,
+   beside a proposal set like the ones I send (orange circled arrows, dotted leaders to green prices,
+   the gear in the corner). */
 .hire { --money: #2f9e44; --you: #ea580c; }
 @media (prefers-color-scheme: dark) { .hire { --money: #5cc46a; } }
 @keyframes hire-in { from { opacity: 0; translate: 0 6px; } }
 
-/* Availability, under the lede */
-.hire-avail { --r: 999px; display: inline-flex; align-items: center; gap: 8px; margin: 18px 0 0; padding: 6px 13px 6px 11px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
-.hire-avail i { width: 8px; height: 8px; border-radius: 50%; background: #18c26a; box-shadow: 0 0 0 3px color-mix(in srgb, #18c26a 22%, transparent); animation: hire-pulse 2.4s ease-in-out infinite; }
-.hire-avail.is-closed i { background: var(--muted); box-shadow: none; animation: none; }
-@keyframes hire-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, #18c26a 10%, transparent); } }
+/* Me, and whether I'm free */
+.hire-me { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; gap: 20px; }
+.hire-me__photo { --r: 26px; width: 104px; height: 104px; object-fit: cover; box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.hire-me__name { display: grid; gap: 6px; padding-bottom: 4px; }
+.hire-me__name h1 { margin: 0; font-size: clamp(34px, 6vw, 46px); line-height: 1.02; letter-spacing: -0.035em; }
+.hire-me .essay__meta { margin: 0; }
+.hire-lede { margin-top: 22px; }
+.hire-status { --r: 18px; display: grid; gap: 2px; padding: 12px 16px 13px; border-radius: 18px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); }
+.hire-status__light { display: flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: #15a85b; }
+.hire-status__light i { width: 8px; height: 8px; border-radius: 50%; background: #18c26a; box-shadow: 0 0 0 3px color-mix(in srgb, #18c26a 22%, transparent); animation: hire-pulse 2.4s ease-in-out infinite; }
+.hire-status b { font-size: 24px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; white-space: nowrap; }
+.hire-status.is-closed .hire-status__light { color: var(--muted); }
+.hire-status.is-closed .hire-status__light i { background: var(--muted); box-shadow: none; animation: none; }
+@keyframes hire-pulse { 50% { box-shadow: 0 0 0 5px color-mix(in srgb, #18c26a 8%, transparent); } }
+@media (max-width: 560px) {
+  .hire-me { grid-template-columns: auto minmax(0, 1fr); }
+  .hire-me__photo { width: 76px; height: 76px; --r: 20px; }
+  .hire-status { grid-column: 1 / -1; justify-self: start; }
+}
 
-/* What I do: rows that pick a service in the form */
-.hire-services { margin-top: 0; gap: 2px; }
-.hire-service { width: calc(100% + 24px); grid-template-columns: 40px minmax(0, 1fr) auto; column-gap: 14px; align-items: center; text-align: left; font: inherit; color: inherit; cursor: pointer; }
-.hire-service__icon { --r: 11px; grid-row: 1 / span 2; display: grid; place-items: center; width: 40px; height: 40px; font-size: 18px; color: var(--you); background: color-mix(in oklch, var(--you) 10%, var(--card)); }
-.hire-service .row__title { align-self: end; font-weight: 600; }
-.hire-service .row__date { align-self: end; color: var(--money); font-weight: 600; }
-.hire-service .row__desc { grid-column: 2 / -1; align-self: start; font-size: 14.5px; text-wrap: pretty; }
+/* What I do: the high-level list; each one starts the estimate with it picked */
+.hire-caps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 560px) { .hire-caps { grid-template-columns: 1fr; } }
+.hire-cap { --r: 16px; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 2px 12px; align-items: center; padding: 12px 14px; text-align: left; font: inherit; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.hire-cap:hover { translate: 0 -1px; box-shadow: 0 0 0 1px color-mix(in oklch, var(--ink) 18%, transparent), var(--shadow); }
+.hire-cap__icon { --r: 10px; grid-row: 1 / span 2; display: grid; place-items: center; width: 36px; height: 36px; font-size: 17px; color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.hire-cap b { font-size: 15.5px; font-weight: 650; }
+.hire-cap span:last-child { font-size: 13.5px; line-height: 1.45; color: var(--muted); text-wrap: pretty; }
+.hire-cap:last-child:nth-child(odd) { grid-column: 1 / -1; }
 
-/* How it works */
-.hire-steps { counter-reset: s; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 6px 0 0; padding: 0; list-style: none; }
-.hire-steps li { counter-increment: s; display: grid; gap: 6px; align-content: start; padding: 16px; border-radius: 16px; background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
-.hire-steps li::before { content: counter(s); display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-size: 12.5px; font-weight: 700; color: var(--you); box-shadow: inset 0 0 0 1.5px var(--you); }
-.hire-steps b { font-size: 16px; }
-.hire-steps span { font-size: 14px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
-@media (max-width: 640px) { .hire-steps { grid-template-columns: 1fr; } }
+/* The estimate, as a small app: wider than the column */
+.hire-app { width: min(var(--fig), calc(100vw - 32px)); margin: 64px 0 0 calc((var(--read) - min(var(--fig), calc(100vw - 32px))) / 2); scroll-margin-top: 20px; }
+@media (max-width: 960px) { .hire-app { width: 100%; margin-left: 0; } }
+.est { --r: 26px; overflow: hidden; border-radius: 26px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.est__top { position: relative; display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--hair); }
+.est__title { font-size: 15px; font-weight: 650; white-space: nowrap; }
+.est__steps { display: flex; gap: 4px; margin: 0 auto; padding: 0; list-style: none; }
+.est__steps li { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--muted); transition: color var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.est__steps li i { width: 7px; height: 7px; border-radius: 50%; background: var(--hair); transition: background var(--t-ui) var(--ease); }
+.est__steps li.is-done { color: var(--ink-soft); }
+.est__steps li.is-done i { background: var(--money); }
+.est__steps li.is-on { color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.est__steps li.is-on i { background: var(--you); }
+.est__count { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.est__bar { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; }
+.est__bar i { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--you); transition: width 420ms var(--ease); }
+@media (max-width: 720px) { .est__steps { display: none; } .est__count { margin-left: auto; } }
+.est__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); }
+@media (max-width: 900px) { .est__body { grid-template-columns: 1fr; } }
+.est__panel { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 560px; border-right: 1px solid var(--hair); }
+@media (max-width: 900px) { .est__panel { border-right: 0; border-bottom: 1px solid var(--hair); min-height: 0; } }
+.est__screens { position: relative; padding: 22px 22px 8px; }
+.est__screen { display: none; gap: 4px; align-content: start; }
+.est__screen.is-on { display: grid; animation: app-in 320ms var(--ease) both; }
+.est__screen.is-on.from-back { animation-name: app-back; }
+@keyframes app-in { from { opacity: 0; translate: 18px 0; } }
+@keyframes app-back { from { opacity: 0; translate: -18px 0; } }
+@media (prefers-reduced-motion: reduce) { .est__screen.is-on { animation: none; } }
+.est__screen h3 { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; margin: 0 0 12px; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.est__screen h3 small { flex-basis: 100%; font-size: 14px; font-weight: 400; letter-spacing: 0; color: var(--muted); }
+.est__screen h3 .icon { font-size: 20px; color: var(--muted); }
+.est__nav { display: flex; align-items: center; gap: 12px; padding: 14px 22px 18px; }
+.est__hint { flex: 1; font-size: 13px; color: var(--muted); }
+.est__hint.is-bad { color: #e5484d; }
+.est__btn { --r: 999px; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; font: 600 14.5px var(--font); color: var(--ink); background: color-mix(in oklch, var(--ink) 7%, transparent); transition: translate var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
+.est__btn:hover { translate: 0 -1px; }
+.est__btn--quiet { background: none; color: var(--muted); padding-inline: 12px; }
+.est__btn--quiet:hover { color: var(--ink); background: color-mix(in oklch, var(--ink) 5%, transparent); }
+.est__btn--go { margin-left: auto; color: var(--paper); background: var(--ink); }
+.est__btn--send { color: #fff; background: var(--you); }
+.est__btn:disabled { opacity: 0.55; cursor: progress; translate: none; }
+.est__side { padding: 18px; background: color-mix(in oklch, var(--ink) 2.5%, var(--paper)); }
+@media (min-width: 901px) { .est__side .prop { position: sticky; top: 18px; } }
 
-/* The estimate: wider than the column, form beside the proposal */
-.hire-est { width: min(var(--fig), calc(100vw - 32px)); margin-left: calc((var(--read) - min(var(--fig), calc(100vw - 32px))) / 2); scroll-margin-top: 24px; }
-@media (max-width: 960px) { .hire-est { width: 100%; margin-left: 0; } }
-.hire-est__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: 28px; align-items: start; }
-@media (max-width: 900px) { .hire-est__grid { grid-template-columns: 1fr; } }
-
-/* The form: one question at a time */
-.hire-form { display: grid; gap: 14px; }
-.hire-q { display: grid; gap: 4px; margin: 0; padding: 16px; border: 0; border-radius: 20px; background: var(--card); box-shadow: 0 0 0 1px var(--hair); animation: hire-in 260ms var(--ease) both; min-width: 0; }
-.hire-q legend { float: left; width: 100%; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; padding: 0; font-size: 17px; font-weight: 650; }
-.hire-q__n { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; font-size: 12.5px; font-weight: 700; color: var(--you); box-shadow: inset 0 0 0 1.5px var(--you); }
-.hire-q__n .icon { font-size: 13px; }
-.hire-picks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+/* Choices */
+.hire-picks, .hire-when { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 @media (max-width: 520px) { .hire-picks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.hire-pick { --r: 14px; display: grid; justify-items: start; gap: 2px; padding: 12px; text-align: left; font: inherit; color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease); }
-.hire-pick .icon { margin-bottom: 6px; font-size: 18px; color: var(--muted); transition: color var(--t-ui) var(--ease); }
+.hire-when { margin-bottom: 10px; }
+.hire-pick { --r: 14px; display: grid; justify-items: start; align-content: start; gap: 2px; padding: 12px; text-align: left; font: inherit; color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease), background-color var(--t-ui) var(--ease), translate var(--t-ui) var(--ease); }
+.hire-pick .icon { margin-bottom: 8px; font-size: 18px; color: var(--muted); transition: color var(--t-ui) var(--ease); }
 .hire-pick b { font-size: 14.5px; font-weight: 600; }
 .hire-pick small { font-size: 12.5px; color: var(--muted); }
-.hire-pick:hover { box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--ink) 25%, transparent); }
-.hire-pick[aria-pressed="true"] { background: color-mix(in oklch, var(--you) 7%, var(--card)); box-shadow: inset 0 0 0 1.5px var(--you); }
-.hire-pick[aria-pressed="true"] .icon { color: var(--you); }
+.hire-pick:hover { translate: 0 -1px; box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--ink) 25%, transparent); }
+.hire-pick:is([aria-pressed="true"], [aria-checked="true"]) { background: var(--card); box-shadow: inset 0 0 0 2px var(--ink), var(--shadow); }
+.hire-pick:is([aria-pressed="true"], [aria-checked="true"]) .icon { color: var(--ink); }
 
-.hire-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 44px; padding: 4px 2px; border-top: 1px solid var(--hair); }
-.hire-q legend + .hire-row, .hire-q legend + div > .hire-row:first-child { border-top: 0; }
+.hire-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 46px; padding: 4px 0; border-top: 1px solid var(--hair); }
+.est__screen h3 + .hire-row, .hire-when + .hire-row { border-top: 0; }
 .hire-row > span { font-size: 14.5px; font-weight: 500; }
 .hire-row > span small { display: block; font-size: 12.5px; font-weight: 400; color: var(--muted); }
-.hire-row select { font: 500 14px var(--font); color: var(--ink); padding: 6px 10px; border-radius: 10px; border: 0; background: color-mix(in oklch, var(--ink) 6%, transparent); }
-.hire-seg { display: flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: 11px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.hire-seg { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px; padding: 3px; border-radius: 11px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
 .hire-seg button { padding: 6px 11px; border-radius: 8px; font: 500 13.5px var(--font); color: var(--muted); transition: background-color var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
 .hire-seg button[aria-checked="true"] { color: var(--ink); font-weight: 600; background: var(--card); box-shadow: 0 1px 2px rgb(0 0 0 / 0.1), 0 0 0 0.5px var(--hair); }
 .hire-switch { cursor: pointer; }
 .hire-switch input { position: absolute; opacity: 0; pointer-events: none; }
 .hire-switch i { position: relative; flex: none; width: 36px; height: 22px; border-radius: 999px; background: color-mix(in oklch, var(--ink) 16%, transparent); transition: background var(--t-ui) var(--ease); }
 .hire-switch i::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--card); box-shadow: 0 1px 2px rgb(0 0 0 / 0.2); transition: translate var(--t-ui) var(--ease); }
-.hire-switch input:checked + i { background: var(--you); }
+.hire-switch input:checked + i { background: var(--ink); }
 .hire-switch input:checked + i::after { translate: 14px 0; }
 .hire-switch input:focus-visible + i { outline: 2px solid var(--ink); outline-offset: 2px; }
-.hire-slider { position: relative; }
 .hire-slider output { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
-.hire-slider input { flex: 0 1 220px; accent-color: var(--you); }
+.hire-slider input { flex: 0 1 220px; accent-color: var(--ink); }
+
+/* Extras: things to add, each with its price */
+.hire-extras { display: grid; gap: 6px; margin-top: 10px; padding-top: 14px; border-top: 1px solid var(--hair); }
+.hire-extras__h { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.hire-extra { --r: 12px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 12px; cursor: pointer; background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); transition: box-shadow var(--t-ui) var(--ease); }
+.hire-extra input { width: 18px; height: 18px; margin: 0; accent-color: var(--ink); }
+.hire-extra b { display: block; font-size: 14px; font-weight: 600; }
+.hire-extra small { font-size: 12.5px; color: var(--muted); }
+.hire-extra em { font-style: normal; font-size: 13.5px; font-weight: 600; color: var(--money); font-variant-numeric: tabular-nums; }
+.hire-extra:has(input:checked) { box-shadow: inset 0 0 0 1.5px var(--ink); background: var(--card); }
 
 .hire-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 @media (max-width: 520px) { .hire-fields { grid-template-columns: 1fr; } }
 .hire-fields label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
 .hire-fields__wide { grid-column: 1 / -1; }
-.hire-fields :is(input, textarea) { width: 100%; padding: 10px 12px; border: 0; border-radius: 12px; font: 400 15px/1.45 var(--font); color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); resize: vertical; }
+.hire-fields :is(input, textarea) { width: 100%; padding: 11px 12px; border: 0; border-radius: 12px; font: 400 15px/1.45 var(--font); color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair); resize: vertical; }
 .hire-fields :is(input, textarea):focus { outline: none; box-shadow: inset 0 0 0 1.5px var(--ink); }
 .hire-fields .is-bad { box-shadow: inset 0 0 0 1.5px #e5484d; }
 .hire-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
-.hire-send { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
-.hire-send__btn { --r: 999px; display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 999px; font: 600 15px var(--font); color: #fff; background: var(--you); box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--you) 80%, transparent); transition: translate var(--t-ui) var(--ease); }
-.hire-send__btn:hover { translate: 0 -1px; }
-.hire-send__btn:disabled { opacity: 0.6; cursor: progress; translate: none; }
-.hire-send__note { font-size: 13px; color: var(--muted); }
-.hire-send__note.is-bad { color: #e5484d; }
+
+/* Review: what you're sending, each part a tap away */
+.hire-review { display: grid; margin: 0; }
+.hire-review div { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 12px; align-items: baseline; padding: 11px 0; border-top: 1px solid var(--hair); }
+.hire-review div:first-child { border-top: 0; }
+.hire-review dt { font-size: 13px; font-weight: 600; color: var(--muted); }
+.hire-review dd { margin: 0; font-size: 14.5px; line-height: 1.5; }
+.hire-review button { font: 600 13px var(--font); color: var(--muted); padding: 2px 8px; border-radius: 999px; }
+.hire-review button:hover { color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
+
+/* Sent: a note from me, signed */
+.hire-note { position: relative; display: grid; justify-items: start; gap: 12px; padding: 4px 2px 6px; }
+.hire-note__photo { --r: 16px; width: 56px; height: 56px; object-fit: cover; box-shadow: 0 0 0 1px var(--hair); rotate: -3deg; }
+.hire-note h3 { display: block; margin: 0; font-size: 30px; }
+.hire-note > p { margin: 0; max-width: 46ch; font-size: 16px; line-height: 1.6; color: var(--ink-soft); }
+.hire-next { counter-reset: n; display: grid; gap: 8px; width: 100%; margin: 6px 0 0; padding: 0; list-style: none; }
+.hire-next li { counter-increment: n; display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 0 10px; align-items: baseline; }
+.hire-next li::before { content: counter(n); grid-row: 1 / span 2; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: 700; color: var(--you); box-shadow: inset 0 0 0 1.5px var(--you); }
+.hire-next b { font-size: 15px; }
+.hire-next span { font-size: 13.5px; color: var(--muted); }
+.hire-note__sign { width: 200px; color: var(--ink); }
+.hire-note__sign .sig { width: 100%; }
+.hire-note__acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.est__screen[data-screen="sent"].is-on ~ * { display: none; }
 
 /* The proposal */
-.hire-side { position: sticky; top: 24px; display: grid; gap: 10px; }
-.prop { --r: 22px; position: relative; overflow: hidden; display: grid; gap: 22px; padding: 26px 26px 104px; border-radius: 22px; font-size: 14.5px; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
+.prop { --r: 22px; position: relative; overflow: hidden; display: grid; align-content: start; min-height: 440px; gap: 22px; padding: 26px 26px 104px; border-radius: 22px; font-size: 14.5px; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
 .prop__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .prop__head div { display: grid; gap: 2px; }
 .prop__title { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
@@ -95,7 +163,7 @@
 .prop__mark { flex: none; display: inline-grid; place-items: center; width: 19px; height: 19px; border-radius: 50%; font-size: 11px; color: var(--you); box-shadow: inset 0 0 0 1.4px var(--you); }
 .prop section { display: grid; gap: 10px; }
 .prop section[hidden] { display: none; }
-.prop h3 { display: flex; align-items: center; gap: 9px; margin: 0; font-size: 15.5px; font-weight: 600; }
+.prop h4 { display: flex; align-items: center; gap: 9px; margin: 0; font-size: 15.5px; font-weight: 600; }
 .prop__overview { margin: 0; color: var(--ink-soft); line-height: 1.6; text-wrap: pretty; }
 .prop__lines { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
 .prop__lines li { display: grid; grid-template-columns: auto minmax(12px, 1fr) auto; align-items: baseline; gap: 2px 8px; animation: hire-in 220ms var(--ease) both; }
@@ -108,25 +176,19 @@
 .prop__pay em { font-style: normal; font-weight: 600; color: var(--money); }
 .prop__foot { position: absolute; inset: auto 0 0 0; height: 84px; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 22px 18px; }
 .prop__gear { position: absolute; left: -92px; bottom: -164px; width: 240px; height: 251px; rotate: -18deg; fill: color-mix(in oklch, var(--you) 5%, transparent); stroke: var(--you); stroke-width: 1.6; vector-effect: non-scaling-stroke; pointer-events: none; }
-.prop__foot span { position: relative; display: grid; font-size: 12.5px; color: var(--muted); }
+.prop__foot span { position: relative; display: grid; flex: none; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 .prop__foot span b { font-size: 13px; color: var(--ink); }
 .prop__foot p { position: relative; max-width: 200px; margin: 0; font-size: 12px; line-height: 1.4; color: var(--muted); text-align: right; }
 
 /* Phones: the proposal follows the form, and a bar keeps the total in sight */
 .hire-sum { display: none; }
 @media (max-width: 900px) {
-  .hire-side { position: static; }
   .hire-sum:not([hidden]) { --r: 999px; position: fixed; z-index: 45; left: 50%; bottom: calc(70px + env(safe-area-inset-bottom, 0px)); translate: -50% 0; display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 999px; font-size: 14px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); animation: hire-in 220ms var(--ease) both; }
   .hire-sum { white-space: nowrap; }
   .hire-sum span { color: var(--muted); }
   .hire-sum b { color: var(--money); font-variant-numeric: tabular-nums; }
   .hire-sum a { display: inline-flex; align-items: center; gap: 4px; padding: 5px 11px; border-radius: 999px; font-weight: 600; text-decoration: none; color: var(--ink); background: color-mix(in oklch, var(--ink) 6%, transparent); }
 }
-
-/* Sent */
-.hire-done { display: grid; justify-items: start; gap: 8px; margin-top: 14px; padding: 18px; border-radius: 20px; background: color-mix(in oklch, var(--money) 8%, var(--card)); box-shadow: 0 0 0 1px color-mix(in oklch, var(--money) 30%, transparent); animation: hire-in 260ms var(--ease) both; }
-.hire-done b { font-size: 18px; }
-.hire-done p { margin: 0; color: var(--ink-soft); }
 
 .hire-more { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; letter-spacing: 0; color: var(--muted); text-decoration: none; }
 .hire-close { margin: 64px 0 0; font-size: 17px; color: var(--ink-soft); }

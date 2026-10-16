@@ -45,9 +45,8 @@ const pagesFor = Object.fromEntries(TOPICS.map((t) => {
       </span>
     </span></span></button>.
     I also take on projects of my own as <a class="wchip sq djd-chip" href="/hire/"><Gear size={15} id="helloGear" /> Derek J Design<span class="pop"><span class="djd sq">
-      <span class:list={['djd__avail', !availability.open && 'is-closed']}><i></i>{availability.line}</span>
-      {SERVICES.map((sv) => <span class="djd__row"><span>{sv.name}</span><small>{sv.from}</small></span>)}
-      <span class="djd__go">See what it costs →</span>
+      <span class:list={['djd__status', !availability.open && 'is-closed']}><span class="djd__light"><i></i>{availability.open ? 'Open for work' : 'Booked up'}</span><b>{availability.open ? (availability.from === 'now' ? 'Right now' : `From ${availability.from}`) : 'For now'}</b></span>
+      <span class="djd__caps">{SERVICES.map((sv) => <span>{sv.name}</span>)}</span>
     </span></span></a>.
     Here I write about {TOPICS.map((t, i) => (
       <Fragment>
