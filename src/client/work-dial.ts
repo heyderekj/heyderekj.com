@@ -1,13 +1,13 @@
 /**
  * The Work list's dial panel (components/site/WorkIndex.astro): a settings button beside the studio
- * filters opens a few live controls, set like the deck's: list or grid, sort, design or dev work,
+ * filters opens a few live controls, set like the deck's: list, grid or just the shots, sort, design or dev work,
  * grouping by year, and thumbnails. Remembered in this browser.
  */
 const list = document.querySelector<HTMLElement>('.work-list');
 const dial = document.querySelector<HTMLElement>('.work-dial');
 const btn = document.querySelector<HTMLButtonElement>('[data-wdial-toggle]');
 if (list && dial && btn) {
-  type Set = { layout: 'list' | 'grid'; sort: 'new' | 'old' | 'az'; type: 'all' | 'design' | 'dev'; group: boolean; thumbs: boolean };
+  type Set = { layout: 'list' | 'grid' | 'shots'; sort: 'new' | 'old' | 'az'; type: 'all' | 'design' | 'dev'; group: boolean; thumbs: boolean };
   const DEFAULTS: Set = { layout: 'list', sort: 'new', type: 'all', group: true, thumbs: true };
   let set: Set = { ...DEFAULTS };
   try { set = { ...DEFAULTS, ...JSON.parse(localStorage.getItem('hdj:work') || '{}') }; } catch {}
@@ -18,6 +18,7 @@ if (list && dial && btn) {
 
   function apply() {
     list.classList.toggle('is-grid', set.layout === 'grid');
+    list.classList.toggle('is-shots', set.layout === 'shots');
     list.classList.toggle('is-flat', !set.group);
     list.classList.toggle('no-thumbs', !set.thumbs && set.layout === 'list');
     // Type: design covers Design and Design & Development; dev covers Development and both

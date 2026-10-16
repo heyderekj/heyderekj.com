@@ -16,6 +16,8 @@ const rows = await Promise.all([...work].sort((a, b) => workDate(b).valueOf() - 
   const done = workDate(w), first = shotsOf(w)[0];
   return {
     thumb: first ? await pageOf(first, 640) : undefined, at: done.valueOf(), type: w.data.workType ?? '',
+    // Every shot of the site, for the Shots layout
+    shots: await Promise.all(shotsOf(w).slice(0, 4).map((s) => pageOf(s, 640))),
     href: `/work/${w.slug}/`, title: w.data.title, year: done.getUTCFullYear(), date: `${MON[done.getUTCMonth()]}`,
     sub: [w.data.partnership ? `With ${w.data.partnership}` : 'Solo', w.data.workType].filter(Boolean).join(' · '),
     img: first ? shot(first, 640) : undefined, url: host(w.data.liveLink ?? w.data.waybackUrl),
@@ -36,7 +38,7 @@ const years = [...new Set(rows.map((r) => r.year))];
 </button>
 <div class="dial work-dial" role="dialog" aria-label="Customize this list" hidden>
   <div class="dial__head"><b>View</b><button type="button" class="dial__reset" data-wdial-reset>Reset</button></div>
-  <div class="dial__row"><span>Layout</span><div class="dial__seg" role="radiogroup" aria-label="Layout"><button type="button" role="radio" data-set="layout:list">List</button><button type="button" role="radio" data-set="layout:grid">Grid</button></div></div>
+  <div class="dial__row"><span>Layout</span><div class="dial__seg" role="radiogroup" aria-label="Layout"><button type="button" role="radio" data-set="layout:list">List</button><button type="button" role="radio" data-set="layout:grid">Grid</button><button type="button" role="radio" data-set="layout:shots">Shots</button></div></div>
   <div class="dial__row"><span>Sort</span><div class="dial__seg" role="radiogroup" aria-label="Sort"><button type="button" role="radio" data-set="sort:new">Newest</button><button type="button" role="radio" data-set="sort:old">Oldest</button><button type="button" role="radio" data-set="sort:az">A–Z</button></div></div>
   <div class="dial__row"><span>Type</span><div class="dial__seg" role="radiogroup" aria-label="Type"><button type="button" role="radio" data-set="type:all">All</button><button type="button" role="radio" data-set="type:design">Design</button><button type="button" role="radio" data-set="type:dev">Dev</button></div></div>
   <label class="dial__row dial__switch"><span>Group by year</span><input type="checkbox" data-switch="group" /><i aria-hidden="true"></i></label>
@@ -53,6 +55,7 @@ const years = [...new Set(rows.map((r) => r.year))];
           <span class="row__thumb sq" aria-hidden="true">{r.thumb && 'src' in r.thumb && <img src={r.thumb.src} alt="" class={frameAttrs(r.thumb).class} style={frameAttrs(r.thumb).style} loading="lazy" decoding="async" />}</span>
           <span class="row__title">{r.title}</span>
           <span class="row__date">{r.date}</span>
+          <span class="row__shots" aria-hidden="true">{r.shots.map((p) => 'src' in p && <span class="row__shot sq"><img src={p.src} alt="" class={frameAttrs(p).class} style={frameAttrs(p).style} loading="lazy" decoding="async" /></span>)}<em>{r.title}</em></span>
           <span class="row__desc">{r.sub}</span>
         </a>
       ))}
