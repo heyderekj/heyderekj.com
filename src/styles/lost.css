@@ -383,3 +383,4 @@ html.four-locked .lost-head__line { opacity: 0.45; }
 .four.is-wopr .four__col i:is(.you, .me) { filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(4) brightness(0.9); }
 .four.is-wopr .four__line { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.04em; color: #3dff6a; background: #020a03; }
 .four.is-wopr .four__say { --bub: #020a03; }
+.four.is-wopr .four__line { white-space: normal; text-overflow: clip; }
