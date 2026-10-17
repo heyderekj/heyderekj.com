@@ -215,7 +215,7 @@ if (game && grid404 && head) {
   // ---- A game: rounds until I win one. Score: 100 × level + 10 for each hole left, per win
   let b: Who[] = Array(COLS * ROWS).fill(0), level = 1, score = 0, turn: 'you' | 'me' | 'off' = 'off', aim = 3, playing = false;
   // When it's your turn and you've been thinking a while, they say something (once a turn)
-  const IDLE = 9000;
+  const IDLE = 5000;
   let idleAt = 0;
   let moves: Move[] = [], best = 0, runId = 0; // runId: a new run cancels the last one's pending lines
   try { best = Number(localStorage.getItem('hdj:four:best') || 0); } catch {}
