@@ -627,6 +627,8 @@ body.site .app-toc { display: none !important; }
 /* Opening: the pages come in one by one */
 .is-opening .pages button { animation: deck-rise 420ms var(--ease) both; animation-delay: calc(90ms + var(--n, 0) * 55ms); }
 @media (max-width: 560px) {
+  /* One column on phones, drawer open or closed: the rail's 0px column above would take the preview with it */
+  :is([data-drawer="closed"] > .wslide, .wslide[data-drawer="closed"]):has(.pages) { grid-template-columns: minmax(0, 1fr); }
   :is([data-drawer="closed"] > .wslide, .wslide[data-drawer="closed"]) > .pages { display: none; }
 }
 
