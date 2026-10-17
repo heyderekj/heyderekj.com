@@ -14,7 +14,7 @@ export const TOPICS: { key: string; label: string; tags: string[] }[] = [
   { key: 'making', label: 'making things', tags: ['making'] },
   { key: 'faith', label: 'faith', tags: ['faith'] },
   { key: 'life', label: 'life', tags: ['life', 'family', 'milestones'] },
-  { key: 'interests', label: 'things that interest me', tags: ['design', 'tech', 'ai', 'branding'] },
+  { key: 'interests', label: 'what I’m into', tags: ['design', 'tech', 'ai', 'branding'] },
 ];
 
 /** One searchable thing: an essay, a write-up or an app. Short keys keep /search.json small. */

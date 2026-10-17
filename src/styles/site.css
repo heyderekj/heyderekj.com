@@ -806,7 +806,7 @@ img.framed { --iw: max(100cqw / var(--fw), 100cqh * var(--fr) / var(--fh)); posi
 .folder::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 112px; border-radius: 12px; background: var(--fe); }
 .folder__paper b { font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 /* The papers fan out and spread further as the folder opens, each folder its own way: making things leans
-   left, faith mirrors it, life is a tidy stack, things that interest me is a messy one */
+   left, faith mirrors it, life is a tidy stack, what I’m into is a messy one */
 .folder__paper:nth-child(1) { top: var(--t1); left: var(--l1); right: var(--r1); transform-origin: 50% 100%; transform: rotate(var(--a1)); }
 .folder__paper:nth-child(2) { top: var(--t2); left: var(--l2); right: var(--r2); transform-origin: 50% 100%; transform: rotate(var(--a2)); }
 :is(.wchip:hover, .wchip:focus-visible, .wchip.is-on) .folder__paper:nth-child(1) { transform: translate(var(--x1), var(--y1)) rotate(var(--o1)); }
