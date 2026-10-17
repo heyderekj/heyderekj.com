@@ -461,12 +461,15 @@ body.site .toast { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
   margin: 40px 0 44px calc((var(--read) - min(var(--fig), calc(100vw - 32px))) / 2);
 }
 @media (max-width: 680px) { .essay .prose > .snapshots, .essay .prose > .compare, .essay .prose > .pfig, .essay .prose > .pclip { width: 100%; margin-left: 0; } }
-/* Figures at rest sit back on their mat with room around them; zoomed, a figure grows well past the column
+/* Zoomed, a figure grows well past the column
    (most of the window, centred) and takes the image's own shape, the image filling it edge to edge */
-.essay .prose > .pfig:not(.pfig--fill) img { padding: 9% 12%; }
+/* The frame always takes the picture's own proportions (Figure sets --ar); at rest a screenshot sits back
+   inside it at 84%, zoomed it fills the frame */
+.essay .prose > .pfig > .zoom-trigger { display: grid; place-items: center; aspect-ratio: var(--ar, auto); height: auto; max-height: none; }
+.essay .prose > .pfig img { width: 100%; height: 100%; padding: 0; object-fit: cover; }
+.essay .prose > .pfig:not(.pfig--fill):not(.is-zoomed) img { width: 84%; height: 84%; object-fit: contain; }
+.essay .prose > .pfig.zoomable.is-zoomed > .zoom-trigger { aspect-ratio: var(--ar, auto); height: auto; max-height: none; } /* beats the global 4:3 zoom */
 .essay .prose > .pfig.is-zoomed { --zw: min(1180px, calc(100vw - 48px)); width: var(--zw); margin-left: calc((var(--read) - var(--zw)) / 2); }
-.essay .prose > .pfig.is-zoomed > .zoom-trigger { aspect-ratio: auto; height: auto; max-height: none; }
-.essay .prose > .pfig.is-zoomed img { height: auto; padding: 0; object-fit: cover; }
 @media (max-width: 680px) { .essay .prose > .pfig.is-zoomed { --zw: calc(100vw - 24px); margin-left: calc((100% - var(--zw)) / 2); } }
 .essay .prose > .pfig figcaption, .essay .ms figcaption, .essay .compare figcaption { font-size: 13.5px; color: var(--muted); }
 .essay .prose > .fig { margin-top: 40px; }

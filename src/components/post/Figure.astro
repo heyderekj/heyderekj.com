@@ -18,10 +18,13 @@ interface Props {
 }
 
 const { src, alt, caption, sizes = '(max-width: 560px) 100vw, 530px', fill = false } = Astro.props;
+// The frame takes the picture's own proportions
+const attrs = imgAttrs(src, { sizes });
+const ar = attrs.width && attrs.height ? `--ar: ${attrs.width} / ${attrs.height}` : undefined;
 ---
 <figure class:list={['pfig zoomable', fill && 'pfig--fill']} data-fig-init>
-  <button type="button" class="zoom-trigger" aria-label="Zoom image" aria-expanded="false">
-    <img {...imgAttrs(src, { sizes })} alt={alt} loading="lazy" decoding="async" />
+  <button type="button" class="zoom-trigger" aria-label="Zoom image" aria-expanded="false" style={ar}>
+    <img {...attrs} alt={alt} loading="lazy" decoding="async" />
   </button>
   {(caption || Astro.slots.has('default')) && (
     <figcaption>{caption}<slot /></figcaption>

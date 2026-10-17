@@ -22,6 +22,9 @@ function triggerFor(img: HTMLImageElement) {
   btn.setAttribute('aria-expanded', 'false');
   img.parentNode!.insertBefore(btn, img);
   btn.appendChild(img);
+  // The frame takes the picture's own proportions (Figure sets this at build; plain images learn it here)
+  const fit = () => { if (img.naturalWidth) btn.style.setProperty('--ar', `${img.naturalWidth} / ${img.naturalHeight}`); };
+  if (img.complete) fit(); else img.addEventListener('load', fit, { once: true });
   return btn;
 }
 
