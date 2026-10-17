@@ -1,15 +1,15 @@
 /**
  * heyderekj-mail: sends the site's emails to derekj@hey.com. Pages Functions can't send email
  * themselves, so they call this Worker through a service binding (MAIL) with a ready-made message.
- * It has no public URL, and it only sends from the site's addresses on koatiapp.com (a domain with
- * Cloudflare Email Routing on; heyderekj.com's mail lives at Hover, so it can't send from there).
+ * It has no public URL, and it only sends from the site's addresses on mail.heyderekj.com (Cloudflare
+ * Email Routing is on for that subdomain only; heyderekj.com's own mail stays at Hover).
  *
  *   POST { from: 'hire' | 'notes', raw: '<the whole MIME message>' }  →  { ok: true }
  */
 import { EmailMessage } from 'cloudflare:email';
 
 interface Env { SEND: { send(message: EmailMessage): Promise<void> } }
-export const DOMAIN = 'koatiapp.com';
+export const DOMAIN = 'mail.heyderekj.com';
 const TO = 'derekj@hey.com';
 const SENDERS = ['hire', 'notes'];
 

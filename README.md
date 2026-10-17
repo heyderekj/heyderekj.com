@@ -54,7 +54,7 @@ Optional manual deploy: `npx wrangler pages deploy dist` when logged in locally.
 Triple-clicking the signature watermark opens a "Leave me a note" card (`src/client/sig-egg.ts`). Notes post to a Pages Function, [functions/api/note.ts](functions/api/note.ts), which emails them to derekj@hey.com. Nothing is stored. One-time setup in the Cloudflare dashboard:
 
 1. **Email Routing** for heyderekj.com: turn it on, and add and verify **derekj@hey.com** as a destination address.
-2. Email goes through a tiny Worker, `heyderekj-mail` ([workers/mail](workers/mail)), which sends to `derekj@hey.com` from koatiapp.com (Email Routing is on there; heyderekj.com's mail is at Hover). Deploy it with `npx wrangler deploy --config workers/mail/wrangler.toml`, then in the Pages project add **Settings → Bindings → Service binding** `MAIL` → `heyderekj-mail`.
+2. Email goes through a tiny Worker, `heyderekj-mail` ([workers/mail](workers/mail)), which sends to `derekj@hey.com` from mail.heyderekj.com (Email Routing is on for that subdomain only, so heyderekj.com's own mail stays at Hover). Deploy it with `npx wrangler deploy --config workers/mail/wrangler.toml`, then in the Pages project add **Settings → Bindings → Service binding** `MAIL` → `heyderekj-mail`.
 3. Redeploy.
 
 Until the binding exists, the function answers 503 and the card tells the visitor to email instead. Notes come from `notes@heyderekj.com`.

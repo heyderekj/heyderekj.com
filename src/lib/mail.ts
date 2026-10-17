@@ -1,9 +1,10 @@
 /**
  * Email to me from the site's Pages Functions (hire, notes). Pages can't send email itself, so this hands a
  * ready-made message to the heyderekj-mail Worker (workers/mail) through a service binding named MAIL.
- * It sends from koatiapp.com, a domain with Cloudflare Email Routing on (heyderekj.com's mail is at Hover).
+ * It sends from mail.heyderekj.com: Cloudflare Email Routing is on for that subdomain only, so heyderekj.com's
+ * own mail stays at Hover.
  */
-export const MAIL_DOMAIN = 'koatiapp.com';
+export const MAIL_DOMAIN = 'mail.heyderekj.com';
 export const MAIL_TO = 'derekj@hey.com';
 export interface MailEnv { MAIL?: { fetch(input: string, init?: RequestInit): Promise<Response> } }
 export const mailFrom = (who: 'hire' | 'notes') => `${who}@${MAIL_DOMAIN}`;
