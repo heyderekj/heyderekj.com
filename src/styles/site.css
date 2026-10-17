@@ -795,11 +795,20 @@ img.framed { --iw: max(100cqw / var(--fw), 100cqh * var(--fr) / var(--fh)); posi
 /* The back of the folder, behind the papers */
 .folder::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 112px; border-radius: 12px; background: var(--fe); }
 .folder__paper b { font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-/* The papers fan out, the older one behind and to the left, and spread further as the folder opens */
-.folder__paper:nth-child(1) { top: 0; left: 6px; right: 30px; transform-origin: 30% 100%; transform: rotate(-6deg); }
-.folder__paper:nth-child(2) { top: 24px; left: 30px; right: 6px; transform-origin: 70% 100%; transform: rotate(4deg); }
-:is(.wchip:hover, .wchip:focus-visible, .wchip.is-on) .folder__paper:nth-child(1) { transform: translate(-8px, -16px) rotate(-10deg); }
-:is(.wchip:hover, .wchip:focus-visible, .wchip.is-on) .folder__paper:nth-child(2) { transform: translate(8px, -8px) rotate(7deg); }
+/* The papers fan out and spread further as the folder opens, each folder its own way: making things leans
+   left, faith mirrors it, life is a tidy stack, things that interest me is a messy one */
+.folder__paper:nth-child(1) { top: var(--t1); left: var(--l1); right: var(--r1); transform-origin: 50% 100%; transform: rotate(var(--a1)); }
+.folder__paper:nth-child(2) { top: var(--t2); left: var(--l2); right: var(--r2); transform-origin: 50% 100%; transform: rotate(var(--a2)); }
+:is(.wchip:hover, .wchip:focus-visible, .wchip.is-on) .folder__paper:nth-child(1) { transform: translate(var(--x1), var(--y1)) rotate(var(--o1)); }
+:is(.wchip:hover, .wchip:focus-visible, .wchip.is-on) .folder__paper:nth-child(2) { transform: translate(var(--x2), var(--y2)) rotate(var(--o2)); }
+.folder { --t1: 0px; --l1: 6px; --r1: 30px; --a1: -6deg; --x1: -8px; --y1: -16px; --o1: -10deg;
+          --t2: 24px; --l2: 30px; --r2: 6px; --a2: 4deg; --x2: 8px; --y2: -8px; --o2: 7deg; }
+.folder[data-topic="faith"] { --t1: 2px; --l1: 32px; --r1: 4px; --a1: 5deg; --x1: 8px; --y1: -16px; --o1: 9deg;
+                              --t2: 22px; --l2: 8px; --r2: 28px; --a2: -3deg; --x2: -6px; --y2: -8px; --o2: -6deg; }
+.folder[data-topic="life"] { --t1: 0px; --l1: 22px; --r1: 12px; --a1: -1.5deg; --x1: 4px; --y1: -18px; --o1: -2.5deg;
+                             --t2: 20px; --l2: 10px; --r2: 24px; --a2: 1deg; --x2: -4px; --y2: -10px; --o2: 2deg; }
+.folder[data-topic="interests"] { --t1: -8px; --l1: 0px; --r1: 40px; --a1: -7deg; --x1: -10px; --y1: -16px; --o1: -11deg;
+                                  --t2: 26px; --l2: 40px; --r2: 0px; --a2: 6deg; --x2: 10px; --y2: -8px; --o2: 9deg; }
 /* The front and its tab are one piece: no edge between them, a square corner under the tab and a soft curve where the tab meets the top */
 .folder__front { position: absolute; inset: auto 0 0 0; height: 92px; display: flex; flex-direction: column; padding: 10px 12px; border-radius: 0 12px 12px 12px; color: var(--fi); background: var(--fc); box-shadow: 0 10px 22px -12px rgb(0 0 0 / 0.35); }
 .folder__tab { position: absolute; left: 0; bottom: calc(100% - 1px); padding: 4px 12px 3px; border-radius: 9px 9px 0 0; font-size: 11px; font-weight: 600; color: var(--fi); background: var(--fc); white-space: nowrap; }
