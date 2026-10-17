@@ -20,13 +20,14 @@ const { kem, icons } = await getDeck();
 // The fan's windows are small, so its shots are cropped to the screen (no device frame)
 const kemPages = await Promise.all(kem.map((w) => pageOf(shotsOf(w)[0], 480)));
 const last = TOPICS.length - 1;
-// Each topic's three latest posts, as a little pile of pages when you hover it (newest on top)
+// Each topic as a folder when you hover it: its colour, its name on the tab, the newest post on the front,
+// two older ones sticking out the top, and how many are inside
 const posts = await getPublishedPosts();
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 const pagesFor = Object.fromEntries(TOPICS.map((t) => {
   const mine = posts.filter((p) => p.data.tags?.some((g) => t.tags.includes(g)));
   const [a, b, c] = mine.slice(0, 3).map((p) => ({ title: postTitle(p), date: fmt(p.data.date) }));
-  return [t.key, { pages: [c, b, a].filter(Boolean) }];
+  return [t.key, { pages: [c, b, a].filter(Boolean), newest: a, older: [c, b].filter(Boolean), count: mine.length }];
 }));
 ---
 <header class="hello-head" data-bar-label="Home">
@@ -51,9 +52,10 @@ const pagesFor = Object.fromEntries(TOPICS.map((t) => {
     Here I write about {TOPICS.map((t, i) => (
       <Fragment>
         <button class="wchip sq topic" data-tag={t.key} data-label={t.label} data-tags={t.tags.join(' ')} aria-pressed="false">{t.label}{pagesFor[t.key].pages.length > 0 && (
-          <span class="pop" aria-hidden="true"><span class="leaves">{pagesFor[t.key].pages.map((pg) => (
-            <span class="leaf sq"><small>{pg.date}</small><b>{pg.title}</b></span>
-          ))}</span></span>
+          <span class="pop" aria-hidden="true"><span class="folder" data-topic={t.key}>
+            {pagesFor[t.key].older.map((pg) => <span class="folder__paper"><b>{pg.title}</b></span>)}
+            <span class="folder__front"><span class="folder__tab">{t.label}</span><small>{pagesFor[t.key].newest.date}</small><b>{pagesFor[t.key].newest.title}</b><small class="folder__count">{pagesFor[t.key].count} {pagesFor[t.key].count === 1 ? 'post' : 'posts'} inside</small></span>
+          </span></span>
         )}</button>{i < last - 1 ? ', ' : i === last - 1 ? ' and ' : '.'}
       </Fragment>
     ))}

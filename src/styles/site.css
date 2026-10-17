@@ -785,17 +785,25 @@ img.framed { --iw: max(100cqw / var(--fw), 100cqh * var(--fr) / var(--fh)); posi
 .wslide > .browser { display: flex; flex-direction: column; }
 .wslide > .browser > .browser__view { flex: 1 0 auto; }
 
-/* Topics: the latest three posts as a little pile of pages, newest on top (components/site/Hello.astro) */
-.leaves { position: relative; display: block; width: 190px; height: 140px; }
-.leaf { --r: 10px; position: absolute; left: 50%; bottom: 0; width: 150px; height: 112px; translate: -50% 0; display: flex; flex-direction: column; gap: 0; padding: 9px 12px; background: var(--card); box-shadow: 0 0 0 1px var(--hair), var(--shadow); font-size: 11.5px; line-height: 14px; color: var(--ink); transition: transform var(--t-move) var(--ease); background-image: repeating-linear-gradient(to bottom, transparent 0 13px, color-mix(in srgb, var(--ink) 9%, transparent) 13px 14px); background-position: 0 10px; }
-.leaf:last-child { box-shadow: 0 0 0 1px var(--hair), var(--shadow-lift); }
-.leaf small { font-size: 9.5px; line-height: 14px; color: var(--muted); letter-spacing: 0.01em; }
-.leaf b { font-weight: 500; letter-spacing: -0.005em; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-wrap: balance; }
-.leaf:nth-last-child(3) { transform: translate(-8px, -12px) rotate(-5deg); }
-.leaf:nth-last-child(2) { transform: translate(7px, -6px) rotate(3deg); }
-.wchip:hover .leaf:nth-last-child(3), .wchip:focus-visible .leaf:nth-last-child(3) { transform: translate(-16px, -26px) rotate(-8deg); }
-.wchip:hover .leaf:nth-last-child(2), .wchip:focus-visible .leaf:nth-last-child(2) { transform: translate(14px, -14px) rotate(5deg); }
-.wchip:hover .leaf:last-child, .wchip:focus-visible .leaf:last-child { transform: translateY(-2px); }
+/* Topics: a folder for each, in its own colour (components/site/Hello.astro): the topic on the tab, the newest
+   post on the front, two older ones sticking out the top, and how many are inside */
+.folder { --fc: #f2d9a6; --fe: #d9b674; --fi: #5c3f0e; position: relative; display: block; width: 214px; height: 150px; text-align: left; white-space: normal; }
+.folder[data-topic="faith"] { --fc: #cfdff3; --fe: #a6c0e2; --fi: #1d4777; }
+.folder[data-topic="life"] { --fc: #d3ead6; --fe: #a9d1b0; --fi: #22573a; }
+.folder[data-topic="interests"] { --fc: #e2d8f5; --fe: #c4b4ea; --fi: #45307e; }
+.folder__paper { --r: 6px; position: absolute; left: 16px; right: 16px; top: 8px; height: 76px; padding: 7px 10px; border-radius: 6px; background: #fbfaf6; box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08), 0 2px 6px -3px rgb(0 0 0 / 0.25); font-size: 11.5px; line-height: 1.3; color: #55524b; transition: transform 360ms var(--ease); }
+/* The back of the folder, behind the papers */
+.folder::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 112px; border-radius: 12px; background: var(--fe); }
+.folder__paper b { font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.folder__paper:nth-child(1) { transform: rotate(-3deg); }
+.folder__paper:nth-child(2) { left: 10px; right: 10px; top: 20px; transform: rotate(2deg); }
+.wchip:hover .folder__paper:nth-child(1), .wchip:focus-visible .folder__paper:nth-child(1) { transform: translateY(-10px) rotate(-5deg); }
+.wchip:hover .folder__paper:nth-child(2), .wchip:focus-visible .folder__paper:nth-child(2) { transform: translateY(-5px) rotate(3deg); }
+.folder__front { position: absolute; inset: auto 0 0 0; height: 92px; display: flex; flex-direction: column; padding: 10px 12px; border-radius: 4px 12px 12px 12px; color: var(--fi); background: var(--fc); box-shadow: inset 0 0 0 1px var(--fe), 0 10px 22px -12px rgb(0 0 0 / 0.35); }
+.folder__tab { position: absolute; left: 0; bottom: 100%; padding: 3px 12px 2px; border-radius: 8px 8px 0 0; font-size: 11px; font-weight: 600; color: var(--fi); background: var(--fc); box-shadow: inset 1px 1px 0 var(--fe), inset -1px 0 0 var(--fe); white-space: nowrap; }
+.folder__front small { font-size: 10.5px; opacity: 0.75; }
+.folder__front b { margin-top: 1px; font-size: 13.5px; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-wrap: balance; }
+.folder__count { margin-top: auto; }
 
 
 /* Apps in the deck: three screenshot cards collaged on the app's mesh, its icon tucked in front */
