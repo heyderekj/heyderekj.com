@@ -34,29 +34,29 @@ const pagesFor = Object.fromEntries(TOPICS.map((t) => {
   <Byline />
   <p class="hello">
     I make sites with <button class="wchip sq" data-act="kem"><Icon name="work" /> Kem Design<span class="pop"><span class="fan">{kem.map((w, i) => <Browser pages={[kemPages[i]]} url={host(w.data.liveLink)} />)}</span></span></button>
-    and apps at <button class="wchip sq" data-act="apps"><span class="tm" aria-hidden="true">{TM_TILES.map(([, c]) => <i style={`--c:${c}`}></i>)}</span>Testament Made<span class="pop"><span class="spread">{TM_TILES.map(([slug, c], i) => (
+    and apps at <span class="nobr"><button class="wchip sq" data-act="apps"><span class="tm" aria-hidden="true">{TM_TILES.map(([, c]) => <i style={`--c:${c}`}></i>)}</span>Testament Made<span class="pop"><span class="spread">{TM_TILES.map(([slug, c], i) => (
       <span class="tmapp" style={`--i:${i};--col:${(i % 3) - 1};--row:${Math.floor(i / 3) - 0.5};--c:${c}`}><img src={icons[slug]?.icon ?? ''} alt={icons[slug]?.title ?? ''} /></span>
-    ))}</span></span></button>,
-    from <button class="wchip sq" data-act="here"><Icon name="iowa" /> Des Moines, IA<span class="pop"><span class="here sq">
+    ))}</span></span></button>,</span>
+    from <span class="nobr"><button class="wchip sq" data-act="here"><Icon name="iowa" /> Des Moines, IA<span class="pop"><span class="here sq">
       <span class="sky"><canvas id="dsmCanvas" aria-label="A drawing of downtown Des Moines right now"></canvas></span>
       <span class="here__body">
         <span class="here__row"><b id="dsmTime"></b><span class="temp" id="dsmTemp"></span></span>
         <span class="here__cond" id="dsmCond">Downtown Des Moines</span>
         <span class="here__home">Home with my wife, Lilo, Kiya, Leroy and Irma.</span>
       </span>
-    </span></span></button>.
-    I also take on projects of my own as <a class="wchip sq djd-chip" href="/hire/"><Gear size={15} id="helloGear" /> Derek J Design<span class="pop"><span class="djd sq">
+    </span></span></button>.</span>
+    I also take on projects of my own as <span class="nobr"><a class="wchip sq djd-chip" href="/hire/"><Gear size={15} id="helloGear" /> Derek J Design<span class="pop"><span class="djd sq">
       <span class:list={['djd__status', !availability.open && 'is-closed']}><span class="djd__light"><i></i>{availability.open ? 'Open for work' : 'Booked up'}</span><b data-avail={availability.open ? 'big' : undefined}>{availability.open ? (availability.from === 'now' ? 'Right now' : `From ${availabilityWhen}`) : 'For now'}</b></span>
       <span class="djd__caps">{SERVICES.map((sv) => <span>{sv.name}</span>)}</span>
-    </span></span></a>.
+    </span></span></a>.</span>
     Here I write about {TOPICS.map((t, i) => (
       <Fragment>
-        <button class="wchip sq topic" data-tag={t.key} data-label={t.label} data-tags={t.tags.join(' ')} aria-pressed="false">{t.label}{pagesFor[t.key].pages.length > 0 && (
+        <span class="nobr"><button class="wchip sq topic" data-tag={t.key} data-label={t.label} data-tags={t.tags.join(' ')} aria-pressed="false">{t.label}{pagesFor[t.key].pages.length > 0 && (
           <span class="pop" aria-hidden="true"><span class="folder" data-topic={t.key}>
             {pagesFor[t.key].older.map((pg) => <span class="folder__paper"><b>{pg.title}</b></span>)}
             <span class="folder__front"><span class="folder__tab">{t.label}</span><small>{pagesFor[t.key].newest.date}</small><b>{pagesFor[t.key].newest.title}</b><small class="folder__count">{pagesFor[t.key].count} {pagesFor[t.key].count === 1 ? 'post' : 'posts'} inside</small></span>
           </span></span>
-        )}</button>{i < last - 1 ? ', ' : i === last - 1 ? ' and ' : '.'}
+        )}</button>{i < last - 1 ? ',' : i === last ? '.' : ''}</span>{i < last - 1 ? ' ' : i === last - 1 ? ' and ' : ''}
       </Fragment>
     ))}
   </p>

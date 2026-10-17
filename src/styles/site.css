@@ -312,6 +312,8 @@ button.wchip { font: inherit; }
 /* Chips sit on the text's baseline, like words, so every line lines up */
 .hello .wchip { display: inline-block; vertical-align: baseline; line-height: 1.3; padding: 0.02em 0.4em 0.06em 0.32em; margin: 0.08em 0; }
 .hello .wchip > .icon, .hello .wchip > img { display: inline-block; vertical-align: -0.1em; margin-right: 0.28em; }
+/* Each chip keeps the punctuation after it on its own line (components/site/Hello.astro) */
+.hello .nobr { white-space: nowrap; }
 .hello .wchip > .tm { vertical-align: 0.38em; margin-right: 0.3em; }
 
 /* Deck: autoplay moves between projects; each project's pages sit on a rail you browse yourself */
