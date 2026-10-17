@@ -1,7 +1,8 @@
 /**
  * The 404 page as a chat with me (pages/404.astro). I say what I couldn't find, offer the pages
- * that best match the broken address, then answer quick replies or anything typed: words search the
- * site (/search.json, the bar's index), and a few commands do things (/help lists them). "Leave a
+ * that best match the broken address, then answer quick replies or anything typed: a few commands do
+ * things (/help lists them), and anything else goes to an AI version of me (/api/chat), falling back to
+ * searching the site (/search.json, the bar's index) when that's not available. "Leave a
  * note" sends the next message to me through /api/note, like the signature's note card.
  */
 type Item = { k: string; t: string; h: string; y: string; x?: 1; s: string };
@@ -160,7 +161,7 @@ if (box && thread && slash && prompts && form && input) {
     lastAsk = ASKS.find(([a]) => a === asked)?.[0] ?? '';
     const cmd = asked.toLowerCase().replace(/^\//, '').replace(/[.!?]+$/, '');
     if (/^(help|commands|\?)$/.test(cmd)) {
-      return say('Type anything and I’ll search the site. Or type <code>/</code> for shortcuts: home, writing, work, projects, about, play, secrets, note and clear.');
+      return say('Ask me anything, about my work, my writing, or me. Or type <code>/</code> for shortcuts: home, writing, work, projects, about, play, secrets, note and clear.');
     }
     if (/^(home|go home|take me home)$/.test(cmd)) { await say('Heading home…'); return void setTimeout(() => { location.href = '/'; }, calm ? 0 : 500); }
     if (/^(clear|reset)$/.test(cmd)) { thread!.innerHTML = ''; lastStatus = null; lastAsk = ''; return intro(); }
@@ -194,10 +195,38 @@ if (box && thread && slash && prompts && form && input) {
       await say('Sure! Type your note and hit send. Add your name if you’d like a reply; otherwise it’s anonymous.');
       return offer(['Cancel']);
     }
-    // Anything else: search
+    // Anything else: I answer, as myself (functions/api/chat.ts, Claude with my voice); without it, search
+    const reply = await ask(text);
+    if (reply) return;
     const found = rank(await load(), words(text));
     if (found.length) return say(found.length === 1 ? 'Found this:' : `Found ${found.length}:`, () => links(found.map(card)));
     return say(`I couldn’t find anything for “${esc(text)}”. Try another word, or pick one below.`);
+  }
+
+  // ---- Talking: free-typed messages go to the AI version of me, with the conversation so far
+  const log: { role: 'user' | 'assistant'; content: string }[] = [];
+  // Its Markdown links become real links (only to this site, or https); everything else stays text
+  // and a bare site path that ends in a slash (/hire/, /posts/…/) does too; commands like /note stay text
+  const md = (s: string) => esc(s)
+    .replace(/\[([^\]]+)\]\(((?:\/|https:\/\/)[^)\s]*)\)/g, (_, t, h) => `<a href="${h}"${h.startsWith('/') ? '' : ' target="_blank" rel="noopener"'}>${t}</a>`)
+    .replace(/(^|[\s(])(\/(?:[a-z0-9][a-z0-9-]*\/)+)(?=[\s.,!?)]|$)/g, (_, pre, h) => `${pre}<a href="${h}">${h}</a>`)
+    .replace(/\n+/g, '<br>');
+  async function ask(text: string) {
+    log.push({ role: 'user', content: text });
+    if (lastStatus) lastStatus.textContent = 'Read';
+    const t = document.createElement('p'); t.className = 'lost__msg is-me lost__typing is-mine';
+    t.innerHTML = `<img class="lost__face sq" src="${photo}" alt="" /><span class="lost__bubble" aria-label="Derek is typing"><i></i><i></i><i></i></span>`;
+    thread!.append(t); scroll(); box!.classList.add('is-thinking');
+    let reply = '';
+    try {
+      const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: log }) });
+      if (r.ok || r.status === 429) reply = ((await r.json()) as { reply?: string }).reply ?? '';
+    } catch { /* fall back to search */ }
+    t.remove(); box!.classList.remove('is-thinking');
+    if (!reply) { log.pop(); return ''; }
+    log.push({ role: 'assistant', content: reply });
+    me(md(reply)); await wait(120);
+    return reply;
   }
 
   async function sendNote(text: string) {

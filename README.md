@@ -70,6 +70,13 @@ The [/hire/](src/pages/hire.astro) form builds an estimate as people answer. Pri
 
 To read requests: `npx wrangler d1 execute hdj-hire --remote --command "SELECT created_at, name, email, org, total FROM requests ORDER BY created_at DESC LIMIT 20"`. With only one binding, it still saves or still emails. With neither, the form offers your email address instead.
 
+#### The 404 chat, as me
+
+Typed messages on the 404 page go to [functions/api/chat.ts](functions/api/chat.ts), which answers in my voice with Claude Haiku: [src/data/voice.ts](src/data/voice.ts) (drawn from my posts; edit it to change how it talks) plus the site's own pages, so it links to real places. Commands (play, secrets, note, home) still answer instantly, and without a key the chat searches the site like before.
+
+1. Make an API key at console.anthropic.com.
+2. Save it to the Pages project as a secret: `npx wrangler pages secret put ANTHROPIC_API_KEY --project-name heyderekj-com`.
+
 #### One database for requests and the game's records
 
 Requests from /hire/ ([functions/api/hire.ts](functions/api/hire.ts)) and each pet's record in the 404 game ([functions/api/four.ts](functions/api/four.ts)) share one D1 database. Until it's bound, requests can't be saved (they still email if `NOTES_MAIL` is bound) and the game hides the records.
