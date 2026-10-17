@@ -66,8 +66,9 @@ if (fig && track) {
   function hold() { held = true; sync(); clearTimeout(holdT); holdT = window.setTimeout(() => { held = false; sync(); }, 12000); }
   ticks.addEventListener('animationend', (e) => { if (e.animationName === 'tick-fill') step(1); });
   tickBtns.forEach((b, i) => b.addEventListener('click', () => { goSlide(i); hold(); }));
-  fig.addEventListener('pointerenter', () => { hovering = true; sync(); });
-  fig.addEventListener('pointerleave', () => { hovering = false; sync(); });
+  // Only a mouse or pen hovers: a finger on a phone sets off the same events but may never leave, which held the deck paused
+  fig.addEventListener('pointerenter', (e) => { if (e.pointerType === 'touch') return; hovering = true; sync(); });
+  fig.addEventListener('pointerleave', (e) => { if (e.pointerType === 'touch') return; hovering = false; sync(); });
   new IntersectionObserver(([e]) => {
     inView = e.isIntersecting; sync();
   }, { threshold: 0.4 }).observe(fig);
@@ -77,10 +78,12 @@ if (fig && track) {
     if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); hold(); }
   });
 
-  // Swipe sideways on touch to change project
+  // Swipe sideways on touch to change project. A tap or swipe holds autoplay; scrolling the page past doesn't
+  // (that ends in pointercancel, not pointerup)
   let sx = 0, sy = 0;
-  track.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; hold(); });
+  track.addEventListener('pointerdown', (e) => { sx = e.clientX; sy = e.clientY; });
   track.addEventListener('pointerup', (e) => {
+    hold();
     if (e.pointerType === 'mouse') return;
     const dx = e.clientX - sx, dy = e.clientY - sy;
     if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
