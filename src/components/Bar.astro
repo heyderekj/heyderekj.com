@@ -14,7 +14,7 @@ const { context = { kind: 'page', title: 'Derek Castelli' } } = Astro.props;
 const label = context.kind === 'home' ? 'Home' : context.title;
 const figures = context.kind === 'essay' ? context.figures ?? [] : [];
 const nav = [
-  { href: '/#writing', label: 'Writing', icon: 'writing' as const },
+  { href: '/posts/', label: 'Posts', icon: 'writing' as const },
   { href: '/work/', label: 'Work', icon: 'work' as const },
   { href: '/projects/', label: 'Projects', icon: 'projects' as const },
   { href: '/about/', label: 'About', icon: 'about' as const },
