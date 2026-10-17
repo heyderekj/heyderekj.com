@@ -1,21 +1,22 @@
 /**
- * POST /api/chat: the 404 page's chat (client/lost-chat.ts), answered as me by Claude Haiku. It gets my
+ * POST /api/chat: the 404 page's chat (client/lost-chat.ts), answered as me by Cloudflare Workers AI. It gets my
  * voice (src/data/voice.ts, drawn from my posts), the site's pages (its own /search.json, so it links to
  * real places), and the conversation so far. Replies are short, like texting.
  *
  * Body: { messages: [{ role: 'user' | 'assistant', content }] }  →  { reply }
- * Setting (Cloudflare Pages → Settings → Variables and secrets): ANTHROPIC_API_KEY, as a secret.
- * Without it this answers 404 and the chat goes back to searching the site.
+ * Binding (Cloudflare Pages → Settings → Bindings): Workers AI, as AI. Without it this answers 404 and
+ * the chat goes back to searching the site.
  *
- * Kept cheap and safe: the system prompt is cached, replies are capped, the conversation is trimmed to
- * its last few turns, and each visitor gets a limited number of messages an hour.
+ * Kept cheap and safe (Workers AI has a free daily allowance): replies are capped, the conversation is
+ * trimmed to its last few turns, and each visitor gets a limited number of messages an hour.
  */
 import { VOICE } from '../../src/data/voice';
 
-interface Env { ANTHROPIC_API_KEY?: string }
+interface Env { AI?: { run(model: string, input: object): Promise<{ response?: string }> } }
 type Msg = { role: 'user' | 'assistant'; content: string };
 
-const MODEL = 'claude-haiku-5-5';
+// The strongest fast chat model on Workers AI: it holds a voice far better than the small ones
+const MODEL = '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 const PER_HOUR = 40;
 const json = (status: number, body: object) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
 
@@ -31,7 +32,7 @@ Rules:
 - Commands visitors can type: play (Connect Four with the pets), secrets, note, home, help.`;
 
 export async function onRequestPost({ request, env }: { request: Request; env: Env }) {
-  if (!env.ANTHROPIC_API_KEY) return json(404, { error: 'not set up' });
+  if (!env.AI) return json(404, { error: 'not set up' });
   let body: { messages?: unknown };
   try { body = await request.json(); } catch { return json(400, { error: 'bad request' }); }
 
@@ -56,18 +57,11 @@ export async function onRequestPost({ request, env }: { request: Request; env: E
     pages = items.filter((i) => !i.x && i.h.startsWith('/')).slice(0, 220).map((i) => `- ${i.k}: ${i.t}${i.y ? ` (${i.y})` : ''} → ${i.h}`).join('\n');
   } catch { /* answer without the list */ }
 
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({
-      model: MODEL, max_tokens: 300, temperature: 0.7,
-      // Rules and voice change rarely, so they're cached; the page list is cached with them
-      system: [{ type: 'text', text: `${RULES}\n\n# Derek's voice\n\n${VOICE}\n\n# The site's pages\n\n${pages}`, cache_control: { type: 'ephemeral' } }],
-      messages,
-    }),
-  }).catch(() => null);
-  if (!r?.ok) return json(502, { error: `model ${r?.status ?? 'unreachable'}` });
-  const data = await r.json() as { content?: { type: string; text?: string }[] };
-  const reply = (data.content ?? []).filter((c) => c.type === 'text').map((c) => c.text).join('').trim();
+  const system = `${RULES}\n\n# Derek's voice\n\n${VOICE}\n\n# The site's pages\n\n${pages}`;
+  let reply = '';
+  try {
+    const out = await env.AI.run(MODEL, { messages: [{ role: 'system', content: system }, ...messages], max_tokens: 300, temperature: 0.7 });
+    reply = (out.response ?? '').trim();
+  } catch { return json(502, { error: 'model unreachable' }); }
   return reply ? json(200, { reply }) : json(502, { error: 'empty reply' });
 }

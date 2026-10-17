@@ -72,10 +72,9 @@ To read requests: `npx wrangler d1 execute hdj-hire --remote --command "SELECT c
 
 #### The 404 chat, as me
 
-Typed messages on the 404 page go to [functions/api/chat.ts](functions/api/chat.ts), which answers in my voice with Claude Haiku: [src/data/voice.ts](src/data/voice.ts) (drawn from my posts; edit it to change how it talks) plus the site's own pages, so it links to real places. Commands (play, secrets, note, home) still answer instantly, and without a key the chat searches the site like before.
+Typed messages on the 404 page go to [functions/api/chat.ts](functions/api/chat.ts), which answers in my voice with Cloudflare Workers AI (Llama 3.3 70B): [src/data/voice.ts](src/data/voice.ts) (drawn from my posts; edit it to change how it talks) plus the site's own pages, so it links to real places. Commands (play, secrets, note, home) still answer instantly, and without the binding the chat searches the site like before.
 
-1. Make an API key at console.anthropic.com.
-2. Save it to the Pages project as a secret: `npx wrangler pages secret put ANTHROPIC_API_KEY --project-name heyderekj-com`.
+Setup: in the Pages project, **Settings → Bindings → Workers AI**, named `AI` (Production and Preview), then redeploy.
 
 #### One database for requests and the game's records
 
