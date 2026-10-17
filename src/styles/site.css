@@ -10,6 +10,9 @@ body.site::before { content: ''; position: fixed; inset: 0 -48px; z-index: -1; p
 :where(body.site) button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 :where(body.site) a { color: inherit; }
 body.site :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 8px; }
+/* Inside anything that clips its edges (the bar, chats, sliders, strips, frames), the ring sits just inside
+   the element so it's never cut off */
+body.site :is(.bar, .lost, .lost__thread, .lost__prompts, .lost__sheet, .hire-cap__strip, .hire-said .said, .est, .prop, .browser, .pages, .shots, .fig, .dial, .four__sheet, .four-card, .deck__track) :focus-visible { outline-offset: -2px; }
 body.site ::selection { background: color-mix(in srgb, var(--ink) 16%, transparent); color: inherit; }
 body.site .icon { width: 1em; height: 1em; flex: none; }
 
