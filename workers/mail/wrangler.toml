@@ -1,0 +1,11 @@
+# The site's mail: a tiny Worker that sends to derekj@hey.com only, for the Pages Functions that need it
+# (functions/api/hire.ts and note.ts reach it through a service binding named MAIL).
+# Deploy: npx wrangler deploy --config workers/mail/wrangler.toml
+name = "heyderekj-mail"
+main = "index.ts"
+compatibility_date = "2026-09-01"
+workers_dev = false # no public URL: only the site can call it
+
+[[send_email]]
+name = "SEND"
+destination_address = "derekj@hey.com"

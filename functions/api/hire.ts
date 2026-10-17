@@ -7,19 +7,19 @@
  *
  * Bindings (Cloudflare Pages → Settings → Bindings; setup in README.md):
  *   HIRE_DB    — D1 database, table from migrations/0001_hire.sql
- *   NOTES_MAIL — the same send_email binding as /api/note (to derekj@hey.com)
+ *   MAIL       — the heyderekj-mail Worker (service binding; src/lib/mail.ts), which emails derekj@hey.com
  * With only one of them, it still does that one; with neither, it answers 503 and the page offers my email.
  */
-import { EmailMessage } from 'cloudflare:email';
+import { mailFrom, MAIL_TO, sendMail, type MailEnv } from '../../src/lib/mail';
 import { budgetGap, clean, estimate, money, schedule, short } from '../../src/lib/estimate';
 import { availability } from '../../src/data/hire';
 import { SERVICES } from '../../src/data/hire';
 
 interface D1 { prepare(sql: string): { bind(...v: unknown[]): { run(): Promise<unknown> } } }
-interface Env { HIRE_DB?: D1; DB?: D1; NOTES_MAIL?: { send(message: EmailMessage): Promise<void> } }
+interface Env extends MailEnv { HIRE_DB?: D1; DB?: D1 }
 
-const FROM = 'hire@heyderekj.com';
-const TO = 'derekj@hey.com';
+const FROM = mailFrom('hire');
+const TO = MAIL_TO;
 const json = (status: number, body: object) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const oneLine = (v: unknown, max: number) => (typeof v === 'string' ? v.replace(/[\r\n]+/g, ' ').trim().slice(0, max) : '');
 const b64 = (s: string) => btoa(unescape(encodeURIComponent(s)));
@@ -48,7 +48,7 @@ export async function onRequestPost({ request, env: bound }: { request: Request;
   const ymd = (v: unknown) => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : '');
   const day = new Date().toISOString().slice(0, 10), seen = ymd(data.today);
   const plan = schedule(answers, est, data.free === 'now' ? 'now' : ymd(data.free) || availability.from, seen && Math.abs(Date.parse(seen) - Date.parse(day)) < 2 * 86_400_000 ? seen : day);
-  if (!env.HIRE_DB && !env.NOTES_MAIL) return json(503, { error: 'requests are not set up yet' });
+  if (!env.HIRE_DB && !env.MAIL) return json(503, { error: 'requests are not set up yet' });
 
   const id = crypto.randomUUID(), at = new Date();
   const names = answers.services.map((s) => SERVICES.find((x) => x.id === s)!.name);
@@ -65,7 +65,7 @@ export async function onRequestPost({ request, env: bound }: { request: Request;
     } catch { /* still try the email */ }
   }
 
-  if (env.NOTES_MAIL) {
+  if (env.MAIL) {
     const what = names.length ? names.join(', ') : 'Not sure yet';
     const subject = `Work request: ${org || name} — ${what}${est.total ? ` — ~${money(est.total)}` : ''}`;
     const body = [
@@ -104,7 +104,7 @@ export async function onRequestPost({ request, env: bound }: { request: Request;
       '',
       body,
     ].join('\r\n');
-    try { await env.NOTES_MAIL.send(new EmailMessage(FROM, TO, raw)); sent = true; } catch { /* reported below */ }
+    sent = await sendMail(env, 'hire', raw);
   }
 
   if (!saved && !sent) return json(502, { error: 'could not save or send' });

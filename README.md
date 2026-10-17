@@ -54,7 +54,7 @@ Optional manual deploy: `npx wrangler pages deploy dist` when logged in locally.
 Triple-clicking the signature watermark opens a "Leave me a note" card (`src/client/sig-egg.ts`). Notes post to a Pages Function, [functions/api/note.ts](functions/api/note.ts), which emails them to derekj@hey.com. Nothing is stored. One-time setup in the Cloudflare dashboard:
 
 1. **Email Routing** for heyderekj.com: turn it on, and add and verify **derekj@hey.com** as a destination address.
-2. In the Pages project, go to **Settings → Bindings → Add → Send email**. Name it `NOTES_MAIL` and set the destination address to `derekj@hey.com`.
+2. Email goes through a tiny Worker, `heyderekj-mail` ([workers/mail](workers/mail)), which sends to `derekj@hey.com` from koatiapp.com (Email Routing is on there; heyderekj.com's mail is at Hover). Deploy it with `npx wrangler deploy --config workers/mail/wrangler.toml`, then in the Pages project add **Settings → Bindings → Service binding** `MAIL` → `heyderekj-mail`.
 3. Redeploy.
 
 Until the binding exists, the function answers 503 and the card tells the visitor to email instead. Notes come from `notes@heyderekj.com`.
@@ -65,7 +65,7 @@ The [/hire/](src/pages/hire.astro) form builds an estimate as people answer. Pri
 
 1. Create the database: `npx wrangler d1 create hdj-hire`
 2. Make the table: `npx wrangler d1 execute hdj-hire --remote --file=migrations/0001_hire.sql`
-3. In the Pages project, go to **Settings → Bindings → Add → D1 database**. Name it `HIRE_DB` and pick `hdj-hire`. The email uses the `NOTES_MAIL` binding from above, so there's nothing more to set up for it.
+3. In the Pages project, go to **Settings → Bindings → Add → D1 database**. Name it `HIRE_DB` and pick `hdj-hire`. The email uses the `MAIL` service binding from above.
 4. Redeploy.
 
 To read requests: `npx wrangler d1 execute hdj-hire --remote --command "SELECT created_at, name, email, org, total FROM requests ORDER BY created_at DESC LIMIT 20"`. With only one binding, it still saves or still emails. With neither, the form offers your email address instead.
@@ -78,7 +78,7 @@ Setup: in the Pages project, **Settings → Bindings → Workers AI**, named `AI
 
 #### One database for requests and the game's records
 
-Requests from /hire/ ([functions/api/hire.ts](functions/api/hire.ts)) and each pet's record in the 404 game ([functions/api/four.ts](functions/api/four.ts)) share one D1 database. Until it's bound, requests can't be saved (they still email if `NOTES_MAIL` is bound) and the game hides the records.
+Requests from /hire/ ([functions/api/hire.ts](functions/api/hire.ts)) and each pet's record in the 404 game ([functions/api/four.ts](functions/api/four.ts)) share one D1 database. Until it's bound, requests can't be saved (they still email if `MAIL` is bound) and the game hides the records.
 
 1. `npx wrangler d1 create heyderekj`
 2. `npx wrangler d1 execute heyderekj --remote --file=migrations/0001_hire.sql`, then the same with `0002_four.sql`
