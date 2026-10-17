@@ -28,7 +28,7 @@ const description = topics[tag]?.description;
 ---
 <Site bar={{ kind: 'page', title: label }} title={`${label} — Derek Castelli`} description={description ?? `Posts about ${label}.`}>
   <main class="home">
-    <PageHead title={label} meta={`Topic · ${entries.length} ${entries.length === 1 ? 'post' : 'posts'}`}><Fragment slot="lede">{description ?? `Posts about ${label}.`} <a href="/topics/">All topics</a></Fragment></PageHead>
+    <PageHead back={{ href: '/topics/', label: 'Topics' }} title={label} meta={`Topic · ${entries.length} ${entries.length === 1 ? 'post' : 'posts'}`}><Fragment slot="lede">{description ?? `Posts about ${label}.`} <a href="/topics/">All topics</a></Fragment></PageHead>
     <PostIndex posts={entries} show={Infinity} />
   </main>
   <script src="../../client/peek.ts"></script>

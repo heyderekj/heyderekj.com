@@ -4,6 +4,7 @@
  * one step at a time, beside a proposal set like the ones I send (client/hire.ts). Requests are saved
  * and emailed to me (functions/api/hire.ts). Prices, extras, timing and availability live in src/data/hire.ts.
  */
+import Back from '../components/site/Back.astro';
 import Site from '../layouts/Site.astro';
 import Icon from '../components/Icon.astro';
 import Said from '../components/site/Said.astro';
@@ -53,7 +54,7 @@ const STEPS = [['services', 'What'], ['details', 'Details'], ['timing', 'When'],
     <header class="hire-me">
       <img class="hire-me__photo sq" src={photo} alt="Derek Castelli" width="104" height="104" />
       <div class="hire-me__name">
-        <span class="essay__meta"><span>Derek J Design · Testament Made, LLC</span></span>
+        <span class="essay__meta"><Back /><span>Derek J Design · Testament Made, LLC</span></span>
         <h1>Work with me</h1>
         <p class:list={['hire-status', !availability.open && 'is-closed']}><i aria-hidden="true"></i>{availability.open ? 'Open for work' : 'Booked up for now'}{availability.open && <span> · <span data-avail="small">{availability.from === 'now' ? 'open now' : `from ${availabilityWhen}`}</span></span>}</p>
       </div>

@@ -26,7 +26,7 @@ const types = (Object.keys(TYPE_LABELS) as PostType[]).filter((k) => counts[k]);
 ---
 <Site bar={{ kind: 'page', title: label.many }} title={`${label.many} — Derek Castelli`} description={INTROS[type]}>
   <main class="home">
-    <PageHead title={label.many} meta={`Writing · ${entries.length}`}><Fragment slot="lede">{INTROS[type]}</Fragment></PageHead>
+    <PageHead title={label.many} meta={`Writing · ${entries.length}`} back={type === 'essay' ? undefined : { href: '/posts/', label: 'Posts' }}><Fragment slot="lede">{INTROS[type]}</Fragment></PageHead>
     <!-- Like the work page: one button opens a dial with topics (and kinds, once there's more than one) and view settings (client/post-dial.ts) -->
     <div class="work-tools">
       <button type="button" class="work-tools__btn sq" data-pdial-toggle aria-expanded="false" aria-haspopup="dialog" aria-label={`Filter and view: ${label.many}`}>

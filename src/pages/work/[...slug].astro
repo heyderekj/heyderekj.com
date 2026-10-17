@@ -3,6 +3,7 @@
  * A website write-up, in the same voice and layout as an essay: what they needed, the problem,
  * what I built, with the site in a browser window and its pages on a rail beside it.
  */
+import Back from '../../components/site/Back.astro';
 import { postComponents } from '../../components/post';
 import { type CollectionEntry } from 'astro:content';
 import Site from '../../layouts/Site.astro';
@@ -84,7 +85,7 @@ const posterSrc = d.videoPoster ? imgSrc(d.videoPoster, 1280) : undefined;
   bar={{ kind: 'writeup', title: d.title, newer: link(newer), older: link(older) }}
 >
   <article class="essay writeup" data-bar-progress data-select>
-    <div class="essay__meta">{meta.map((m, i) => <>{i > 0 && <span>·</span>}<span>{m}</span></>)}{d.archived && <span class="badge">Archived</span>}</div>
+    <div class="essay__meta"><Back href="/work/" label="Sites" />{meta.map((m, i) => <>{i > 0 && <span>·</span>}<span>{m}</span></>)}{d.archived && <span class="badge">Archived</span>}</div>
     <h1>{d.title}</h1>
     {d.description && <p class="lede">{d.description}</p>}
 

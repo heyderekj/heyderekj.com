@@ -20,7 +20,7 @@ const site = PARTNER_SITES[partner.name];
   bar={{ kind: 'page', title: `With ${partner.name}` }}
 >
   <main class="home">
-    <PageHead title={`With ${partner.name}`} meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">Sites I've built in partnership with {site ? <a href={site} target="_blank" rel="noopener">{partner.name}</a> : partner.name}.</Fragment></PageHead>
+    <PageHead back={{ href: '/work/', label: 'Sites' }} title={`With ${partner.name}`} meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">Sites I've built in partnership with {site ? <a href={site} target="_blank" rel="noopener">{partner.name}</a> : partner.name}.</Fragment></PageHead>
     <WorkIndex work={entries} active={partner.slug} />
   </main>
 </Site>

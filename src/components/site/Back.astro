@@ -1,0 +1,8 @@
+---
+/** A way back up, inside a page's meta line: it shows above that line when the top of the page is hovered
+ *  (or it's focused), and stays out of the way otherwise. Home for top-level pages, the parent list below them. */
+import Icon from '../Icon.astro';
+interface Props { href?: string; label?: string }
+const { href = '/', label = 'Home' } = Astro.props;
+---
+<a class="back-up" href={href}><Icon name="arrow-left" />{label}</a>

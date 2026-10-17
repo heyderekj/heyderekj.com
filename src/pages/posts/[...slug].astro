@@ -1,4 +1,5 @@
 ---
+import Back from '../../components/site/Back.astro';
 import Site from '../../layouts/Site.astro';
 import Signature from '../../components/Signature.astro';
 import KeepReading from '../../components/site/KeepReading.astro';
@@ -91,6 +92,7 @@ const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
 >
   <article class={`essay post post--${d.type}`} data-bar-progress data-select>
     <div class="essay__meta">
+      <Back href={typeHref(d.type)} label={TYPE_LABELS[d.type].many} />
       {d.type !== 'essay' && <a class="post-kind" href={typeHref(d.type)}>{TYPE_LABELS[d.type].one}</a>}
       <time datetime={published}>{fmtDate(d.date)}</time>
       {d.type === 'essay' && <span>· {mins} min read</span>}

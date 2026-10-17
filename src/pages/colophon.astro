@@ -1,4 +1,5 @@
 ---
+import Back from '../components/site/Back.astro';
 import fs from 'node:fs';
 import Site from '../layouts/Site.astro';
 import Signature from '../components/Signature.astro';
@@ -22,7 +23,7 @@ const REPO = 'https://github.com/heyderekj/heyderekj.com';
 ---
 <Site bar={{ kind: 'page', title: 'Colophon' }} title="Colophon — Derek Castelli" description="How this site is made, and how the writing on it works.">
   <article class="essay colophon" data-select data-bar-progress>
-    <div class="essay__meta"><span>About this site</span></div>
+    <div class="essay__meta"><Back /><span>About this site</span></div>
     <h1>Colophon</h1>
     <p class="lede">How this site is made, and how the writing on it works.</p>
     <div class="prose">

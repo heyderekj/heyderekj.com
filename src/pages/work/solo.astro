@@ -13,7 +13,7 @@ const entries = (await getPublishedWork()).filter((w) => !w.data.partnership?.tr
   bar={{ kind: 'page', title: 'Solo' }}
 >
   <main class="home">
-    <PageHead title="Solo" meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">Sites I've designed and built on my own, under Derek J Design.</Fragment></PageHead>
+    <PageHead back={{ href: '/work/', label: 'Sites' }} title="Solo" meta={`Work · ${entries.length} write-ups`}><Fragment slot="lede">Sites I've designed and built on my own, under Derek J Design.</Fragment></PageHead>
     <WorkIndex work={entries} active="solo" />
   </main>
 </Site>

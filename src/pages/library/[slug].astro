@@ -4,6 +4,7 @@
  * `/library/<item-slug>/` (items with notes). Item files are prefixed with
  * their kind (`book-…`, `tool-…`) so the two never collide.
  */
+import Back from '../../components/site/Back.astro';
 import Site from '../../layouts/Site.astro';
 import PageHead from '../../components/site/PageHead.astro';
 import LibraryChips from '../../components/site/LibraryChips.astro';
@@ -74,7 +75,7 @@ const specRows: [string, string | undefined, string?][] = d
     bar={{ kind: 'page', title: KIND_META[props.kind].many }}
   >
     <main class="home">
-      <PageHead title={KIND_META[props.kind].many} meta={`Library · ${counts[props.kind]} ${KIND_META[props.kind].many.toLowerCase()}`} lede={KIND_META[props.kind].intro}>
+      <PageHead back={{ href: '/library/', label: 'Library' }} title={KIND_META[props.kind].many} meta={`Library · ${counts[props.kind]} ${KIND_META[props.kind].many.toLowerCase()}`} lede={KIND_META[props.kind].intro}>
         <LibraryChips counts={counts} total={items.length} active={props.kind} />
       </PageHead>
       <LibraryList kind={props.kind} items={byKind(items, props.kind)} heading={false} />
@@ -86,6 +87,7 @@ const specRows: [string, string | undefined, string?][] = d
   <Site noindex title={`${d!.title} — Library — Derek Castelli`} description={d!.note ?? KIND_META[d!.kind].intro} bar={{ kind: 'page', title: d!.title }}>
     <article class="essay" data-select>
       <div class="essay__meta">
+        <Back href="/library/" label="Library" />
         <a href="/library/">Library</a><span>·</span><a href={kindHref(d!.kind)}>{KIND_META[d!.kind].many}</a>
         {specRows.filter(([k, v]) => v && k !== 'Kind').map(([k, v, href]) => <><span>·</span>{href ? <a href={href} target="_blank" rel="noopener">{v}</a> : <span>{k === 'Catalog' ? v : `${k} ${v}`}</span>}</>)}
       </div>

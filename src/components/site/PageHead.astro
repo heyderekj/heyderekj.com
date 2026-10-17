@@ -1,10 +1,12 @@
 ---
-/** The top of a page, set like an essay: a small meta line, the title, and a lede. A slot goes after the lede. */
-interface Props { meta?: string; title: string; lede?: string }
-const { meta, title, lede } = Astro.props;
+/** The top of a page, set like an essay: a small meta line (with a way back up, components/site/Back.astro), the
+ *  title, and a lede. A slot goes after the lede. */
+import Back from './Back.astro';
+interface Props { meta?: string; title: string; lede?: string; back?: { href: string; label: string } }
+const { meta, title, lede, back } = Astro.props;
 ---
 <header class="page-head">
-  {meta && <div class="essay__meta"><span>{meta}</span></div>}
+  <div class="essay__meta"><Back {...back} />{meta && <span>{meta}</span>}</div>
   <h1>{title}</h1>
   {(lede || Astro.slots.has('lede')) && <p class="lede">{lede}<slot name="lede" /></p>}
   <slot />
