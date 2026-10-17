@@ -20,8 +20,6 @@ const whole = [
   // The new logo on its own, the brand in the world (mockups), and the home page's video
   ['Slide 16_9 - 8.png', 'logo-new'], ['Frame 104.png', 'cards'], ['Frame 101.png', 'billboard'],
   ['Frame 103.png', 'site-laptop'], ['Frame 102.png', 'app-pocket'], ['Home.png', 'home-video'],
-  // The cover: the mark, big, behind the logo
-  ['Frame 100.png', 'cover'],
 ];
 const firstScreen = [['home_current.png', 'home-before'], ['home_new.png', 'home-after'], ['exit-diabetes_current.png', 'landing-before'], ['exit-diabetes_new.png', 'landing-after']];
 const webp = (img) => img.resize({ width: MAX, withoutEnlargement: true }).webp({ quality: 90, smartSubsample: true });
@@ -29,5 +27,12 @@ for (const [f, name] of whole) await webp(sharp(join(src, f))).toFile(`${out}/${
 for (const [f, name] of firstScreen) {
   const { width } = await sharp(join(src, f)).metadata();
   await webp(sharp(join(src, f)).extract({ left: 0, top: 0, width, height: Math.round((width * 10) / 16) })).toFile(`${out}/${name}.webp`);
+}
+// The cover: the mark behind the logo, cut to 16:10 from the middle so it fits the site's browser frames
+// whole (they show the top of a 16:10 view) and stays centred in square crops
+{
+  const f = join(src, 'Frame 100.png'), { width, height } = await sharp(f, { limitInputPixels: false }).metadata();
+  const h = Math.round((width * 10) / 16);
+  await webp(sharp(f, { limitInputPixels: false }).extract({ left: 0, top: Math.round((height - h) / 2), width, height: h })).toFile(`${out}/cover.webp`);
 }
 console.log('done');
