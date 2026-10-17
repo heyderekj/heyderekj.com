@@ -70,6 +70,14 @@ The [/hire/](src/pages/hire.astro) form builds an estimate as people answer. Pri
 
 To read requests: `npx wrangler d1 execute hdj-hire --remote --command "SELECT created_at, name, email, org, total FROM requests ORDER BY created_at DESC LIMIT 20"`. With only one binding, it still saves or still emails. With neither, the form offers your email address instead.
 
+#### One database for requests and the game's records
+
+Requests from /hire/ ([functions/api/hire.ts](functions/api/hire.ts)) and each pet's record in the 404 game ([functions/api/four.ts](functions/api/four.ts)) share one D1 database. Until it's bound, requests can't be saved (they still email if `NOTES_MAIL` is bound) and the game hides the records.
+
+1. `npx wrangler d1 create heyderekj`
+2. `npx wrangler d1 execute heyderekj --remote --file=migrations/0001_hire.sql`, then the same with `0002_four.sql`
+3. In the Pages project, **Settings → Bindings → D1 database**: bind it as `DB` (Production and Preview), then redeploy.
+
 #### Availability from Notion
 
 The "Open for work" date follows the projects board in Notion (the "Projects" database on the Projects & Tasks page) instead of the line in `src/data/hire.ts`. [functions/api/availability.ts](functions/api/availability.ts) takes the projects that are booked (Staged, In Progress, Under Review: anything but done, Shaping or Proposal Sent), finds the latest end date in "Dates" (one that's run over counts as today), adds a week, and caches the result for an hour. To set it up:

@@ -175,10 +175,13 @@ body.site .four__col:focus-visible { outline: none; }
 .four__who:hover, .four__who[aria-expanded="true"] { scale: 1.06; }
 .four__who i { position: absolute; right: -6px; bottom: -6px; display: grid; place-items: center; width: 15px; height: 15px; border-radius: 50%; font-size: 10px; color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair), 0 1px 2px rgb(0 0 0 / 0.12); transition: rotate var(--t-ui) var(--ease); }
 .four__who[aria-expanded="true"] i { rotate: 180deg; }
-.four__dial { top: calc(100% + 8px); left: 0; width: 264px; transform-origin: top left; }
+.four__dial { top: calc(100% + 8px); left: 0; right: 0; width: auto; padding: 10px; transform-origin: top left; }
 /* The pets' photos line up with the settings' labels below (dial__row's 10px) */
 .four__foes { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 0 0 2px; }
 .four__foes button { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 14px; font: 500 14.5px var(--font); color: var(--ink-soft); transition: background-color var(--t-ui) var(--ease), color var(--t-ui) var(--ease); }
+.four__foes button > span { display: grid; min-width: 0; text-align: left; line-height: 1.25; }
+.four__foes button small { font-size: 11.5px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.four__foes button small:empty { display: none; }
 .four__foes button:hover { background: color-mix(in oklch, var(--ink) 5%, transparent); color: var(--ink); }
 .four__foes button i { --r: 11px; flex: none; width: 46px; height: 46px; filter: grayscale(1); opacity: 0.7; transition: filter var(--t-ui) var(--ease), opacity var(--t-ui) var(--ease); }
 .four__foes button:hover i { filter: none; opacity: 1; }
@@ -324,3 +327,61 @@ body.site .four__col:focus-visible { outline: none; }
 @keyframes cats-stamp { from { opacity: 0; scale: 2.2; } }
 @keyframes cats-step { 0% { opacity: 0; scale: 0.4; } 15% { opacity: 0.9; scale: 1; } 70% { opacity: 0.9; } 100% { opacity: 0.25; } }
 @media (prefers-reduced-motion: reduce) { .four__cats b, .four__cats span { animation: none; opacity: 0.85; } }
+
+/* Playing: the page holds still (client/four.ts lock), and a drag on the board is a move, never a scroll */
+html.four-locked, html.four-locked body { overflow: hidden; overscroll-behavior: none; }
+.four__board { touch-action: none; }
+html.four-locked .bar { opacity: 0; translate: -50% 24px; pointer-events: none; }
+html.four-locked .lost { opacity: 0.45; filter: grayscale(0.3); transition: opacity 300ms var(--ease), filter 300ms var(--ease); }
+html.four-locked .lost-head__line { opacity: 0.45; }
+
+/* The picker spans the game: Random and the four pets in one row of matching tiles (a picture, the name,
+   the record under it), then the two settings side by side */
+.four__foes { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+.four__foes .four__any { grid-column: auto; }
+.four__foes button { flex-direction: column; gap: 4px; padding: 6px 4px 7px; font-size: 13.5px; text-align: center; }
+.four__foes button > span { justify-items: center; text-align: center; }
+.four__foes button i { width: min(44px, 100%); height: auto; aspect-ratio: 1; --r: 11px; }
+.four__foes .four__any i { font-size: 17px; }
+.four__any small { display: none; }
+.four__sets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+
+/* The score is a button: tap it for the stats card */
+.four__tally .four__stats { gap: 0; height: 34px; padding: 0 2px; cursor: pointer; transition: background-color var(--t-ui) var(--ease), scale var(--t-ui) var(--ease); }
+.four__tally .four__stats:hover { background: color-mix(in oklch, var(--ink) 9%, transparent); }
+.four__tally .four__stats:active { scale: 0.97; }
+.four__tally .four__stats[aria-expanded="true"] { background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
+
+/* The stats card: it rises over the board (always in view while you play), the game's width, with You and
+   Everyone as tabs that cross-fade */
+.four__sheet { top: auto; bottom: calc(100% + 8px); left: 0; right: 0; width: auto; padding: 10px; gap: 10px; transform-origin: bottom right; }
+.four__flip-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; padding: 3px; border-radius: 12px; background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.four__flip-tabs button { height: 30px; border-radius: 9px; font: 600 13px var(--font); color: var(--muted); }
+.four__flip-tabs button[aria-selected="true"] { color: var(--ink); background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
+.four__flip { display: grid; }
+.four__face { grid-area: 1 / 1; display: grid; gap: 8px; align-content: start; transition: opacity 200ms var(--ease); }
+.four__flip .is-back, .four__flip.is-flipped .four__face:not(.is-back) { opacity: 0; pointer-events: none; }
+.four__flip.is-flipped .is-back { opacity: 1; pointer-events: auto; }
+.four__tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.four__tile { display: grid; gap: 0; padding: 7px 10px; border-radius: 11px; background: var(--card); box-shadow: 0 0 0 1px var(--hair); }
+.four__tile b { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.four__tile small { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.four__vs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.four__stand { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+.four__vs > div, .four__stand > div { display: flex; align-items: center; gap: 8px; padding: 4px; border-radius: 10px; }
+.four__vs i, .four__stand i { --r: 9px; flex: none; width: 30px; height: 30px; border-radius: 9px; }
+.four__vs span, .four__stand span { display: grid; min-width: 0; line-height: 1.25; }
+.four__vs b, .four__stand b { font-size: 13px; font-weight: 600; }
+.four__vs small, .four__stand small { font-size: 11px; color: var(--muted); }
+.four__vs small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.four__stand em { flex: none; width: 14px; font: 700 13px var(--font); font-style: normal; color: var(--muted); text-align: center; }
+.four__soon { margin: 0; padding: 14px 10px; text-align: center; font-size: 13px; color: var(--muted); }
+@media (max-width: 560px) { .four__tiles, .four__vs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .four__stand { grid-template-columns: 1fr; } }
+
+/* The WOPR: green on black for a moment */
+.four.is-wopr .four__board { background: #020a03; box-shadow: 0 0 0 1px #1d6b2a, 0 0 40px -10px rgb(57 255 100 / 0.35); transition: background-color 300ms, box-shadow 300ms; }
+.four.is-wopr .four__col i:not(.you):not(.me) { background: #06180a; box-shadow: inset 0 0 0 1px rgb(57 255 100 / 0.25); }
+.four.is-wopr .four__col i:is(.you, .me) { filter: grayscale(1) sepia(1) hue-rotate(70deg) saturate(4) brightness(0.9); }
+.four.is-wopr .four__line { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.04em; color: #3dff6a; background: #020a03; }
+.four.is-wopr .four__say { --bub: #020a03; }
+.four.is-wopr .four__line { white-space: normal; text-overflow: clip; }

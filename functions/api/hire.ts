@@ -16,7 +16,7 @@ import { availability } from '../../src/data/hire';
 import { SERVICES } from '../../src/data/hire';
 
 interface D1 { prepare(sql: string): { bind(...v: unknown[]): { run(): Promise<unknown> } } }
-interface Env { HIRE_DB?: D1; NOTES_MAIL?: { send(message: EmailMessage): Promise<void> } }
+interface Env { HIRE_DB?: D1; DB?: D1; NOTES_MAIL?: { send(message: EmailMessage): Promise<void> } }
 
 const FROM = 'hire@heyderekj.com';
 const TO = 'derekj@hey.com';
@@ -25,7 +25,9 @@ const oneLine = (v: unknown, max: number) => (typeof v === 'string' ? v.replace(
 const b64 = (s: string) => btoa(unescape(encodeURIComponent(s)));
 const TIMELINE = { asap: 'As soon as possible', soon: 'In the next month or two', flexible: 'Flexible' } as const;
 
-export async function onRequestPost({ request, env }: { request: Request; env: Env }) {
+export async function onRequestPost({ request, env: bound }: { request: Request; env: Env }) {
+  // The site's one database can be bound as HIRE_DB or DB
+  const env = { ...bound, HIRE_DB: bound.HIRE_DB ?? bound.DB };
   let data: Record<string, unknown>;
   try { data = await request.json(); } catch { return json(400, { error: 'bad request' }); }
 

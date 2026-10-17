@@ -28,7 +28,7 @@ if (game && grid404 && head) {
   const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)];
 
   // ---- Who you're playing: one of the animals, each with their own way of playing and talking
-  type Lines = { stop: string[]; start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[]; idle?: string[] };
+  type Lines = { stop: string[]; start: string[]; level: (l: number) => string[]; mine: string[]; block: string[]; youWin: string[]; iWin: string[]; draw: string[]; spare?: string[]; slip?: string[]; idle?: string[]; stats?: string[] };
   type Foe = { name: string; kind: 'cat' | 'dog'; tone: string; toneInk?: string; delay: [number, number]; depth: (l: number) => number; slip: (l: number) => number; spares?: number; lines: Lines };
   const WARGAMES = 'The only winning move is not to play.';
   // Oldest first: Lilo, Leroy, Kiya, Irma
@@ -36,6 +36,7 @@ if (game && grid404 && head) {
     { // Attentive and smart, but kind: always blocks you, and sometimes won't take the win
       name: 'Lilo', kind: 'dog', tone: 'oklch(0.55 0.17 300)', delay: [600, 1000], depth: (l) => Math.min(6, l + 1), slip: (l) => Math.max(0, 0.15 - 0.05 * (l - 1)), spares: 0.4,
       lines: {
+        stats: ['Ooh, numbers!', 'You’re doing great. Really.'], // when you open your stats
         idle: ['Hmmm. What you doing?'], // when you've been thinking a while
         stop: ['Good game! Come back anytime.', 'That was so fun. Thank you!'],
         start: ['Hi, I’m Lilo! Want to play? You go first.'],
@@ -51,6 +52,7 @@ if (game && grid404 && head) {
     { // Slow, but persistent and smart: thinks for ages, looks furthest ahead, never slips
       name: 'Leroy', kind: 'cat', tone: 'oklch(0.56 0.19 18)', delay: [1300, 2300], depth: (l) => Math.min(7, l + 2), slip: () => 0,
       lines: {
+        stats: ['I’ve been keeping score too.', 'Interesting numbers.'], // when you open your stats
         idle: ['I already have my next move.'], // when you've been thinking a while
         stop: ['Leaving? I’ll be right here.', 'Smart. Quit while you’re ahead.'],
         start: ['Shall we play? Take your time. I will.'],
@@ -65,6 +67,7 @@ if (game && grid404 && head) {
     { // Competitive and smart, but a bully and easily distracted: quick, mouthy, and wanders off
       name: 'Kiya', kind: 'dog', tone: 'oklch(0.62 0.11 195)', delay: [250, 520], depth: (l) => Math.min(6, l + 1), slip: () => 0.18,
       lines: {
+        stats: ['I could beat that. I’m Kiya!', 'Look at MY numbers!'], // when you open your stats
         idle: ['Hi, I’m Kiya!'], // when you've been thinking a while
         stop: ['Scared? Thought so.', 'Running away? Classic.'],
         start: ['You’re going down. Go first.'],
@@ -80,6 +83,7 @@ if (game && grid404 && head) {
     { // Dumb, but plays hard: barely looks ahead, moves fast and loud, grabs any win
       name: 'Irma', kind: 'cat', tone: 'oklch(0.84 0.09 55)', toneInk: '#3d3a35', delay: [200, 420], depth: () => 1, slip: (l) => Math.max(0.15, 0.4 - 0.05 * (l - 1)),
       lines: {
+        stats: ['Wake me when it’s more.', 'Numbers make me sleepy…'], // when you open your stats
         idle: ['I could use a nap…'], // when you've been thinking a while
         stop: ['NOOO! Okay. Bye!', 'Already? Again soon?!'],
         start: ['IRMA! LET’S PLAY! You go first!'],
@@ -96,7 +100,16 @@ if (game && grid404 && head) {
   const whoEl = $('.four__who');
   // Who you play: picked at random each game (never the last one twice), unless you pick someone from the faces
   const foesEl = $('.four__foes');
-  foesEl.insertAdjacentHTML('beforeend', FOES.map((f) => `<button type="button" data-foe="${f.name}" aria-pressed="false" style="--tone:${f.tone}"><i class="sq" style="background:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp) center / cover no-repeat"></i>${f.name}</button>`).join(''));
+  foesEl.insertAdjacentHTML('beforeend', FOES.map((f) => `<button type="button" data-foe="${f.name}" aria-pressed="false" style="--tone:${f.tone}"><i class="sq" style="background:url(/images/four/pet-${f.name.toLowerCase()}-sm.webp) center / cover no-repeat"></i><span>${f.name}<small data-stat="${f.name}"></small></span></button>`).join(''));
+  // Each pet's record against everyone who's played (functions/api/four.ts), under their name in the picker
+  type Rec = { wins: number; losses: number; draws: number };
+  let globalStats: Record<string, Rec> | null = null;
+  const showStats = (stats: Record<string, Rec>) => (globalStats = stats, foesEl.querySelectorAll<HTMLElement>('[data-stat]')).forEach((el) => {
+    const r = stats[el.dataset.stat!]; if (!r) return;
+    el.textContent = `Won ${r.wins} · Lost ${r.losses}`;
+    el.title = `${el.dataset.stat} against everyone: ${r.wins} wins, ${r.losses} losses, ${r.draws} draws`;
+  });
+  fetch('/api/four').then((r) => (r.ok ? r.json() : null)).then((d) => d?.stats && showStats(d.stats)).catch(() => {});
   const randomBtn = $<HTMLButtonElement>('[data-foe-random]');
   // Picked: that animal; random: Random, with whoever came up ringed
   function markFoes() {
@@ -224,7 +237,29 @@ if (game && grid404 && head) {
     b = Array(COLS * ROWS).fill(0); moves = []; turn = 'you'; idleAt = Date.now() + IDLE;
     cells.forEach((el) => el.classList.remove('drop', 'win'));
     paint(); tally(); talk(line ?? pick(LINES.start));
+    lock(true);
   }
+  // While a round is on, the page holds still: no scrolling away by accident (wheel, keys or a swipe), and
+  // the game sits in view. Let go when the game ends (for the card) or you quit.
+  let locked = false;
+  function lock(on: boolean) {
+    locked = on;
+    document.documentElement.classList.toggle('four-locked', on);
+    // Everything but the game goes quiet: the bar slides away, and the chat and the rest can't be
+    // clicked, focused or selected (inert) until the round ends
+    document.querySelectorAll<HTMLElement>('#bar, .lost, body > footer, .lost-head__line').forEach((el) => { el.inert = on; });
+    if (on) {
+      const r = game!.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > innerHeight) game!.scrollIntoView({ block: r.height < innerHeight ? 'center' : 'start', behavior: calm ? 'auto' : 'smooth' });
+    }
+  }
+  // Each finished game counts toward the pet's record (from your side: 'you' won, 'them' won, or a draw)
+  function stat(result: 'you' | 'them' | 'draw') {
+    keepMine(result);
+    fetch('/api/four', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pet: foe.name, result, moves: moves.length }), keepalive: true }).catch(() => {});
+  }
+  document.addEventListener('touchmove', (e) => { if (locked && !(e.target as Element).closest('.four__dial, .four-card')) e.preventDefault(); }, { passive: false });
+
   function start() {
     if (playing) return;
     playing = true; level = 1; score = 0; againBtn.hidden = cardBtn.hidden = nextBtn.hidden = stopBtn.hidden = true; meet();
@@ -280,7 +315,7 @@ if (game && grid404 && head) {
   }
   function quit() {
     if (paused) resume();
-    playing = false; turn = 'off';
+    playing = false; turn = 'off'; lock(false);
     document.documentElement.classList.remove('four-on');
     game!.hidden = true; grid404!.hidden = false;
     grid404!.querySelectorAll<HTMLElement>('i.on').forEach((d) => { d.style.animation = 'none'; void d.offsetWidth; d.style.animation = ''; });
@@ -323,6 +358,7 @@ if (game && grid404 && head) {
   }
   // The game's over, lost or stopped: keep the best, and offer a card of it
   function finish(by: 'you' | 'them', run: number[]) {
+    lock(false); stat(by);
     const record = score > best;
     if (record) { best = score; try { localStorage.setItem('hdj:four:best', String(best)); } catch {} }
     tally();
@@ -333,7 +369,7 @@ if (game && grid404 && head) {
   // A draw is a cat's game: a stamp, and paw prints across the board in their colour.
   // The cats (Leroy, Irma) are thrilled; the dogs (Lilo, Kiya) are not.
   function roundDraw() {
-    turn = 'off'; paint(); score += 50; tally(); talk(pick(LINES.draw));
+    turn = 'off'; paint(); score += 50; tally(); talk(pick(LINES.draw)); stat('draw');
     beep(foe.kind === 'cat' ? [784, 988, 1175, 988, 1319] : [392, 370, 349], foe.kind === 'cat' ? 0.09 : 0.14, 'triangle');
     catsGame();
     const id = runId;
@@ -388,7 +424,9 @@ if (game && grid404 && head) {
 
   // ---- The dial: their face opens it
   const dial = $('.four__dial');
-  const openDial = () => { dial.hidden = false; dial.classList.remove('is-in'); void dial.offsetWidth; dial.classList.add('is-in'); whoEl.setAttribute('aria-expanded', 'true'); };
+  const openDial = () => { dial.hidden = false; dial.classList.remove('is-in'); void dial.offsetWidth; dial.classList.add('is-in'); whoEl.setAttribute('aria-expanded', 'true');
+    // The page is locked while you play, so bring the whole picker into view
+    requestAnimationFrame(() => dial.scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' })); };
   function closeDial() { if (dial.hidden) return; dial.hidden = true; whoEl.setAttribute('aria-expanded', 'false'); }
   whoEl.addEventListener('click', () => (dial.hidden ? openDial() : closeDial()));
   document.addEventListener('pointerdown', (e) => { if (!dial.hidden && !(e.target as HTMLElement).closest('.four__dial, .four__who')) closeDial(); });
@@ -436,6 +474,72 @@ if (game && grid404 && head) {
   pauseEl.querySelector('[data-four-leave]')!.addEventListener('click', () => { quit(); document.querySelector<HTMLElement>('[data-four-play]')?.focus(); });
   // Sent here to play (the "joshua" egg, or the search result): start once the page has settled
   if (location.hash === '#play') { history.replaceState(null, '', location.pathname + location.search); setTimeout(start, calm ? 100 : 700); }
+  // ---- Your record, kept in this browser: games, wins and losses (and against whom), streaks, fastest win
+  type Mine = { games: number; wins: number; losses: number; draws: number; streak: number; bestStreak: number; fastest: number; by: Record<string, { w: number; l: number; d: number }> };
+  const MINE_KEY = 'hdj:four:me';
+  const mine = (): Mine => { try { const m = JSON.parse(localStorage.getItem(MINE_KEY) || 'null'); if (m) return m; } catch {} return { games: 0, wins: 0, losses: 0, draws: 0, streak: 0, bestStreak: 0, fastest: 0, by: {} }; };
+  function keepMine(result: 'you' | 'them' | 'draw') {
+    const m = mine(), p = (m.by[foe.name] ??= { w: 0, l: 0, d: 0 }), yours = moves.filter((x) => x.who === 1).length;
+    m.games++;
+    if (result === 'you') { m.wins++; p.w++; m.streak++; m.bestStreak = Math.max(m.bestStreak, m.streak); if (!m.fastest || yours < m.fastest) m.fastest = yours; }
+    else if (result === 'them') { m.losses++; p.l++; m.streak = 0; }
+    else { m.draws++; p.d++; }
+    try { localStorage.setItem(MINE_KEY, JSON.stringify(m)); } catch {}
+  }
+
+  // ---- Tap the score: a card over the board with you and everyone, and whoever you're playing has a word
+  const sheet = $('#fourSheet'), statsBtn = $<HTMLButtonElement>('.four__stats'), flip = sheet.querySelector<HTMLElement>('.four__flip')!;
+  const face = (name: string) => `<i class="sq" style="background:url(/images/four/pet-${name.toLowerCase()}-sm.webp) center / cover no-repeat"></i>`;
+  const SAYS: Record<string, (r: Rec) => string> = {
+    Lilo: (r) => `Has beaten ${r.wins.toLocaleString()} players, and let ${r.losses.toLocaleString()} win. Nicely.`,
+    Leroy: (r) => `${r.wins.toLocaleString()} wins. He saw every one coming.`,
+    Kiya: (r) => `${r.wins.toLocaleString()} wins! The ${r.losses.toLocaleString()} losses don’t count.`,
+    Irma: (r) => `${r.wins.toLocaleString()} wins, ${r.losses.toLocaleString()} losses, mostly while napping.`,
+  };
+  function paintSheet() {
+    const m = mine(), tile = (n: string | number, l: string) => `<div class="four__tile"><b>${n}</b><small>${l}</small></div>`;
+    sheet.querySelector<HTMLElement>('[data-sheet="you"]')!.innerHTML = `<div class="four__tiles">${tile(m.games, 'Games')}${tile(m.wins, 'Won')}${tile(m.bestStreak, 'Best streak')}${tile(m.fastest ? `${m.fastest}` : '–', 'Fastest win, moves')}</div>`
+      + `<div class="four__vs">${FOES.map((f) => { const r = m.by[f.name]; return `<div>${face(f.name)}<span><b>${f.name}</b><small>${r ? `${r.w} won · ${r.l} lost` : 'Not yet'}</small></span></div>`; }).join('')}</div>`;
+    const all = globalStats;
+    sheet.querySelector<HTMLElement>('[data-sheet="all"]')!.innerHTML = all && Object.keys(all).length
+      ? `<div class="four__stand">${[...FOES].sort((a, b) => (all[b.name]?.wins ?? 0) - (all[a.name]?.wins ?? 0)).map((f, k) => { const r = all[f.name] ?? { wins: 0, losses: 0, draws: 0 }; return `<div><em>${k + 1}</em>${face(f.name)}<span><b>${f.name}</b><small>${SAYS[f.name]?.(r) ?? ''}</small></span></div>`; }).join('')}</div>`
+      : `<p class="four__soon">The standings fill in as people play. Be the first.</p>`;
+  }
+  function showFace(which: 'you' | 'all') {
+    flip.classList.toggle('is-flipped', which === 'all');
+    sheet.querySelectorAll<HTMLElement>('[data-face]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.face === which)));
+  }
+  const openSheet = () => {
+    closeDial(); paintSheet(); showFace('you');
+    sheet.hidden = false; sheet.classList.remove('is-in'); void sheet.offsetWidth; sheet.classList.add('is-in'); statsBtn.setAttribute('aria-expanded', 'true');
+    if (foe.lines.stats) talk(pick(foe.lines.stats));
+    fetch('/api/four').then((r) => (r.ok ? r.json() : null)).then((d) => { if (d?.stats) { showStats(d.stats); paintSheet(); } }).catch(() => {});
+  };
+  const closeSheet = () => { if (sheet.hidden) return; sheet.hidden = true; statsBtn.setAttribute('aria-expanded', 'false'); };
+  // Three quick taps on your best (the star): the WOPR wakes up
+  let starTaps: number[] = [];
+  statsBtn.addEventListener('click', (e) => {
+    if ((e.target as Element).closest('[title="Your best"]')) {
+      const now = Date.now(); starTaps = [...starTaps.filter((t) => now - t < 800), now];
+      if (starTaps.length >= 3) { starTaps = []; closeSheet(); return wopr(); }
+    }
+    sheet.hidden ? openSheet() : closeSheet();
+  });
+  sheet.querySelectorAll<HTMLElement>('[data-face]').forEach((b) => b.addEventListener('click', () => showFace(b.dataset.face as 'you' | 'all')));
+  document.addEventListener('pointerdown', (e) => { if (!sheet.hidden && !(e.target as HTMLElement).closest('.four__sheet, .four__stats')) closeSheet(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !sheet.hidden) { closeSheet(); statsBtn.focus(); e.stopPropagation(); } }, true);
+
+  // The WOPR: the board goes green on black for a moment, and it has a few words for Professor Falken
+  let woprOn = false;
+  function wopr() {
+    if (woprOn) return; woprOn = true;
+    game!.classList.add('is-wopr');
+    beep([196, 262, 330, 392, 523], 0.08, 'square', 0.05);
+    const lines = ['GREETINGS, PROFESSOR FALKEN.', 'SHALL WE PLAY A GAME?', 'A STRANGE GAME. THE ONLY WINNING MOVE IS NOT TO PLAY.'];
+    lines.forEach((l, k) => setTimeout(() => talk(l), k * 1800));
+    setTimeout(() => { game!.classList.remove('is-wopr'); woprOn = false; talk(pick(foe.lines.idle ?? LINES.start)); }, lines.length * 1800 + 1600);
+  }
+
   setInterval(() => {
     if (!idleAt || Date.now() < idleAt || turn !== 'you' || !playing || paused || document.hidden || !foe.lines.idle) return;
     idleAt = 0; talk(pick(foe.lines.idle));
